@@ -966,10 +966,14 @@ function editProgress(id){
   if(!isAdmin){ alert("관리자 모드에서만 수정할 수 있습니다."); return; }
   const t = tasks.find(x=>x.id===id);
   if(!t) return;
-  const val = prompt("새 진행율을 입력하세요 (0-100):", t.progress);
+  const val = prompt(`새 진행율을 입력하세요 (${t.progress}-100):`, t.progress);
   if(val === null) return;
   const num = Math.max(0, Math.min(100, Number(val)));
   if(isNaN(num)) return;
+  if(num < t.progress){
+    alert(`진행율은 낮출 수 없습니다. 현재 ${t.progress}%보다 낮은 값(${num}%)으로는 수정할 수 없습니다.`);
+    return;
+  }
   t.progress = num;
   if(num >= 100){ if(!t.completedAt) t.completedAt = new Date().toISOString(); }
   else { delete t.completedAt; }
