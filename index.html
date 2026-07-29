@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>업무일정관리 대시보드</title>
+<style>
+  :root{
+    --safety:#2563eb;
+    --edu:#059669;
+    --bg:#f5f6f8;
+    --card:#ffffff;
+    --border:#e2e4e9;
+    --text:#1f2430;
+    --sub:#6b7280;
+    --red:#dc2626;
+    --orange:#d97706;
+    --green:#16a34a;
+    --blue:#2563eb;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Malgun Gothic","Apple SD Gothic Neo","Segoe UI",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 60px;}
+  header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:20px;}
+  header h1{font-size:22px;margin:0 0 4px;}
+  header p{margin:0;color:var(--sub);font-size:13px;}
+  .today-badge{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:13px;color:var(--sub);}
+  .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+  .header-actions{display:flex;align-items:center;gap:8px;}
+  .sync-status{font-size:12px;color:var(--sub);white-space:nowrap;}
+  .sync-status.saving{color:var(--orange);}
+  .sync-status.error{color:var(--red);}
+  .icon-btn{background:var(--card);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:14px;color:var(--sub);}
+  .icon-btn:hover{background:#f2f3f5;}
+  .modal-box textarea{width:100%;padding:8px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;resize:vertical;}
+  .setup-banner{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:14px 16px;margin-bottom:22px;font-size:13px;color:#92400e;}
+  .setup-banner button{margin-left:8px;background:#b45309;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;}
+
+  .summary{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px;}
+  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+  .stat-card .num{font-size:24px;font-weight:700;}
+  .stat-card .label{font-size:12px;color:var(--sub);margin-top:2px;}
+  .stat-card.overdue .num{color:var(--red);}
+  .stat-card.done .num{color:var(--green);}
+  .stat-card.progress .num{color:var(--blue);}
+
+  .tabs{display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--border);}
+  .tab{padding:10px 18px;font-size:14px;cursor:pointer;color:var(--sub);border-bottom:2px solid transparent;user-select:none;}
+  .tab.active{color:var(--text);font-weight:600;border-bottom-color:var(--blue);}
+
+  .add-form{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:22px;display:grid;grid-template-columns:110px 1.6fr 110px 140px 160px 90px;gap:10px;align-items:end;}
+  .add-form label{display:block;font-size:11px;color:var(--sub);margin-bottom:4px;}
+  .add-form input,.add-form select{width:100%;padding:8px 9px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;}
+  .add-form button{background:var(--blue);color:#fff;border:none;border-radius:6px;padding:9px 0;font-size:13px;cursor:pointer;font-weight:600;}
+  .add-form button:hover{opacity:.9;}
+
+  .team-section{margin-bottom:28px;}
+  .team-title{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+  .team-dot{width:10px;height:10px;border-radius:50%;}
+  .team-dot.safety{background:var(--safety);}
+  .team-dot.edu{background:var(--edu);}
+  .team-title h2{font-size:16px;margin:0;}
+  .team-title .count{font-size:12px;color:var(--sub);}
+
+  .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px;}
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  th,td{padding:10px 12px;font-size:13px;text-align:left;border-bottom:1px solid var(--border);}
+  th{background:#fafbfc;color:var(--sub);font-weight:600;font-size:12px;}
+  tr:last-child td{border-bottom:none;}
+  tr.row-overdue td{background:#fef2f2;}
+
+  .progress-cell{display:flex;align-items:center;gap:8px;min-width:140px;}
+  .bar-bg{flex:1;height:8px;background:#e9ebef;border-radius:4px;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:4px;}
+  .prog-num{font-size:12px;color:var(--sub);width:34px;text-align:right;}
+
+  .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+  .badge.done{background:#dcfce7;color:var(--green);}
+  .badge.ongoing{background:#dbeafe;color:var(--blue);}
+  .badge.overdue{background:#fee2e2;color:var(--red);}
+
+  .dday{font-size:12px;font-weight:600;}
+  .dday.warn{color:var(--orange);}
+  .dday.late{color:var(--red);}
+  .dday.ok{color:var(--sub);}
+
+  .row-actions{display:flex;gap:6px;flex-wrap:wrap;}
+  .row-actions button{border:1px solid var(--border);background:#fff;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;color:var(--sub);}
+  .row-actions button:hover{background:#f2f3f5;}
+  .row-actions button.del:hover{background:#fee2e2;color:var(--red);border-color:#fca5a5;}
+
+  tr.row-completed td{color:var(--sub);}
+  tr.row-completed .badge.done{color:var(--green);}
+
+  details.completed-details{margin-top:12px;}
+  details.completed-details > summary{cursor:pointer;list-style:none;font-size:13px;color:var(--sub);padding:6px 2px;display:flex;align-items:center;gap:6px;user-select:none;}
+  details.completed-details > summary::-webkit-details-marker{display:none;}
+  details.completed-details > summary:before{content:'▸';font-size:10px;}
+  details.completed-details[open] > summary:before{content:'▾';}
+  details.completed-details > summary:hover{color:var(--text);}
+  details.completed-details .table-scroll{margin-top:8px;}
+
+  .prog-input{width:60px;}
+  .empty{padding:24px;text-align:center;color:var(--sub);font-size:13px;}
+
+  .due-cell{display:flex;align-items:center;gap:6px;}
+  .hist-link{font-size:11px;color:var(--blue);cursor:pointer;border:1px solid #c7d7fe;background:#eff4ff;padding:1px 7px;border-radius:10px;white-space:nowrap;}
+  .hist-link:hover{background:#dbe6fe;}
+  .hist-link.empty-hist{color:var(--sub);border-color:var(--border);background:#f5f6f8;}
+
+  .modal-overlay{position:fixed;inset:0;background:rgba(15,18,25,.45);display:none;align-items:center;justify-content:center;z-index:100;}
+  .modal-overlay.open{display:flex;}
+  .modal-box{background:#fff;border-radius:12px;padding:20px 22px;width:420px;max-width:92vw;max-height:80vh;overflow-y:auto;box-shadow:0 12px 32px rgba(0,0,0,.18);}
+  .modal-box h3{margin:0 0 14px;font-size:16px;}
+  .modal-box .field{margin-bottom:12px;}
+  .modal-box label{display:block;font-size:12px;color:var(--sub);margin-bottom:4px;}
+  .modal-box input{width:100%;padding:8px 9px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;}
+  .modal-actions button{border:none;border-radius:6px;padding:8px 16px;font-size:13px;cursor:pointer;}
+  .modal-actions .btn-primary{background:var(--blue);color:#fff;font-weight:600;}
+  .modal-actions .btn-ghost{background:#f2f3f5;color:var(--text);}
+
+  .hist-table{width:100%;border-collapse:collapse;margin-top:4px;}
+  .hist-table th,.hist-table td{padding:7px 8px;font-size:12px;border-bottom:1px solid var(--border);text-align:left;}
+  .hist-table th{color:var(--sub);font-weight:600;}
+  .hist-empty{font-size:13px;color:var(--sub);padding:10px 0;}
+  .hist-arrow{color:var(--sub);margin:0 4px;}
+  .hist-old{text-decoration:line-through;color:var(--sub);}
+  .hist-new{font-weight:600;}
+
+  .absence-banner{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:22px;}
+  .absence-banner h3{margin:0 0 10px;font-size:14px;}
+  .absence-chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .absence-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:12px;border:1px solid var(--border);background:#fafbfc;}
+  .absence-chip .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .absence-chip.safety .dot{background:var(--safety);}
+  .absence-chip.edu .dot{background:var(--edu);}
+  .absence-empty{color:var(--sub);font-size:13px;}
+
+  .type-badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+  .type-badge.outside{background:#e0e7ff;color:#4338ca;}
+  .type-badge.trip{background:#fae8ff;color:#a21caf;}
+  .type-badge.leave{background:#fef3c7;color:#b45309;}
+
+  .absence-status{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+  .absence-status.upcoming{background:#dbeafe;color:var(--blue);}
+  .absence-status.active{background:#fee2e2;color:var(--red);}
+  .absence-status.done{background:#f1f5f9;color:var(--sub);}
+
+  .add-form.absence-form{grid-template-columns:100px 130px 90px 140px 140px 1fr 110px;}
+
+  .cal-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .cal-header .cal-label{font-size:15px;font-weight:700;min-width:100px;text-align:center;}
+  .cal-nav{background:#fff;border:1px solid var(--border);border-radius:6px;width:30px;height:30px;cursor:pointer;font-size:15px;color:var(--sub);}
+  .cal-nav:hover{background:#f2f3f5;}
+  .cal-today-btn{margin-left:auto;background:#fff;border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;color:var(--sub);}
+  .cal-today-btn:hover{background:#f2f3f5;}
+
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:28px;}
+  .cal-weekday{text-align:center;font-size:12px;color:var(--sub);font-weight:600;padding:4px 0;}
+  .cal-weekday:first-child{color:var(--red);}
+  .cal-weekday:last-child{color:var(--blue);}
+  .cal-cell{background:var(--card);border:1px solid var(--border);border-radius:8px;min-height:96px;padding:6px;display:flex;flex-direction:column;gap:4px;}
+  .cal-cell.cal-other-month{background:#fafbfc;}
+  .cal-cell.cal-other-month .cal-daynum{color:#c7cbd3;}
+  .cal-cell.cal-today{border-color:var(--blue);box-shadow:inset 0 0 0 1px var(--blue);}
+  .cal-daynum{font-size:12px;font-weight:600;color:var(--sub);}
+  .cal-cell:nth-child(7n+1) .cal-daynum{color:var(--red);}
+  .cal-cell:nth-child(7n) .cal-daynum{color:var(--blue);}
+  .cal-cell.cal-other-month:nth-child(7n+1) .cal-daynum,
+  .cal-cell.cal-other-month:nth-child(7n) .cal-daynum{color:#dfc9c9;}
+  .cal-today .cal-daynum{color:var(--blue) !important;}
+  .cal-chips{display:flex;flex-direction:column;gap:3px;overflow:hidden;}
+  .cal-chip{font-size:10.5px;padding:2px 6px;border-radius:5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:3px solid transparent;background:#eef1f5;}
+  .cal-chip.safety{border-left-color:var(--safety);background:#eaf1ff;}
+  .cal-chip.edu{border-left-color:var(--edu);background:#e8f8f1;}
+  .cal-chip-type{opacity:.7;margin-left:2px;}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px){
+    .summary{grid-template-columns:repeat(3,1fr);}
+  }
+
+  @media (max-width: 640px){
+    .wrap{padding:16px 12px 40px;}
+    header{align-items:flex-start;}
+    header h1{font-size:18px;}
+    header p{font-size:12px;}
+    .today-badge{padding:6px 10px;font-size:12px;}
+
+    .summary{grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px;}
+    .stat-card{padding:10px 12px;}
+    .stat-card .num{font-size:19px;}
+    .stat-card .label{font-size:11px;}
+
+    .absence-banner{padding:12px;margin-bottom:16px;}
+    .absence-chip{font-size:11px;padding:5px 10px;}
+
+    .add-form, .add-form.absence-form{grid-template-columns:1fr;padding:12px;gap:8px;margin-bottom:16px;}
+    .add-form button{padding:12px 0;margin-top:2px;}
+
+    .tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;margin-bottom:12px;}
+    .tab{flex-shrink:0;padding:9px 14px;font-size:13px;white-space:nowrap;}
+
+    table{min-width:620px;}
+    th,td{padding:8px 10px;font-size:12.5px;}
+    .row-actions{gap:4px;}
+    .row-actions button{padding:6px 8px;font-size:11px;}
+
+    .cal-header{gap:6px;}
+    .cal-header .cal-label{font-size:13px;min-width:76px;}
+    .cal-nav{width:26px;height:26px;font-size:13px;}
+    .cal-today-btn{padding:5px 9px;font-size:11px;}
+    .cal-grid{gap:3px;margin-bottom:20px;}
+    .cal-weekday{font-size:10.5px;padding:2px 0;}
+    .cal-cell{min-height:58px;padding:3px;border-radius:6px;gap:2px;}
+    .cal-daynum{font-size:10px;}
+    .cal-chip{font-size:8.5px;padding:1px 3px;border-radius:3px;}
+    .cal-chip-type{display:none;}
+
+    .modal-box{padding:16px;width:92vw;}
+  }
+
+  @media (max-width: 400px){
+    .summary{grid-template-columns:repeat(2,1fr);}
+    .cal-cell{min-height:48px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <h1>업무일정관리 대시보드</h1>
+      <p>안전관리팀 · 교육팀 공동 업무 현황</p>
+    </div>
+    <div class="header-right">
+      <div class="today-badge" id="todayBadge"></div>
+      <div class="header-actions">
+        <span class="sync-status" id="syncStatus"></span>
+        <button class="icon-btn" onclick="manualRefresh()" title="새로고침">⟳</button>
+        <button class="icon-btn" onclick="openSettings()" title="GitHub 동기화 설정">⚙</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="setup-banner" id="setupBanner" style="display:none;">
+    아직 GitHub 동기화가 설정되지 않았습니다. 설정을 완료해야 팀원들과 데이터가 공유됩니다.
+    <button onclick="openSettings()">지금 설정하기</button>
+  </div>
+
+  <div class="summary" id="summary"></div>
+
+  <div class="absence-banner" id="absenceBanner"></div>
+
+  <div class="add-form" id="taskAddForm">
+    <div>
+      <label>팀</label>
+      <select id="inTeam">
+        <option value="safety">안전관리</option>
+        <option value="edu">교육</option>
+      </select>
+    </div>
+    <div>
+      <label>업무 내용</label>
+      <input type="text" id="inTitle" placeholder="예: 소방안전교육 자료 준비">
+    </div>
+    <div>
+      <label>담당자</label>
+      <input type="text" id="inOwner" placeholder="담당자">
+    </div>
+    <div>
+      <label>마감일자</label>
+      <input type="date" id="inDue">
+    </div>
+    <div>
+      <label>진행율 (%)</label>
+      <input type="number" id="inProgress" min="0" max="100" value="0">
+    </div>
+    <button onclick="addTask()">+ 업무 추가</button>
+  </div>
+
+  <div class="add-form absence-form" id="absenceAddForm" style="display:none;">
+    <div>
+      <label>팀</label>
+      <select id="absTeam">
+        <option value="safety">안전관리</option>
+        <option value="edu">교육</option>
+      </select>
+    </div>
+    <div>
+      <label>이름</label>
+      <input type="text" id="absPerson" placeholder="이름">
+    </div>
+    <div>
+      <label>유형</label>
+      <select id="absType">
+        <option value="outside">외근</option>
+        <option value="trip">출장</option>
+        <option value="leave">휴가</option>
+      </select>
+    </div>
+    <div>
+      <label>시작일</label>
+      <input type="date" id="absStart">
+    </div>
+    <div>
+      <label>종료일</label>
+      <input type="date" id="absEnd">
+    </div>
+    <div>
+      <label>메모</label>
+      <input type="text" id="absMemo" placeholder="목적지/사유 등">
+    </div>
+    <button onclick="addAbsence()">+ 일정 추가</button>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-tab="all">전체</div>
+    <div class="tab" data-tab="safety">안전관리</div>
+    <div class="tab" data-tab="edu">교육</div>
+    <div class="tab" data-tab="absence">외근/출장/휴가</div>
+  </div>
+
+  <div id="content"></div>
+
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<script>
+const GH_CONFIG_KEY = "ghSyncConfig_v1";
+const TEAM_META = {
+  safety: {label:"안전관리", color:"var(--safety)", cls:"safety"},
+  edu: {label:"교육", color:"var(--edu)", cls:"edu"}
+};
+const TYPE_META = {
+  outside: {label:"외근", cls:"outside"},
+  trip: {label:"출장", cls:"trip"},
+  leave: {label:"휴가", cls:"leave"}
+};
+
+function pad2(n){ return String(n).padStart(2,"0"); }
+function fmtLocalDate(d){
+  return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+}
+
+function todayStr(){
+  return fmtLocalDate(new Date());
+}
+
+function nowTimeLabel(){
+  const d = new Date();
+  return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+}
+
+function cid(){ return "t" + Math.random().toString(36).slice(2,10); }
+
+function utf8ToB64(str){ return btoa(unescape(encodeURIComponent(str))); }
+function b64ToUtf8(str){ return decodeURIComponent(escape(atob(str))); }
+
+let tasks = [];
+let absences = [];
+let activeTab = "all";
+let calState = { year: new Date().getFullYear(), month: new Date().getMonth() };
+let ghConfig = null;
+try{ ghConfig = JSON.parse(localStorage.getItem(GH_CONFIG_KEY) || "null"); }catch(e){ ghConfig = null; }
+let fileSha = null;
+let isSaving = false;
+let autoRefreshTimer = null;
+
+function ghUrl(){
+  const pathParts = ghConfig.path.split('/').filter(Boolean).map(encodeURIComponent).join('/');
+  return `https://api.github.com/repos/${encodeURIComponent(ghConfig.owner)}/${encodeURIComponent(ghConfig.repo)}/contents/${pathParts}`;
+}
+
+async function fetchRemoteData(){
+  const res = await fetch(`${ghUrl()}?ref=${encodeURIComponent(ghConfig.branch || 'main')}`, {
+    headers: {
+      "Authorization": `Bearer ${ghConfig.token}`,
+      "Accept": "application/vnd.github+json"
+    }
+  });
+  if(res.status === 404){
+    tasks = [];
+    absences = [];
+    fileSha = null;
+    return { isNew: true };
+  }
+  if(res.status === 401 || res.status === 403){
+    throw new Error("토큰이 유효하지 않거나 권한이 없습니다. 설정을 확인해주세요.");
+  }
+  if(!res.ok){
+    throw new Error(`불러오기 실패 (HTTP ${res.status})`);
+  }
+  const json = await res.json();
+  fileSha = json.sha;
+  let data;
+  try{
+    data = JSON.parse(b64ToUtf8(json.content.replace(/\n/g, '')));
+  }catch(e){
+    throw new Error("데이터 파일 형식이 올바르지 않습니다.");
+  }
+  tasks = Array.isArray(data.tasks) ? data.tasks : [];
+  absences = Array.isArray(data.absences) ? data.absences : [];
+  tasks.forEach(t => { if(!Array.isArray(t.dueHistory)) t.dueHistory = []; });
+  return { isNew: false };
+}
+
+async function saveRemoteData(message){
+  const body = {
+    message: message || "업데이트",
+    content: utf8ToB64(JSON.stringify({ tasks, absences }, null, 2)),
+    branch: ghConfig.branch || "main"
+  };
+  if(fileSha) body.sha = fileSha;
+  const res = await fetch(ghUrl(), {
+    method: "PUT",
+    headers: {
+      "Authorization": `Bearer ${ghConfig.token}`,
+      "Accept": "application/vnd.github+json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
+  });
+  if(res.status === 409){
+    const err = new Error("충돌");
+    err.conflict = true;
+    throw err;
+  }
+  if(!res.ok){
+    let msg = `저장 실패 (HTTP ${res.status})`;
+    try{ const errJson = await res.json(); if(errJson.message) msg = errJson.message; }catch(e){}
+    throw new Error(msg);
+  }
+  const json = await res.json();
+  fileSha = json.content.sha;
+}
+
+function setSyncStatus(state, message){
+  const el = document.getElementById("syncStatus");
+  if(!el) return;
+  el.textContent = message || "";
+  el.className = "sync-status" + (state ? " " + state : "");
+}
+
+function persist(message){
+  if(!ghConfig) return;
+  isSaving = true;
+  setSyncStatus("saving", "저장 중...");
+  saveRemoteData(message)
+    .then(() => {
+      setSyncStatus("idle", "동기화됨 · " + nowTimeLabel());
+    })
+    .catch(async (err) => {
+      if(err && err.conflict){
+        alert("다른 사람이 방금 먼저 저장했습니다. 최신 데이터를 다시 불러옵니다. 방금 변경한 내용은 다시 입력해주세요.");
+        try{ await fetchRemoteData(); }catch(e){}
+        setSyncStatus("error", "충돌 발생 - 다시 불러옴");
+      } else {
+        alert("저장 실패: " + (err.message || err));
+        setSyncStatus("error", "저장 오류");
+      }
+    })
+    .finally(() => {
+      isSaving = false;
+      render();
+    });
+}
+
+function updateSetupBanner(){
+  const banner = document.getElementById("setupBanner");
+  if(!banner) return;
+  banner.style.display = ghConfig ? "none" : "block";
+}
+
+function openSettings(){
+  openModal(`
+    <h3>GitHub 동기화 설정</h3>
+    <p style="font-size:12px;color:var(--sub);margin:-6px 0 14px;">데이터를 저장할 GitHub 저장소 정보를 입력하세요. 저장소는 미리 만들어 두어야 합니다.</p>
+    <div class="field">
+      <label>GitHub 사용자명 / 조직</label>
+      <input type="text" id="cfgOwner" value="${escapeHtml(ghConfig?.owner || '')}" placeholder="예: myaccount">
+    </div>
+    <div class="field">
+      <label>저장소 이름</label>
+      <input type="text" id="cfgRepo" value="${escapeHtml(ghConfig?.repo || '')}" placeholder="예: team-schedule">
+    </div>
+    <div class="field">
+      <label>데이터 파일 경로</label>
+      <input type="text" id="cfgPath" value="${escapeHtml(ghConfig?.path || 'data.json')}">
+    </div>
+    <div class="field">
+      <label>브랜치</label>
+      <input type="text" id="cfgBranch" value="${escapeHtml(ghConfig?.branch || 'main')}">
+    </div>
+    <div class="field">
+      <label>Personal Access Token</label>
+      <input type="password" id="cfgToken" value="${escapeHtml(ghConfig?.token || '')}" placeholder="ghp_... 또는 github_pat_...">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-primary" onclick="saveSettings()">저장하고 불러오기</button>
+    </div>
+  `);
+}
+
+function saveSettings(){
+  const owner = document.getElementById("cfgOwner").value.trim();
+  const repo = document.getElementById("cfgRepo").value.trim();
+  const path = document.getElementById("cfgPath").value.trim() || "data.json";
+  const branch = document.getElementById("cfgBranch").value.trim() || "main";
+  const token = document.getElementById("cfgToken").value.trim();
+  if(!owner || !repo || !token){
+    alert("사용자명, 저장소, 토큰은 필수입니다.");
+    return;
+  }
+  ghConfig = { owner, repo, path, branch, token };
+  localStorage.setItem(GH_CONFIG_KEY, JSON.stringify(ghConfig));
+  closeModal();
+  updateSetupBanner();
+  loadInitial();
+}
+
+async function loadInitial(){
+  if(!ghConfig){
+    updateSetupBanner();
+    render();
+    return;
+  }
+  setSyncStatus("loading", "불러오는 중...");
+  try{
+    const result = await fetchRemoteData();
+    if(result.isNew){
+      await saveRemoteData("초기 데이터 파일 생성");
+    }
+    setSyncStatus("idle", "동기화됨 · " + nowTimeLabel());
+  }catch(err){
+    setSyncStatus("error", "연결 실패");
+    alert("GitHub 연결에 실패했습니다: " + (err.message || err) + "\n설정을 다시 확인해주세요.");
+  }
+  render();
+  startAutoRefresh();
+}
+
+async function manualRefresh(){
+  if(!ghConfig){ openSettings(); return; }
+  if(isSaving) return;
+  setSyncStatus("loading", "불러오는 중...");
+  try{
+    await fetchRemoteData();
+    setSyncStatus("idle", "동기화됨 · " + nowTimeLabel());
+  }catch(err){
+    setSyncStatus("error", "불러오기 실패");
+  }
+  render();
+}
+
+function startAutoRefresh(){
+  if(autoRefreshTimer) clearInterval(autoRefreshTimer);
+  autoRefreshTimer = setInterval(async () => {
+    if(isSaving || !ghConfig) return;
+    try{
+      await fetchRemoteData();
+      setSyncStatus("idle", "동기화됨 · " + nowTimeLabel());
+      render();
+    }catch(e){ /* silent on background poll */ }
+  }, 30000);
+}
+
+function dueInfo(due, progress){
+  const today = new Date(todayStr());
+  const dueDate = new Date(due);
+  const diffDays = Math.round((dueDate - today) / 86400000);
+  let status, badgeClass, ddayClass, ddayText;
+  if(progress >= 100){
+    status = "완료"; badgeClass = "done"; ddayClass = "ok"; ddayText = "완료";
+  } else if(diffDays < 0){
+    status = "지연"; badgeClass = "overdue"; ddayClass = "late"; ddayText = "D+" + Math.abs(diffDays);
+  } else {
+    status = "진행중"; badgeClass = "ongoing";
+    ddayText = diffDays === 0 ? "D-day" : "D-" + diffDays;
+    ddayClass = diffDays <= 3 ? "warn" : "ok";
+  }
+  return {status, badgeClass, ddayClass, ddayText, overdue: diffDays < 0 && progress < 100};
+}
+
+function barColor(progress, overdue){
+  if(overdue) return "var(--red)";
+  if(progress >= 80) return "var(--green)";
+  if(progress >= 40) return "var(--blue)";
+  return "var(--orange)";
+}
+
+function renderSummary(){
+  const total = tasks.length;
+  const done = tasks.filter(t=>t.progress>=100).length;
+  const overdue = tasks.filter(t=> dueInfo(t.due,t.progress).status==="지연").length;
+  const ongoing = total - done - overdue;
+  const avg = total ? Math.round(tasks.reduce((s,t)=>s+Number(t.progress),0)/total) : 0;
+
+  const el = document.getElementById("summary");
+  el.innerHTML = `
+    <div class="stat-card"><div class="num">${total}</div><div class="label">전체 업무</div></div>
+    <div class="stat-card done"><div class="num">${done}</div><div class="label">완료</div></div>
+    <div class="stat-card"><div class="num">${ongoing}</div><div class="label">진행중</div></div>
+    <div class="stat-card overdue"><div class="num">${overdue}</div><div class="label">지연</div></div>
+    <div class="stat-card progress"><div class="num">${avg}%</div><div class="label">평균 진행율</div></div>
+  `;
+}
+
+function taskRow(t, opts){
+  opts = opts || {};
+  const completed = !!opts.completed;
+  const info = dueInfo(t.due, t.progress);
+  const color = barColor(t.progress, info.overdue);
+
+  const ddayCell = completed
+    ? `<span class="dday ok">${t.completedAt ? fmtLocalDate(new Date(t.completedAt)) : '-'}</span>`
+    : `<span class="dday ${info.ddayClass}">${info.ddayText}</span>`;
+
+  const actions = completed
+    ? `
+        <button onclick="openEditDue('${t.id}')">마감일 수정</button>
+        <button onclick="reopenTask('${t.id}')">완료 취소</button>
+        <button class="del" onclick="deleteTask('${t.id}')">삭제</button>
+      `
+    : `
+        <button onclick="openEditDue('${t.id}')">마감일 수정</button>
+        <button onclick="editProgress('${t.id}')">진행율 수정</button>
+        <button onclick="markComplete('${t.id}')">완료 처리</button>
+        <button class="del" onclick="deleteTask('${t.id}')">삭제</button>
+      `;
+
+  return `
+    <tr class="${info.overdue && !completed ? 'row-overdue' : ''} ${completed ? 'row-completed' : ''}">
+      <td>${escapeHtml(t.title)}</td>
+      <td>${escapeHtml(t.owner || '-')}</td>
+      <td>
+        <div class="due-cell">
+          <span>${t.due}</span>
+          <span class="hist-link ${t.dueHistory && t.dueHistory.length ? '' : 'empty-hist'}" onclick="openHistory('${t.id}')">이력${t.dueHistory && t.dueHistory.length ? ' ' + t.dueHistory.length : ''}</span>
+        </div>
+      </td>
+      <td>${ddayCell}</td>
+      <td>
+        <div class="progress-cell">
+          <div class="bar-bg"><div class="bar-fill" style="width:${t.progress}%;background:${color};"></div></div>
+          <span class="prog-num">${t.progress}%</span>
+        </div>
+      </td>
+      <td><span class="badge ${info.badgeClass}">${info.status}</span></td>
+      <td>
+        <div class="row-actions">${actions}</div>
+      </td>
+    </tr>
+  `;
+}
+
+function teamTable(teamKey){
+  const meta = TEAM_META[teamKey];
+  const all = tasks.filter(t=>t.team===teamKey);
+  const active = all.filter(t=>t.progress<100).sort((a,b)=> new Date(a.due) - new Date(b.due));
+  const completed = all.filter(t=>t.progress>=100)
+    .sort((a,b)=> new Date(b.completedAt || b.due) - new Date(a.completedAt || a.due));
+
+  const activeRows = active.length
+    ? active.map(t=>taskRow(t)).join("")
+    : `<tr><td colspan="7" class="empty">등록된 업무가 없습니다.</td></tr>`;
+
+  const completedRows = completed.length
+    ? completed.map(t=>taskRow(t, {completed:true})).join("")
+    : `<tr><td colspan="7" class="empty">완료된 업무가 없습니다.</td></tr>`;
+
+  return `
+    <div class="team-section">
+      <div class="team-title">
+        <span class="team-dot ${meta.cls}"></span>
+        <h2>${meta.label}팀</h2>
+        <span class="count">(진행 ${active.length}건 · 완료 ${completed.length}건)</span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>업무 내용</th><th>담당자</th><th>마감일자</th><th>D-Day</th><th>진행율</th><th>상태</th><th>관리</th>
+            </tr>
+          </thead>
+          <tbody>${activeRows}</tbody>
+        </table>
+      </div>
+      <details class="completed-details">
+        <summary>완료된 업무 (${completed.length}건)</summary>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>업무 내용</th><th>담당자</th><th>마감일자</th><th>완료일</th><th>진행율</th><th>상태</th><th>관리</th>
+              </tr>
+            </thead>
+            <tbody>${completedRows}</tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  `;
+}
+
+function absenceStatus(a){
+  const today = todayStr();
+  if(today < a.start) return {key:"upcoming", label:"예정"};
+  if(today > a.end) return {key:"done", label:"종료"};
+  return {key:"active", label:"진행중"};
+}
+
+function renderAbsenceBanner(){
+  const today = todayStr();
+  const todays = absences.filter(a => a.start <= today && today <= a.end)
+    .sort((a,b)=> TEAM_META[a.team].label.localeCompare(TEAM_META[b.team].label));
+  const el = document.getElementById("absenceBanner");
+  if(!todays.length){
+    el.innerHTML = `<h3>오늘 외근·출장·휴가</h3><div class="absence-empty">오늘 부재중인 인원이 없습니다.</div>`;
+    return;
+  }
+  const chips = todays.map(a => {
+    const meta = TEAM_META[a.team];
+    const type = TYPE_META[a.type];
+    return `<div class="absence-chip ${meta.cls}"><span class="dot"></span>${escapeHtml(a.person)} (${meta.label}) <span class="type-badge ${type.cls}">${type.label}</span></div>`;
+  }).join("");
+  el.innerHTML = `<h3>오늘 외근·출장·휴가 (${todays.length}명)</h3><div class="absence-chips">${chips}</div>`;
+}
+
+function buildCalendarMatrix(year, month){
+  const firstOfMonth = new Date(year, month, 1);
+  const startWeekday = firstOfMonth.getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+  const cells = [];
+
+  for(let i = startWeekday - 1; i >= 0; i--){
+    const day = daysInPrevMonth - i;
+    const d = new Date(year, month - 1, day);
+    cells.push({day, dateStr: fmtLocalDate(d), currentMonth:false});
+  }
+  for(let day = 1; day <= daysInMonth; day++){
+    const d = new Date(year, month, day);
+    cells.push({day, dateStr: fmtLocalDate(d), currentMonth:true});
+  }
+  let nextDay = 1;
+  while(cells.length < 42){
+    const d = new Date(year, month + 1, nextDay);
+    cells.push({day: nextDay, dateStr: fmtLocalDate(d), currentMonth:false});
+    nextDay++;
+  }
+  return cells;
+}
+
+function renderAbsenceCalendar(){
+  const { year, month } = calState;
+  const monthLabel = `${year}년 ${month + 1}월`;
+  const cells = buildCalendarMatrix(year, month);
+  const todayS = todayStr();
+  const weekdayLabels = ["일","월","화","수","목","금","토"];
+
+  const weekHeader = weekdayLabels.map(d => `<div class="cal-weekday">${d}</div>`).join("");
+
+  const dayCells = cells.map(c => {
+    const dayAbsences = absences.filter(a => a.start <= c.dateStr && c.dateStr <= a.end);
+    const chips = dayAbsences.map(a => {
+      const meta = TEAM_META[a.team];
+      const type = TYPE_META[a.type];
+      const tip = `${a.person} · ${meta.label} · ${type.label}${a.memo ? ' · ' + a.memo : ''}`;
+      return `<div class="cal-chip ${meta.cls}" onclick="openEditAbsence('${a.id}')" title="${escapeHtml(tip)}">${escapeHtml(a.person)}<span class="cal-chip-type">${type.label}</span></div>`;
+    }).join("");
+    const classes = ["cal-cell"];
+    if(!c.currentMonth) classes.push("cal-other-month");
+    if(c.dateStr === todayS) classes.push("cal-today");
+    return `<div class="${classes.join(" ")}"><div class="cal-daynum">${c.day}</div><div class="cal-chips">${chips}</div></div>`;
+  }).join("");
+
+  return `
+    <div class="cal-header">
+      <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
+      <div class="cal-label">${monthLabel}</div>
+      <button class="cal-nav" onclick="changeMonth(1)">›</button>
+      <button class="cal-today-btn" onclick="goToday()">오늘</button>
+    </div>
+    <div class="cal-grid">
+      ${weekHeader}
+      ${dayCells}
+    </div>
+  `;
+}
+
+function changeMonth(delta){
+  calState.month += delta;
+  if(calState.month < 0){ calState.month = 11; calState.year--; }
+  if(calState.month > 11){ calState.month = 0; calState.year++; }
+  renderContent();
+}
+
+function goToday(){
+  const now = new Date();
+  calState.year = now.getFullYear();
+  calState.month = now.getMonth();
+  renderContent();
+}
+
+function renderContent(){
+  const el = document.getElementById("content");
+  if(activeTab === "all"){
+    el.innerHTML = teamTable("safety") + teamTable("edu");
+  } else if(activeTab === "absence"){
+    el.innerHTML = renderAbsenceCalendar();
+  } else {
+    el.innerHTML = teamTable(activeTab);
+  }
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, s => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[s]));
+}
+
+function render(){
+  document.getElementById("todayBadge").textContent = "오늘: " + todayStr();
+  updateSetupBanner();
+  renderSummary();
+  renderAbsenceBanner();
+  renderContent();
+}
+
+function addTask(){
+  if(!ghConfig){ openSettings(); return; }
+  const team = document.getElementById("inTeam").value;
+  const title = document.getElementById("inTitle").value.trim();
+  const owner = document.getElementById("inOwner").value.trim();
+  const due = document.getElementById("inDue").value;
+  const progress = Math.max(0, Math.min(100, Number(document.getElementById("inProgress").value) || 0));
+
+  if(!title || !due){
+    alert("업무 내용과 마감일자를 입력해주세요.");
+    return;
+  }
+  tasks.push({id: cid(), team, title, owner, due, progress, dueHistory: []});
+  document.getElementById("inTitle").value = "";
+  document.getElementById("inOwner").value = "";
+  document.getElementById("inDue").value = "";
+  document.getElementById("inProgress").value = 0;
+  render();
+  persist(`업무 추가: ${title}`);
+}
+
+function editProgress(id){
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  const val = prompt("새 진행율을 입력하세요 (0-100):", t.progress);
+  if(val === null) return;
+  const num = Math.max(0, Math.min(100, Number(val)));
+  if(isNaN(num)) return;
+  t.progress = num;
+  if(num >= 100){ if(!t.completedAt) t.completedAt = new Date().toISOString(); }
+  else { delete t.completedAt; }
+  render();
+  persist(`진행율 수정: ${t.title} → ${num}%`);
+}
+
+function markComplete(id){
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  t.progress = 100;
+  t.completedAt = new Date().toISOString();
+  render();
+  persist(`업무 완료 처리: ${t.title}`);
+}
+
+function reopenTask(id){
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  if(!confirm("완료 처리를 취소하고 다시 진행중으로 되돌릴까요?")) return;
+  t.progress = 90;
+  delete t.completedAt;
+  render();
+  persist(`업무 완료 취소: ${t.title}`);
+}
+
+function deleteTask(id){
+  if(!confirm("이 업무를 삭제할까요?")) return;
+  const removed = tasks.find(t=>t.id===id);
+  tasks = tasks.filter(t=>t.id!==id);
+  render();
+  persist(`업무 삭제: ${removed ? removed.title : id}`);
+}
+
+function addAbsence(){
+  if(!ghConfig){ openSettings(); return; }
+  const team = document.getElementById("absTeam").value;
+  const person = document.getElementById("absPerson").value.trim();
+  const type = document.getElementById("absType").value;
+  const start = document.getElementById("absStart").value;
+  const end = document.getElementById("absEnd").value || start;
+  const memo = document.getElementById("absMemo").value.trim();
+
+  if(!person || !start){
+    alert("이름과 시작일을 입력해주세요.");
+    return;
+  }
+  if(end < start){
+    alert("종료일은 시작일보다 빠를 수 없습니다.");
+    return;
+  }
+  absences.push({id: cid(), team, person, type, start, end, memo});
+  document.getElementById("absPerson").value = "";
+  document.getElementById("absStart").value = "";
+  document.getElementById("absEnd").value = "";
+  document.getElementById("absMemo").value = "";
+  render();
+  persist(`외근/출장/휴가 추가: ${person}`);
+}
+
+function openEditAbsence(id){
+  const a = absences.find(x=>x.id===id);
+  if(!a) return;
+  openModal(`
+    <h3>외근/출장/휴가 수정</h3>
+    <div class="field">
+      <label>팀</label>
+      <select id="modalAbsTeam">
+        <option value="safety" ${a.team==='safety'?'selected':''}>안전관리</option>
+        <option value="edu" ${a.team==='edu'?'selected':''}>교육</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>이름</label>
+      <input type="text" id="modalAbsPerson" value="${escapeHtml(a.person)}">
+    </div>
+    <div class="field">
+      <label>유형</label>
+      <select id="modalAbsType">
+        <option value="outside" ${a.type==='outside'?'selected':''}>외근</option>
+        <option value="trip" ${a.type==='trip'?'selected':''}>출장</option>
+        <option value="leave" ${a.type==='leave'?'selected':''}>휴가</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>시작일</label>
+      <input type="date" id="modalAbsStart" value="${a.start}">
+    </div>
+    <div class="field">
+      <label>종료일</label>
+      <input type="date" id="modalAbsEnd" value="${a.end}">
+    </div>
+    <div class="field">
+      <label>메모</label>
+      <input type="text" id="modalAbsMemo" value="${escapeHtml(a.memo || '')}">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" style="margin-right:auto;color:var(--red);" onclick="deleteAbsence('${a.id}')">삭제</button>
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-primary" onclick="saveAbsenceEdit('${a.id}')">저장</button>
+    </div>
+  `);
+}
+
+function saveAbsenceEdit(id){
+  const a = absences.find(x=>x.id===id);
+  if(!a) return;
+  const start = document.getElementById("modalAbsStart").value;
+  const end = document.getElementById("modalAbsEnd").value || start;
+  const person = document.getElementById("modalAbsPerson").value.trim();
+  if(!person || !start){
+    alert("이름과 시작일을 입력해주세요.");
+    return;
+  }
+  if(end < start){
+    alert("종료일은 시작일보다 빠를 수 없습니다.");
+    return;
+  }
+  a.team = document.getElementById("modalAbsTeam").value;
+  a.person = person;
+  a.type = document.getElementById("modalAbsType").value;
+  a.start = start;
+  a.end = end;
+  a.memo = document.getElementById("modalAbsMemo").value.trim();
+  closeModal();
+  render();
+  persist(`일정 수정: ${a.person}`);
+}
+
+function deleteAbsence(id){
+  if(!confirm("이 일정을 삭제할까요?")) return;
+  const removed = absences.find(a=>a.id===id);
+  absences = absences.filter(a=>a.id!==id);
+  closeModal();
+  render();
+  persist(`일정 삭제: ${removed ? removed.person : id}`);
+}
+
+function formatDateTime(iso){
+  const d = new Date(iso);
+  const pad = n => String(n).padStart(2,"0");
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function openModal(html){
+  document.getElementById("modalBox").innerHTML = html;
+  document.getElementById("modalOverlay").classList.add("open");
+}
+function closeModal(){
+  document.getElementById("modalOverlay").classList.remove("open");
+}
+
+function openEditDue(id){
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  openModal(`
+    <h3>마감일자 수정</h3>
+    <div class="field">
+      <label>현재 마감일</label>
+      <input type="text" value="${t.due}" disabled>
+    </div>
+    <div class="field">
+      <label>새 마감일</label>
+      <input type="date" id="modalNewDue" value="${t.due}">
+    </div>
+    <div class="field">
+      <label>변경 사유 (선택)</label>
+      <input type="text" id="modalReason" placeholder="예: 현장 사정으로 연기">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-primary" onclick="saveDueEdit('${t.id}')">저장</button>
+    </div>
+  `);
+}
+
+function saveDueEdit(id){
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  const newDue = document.getElementById("modalNewDue").value;
+  const reason = document.getElementById("modalReason").value.trim();
+  if(!newDue){
+    alert("새 마감일을 입력해주세요.");
+    return;
+  }
+  let changed = false;
+  if(newDue !== t.due){
+    if(!Array.isArray(t.dueHistory)) t.dueHistory = [];
+    t.dueHistory.push({
+      from: t.due,
+      to: newDue,
+      changedAt: new Date().toISOString(),
+      reason: reason || ""
+    });
+    t.due = newDue;
+    changed = true;
+  }
+  closeModal();
+  render();
+  if(changed) persist(`마감일 수정: ${t.title}`);
+}
+
+function openHistory(id){
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  const history = (t.dueHistory || []).slice().sort((a,b)=> new Date(b.changedAt) - new Date(a.changedAt));
+  const rows = history.length
+    ? history.map(h => `
+        <tr>
+          <td>${formatDateTime(h.changedAt)}</td>
+          <td><span class="hist-old">${h.from}</span><span class="hist-arrow">→</span><span class="hist-new">${h.to}</span></td>
+          <td>${escapeHtml(h.reason || '-')}</td>
+        </tr>
+      `).join("")
+    : `<tr><td colspan="3" class="hist-empty">마감일 변경 이력이 없습니다.</td></tr>`;
+
+  openModal(`
+    <h3>마감일 변경 이력 — ${escapeHtml(t.title)}</h3>
+    <table class="hist-table">
+      <thead><tr><th>변경일시</th><th>변경 내용</th><th>사유</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">닫기</button>
+    </div>
+  `);
+}
+
+document.getElementById("modalOverlay").addEventListener("click", (e)=>{
+  if(e.target.id === "modalOverlay") closeModal();
+});
+
+document.getElementById("tabs").addEventListener("click", (e)=>{
+  const tabEl = e.target.closest(".tab");
+  if(!tabEl) return;
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  tabEl.classList.add("active");
+  activeTab = tabEl.dataset.tab;
+  document.getElementById("taskAddForm").style.display = activeTab === "absence" ? "none" : "grid";
+  document.getElementById("absenceAddForm").style.display = activeTab === "absence" ? "grid" : "none";
+  renderContent();
+});
+
+loadInitial();
+</script>
+</body>
+</html>
