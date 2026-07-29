@@ -6,7 +6,7 @@
       "title": "TBM 시행 기준 수립 및 시행",
       "owner": "이재혁",
       "due": "2026-08-19",
-      "progress": 90,
+      "progress": 100,
       "dueHistory": [
         {
           "from": "2026-08-07",
@@ -20,7 +20,8 @@
           "changedAt": "2026-07-29T12:20:19.011Z",
           "reason": "사업장 특별 점검으로 일정 연기"
         }
-      ]
+      ],
+      "completedAt": "2026-07-29T12:30:09.070Z"
     },
     {
       "id": "trlxbu9ws",
