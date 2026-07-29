@@ -172,9 +172,10 @@
   .absence-empty{color:var(--sub);font-size:13px;}
 
   .type-badge{display:inline-block;padding:4px 11px;border-radius:999px;font-size:11px;font-weight:700;}
-  .type-badge.outside{background:#e0e7ff;color:#4338ca;}
-  .type-badge.trip{background:#fae8ff;color:#a21caf;}
+  .type-badge.inspect{background:#e0e7ff;color:#4338ca;}
+  .type-badge.training{background:#fae8ff;color:#a21caf;}
   .type-badge.leave{background:#fef3c7;color:#b45309;}
+  .type-badge.etc{background:#ccfbf1;color:#0f766e;}
 
   .absence-status{display:inline-block;padding:4px 11px;border-radius:999px;font-size:11px;font-weight:700;}
   .absence-status.upcoming{background:#dbeafe;color:#1d4ed8;}
@@ -337,9 +338,10 @@
     <div>
       <label>유형</label>
       <select id="absType">
-        <option value="outside">외근</option>
-        <option value="trip">출장</option>
+        <option value="inspect">점검</option>
+        <option value="training">교육</option>
         <option value="leave">휴가</option>
+        <option value="etc">기타</option>
       </select>
     </div>
     <div>
@@ -362,7 +364,7 @@
     <div class="tab" data-tab="safety">안전관리</div>
     <div class="tab" data-tab="edu">교육</div>
     <div class="tab" data-tab="etc">기타</div>
-    <div class="tab" data-tab="absence">외근/출장/휴가</div>
+    <div class="tab" data-tab="absence">주요 일정</div>
   </div>
 
   <div id="content"></div>
@@ -381,9 +383,10 @@ const TEAM_META = {
   etc: {label:"기타", color:"var(--etc)", cls:"etc"}
 };
 const TYPE_META = {
-  outside: {label:"외근", cls:"outside"},
-  trip: {label:"출장", cls:"trip"},
-  leave: {label:"휴가", cls:"leave"}
+  inspect: {label:"점검", cls:"inspect"},
+  training: {label:"교육", cls:"training"},
+  leave: {label:"휴가", cls:"leave"},
+  etc: {label:"기타", cls:"etc"}
 };
 
 function pad2(n){ return String(n).padStart(2,"0"); }
@@ -770,7 +773,7 @@ function renderAbsenceBanner(){
     .sort((a,b)=> TEAM_META[a.team].label.localeCompare(TEAM_META[b.team].label));
   const el = document.getElementById("absenceBanner");
   if(!todays.length){
-    el.innerHTML = `<h3>오늘 외근·출장·휴가</h3><div class="absence-empty">오늘 부재중인 인원이 없습니다.</div>`;
+    el.innerHTML = `<h3>오늘 주요 일정</h3><div class="absence-empty">오늘 부재중인 인원이 없습니다.</div>`;
     return;
   }
   const chips = todays.map(a => {
@@ -778,7 +781,7 @@ function renderAbsenceBanner(){
     const type = TYPE_META[a.type];
     return `<div class="absence-chip ${meta.cls}"><span class="dot"></span>${escapeHtml(a.person)} (${meta.label}) <span class="type-badge ${type.cls}">${type.label}</span></div>`;
   }).join("");
-  el.innerHTML = `<h3>오늘 외근·출장·휴가 (${todays.length}명)</h3><div class="absence-chips">${chips}</div>`;
+  el.innerHTML = `<h3>오늘 주요 일정 (${todays.length}명)</h3><div class="absence-chips">${chips}</div>`;
 }
 
 function buildCalendarMatrix(year, month){
@@ -967,14 +970,14 @@ function addAbsence(){
   document.getElementById("absEnd").value = "";
   document.getElementById("absMemo").value = "";
   render();
-  persist(`외근/출장/휴가 추가: ${person}`);
+  persist(`일정 추가: ${person}`);
 }
 
 function openEditAbsence(id){
   const a = absences.find(x=>x.id===id);
   if(!a) return;
   openModal(`
-    <h3>외근/출장/휴가 수정</h3>
+    <h3>일정 수정</h3>
     <div class="field">
       <label>팀</label>
       <select id="modalAbsTeam">
@@ -990,9 +993,10 @@ function openEditAbsence(id){
     <div class="field">
       <label>유형</label>
       <select id="modalAbsType">
-        <option value="outside" ${a.type==='outside'?'selected':''}>외근</option>
-        <option value="trip" ${a.type==='trip'?'selected':''}>출장</option>
+        <option value="inspect" ${a.type==='inspect'?'selected':''}>점검</option>
+        <option value="training" ${a.type==='training'?'selected':''}>교육</option>
         <option value="leave" ${a.type==='leave'?'selected':''}>휴가</option>
+        <option value="etc" ${a.type==='etc'?'selected':''}>기타</option>
       </select>
     </div>
     <div class="field">
