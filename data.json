@@ -47,10 +47,17 @@
       "team": "edu",
       "title": "ㅇㄹㄴㅇㄹ",
       "owner": "ㄴㅁㅇㄹ",
-      "due": "2026-08-05",
+      "due": "2026-08-07",
       "progress": 25,
       "memo": "ㅁㄴㅇㄹ",
-      "dueHistory": []
+      "dueHistory": [
+        {
+          "from": "2026-08-05",
+          "to": "2026-08-07",
+          "changedAt": "2026-07-29T23:50:49.027Z",
+          "reason": "사업장 특별 점검으로 일정 연기"
+        }
+      ]
     },
     {
       "id": "tojnjpkpn",
