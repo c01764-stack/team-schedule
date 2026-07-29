@@ -24,6 +24,15 @@
       "due": "2026-07-31",
       "progress": 90,
       "dueHistory": []
+    },
+    {
+      "id": "tmql7k1vn",
+      "team": "safety",
+      "title": "교육중333333",
+      "owner": "천재우",
+      "due": "2026-08-04",
+      "progress": 20,
+      "dueHistory": []
     }
   ],
   "absences": []
