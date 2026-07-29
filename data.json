@@ -34,6 +34,16 @@
       "progress": 100,
       "dueHistory": [],
       "completedAt": "2026-07-29T10:46:41.472Z"
+    },
+    {
+      "id": "th277omc4",
+      "team": "edu",
+      "title": "ㅇㄹㄴㅇㄹ",
+      "owner": "ㄴㅁㅇㄹ",
+      "due": "2026-08-05",
+      "progress": 0,
+      "memo": "ㅁㄴㅇㄹ",
+      "dueHistory": []
     }
   ],
   "absences": []
