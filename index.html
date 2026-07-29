@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>업무일정관리 대시보드</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" />
 <style>
   :root{
     --safety:#2563eb;
@@ -21,8 +22,11 @@
   *{box-sizing:border-box;}
   body{
     margin:0;
-    font-family:"Malgun Gothic","Apple SD Gothic Neo","Segoe UI",sans-serif;
-    background:var(--bg);
+    font-family:'Pretendard Variable',Pretendard,"Malgun Gothic","Apple SD Gothic Neo","Segoe UI",sans-serif;
+    background:
+      url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAwIDkwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9InNreSIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNGY5YmRiIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iNDUlIiBzdG9wLWNvbG9yPSIjYTNkM2Y1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2U4ZjVmYyIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxmaWx0ZXIgaWQ9InNvZnQiIHg9Ii01MCUiIHk9Ii01MCUiIHdpZHRoPSIyMDAlIiBoZWlnaHQ9IjIwMCUiPgogICAgICA8ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSIyMCIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxNjAwIiBoZWlnaHQ9IjkwMCIgZmlsbD0idXJsKCNza3kpIi8+CiAgPGcgZmlsdGVyPSJ1cmwoI3NvZnQpIiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjg1Ij4KICAgIDxlbGxpcHNlIGN4PSIyMjAiIGN5PSIxNzAiIHJ4PSIxNDAiIHJ5PSI0NSIvPgogICAgPGVsbGlwc2UgY3g9IjMzMCIgY3k9IjE1MCIgcng9IjEwMCIgcnk9IjQwIi8+CiAgICA8ZWxsaXBzZSBjeD0iMTIwIiBjeT0iMTkwIiByeD0iOTAiIHJ5PSIzNSIvPgoKICAgIDxlbGxpcHNlIGN4PSI5MjAiIGN5PSIxMTAiIHJ4PSIxNjAiIHJ5PSI1MCIvPgogICAgPGVsbGlwc2UgY3g9IjEwNDAiIGN5PSIxNDAiIHJ4PSIxMTAiIHJ5PSI0MiIvPgogICAgPGVsbGlwc2UgY3g9IjgxMCIgY3k9IjE0NSIgcng9IjEwMCIgcnk9IjM4Ii8+CgogICAgPGVsbGlwc2UgY3g9IjEzNjAiIGN5PSIyNTAiIHJ4PSIxNTAiIHJ5PSI0OCIvPgogICAgPGVsbGlwc2UgY3g9IjE0NzAiIGN5PSIyODAiIHJ4PSIxMDAiIHJ5PSIzOCIvPgogICAgPGVsbGlwc2UgY3g9IjEyNjAiIGN5PSIyODAiIHJ4PSI5MCIgcnk9IjM1Ii8+CgogICAgPGVsbGlwc2UgY3g9IjUyMCIgY3k9IjMzMCIgcng9IjEzMCIgcnk9IjQyIi8+CiAgICA8ZWxsaXBzZSBjeD0iNjIwIiBjeT0iMzYwIiByeD0iOTUiIHJ5PSIzNSIvPgogICAgPGVsbGlwc2UgY3g9IjQzMCIgY3k9IjM1NSIgcng9Ijg1IiByeT0iMzIiLz4KICA8L2c+Cjwvc3ZnPgo=") center top / cover no-repeat fixed,
+      var(--bg);
+    min-height:100vh;
     color:var(--text);
   }
   .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 60px;}
@@ -53,7 +57,7 @@
   .tab{padding:10px 18px;font-size:14px;cursor:pointer;color:var(--sub);border-bottom:2px solid transparent;user-select:none;}
   .tab.active{color:var(--text);font-weight:600;border-bottom-color:var(--blue);}
 
-  .add-form{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:22px;display:grid;grid-template-columns:110px 1.6fr 110px 140px 160px 90px;gap:10px;align-items:end;}
+  .add-form{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:22px;display:grid;grid-template-columns:100px 1.2fr 90px 130px 90px 1fr 90px;gap:10px;align-items:end;}
   .add-form label{display:block;font-size:11px;color:var(--sub);margin-bottom:4px;}
   .add-form input,.add-form select{width:100%;padding:8px 9px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;}
   .add-form button{background:var(--blue);color:#fff;border:none;border-radius:6px;padding:9px 0;font-size:13px;cursor:pointer;font-weight:600;}
@@ -107,6 +111,8 @@
 
   .prog-input{width:60px;}
   .empty{padding:24px;text-align:center;color:var(--sub);font-size:13px;}
+
+  .memo-cell{display:inline-block;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;color:var(--sub);}
 
   .due-cell{display:flex;align-items:center;gap:6px;}
   .hist-link{font-size:11px;color:var(--blue);cursor:pointer;border:1px solid #c7d7fe;background:#eff4ff;padding:1px 7px;border-radius:10px;white-space:nowrap;}
@@ -207,10 +213,11 @@
     .tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;margin-bottom:12px;}
     .tab{flex-shrink:0;padding:9px 14px;font-size:13px;white-space:nowrap;}
 
-    table{min-width:620px;}
+    table{min-width:720px;}
     th,td{padding:8px 10px;font-size:12.5px;}
     .row-actions{gap:4px;}
     .row-actions button{padding:6px 8px;font-size:11px;}
+    .memo-cell{max-width:110px;}
 
     .cal-header{gap:6px;}
     .cal-header .cal-label{font-size:13px;min-width:76px;}
@@ -238,7 +245,6 @@
   <header>
     <div>
       <h1>업무일정관리 대시보드</h1>
-      <p>안전관리팀 · 교육팀 공동 업무 현황</p>
     </div>
     <div class="header-right">
       <div class="today-badge" id="todayBadge"></div>
@@ -282,6 +288,10 @@
     <div>
       <label>진행율 (%)</label>
       <input type="number" id="inProgress" min="0" max="100" value="0">
+    </div>
+    <div>
+      <label>기타</label>
+      <input type="text" id="inMemo" placeholder="세부 내용/특이사항">
     </div>
     <button onclick="addTask()">+ 업무 추가</button>
   </div>
@@ -630,15 +640,19 @@ function taskRow(t, opts){
   const actions = completed
     ? `
         <button onclick="openEditDue('${t.id}')">마감일 수정</button>
+        <button onclick="openEditMemo('${t.id}')">기타 수정</button>
         <button onclick="reopenTask('${t.id}')">완료 취소</button>
         <button class="del" onclick="deleteTask('${t.id}')">삭제</button>
       `
     : `
         <button onclick="openEditDue('${t.id}')">마감일 수정</button>
         <button onclick="editProgress('${t.id}')">진행율 수정</button>
+        <button onclick="openEditMemo('${t.id}')">기타 수정</button>
         <button onclick="markComplete('${t.id}')">완료 처리</button>
         <button class="del" onclick="deleteTask('${t.id}')">삭제</button>
       `;
+
+  const memoText = t.memo ? escapeHtml(t.memo) : '-';
 
   return `
     <tr class="${info.overdue && !completed ? 'row-overdue' : ''} ${completed ? 'row-completed' : ''}">
@@ -658,6 +672,7 @@ function taskRow(t, opts){
         </div>
       </td>
       <td><span class="badge ${info.badgeClass}">${info.status}</span></td>
+      <td><span class="memo-cell" title="${memoText}">${memoText}</span></td>
       <td>
         <div class="row-actions">${actions}</div>
       </td>
@@ -674,11 +689,11 @@ function teamTable(teamKey){
 
   const activeRows = active.length
     ? active.map(t=>taskRow(t)).join("")
-    : `<tr><td colspan="7" class="empty">등록된 업무가 없습니다.</td></tr>`;
+    : `<tr><td colspan="8" class="empty">등록된 업무가 없습니다.</td></tr>`;
 
   const completedRows = completed.length
     ? completed.map(t=>taskRow(t, {completed:true})).join("")
-    : `<tr><td colspan="7" class="empty">완료된 업무가 없습니다.</td></tr>`;
+    : `<tr><td colspan="8" class="empty">완료된 업무가 없습니다.</td></tr>`;
 
   return `
     <div class="team-section">
@@ -691,7 +706,7 @@ function teamTable(teamKey){
         <table>
           <thead>
             <tr>
-              <th>업무 내용</th><th>담당자</th><th>마감일자</th><th>D-Day</th><th>진행율</th><th>상태</th><th>관리</th>
+              <th>업무 내용</th><th>담당자</th><th>마감일자</th><th>D-Day</th><th>진행율</th><th>상태</th><th>기타</th><th>관리</th>
             </tr>
           </thead>
           <tbody>${activeRows}</tbody>
@@ -703,7 +718,7 @@ function teamTable(teamKey){
           <table>
             <thead>
               <tr>
-                <th>업무 내용</th><th>담당자</th><th>마감일자</th><th>완료일</th><th>진행율</th><th>상태</th><th>관리</th>
+                <th>업무 내용</th><th>담당자</th><th>마감일자</th><th>완료일</th><th>진행율</th><th>상태</th><th>기타</th><th>관리</th>
               </tr>
             </thead>
             <tbody>${completedRows}</tbody>
@@ -844,16 +859,18 @@ function addTask(){
   const owner = document.getElementById("inOwner").value.trim();
   const due = document.getElementById("inDue").value;
   const progress = Math.max(0, Math.min(100, Number(document.getElementById("inProgress").value) || 0));
+  const memo = document.getElementById("inMemo").value.trim();
 
   if(!title || !due){
     alert("업무 내용과 마감일자를 입력해주세요.");
     return;
   }
-  tasks.push({id: cid(), team, title, owner, due, progress, dueHistory: []});
+  tasks.push({id: cid(), team, title, owner, due, progress, memo, dueHistory: []});
   document.getElementById("inTitle").value = "";
   document.getElementById("inOwner").value = "";
   document.getElementById("inDue").value = "";
   document.getElementById("inProgress").value = 0;
+  document.getElementById("inMemo").value = "";
   render();
   persist(`업무 추가: ${title}`);
 }
@@ -1065,6 +1082,33 @@ function saveDueEdit(id){
   closeModal();
   render();
   if(changed) persist(`마감일 수정: ${t.title}`);
+}
+
+function openEditMemo(id){
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  openModal(`
+    <h3>기타 내용 수정</h3>
+    <div class="field">
+      <label>업무: ${escapeHtml(t.title)}</label>
+      <textarea id="modalMemo" rows="5" placeholder="세부 내용/특이사항을 입력하세요">${escapeHtml(t.memo || '')}</textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-primary" onclick="saveMemoEdit('${t.id}')">저장</button>
+    </div>
+  `);
+}
+
+function saveMemoEdit(id){
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  const newMemo = document.getElementById("modalMemo").value.trim();
+  const changed = newMemo !== (t.memo || '');
+  t.memo = newMemo;
+  closeModal();
+  render();
+  if(changed) persist(`기타 내용 수정: ${t.title}`);
 }
 
 function openHistory(id){
