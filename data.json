@@ -46,5 +46,15 @@
       "dueHistory": []
     }
   ],
-  "absences": []
+  "absences": [
+    {
+      "id": "toi873in6",
+      "team": "safety",
+      "person": "sdfas",
+      "type": "trip",
+      "start": "2026-07-29",
+      "end": "2026-07-29",
+      "memo": ""
+    }
+  ]
 }
