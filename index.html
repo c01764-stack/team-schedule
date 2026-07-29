@@ -388,6 +388,8 @@ const TYPE_META = {
   leave: {label:"휴가", cls:"leave"},
   etc: {label:"기타", cls:"etc"}
 };
+// 이전 유형(외근/출장) 데이터를 새 유형으로 안전하게 이전하기 위한 매핑
+const LEGACY_TYPE_MAP = { outside:"etc", trip:"etc" };
 
 function pad2(n){ return String(n).padStart(2,"0"); }
 function fmtLocalDate(d){
@@ -453,6 +455,7 @@ async function fetchRemoteData(){
   tasks = Array.isArray(data.tasks) ? data.tasks : [];
   absences = Array.isArray(data.absences) ? data.absences : [];
   tasks.forEach(t => { if(!Array.isArray(t.dueHistory)) t.dueHistory = []; });
+  absences.forEach(a => { if(!TYPE_META[a.type]) a.type = LEGACY_TYPE_MAP[a.type] || "etc"; });
   return { isNew: false };
 }
 
@@ -778,7 +781,7 @@ function renderAbsenceBanner(){
   }
   const chips = todays.map(a => {
     const meta = TEAM_META[a.team];
-    const type = TYPE_META[a.type];
+    const type = TYPE_META[a.type] || TYPE_META.etc;
     return `<div class="absence-chip ${meta.cls}"><span class="dot"></span>${escapeHtml(a.person)} (${meta.label}) <span class="type-badge ${type.cls}">${type.label}</span></div>`;
   }).join("");
   el.innerHTML = `<h3>오늘 주요 일정 (${todays.length}명)</h3><div class="absence-chips">${chips}</div>`;
@@ -822,7 +825,7 @@ function renderAbsenceCalendar(){
     const dayAbsences = absences.filter(a => a.start <= c.dateStr && c.dateStr <= a.end);
     const chips = dayAbsences.map(a => {
       const meta = TEAM_META[a.team];
-      const type = TYPE_META[a.type];
+      const type = TYPE_META[a.type] || TYPE_META.etc;
       const tip = `${a.person} · ${meta.label} · ${type.label}${a.memo ? ' · ' + a.memo : ''}`;
       return `<div class="cal-chip ${meta.cls}" onclick="openEditAbsence('${a.id}')" title="${escapeHtml(tip)}">${escapeHtml(a.person)}<span class="cal-chip-type">${type.label}</span></div>`;
     }).join("");
