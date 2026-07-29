@@ -118,6 +118,7 @@
   .row-actions button:hover{background:var(--edu-tint);border-color:var(--violet);}
   .row-actions button.del{color:var(--red);}
   .row-actions button.del:hover{background:#ffe4e6;border-color:#fca5a5;}
+  .locked-hint{opacity:.5;font-size:14px;cursor:default;}
 
   tr.row-completed td{color:var(--sub);}
   tr.row-completed .badge.done{color:var(--green);}
@@ -276,6 +277,7 @@
       <div class="header-actions">
         <span class="sync-status" id="syncStatus"></span>
         <button class="icon-btn" onclick="manualRefresh()" title="새로고침">⟳</button>
+        <button class="icon-btn" id="adminToggleBtn" onclick="toggleAdminMode()" title="관리자 모드">🔒</button>
         <button class="icon-btn" onclick="openSettings()" title="GitHub 동기화 설정">⚙</button>
       </div>
     </div>
@@ -420,18 +422,49 @@ let fileSha = null;
 let isSaving = false;
 let autoRefreshTimer = null;
 
+// 관리자 모드: 서버 인증이 아닌 화면 UI 잠금입니다 (완전한 보안 아님, 실수 방지용).
+const ADMIN_PASSWORD = "safety2026";
+const ADMIN_KEY = "isAdminUnlocked_v1";
+let isAdmin = localStorage.getItem(ADMIN_KEY) === "1";
+
+function toggleAdminMode(){
+  if(isAdmin){
+    if(!confirm("관리자 모드를 끌까요? 이후에는 업무 테이블 수정이 잠깁니다.")) return;
+    isAdmin = false;
+    localStorage.removeItem(ADMIN_KEY);
+  } else {
+    const input = prompt("관리자 비밀번호를 입력하세요.");
+    if(input === null) return;
+    if(input !== ADMIN_PASSWORD){
+      alert("비밀번호가 올바르지 않습니다.");
+      return;
+    }
+    isAdmin = true;
+    localStorage.setItem(ADMIN_KEY, "1");
+  }
+  updateAdminUI();
+  render();
+}
+
+function updateAdminUI(){
+  const btn = document.getElementById("adminToggleBtn");
+  if(btn){
+    btn.textContent = isAdmin ? "🔓" : "🔒";
+    btn.title = isAdmin ? "관리자 모드 (켜짐) - 클릭 시 끄기" : "관리자 모드 켜기";
+  }
+  const taskForm = document.getElementById("taskAddForm");
+  if(taskForm) taskForm.style.display = (isAdmin && activeTab !== "absence") ? "grid" : "none";
+}
+
 function ghUrl(){
   const pathParts = ghConfig.path.split('/').filter(Boolean).map(encodeURIComponent).join('/');
   return `https://api.github.com/repos/${encodeURIComponent(ghConfig.owner)}/${encodeURIComponent(ghConfig.repo)}/contents/${pathParts}`;
 }
 
 async function fetchRemoteData(){
-  const res = await fetch(`${ghUrl()}?ref=${encodeURIComponent(ghConfig.branch || 'main')}`, {
-    headers: {
-      "Authorization": `Bearer ${ghConfig.token}`,
-      "Accept": "application/vnd.github+json"
-    }
-  });
+  const headers = { "Accept": "application/vnd.github+json" };
+  if(ghConfig.token) headers["Authorization"] = `Bearer ${ghConfig.token}`;
+  const res = await fetch(`${ghUrl()}?ref=${encodeURIComponent(ghConfig.branch || 'main')}`, { headers });
   if(res.status === 404){
     tasks = [];
     absences = [];
@@ -498,6 +531,11 @@ function setSyncStatus(state, message){
 
 function persist(message){
   if(!ghConfig) return;
+  if(!ghConfig.token){
+    alert("읽기 전용 모드입니다. 이 기기에서는 저장할 수 없습니다. 편집하려면 설정(⚙)에서 토큰을 입력해주세요.");
+    fetchRemoteData().catch(()=>{}).finally(render);
+    return;
+  }
   isSaving = true;
   setSyncStatus("saving", "저장 중...");
   saveRemoteData(message)
@@ -549,6 +587,7 @@ function openSettings(){
     <div class="field">
       <label>Personal Access Token</label>
       <input type="password" id="cfgToken" value="${escapeHtml(ghConfig?.token || '')}" placeholder="ghp_... 또는 github_pat_...">
+      <p style="font-size:11px;color:var(--sub);margin:4px 0 0;">비워두면 읽기 전용 모드로 저장됩니다 (조회만 가능, 추가/수정 불가). 토큰 입력이 계속 실패하는 기기에서 사용하세요.</p>
     </div>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeModal()">취소</button>
@@ -563,10 +602,11 @@ function saveSettings(){
   const path = document.getElementById("cfgPath").value.trim() || "data.json";
   const branch = document.getElementById("cfgBranch").value.trim() || "main";
   const token = document.getElementById("cfgToken").value.trim();
-  if(!owner || !repo || !token){
-    alert("사용자명, 저장소, 토큰은 필수입니다.");
+  if(!owner || !repo){
+    alert("사용자명과 저장소는 필수입니다.");
     return;
   }
+  if(!token && !confirm("토큰 없이 저장하면 읽기 전용 모드로 동작합니다. 업무 추가/수정은 불가능하고 보기만 가능합니다. 계속할까요?")) return;
   ghConfig = { owner, repo, path, branch, token };
   localStorage.setItem(GH_CONFIG_KEY, JSON.stringify(ghConfig));
   closeModal();
@@ -583,10 +623,10 @@ async function loadInitial(){
   setSyncStatus("loading", "불러오는 중...");
   try{
     const result = await fetchRemoteData();
-    if(result.isNew){
+    if(result.isNew && ghConfig.token){
       await saveRemoteData("초기 데이터 파일 생성");
     }
-    setSyncStatus("idle", "동기화됨 · " + nowTimeLabel());
+    setSyncStatus("idle", (ghConfig.token ? "동기화됨" : "읽기 전용") + " · " + nowTimeLabel());
   }catch(err){
     setSyncStatus("error", "연결 실패");
     alert("GitHub 연결에 실패했습니다: " + (err.message || err) + "\n설정을 다시 확인해주세요.");
@@ -614,7 +654,7 @@ function startAutoRefresh(){
     if(isSaving || !ghConfig) return;
     try{
       await fetchRemoteData();
-      setSyncStatus("idle", "동기화됨 · " + nowTimeLabel());
+      setSyncStatus("idle", (ghConfig.token ? "동기화됨" : "읽기 전용") + " · " + nowTimeLabel());
       render();
     }catch(e){ /* silent on background poll */ }
   }, 30000);
@@ -671,7 +711,9 @@ function taskRow(t, opts){
     ? `<span class="dday ok">${t.completedAt ? fmtLocalDate(new Date(t.completedAt)) : '-'}</span>`
     : `<span class="dday ${info.ddayClass}">${info.ddayText}</span>`;
 
-  const actions = completed
+  const actions = !isAdmin
+    ? `<span class="locked-hint" title="관리자 모드에서만 수정 가능합니다">🔒</span>`
+    : completed
     ? `
         <button onclick="openEditDue('${t.id}')">마감일</button>
         <button onclick="openEditMemo('${t.id}')">기타</button>
@@ -887,6 +929,7 @@ function render(){
 }
 
 function addTask(){
+  if(!isAdmin){ alert("관리자 모드에서만 업무를 추가할 수 있습니다."); return; }
   if(!ghConfig){ openSettings(); return; }
   const team = document.getElementById("inTeam").value;
   const title = document.getElementById("inTitle").value.trim();
@@ -910,6 +953,7 @@ function addTask(){
 }
 
 function editProgress(id){
+  if(!isAdmin){ alert("관리자 모드에서만 수정할 수 있습니다."); return; }
   const t = tasks.find(x=>x.id===id);
   if(!t) return;
   const val = prompt("새 진행율을 입력하세요 (0-100):", t.progress);
@@ -924,6 +968,7 @@ function editProgress(id){
 }
 
 function markComplete(id){
+  if(!isAdmin){ alert("관리자 모드에서만 처리할 수 있습니다."); return; }
   const t = tasks.find(x=>x.id===id);
   if(!t) return;
   t.progress = 100;
@@ -933,6 +978,7 @@ function markComplete(id){
 }
 
 function reopenTask(id){
+  if(!isAdmin){ alert("관리자 모드에서만 처리할 수 있습니다."); return; }
   const t = tasks.find(x=>x.id===id);
   if(!t) return;
   if(!confirm("완료 처리를 취소하고 다시 진행중으로 되돌릴까요?")) return;
@@ -943,6 +989,7 @@ function reopenTask(id){
 }
 
 function deleteTask(id){
+  if(!isAdmin){ alert("관리자 모드에서만 삭제할 수 있습니다."); return; }
   if(!confirm("이 업무를 삭제할까요?")) return;
   const removed = tasks.find(t=>t.id===id);
   tasks = tasks.filter(t=>t.id!==id);
@@ -1095,6 +1142,7 @@ function openEditDue(id){
 }
 
 function saveDueEdit(id){
+  if(!isAdmin){ alert("관리자 모드에서만 수정할 수 있습니다."); return; }
   const t = tasks.find(x=>x.id===id);
   if(!t) return;
   const newDue = document.getElementById("modalNewDue").value;
@@ -1137,6 +1185,7 @@ function openEditMemo(id){
 }
 
 function saveMemoEdit(id){
+  if(!isAdmin){ alert("관리자 모드에서만 수정할 수 있습니다."); return; }
   const t = tasks.find(x=>x.id===id);
   if(!t) return;
   const newMemo = document.getElementById("modalMemo").value.trim();
@@ -1183,11 +1232,12 @@ document.getElementById("tabs").addEventListener("click", (e)=>{
   document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
   tabEl.classList.add("active");
   activeTab = tabEl.dataset.tab;
-  document.getElementById("taskAddForm").style.display = activeTab === "absence" ? "none" : "grid";
+  updateAdminUI();
   document.getElementById("absenceAddForm").style.display = activeTab === "absence" ? "grid" : "none";
   renderContent();
 });
 
+updateAdminUI();
 loadInitial();
 </script>
 </body>
