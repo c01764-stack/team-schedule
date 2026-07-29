@@ -31,8 +31,9 @@
       "title": "교육중333333",
       "owner": "천재우",
       "due": "2026-08-04",
-      "progress": 20,
-      "dueHistory": []
+      "progress": 100,
+      "dueHistory": [],
+      "completedAt": "2026-07-29T10:46:41.472Z"
     }
   ],
   "absences": []
