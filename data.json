@@ -15,6 +15,15 @@
           "reason": "사업장 특별 점검으로 일정 연기"
         }
       ]
+    },
+    {
+      "id": "trlxbu9ws",
+      "team": "edu",
+      "title": "교육 일정 확정",
+      "owner": "주현수",
+      "due": "2026-07-31",
+      "progress": 10,
+      "dueHistory": []
     }
   ],
   "absences": []
