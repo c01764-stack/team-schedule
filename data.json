@@ -29,7 +29,7 @@
       "title": "교육 일정 확정",
       "owner": "주현수",
       "due": "2026-07-31",
-      "progress": 90,
+      "progress": 95,
       "dueHistory": []
     },
     {
@@ -68,7 +68,7 @@
       "id": "toi873in6",
       "team": "safety",
       "person": "sdfas",
-      "type": "trip",
+      "type": "etc",
       "start": "2026-07-29",
       "end": "2026-07-29",
       "memo": ""
@@ -77,7 +77,7 @@
       "id": "tr37aoqyw",
       "team": "safety",
       "person": "천재우",
-      "type": "trip",
+      "type": "etc",
       "start": "2026-07-29",
       "end": "2026-07-29",
       "memo": "t타워 점검"
