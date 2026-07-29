@@ -5,9 +5,16 @@
       "team": "safety",
       "title": "TBM 시행 기준 수립 및 시행",
       "owner": "이재혁",
-      "due": "2026-08-07",
+      "due": "2026-08-13",
       "progress": 10,
-      "dueHistory": []
+      "dueHistory": [
+        {
+          "from": "2026-08-07",
+          "to": "2026-08-13",
+          "changedAt": "2026-07-29T10:38:41.965Z",
+          "reason": "사업장 특별 점검으로 일정 연기"
+        }
+      ]
     }
   ],
   "absences": []
