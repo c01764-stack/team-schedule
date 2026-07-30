@@ -145,6 +145,15 @@
       "start": "2026-07-30",
       "end": "2026-07-30",
       "memo": "T-타워"
+    },
+    {
+      "id": "tegx6akfm",
+      "team": "etc",
+      "person": "천재우",
+      "type": "etc",
+      "start": "2026-07-31",
+      "end": "2026-07-31",
+      "memo": "FMS 미팅"
     }
   ],
   "reports": [
