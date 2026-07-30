@@ -139,6 +139,16 @@
       "progress": 0,
       "memo": "",
       "dueHistory": []
+    },
+    {
+      "id": "tog876clt",
+      "team": "safety",
+      "title": "정기 취합업무 자동화 세팅 (AI)",
+      "owner": "이재혁",
+      "due": "2026-07-31",
+      "progress": 50,
+      "memo": "",
+      "dueHistory": []
     }
   ],
   "absences": [
