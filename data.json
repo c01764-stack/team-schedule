@@ -60,7 +60,8 @@
       "due": "2026-08-07",
       "progress": 50,
       "memo": "",
-      "dueHistory": []
+      "dueHistory": [],
+      "includeInReport": false
     },
     {
       "id": "t0rskplu1",
