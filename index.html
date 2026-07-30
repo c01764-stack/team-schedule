@@ -954,7 +954,7 @@ function buildWeeklyReportText(monday){
 
   let totalActive = 0, totalDone = 0, totalOverdue = 0, progressSum = 0, progressCount = 0;
 
-  ["safety","edu","etc"].forEach(teamKey => {
+  ["safety","etc"].forEach(teamKey => {
     const meta = TEAM_META[teamKey];
     const teamTasks = tasks.filter(t => t.team === teamKey);
     const doneThisWeek = teamTasks.filter(t => t.progress >= 100 && t.completedAt && fmtLocalDate(new Date(t.completedAt)) >= startStr && fmtLocalDate(new Date(t.completedAt)) <= endStr);
