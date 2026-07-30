@@ -98,6 +98,16 @@
       "progress": 80,
       "memo": "",
       "dueHistory": []
+    },
+    {
+      "id": "t1os74eoo",
+      "team": "edu",
+      "title": "하반기 CS 교육계획 수립",
+      "owner": "주현수",
+      "due": "2026-08-19",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": []
     }
   ],
   "absences": [
