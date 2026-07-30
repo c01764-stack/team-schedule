@@ -876,7 +876,8 @@ function renderAbsenceBanner(){
   const chips = todays.map(a => {
     const meta = TEAM_META[a.team];
     const type = TYPE_META[a.type] || TYPE_META.etc;
-    return `<div class="absence-chip ${meta.cls}"><span class="dot"></span>${escapeHtml(a.person)} (${meta.label}) <span class="type-badge ${type.cls}">${type.label}</span></div>`;
+    const memoPart = a.memo ? ` (${escapeHtml(a.memo)})` : '';
+    return `<div class="absence-chip ${meta.cls}"><span class="dot"></span>${escapeHtml(a.person)}${memoPart} <span class="type-badge ${type.cls}">${type.label}</span></div>`;
   }).join("");
   el.innerHTML = `<h3>오늘 주요 일정 (${todays.length}명)</h3><div class="absence-chips">${chips}</div>`;
 }
