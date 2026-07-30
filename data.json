@@ -82,6 +82,16 @@
       "progress": 0,
       "memo": "",
       "dueHistory": []
+    },
+    {
+      "id": "tfquf9zy7",
+      "team": "edu",
+      "title": "CX 자료 제작",
+      "owner": "오혜지",
+      "due": "2026-08-07",
+      "progress": 50,
+      "memo": "",
+      "dueHistory": []
     }
   ],
   "absences": [
