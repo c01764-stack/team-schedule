@@ -112,6 +112,16 @@
       "progress": 20,
       "memo": "",
       "dueHistory": []
+    },
+    {
+      "id": "tr06d1lsj",
+      "team": "edu",
+      "title": "본사 신규입사자 교육 시행",
+      "owner": "주현수",
+      "due": "2026-08-28",
+      "progress": 10,
+      "memo": "",
+      "dueHistory": []
     }
   ],
   "absences": [
