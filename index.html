@@ -243,10 +243,14 @@
 
   @media (max-width: 640px){
     .wrap{padding:16px 12px 40px;}
-    header{align-items:flex-start;}
-    header h1{font-size:21px;}
+    header{align-items:flex-start;flex-wrap:nowrap;gap:8px;}
+    header > div:first-child{min-width:0;flex-shrink:1;}
+    header h1{font-size:17px;line-height:1.25;}
     header p{font-size:12px;}
-    .today-badge{padding:6px 10px;font-size:12px;}
+    .header-right{flex-shrink:0;gap:6px;}
+    .header-actions{gap:6px;}
+    .today-badge{padding:5px 9px;font-size:11px;white-space:nowrap;}
+    .icon-btn{width:30px;height:30px;font-size:13px;}
 
     .summary{grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px;}
     .stat-card{padding:10px 12px;}
@@ -259,8 +263,8 @@
     .add-form, .add-form.absence-form{grid-template-columns:1fr;padding:12px;gap:8px;margin-bottom:16px;}
     .add-form button{padding:12px 0;margin-top:2px;}
 
-    .tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;margin-bottom:12px;}
-    .tab{flex-shrink:0;padding:9px 14px;font-size:13px;white-space:nowrap;}
+    .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;overflow-x:visible;}
+    .tab{padding:9px 4px;font-size:12px;white-space:nowrap;text-align:center;overflow:hidden;text-overflow:ellipsis;}
 
     /* 업무 테이블 -> 카드형으로 전환 (가로 스크롤 없이 한눈에 보이도록) */
     .table-scroll{overflow-x:visible;border-radius:0;border:none !important;box-shadow:none !important;}
