@@ -163,15 +163,6 @@
   ],
   "absences": [
     {
-      "id": "tr37aoqyw",
-      "team": "safety",
-      "person": "천재우",
-      "type": "etc",
-      "start": "2026-07-29",
-      "end": "2026-07-29",
-      "memo": "t타워 점검"
-    },
-    {
       "id": "tilu6kqbz",
       "team": "edu",
       "person": "주현수",
