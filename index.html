@@ -788,8 +788,8 @@ function teamTable(teamKey){
         <h2>${meta.label}</h2>
         <span class="count">(진행 ${active.length}건 · 완료 ${completed.length}건)</span>
       </div>
-      <div class="table-scroll">
-        <table style="border-left:5px solid ${meta.color};">
+      <div class="table-scroll" style="border-left:5px solid ${meta.color};border-radius:16px;">
+        <table>
           <thead>
             <tr>
               <th>업무 내용</th><th>담당자</th><th>마감일자</th><th>D-Day</th><th>진행율</th><th>상태</th><th>기타</th>${isAdmin ? '<th>관리</th>' : ''}
@@ -800,8 +800,8 @@ function teamTable(teamKey){
       </div>
       <details class="completed-details">
         <summary>완료된 업무 (${completed.length}건)</summary>
-        <div class="table-scroll">
-          <table style="border-left:5px solid ${meta.color};">
+        <div class="table-scroll" style="border-left:5px solid ${meta.color};border-radius:16px;">
+          <table>
             <thead>
               <tr>
                 <th>업무 내용</th><th>담당자</th><th>마감일자</th><th>완료일</th><th>진행율</th><th>상태</th><th>기타</th>${isAdmin ? '<th>관리</th>' : ''}
