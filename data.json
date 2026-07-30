@@ -150,7 +150,8 @@
       "due": "2026-07-31",
       "progress": 50,
       "memo": "",
-      "dueHistory": []
+      "dueHistory": [],
+      "includeInReport": false
     },
     {
       "id": "tz4gc35a1",
