@@ -68,6 +68,16 @@
       "progress": 1,
       "memo": "asdfasdf",
       "dueHistory": []
+    },
+    {
+      "id": "tj9b13v3m",
+      "team": "safety",
+      "title": "하반기 점검 자동화 세팅",
+      "owner": "천재우",
+      "due": "2026-08-14",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": []
     }
   ],
   "absences": [
