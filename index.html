@@ -39,7 +39,7 @@
   .wrap{max-width:1360px;margin:0 auto;padding:28px 20px 60px;}
   header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:20px;}
   header h1{
-    font-size:28px;margin:0 0 4px;font-weight:800;
+    font-size:33px;margin:0 0 4px;font-weight:800;
     background:linear-gradient(135deg,#6366f1,#8b5cf6 45%,#ec4899);
     -webkit-background-clip:text;background-clip:text;color:transparent;
     letter-spacing:-.3px;
@@ -242,7 +242,7 @@
   @media (max-width: 640px){
     .wrap{padding:16px 12px 40px;}
     header{align-items:flex-start;}
-    header h1{font-size:18px;}
+    header h1{font-size:21px;}
     header p{font-size:12px;}
     .today-badge{padding:6px 10px;font-size:12px;}
 
@@ -304,7 +304,7 @@
 
   <header>
     <div>
-      <h1>업무관리 대시보드</h1>
+      <h1 id="pageTitle">업무관리 대시보드</h1>
     </div>
     <div class="header-right">
       <div class="today-badge" id="todayBadge"></div>
@@ -1194,6 +1194,7 @@ function escapeHtml(str){
 
 function render(){
   document.getElementById("todayBadge").textContent = "오늘: " + todayStr();
+  document.getElementById("pageTitle").textContent = `업무관리 대시보드: ${new Date().getMonth() + 1}월`;
   updateSetupBanner();
   renderSummary();
   renderAbsenceBanner();
