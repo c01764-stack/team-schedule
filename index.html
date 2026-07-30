@@ -931,9 +931,9 @@ function renderAbsenceCalendar(){
 }
 
 function buildWeeklyReportText(monday){
-  const sunday = new Date(monday); sunday.setDate(sunday.getDate() + 6);
+  const friday = new Date(monday); friday.setDate(friday.getDate() + 4);
   const startStr = fmtLocalDate(monday);
-  const endStr = fmtLocalDate(sunday);
+  const endStr = fmtLocalDate(friday);
 
   const lines = [];
   lines.push(`[주간업무보고] ${startStr} ~ ${endStr}`);
