@@ -108,6 +108,15 @@
       "start": "2026-07-29",
       "end": "2026-07-29",
       "memo": "t타워 점검"
+    },
+    {
+      "id": "tilu6kqbz",
+      "team": "edu",
+      "person": "주현수",
+      "type": "training",
+      "start": "2026-07-30",
+      "end": "2026-07-30",
+      "memo": "관훈빌딩"
     }
   ],
   "reports": [
