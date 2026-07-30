@@ -976,9 +976,12 @@ function buildWeeklyReportText(monday){
 
     lines.push(`■ ${meta.label}`);
     if(!teamTasks.length){
-      lines.push("- 등록된 업무가 없습니다.");
+      lines.push("등록된 업무가 없습니다.");
     } else {
-      teamTasks.forEach(t => lines.push(`- ${t.title} / ${t.progress}% - ${t.memo || '-'}`));
+      teamTasks.forEach((t, idx) => {
+        lines.push(`${idx + 1}. ${t.title} (${t.progress}%)`);
+        if(t.memo) lines.push(t.memo);
+      });
     }
     lines.push("");
   });
@@ -1117,6 +1120,14 @@ function currentReportBodyText(){
   return el ? el.value : buildWeeklyReportText(weekState.monday).body;
 }
 
+function reportBodyToHtml(bodyText){
+  const taskLineRe = /^\d+\.\s.+\(\d+%\)\s*$/;
+  return bodyText.split('\n').map(line => {
+    const escaped = escapeHtml(line);
+    return taskLineRe.test(line) ? `<strong>${escaped}</strong>` : escaped;
+  }).join('\n');
+}
+
 function exportReportPDF(){
   const generated = buildWeeklyReportText(weekState.monday);
   const bodyText = currentReportBodyText();
@@ -1137,7 +1148,7 @@ function exportReportPDF(){
     </head>
     <body>
       <h1>${escapeHtml(generated.subject)}</h1>
-      <pre>${escapeHtml(bodyText)}</pre>
+      <pre>${reportBodyToHtml(bodyText)}</pre>
       <script>
         window.onload = function(){ setTimeout(function(){ window.print(); }, 300); };
       </` + `script>
@@ -1150,7 +1161,7 @@ function exportReportPDF(){
 function exportReportWord(){
   const generated = buildWeeklyReportText(weekState.monday);
   const bodyText = currentReportBodyText();
-  const htmlBody = escapeHtml(bodyText).replace(/\n/g, '<br>');
+  const htmlBody = reportBodyToHtml(bodyText).replace(/\n/g, '<br>');
   const doc = `
     <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
     <head>
