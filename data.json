@@ -92,6 +92,16 @@
       "progress": 50,
       "memo": "",
       "dueHistory": []
+    },
+    {
+      "id": "t0rskplu1",
+      "team": "edu",
+      "title": "파일럿  차수 운영 일정 검토",
+      "owner": "주현수",
+      "due": "2026-08-05",
+      "progress": 10,
+      "memo": "",
+      "dueHistory": []
     }
   ],
   "absences": [
