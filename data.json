@@ -88,6 +88,16 @@
       "progress": 50,
       "memo": "",
       "dueHistory": []
+    },
+    {
+      "id": "tyd3wmw9q",
+      "team": "safety",
+      "title": "태평산재 대응(보험가입자 의견서 제출)",
+      "owner": "이재혁",
+      "due": "2026-07-31",
+      "progress": 80,
+      "memo": "",
+      "dueHistory": []
     }
   ],
   "absences": [
