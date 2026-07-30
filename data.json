@@ -129,6 +129,16 @@
       "progress": 10,
       "memo": "",
       "dueHistory": []
+    },
+    {
+      "id": "tecwfcrbc",
+      "team": "safety",
+      "title": "안전작업 SOP 작성",
+      "owner": "이재혁",
+      "due": "2026-08-19",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": []
     }
   ],
   "absences": [
