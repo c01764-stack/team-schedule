@@ -136,7 +136,10 @@
   .prog-input{width:60px;}
   .empty{padding:24px;text-align:center;color:var(--sub);font-size:13px;}
 
-  .memo-cell{display:inline-block;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;color:var(--sub);}
+  .memo-view-btn{border:1px solid var(--border);background:#f5f4fd;color:#6d28d9;font-weight:700;font-size:12px;padding:4px 12px;border-radius:999px;cursor:pointer;white-space:nowrap;}
+  .memo-view-btn:hover{background:#e4d8fd;}
+  .memo-empty{color:var(--sub);}
+  .memo-view{white-space:pre-wrap;word-break:break-word;font-size:14px;line-height:1.6;color:var(--text);background:#f7f7fb;border-radius:12px;padding:14px 16px;max-height:50vh;overflow-y:auto;}
 
   .due-cell{display:flex;align-items:center;gap:6px;}
   .hist-link{font-size:12px;color:#6d28d9;cursor:pointer;border:none;background:var(--edu-tint);padding:3px 10px;border-radius:999px;white-space:nowrap;font-weight:700;}
@@ -276,7 +279,7 @@
     .table-scroll td.empty::before{content:none;}
     .row-actions{gap:4px;justify-content:flex-end;}
     .row-actions button{padding:6px 8px;font-size:11px;}
-    .memo-cell{max-width:150px;white-space:normal;text-align:right;}
+    .memo-view{max-height:60vh;}
 
     .cal-header{gap:6px;}
     .cal-header .cal-label{font-size:13px;min-width:76px;}
@@ -783,7 +786,9 @@ function taskRow(t, opts){
         <button class="del" onclick="deleteTask('${t.id}')">삭제</button>
       `;
 
-  const memoText = t.memo ? escapeHtml(t.memo) : '-';
+  const memoBtn = t.memo
+    ? `<button class="memo-view-btn" onclick="viewMemo('${t.id}')">내용보기</button>`
+    : `<span class="memo-empty">-</span>`;
 
   return `
     <tr class="${info.overdue && !completed ? 'row-overdue' : ''} ${completed ? 'row-completed' : ''}">
@@ -804,7 +809,7 @@ function taskRow(t, opts){
         </div>
       </td>
       <td data-label="상태"><span class="badge ${info.badgeClass}">${info.status}</span></td>
-      <td data-label="기타"><span class="memo-cell" title="${memoText}">${memoText}</span></td>
+      <td data-label="기타">${memoBtn}</td>
       ${isAdmin ? `<td data-label="관리"><div class="row-actions">${actions}</div></td>` : ''}
     </tr>
   `;
@@ -1459,6 +1464,20 @@ function saveDueEdit(id){
   closeModal();
   render();
   if(changed) persist(`마감일 수정: ${t.title}`);
+}
+
+function viewMemo(id){
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  const content = t.memo ? escapeHtml(t.memo).replace(/\n/g,'<br>') : '등록된 내용이 없습니다.';
+  openModal(`
+    <h3>기타 내용 — ${escapeHtml(t.title)}</h3>
+    <div class="memo-view">${content}</div>
+    <div class="modal-actions">
+      ${isAdmin ? `<button class="btn-ghost" onclick="openEditMemo('${t.id}')">수정</button>` : ''}
+      <button class="btn-primary" onclick="closeModal()">닫기</button>
+    </div>
+  `);
 }
 
 function openEditMemo(id){
