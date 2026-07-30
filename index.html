@@ -93,9 +93,8 @@
   .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:16px;}
   table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(30,20,70,.14);}
   th,td{padding:12px 13px;font-size:14.5px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top;}
-  .table-scroll td:nth-child(1){min-width:200px;font-weight:700;color:var(--text);}
-  .table-scroll td:nth-child(2),.table-scroll td:nth-child(3),.table-scroll td:nth-child(4),.table-scroll td:nth-child(6){white-space:nowrap;}
-  .table-scroll th:nth-child(2),.table-scroll th:nth-child(3),.table-scroll th:nth-child(4),.table-scroll th:nth-child(6){white-space:nowrap;}
+  .table-scroll td[data-label="업무 내용"]{min-width:200px;font-weight:700;color:var(--text);}
+  .table-scroll td[data-label="담당자"],.table-scroll td[data-label="마감일자"],.table-scroll td[data-label="D-Day"],.table-scroll td[data-label="완료일"],.table-scroll td[data-label="상태"]{white-space:nowrap;}
   th{background:linear-gradient(135deg,#f5f3ff,#fdf2f8);color:#7c3aed;font-weight:700;font-size:12px;}
   tr:last-child td{border-bottom:none;}
   tr.row-overdue td{background:#fff1f2;}
@@ -788,6 +787,7 @@ function taskRow(t, opts){
 
   return `
     <tr class="${info.overdue && !completed ? 'row-overdue' : ''} ${completed ? 'row-completed' : ''}">
+      ${isAdmin ? `<td data-label="보고서"><input type="checkbox" title="주간업무보고에 포함" ${t.includeInReport !== false ? 'checked' : ''} onchange="toggleReportInclude('${t.id}')"></td>` : ''}
       <td data-label="업무 내용">${escapeHtml(t.title)}</td>
       <td data-label="담당자">${escapeHtml(t.owner || '-')}</td>
       <td data-label="마감일자">
@@ -817,7 +817,7 @@ function teamTable(teamKey){
   const completed = all.filter(t=>t.progress>=100)
     .sort((a,b)=> new Date(b.completedAt || b.due) - new Date(a.completedAt || a.due));
 
-  const colCount = isAdmin ? 8 : 7;
+  const colCount = isAdmin ? 9 : 7;
 
   const activeRows = active.length
     ? active.map(t=>taskRow(t)).join("")
@@ -838,7 +838,7 @@ function teamTable(teamKey){
         <table>
           <thead>
             <tr>
-              <th>업무 내용</th><th>담당자</th><th>마감일자</th><th>D-Day</th><th>진행율</th><th>상태</th><th>기타</th>${isAdmin ? '<th>관리</th>' : ''}
+              ${isAdmin ? '<th>보고서</th>' : ''}<th>업무 내용</th><th>담당자</th><th>마감일자</th><th>D-Day</th><th>진행율</th><th>상태</th><th>기타</th>${isAdmin ? '<th>관리</th>' : ''}
             </tr>
           </thead>
           <tbody>${activeRows}</tbody>
@@ -850,7 +850,7 @@ function teamTable(teamKey){
           <table>
             <thead>
               <tr>
-                <th>업무 내용</th><th>담당자</th><th>마감일자</th><th>완료일</th><th>진행율</th><th>상태</th><th>기타</th>${isAdmin ? '<th>관리</th>' : ''}
+                ${isAdmin ? '<th>보고서</th>' : ''}<th>업무 내용</th><th>담당자</th><th>마감일자</th><th>완료일</th><th>진행율</th><th>상태</th><th>기타</th>${isAdmin ? '<th>관리</th>' : ''}
               </tr>
             </thead>
             <tbody>${completedRows}</tbody>
@@ -961,7 +961,7 @@ function buildWeeklyReportText(monday){
 
   ["safety","etc"].forEach(teamKey => {
     const meta = TEAM_META[teamKey];
-    const teamTasks = tasks.filter(t => t.team === teamKey);
+    const teamTasks = tasks.filter(t => t.team === teamKey && t.includeInReport !== false);
     const overdue = teamTasks.filter(t => t.progress < 100 && t.due < todayStr());
 
     teamTasks.forEach(t => { progressSum += Number(t.progress); progressCount++; });
@@ -1223,7 +1223,7 @@ function addTask(){
     alert("업무 내용과 마감일자를 입력해주세요.");
     return;
   }
-  tasks.push({id: cid(), team, title, owner, due, progress, memo, dueHistory: []});
+  tasks.push({id: cid(), team, title, owner, due, progress, memo, dueHistory: [], includeInReport: true});
   document.getElementById("inTitle").value = "";
   document.getElementById("inOwner").value = "";
   document.getElementById("inDue").value = "";
@@ -1280,6 +1280,14 @@ function deleteTask(id){
   tasks = tasks.filter(t=>t.id!==id);
   render();
   persist(`업무 삭제: ${removed ? removed.title : id}`);
+}
+
+function toggleReportInclude(id){
+  if(!isAdmin){ alert("관리자 모드에서만 변경할 수 있습니다."); return; }
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  t.includeInReport = t.includeInReport === false ? true : false;
+  persist(`주간보고 포함 변경: ${t.title} → ${t.includeInReport ? '포함' : '제외'}`);
 }
 
 function addAbsence(){
