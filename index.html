@@ -191,7 +191,16 @@
   .report-send-row input{flex:1;min-width:220px;padding:10px 14px;border:2px solid var(--border);border-radius:12px;font-size:13px;font-family:inherit;}
   .report-send-row input:focus{outline:none;border-color:var(--violet);}
   .report-send-row button{white-space:nowrap;}
-  .report-preview{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;font-family:inherit;font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word;box-shadow:0 10px 28px rgba(30,20,70,.12);color:var(--text);}
+  .report-preview{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;font-family:inherit;font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word;box-shadow:0 10px 28px rgba(30,20,70,.12);color:var(--text);width:100%;}
+  textarea.report-editable{resize:vertical;min-height:340px;}
+  textarea.report-editable:focus{outline:none;border-color:var(--violet);}
+  .report-status{font-size:12px;color:var(--sub);margin:-8px 0 12px;font-weight:600;}
+  .report-archive{margin-top:16px;}
+  .report-archive-list{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+  .report-archive-item{display:flex;justify-content:space-between;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 14px;font-size:12.5px;cursor:pointer;}
+  .report-archive-item:hover{border-color:var(--violet);background:var(--edu-tint);}
+  .report-archive-status{color:var(--sub);}
+  .report-archive-empty{font-size:13px;color:var(--sub);padding:8px 0;}
 
   .cal-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
   .cal-header .cal-label{font-size:15px;font-weight:800;min-width:100px;text-align:center;color:#6d28d9;}
@@ -435,6 +444,7 @@ function b64ToUtf8(str){ return decodeURIComponent(escape(atob(str))); }
 
 let tasks = [];
 let absences = [];
+let reports = []; // 주간업무보고 기록: {weekStart, weekEnd, body, email, savedAt, sentAt}
 let activeTab = "all";
 let calState = { year: new Date().getFullYear(), month: new Date().getMonth() };
 
@@ -509,6 +519,7 @@ async function fetchRemoteData(){
   if(res.status === 404){
     tasks = [];
     absences = [];
+    reports = [];
     fileSha = null;
     return { isNew: true };
   }
@@ -528,6 +539,7 @@ async function fetchRemoteData(){
   }
   tasks = Array.isArray(data.tasks) ? data.tasks : [];
   absences = Array.isArray(data.absences) ? data.absences : [];
+  reports = Array.isArray(data.reports) ? data.reports : [];
   tasks.forEach(t => { if(!Array.isArray(t.dueHistory)) t.dueHistory = []; });
   absences.forEach(a => { if(!TYPE_META[a.type]) a.type = LEGACY_TYPE_MAP[a.type] || "etc"; });
   return { isNew: false };
@@ -536,7 +548,7 @@ async function fetchRemoteData(){
 async function saveRemoteData(message){
   const body = {
     message: message || "업데이트",
-    content: utf8ToB64(JSON.stringify({ tasks, absences }, null, 2)),
+    content: utf8ToB64(JSON.stringify({ tasks, absences, reports }, null, 2)),
     branch: ghConfig.branch || "main"
   };
   if(fileSha) body.sha = fileSha;
@@ -984,34 +996,96 @@ function buildWeeklyReportText(monday){
   return { subject: `[주간업무보고] ${startStr} ~ ${endStr}`, body: lines.join("\n"), startStr, endStr };
 }
 
+function findReport(weekStartStr){
+  return reports.find(r => r.weekStart === weekStartStr) || null;
+}
+
 function renderWeeklyReport(){
-  const report = buildWeeklyReportText(weekState.monday);
-  const savedEmail = localStorage.getItem("weeklyReportEmail") || "";
+  const generated = buildWeeklyReportText(weekState.monday);
+  const existing = findReport(generated.startStr);
+  const bodyText = existing ? existing.body : generated.body;
+  const savedEmail = (existing && existing.email) || localStorage.getItem("weeklyReportEmail") || "";
+  const statusLine = existing
+    ? `<div class="report-status">${existing.sentAt ? `📧 ${formatDateTime(existing.sentAt)}에 ${escapeHtml(existing.email||'')}로 발송됨` : `💾 ${formatDateTime(existing.savedAt)}에 저장됨`}</div>`
+    : '';
+
+  const editableBlock = isAdmin
+    ? `
+      <div class="report-send-row">
+        <input type="email" id="reportEmail" placeholder="받는사람 이메일 (예: manager@company.com)" value="${escapeHtml(savedEmail)}">
+        <button class="btn-ghost" onclick="regenerateReport()">현재 데이터로 다시 생성</button>
+        <button class="btn-ghost" onclick="saveWeeklyReport(false)">저장만 하기</button>
+        <button class="btn-primary" onclick="saveWeeklyReport(true)">이메일로 보내기</button>
+      </div>
+      <textarea id="reportBody" class="report-preview report-editable" rows="18">${escapeHtml(bodyText)}</textarea>
+    `
+    : `<pre class="report-preview">${escapeHtml(bodyText)}</pre>`;
+
+  const archiveList = reports.length
+    ? reports.slice().sort((a,b)=> b.weekStart.localeCompare(a.weekStart)).map(r => `
+        <div class="report-archive-item" onclick="goToReportWeek('${r.weekStart}')">
+          <span>${r.weekStart} ~ ${r.weekEnd}</span>
+          <span class="report-archive-status">${r.sentAt ? '발송됨 · ' + escapeHtml(r.email||'') : '저장만 됨'}</span>
+        </div>
+      `).join("")
+    : `<div class="report-archive-empty">저장된 지난 보고 기록이 없습니다.</div>`;
+
   return `
     <div class="report-header">
       <button class="cal-nav" onclick="shiftWeek(-1)">‹</button>
-      <div class="cal-label">${report.startStr} ~ ${report.endStr}</div>
+      <div class="cal-label">${generated.startStr} ~ ${generated.endStr}</div>
       <button class="cal-nav" onclick="shiftWeek(1)">›</button>
       <button class="cal-today-btn" onclick="goCurrentWeek()">이번 주</button>
     </div>
-    <div class="report-send-row">
-      <input type="email" id="reportEmail" placeholder="받는사람 이메일 (예: manager@company.com)" value="${escapeHtml(savedEmail)}">
-      <button class="btn-primary" onclick="sendWeeklyReport()">이메일로 보내기</button>
-    </div>
-    <pre class="report-preview">${escapeHtml(report.body)}</pre>
+    ${statusLine}
+    ${editableBlock}
+    <details class="completed-details report-archive">
+      <summary>지난 주간보고 기록 (${reports.length}건)</summary>
+      <div class="report-archive-list">${archiveList}</div>
+    </details>
   `;
 }
 
-function sendWeeklyReport(){
+function regenerateReport(){
+  if(!isAdmin) return;
+  const generated = buildWeeklyReportText(weekState.monday);
+  const el = document.getElementById("reportBody");
+  if(el) el.value = generated.body;
+}
+
+function goToReportWeek(weekStartStr){
+  weekState.monday = new Date(weekStartStr);
+  renderContent();
+}
+
+function saveWeeklyReport(alsoSend){
+  if(!isAdmin){ alert("관리자 모드에서만 저장/발송할 수 있습니다."); return; }
   const email = document.getElementById("reportEmail").value.trim();
-  if(!email){
+  const bodyText = document.getElementById("reportBody").value;
+  if(alsoSend && !email){
     alert("받는사람 이메일을 입력해주세요.");
     return;
   }
-  localStorage.setItem("weeklyReportEmail", email);
-  const report = buildWeeklyReportText(weekState.monday);
-  const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(report.subject)}&body=${encodeURIComponent(report.body)}`;
-  window.location.href = mailtoUrl;
+  const generated = buildWeeklyReportText(weekState.monday);
+  const nowIso = new Date().toISOString();
+  let entry = findReport(generated.startStr);
+  if(!entry){
+    entry = { weekStart: generated.startStr, weekEnd: generated.endStr };
+    reports.push(entry);
+  }
+  entry.body = bodyText;
+  entry.email = email;
+  entry.savedAt = nowIso;
+  if(alsoSend) entry.sentAt = nowIso;
+
+  if(email) localStorage.setItem("weeklyReportEmail", email);
+  render();
+  persist(alsoSend ? `주간업무보고 발송: ${generated.startStr}` : `주간업무보고 저장: ${generated.startStr}`);
+
+  if(alsoSend){
+    const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(generated.subject)}&body=${encodeURIComponent(bodyText)}`;
+    window.location.href = mailtoUrl;
+  }
 }
 
 function changeMonth(delta){
