@@ -119,6 +119,16 @@
       "progress": 0,
       "memo": "",
       "dueHistory": []
+    },
+    {
+      "id": "ti4zvl673",
+      "team": "safety",
+      "title": "사업장 TBM 계획 수립",
+      "owner": "천재우",
+      "due": "2026-08-07",
+      "progress": 10,
+      "memo": "",
+      "dueHistory": []
     }
   ],
   "absences": [
