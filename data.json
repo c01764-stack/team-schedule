@@ -1,16 +1,6 @@
 {
   "tasks": [
     {
-      "id": "tmql7k1vn",
-      "team": "safety",
-      "title": "교육중333333",
-      "owner": "천재우",
-      "due": "2026-08-04",
-      "progress": 100,
-      "dueHistory": [],
-      "completedAt": "2026-07-29T10:46:41.472Z"
-    },
-    {
       "id": "tj9b13v3m",
       "team": "safety",
       "title": "하반기 점검 자동화 세팅",
