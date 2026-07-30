@@ -119,6 +119,16 @@
       "progress": 70,
       "memo": "",
       "dueHistory": []
+    },
+    {
+      "id": "tgri3ul3w",
+      "team": "safety",
+      "title": "MSDS 개정안 시행 안내",
+      "owner": "이재혁",
+      "due": "2026-08-12",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": []
     }
   ],
   "absences": [
