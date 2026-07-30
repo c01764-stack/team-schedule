@@ -452,6 +452,11 @@ function b64ToUtf8(str){ return decodeURIComponent(escape(atob(str))); }
 let tasks = [];
 let absences = [];
 let reports = []; // 주간업무보고 기록: {weekStart, weekEnd, body, email, savedAt, sentAt}
+// 충돌(409) 발생 시 자동 병합·재저장을 위해, 이번 세션에서 아직 저장에 성공하지 못한
+// 변경분만 추적한다. 값이 'DELETE'면 삭제, 그 외에는 최신 객체(참조)를 의미한다.
+let taskDirty = new Map();
+let absenceDirty = new Map();
+let reportDirty = new Map();
 let activeTab = "all";
 let calState = { year: new Date().getFullYear(), month: new Date().getMonth() };
 
@@ -519,16 +524,12 @@ function ghUrl(){
   return `https://api.github.com/repos/${encodeURIComponent(ghConfig.owner)}/${encodeURIComponent(ghConfig.repo)}/contents/${pathParts}`;
 }
 
-async function fetchRemoteData(){
+async function fetchRemoteRaw(){
   const headers = { "Accept": "application/vnd.github+json" };
   if(ghConfig.token) headers["Authorization"] = `Bearer ${ghConfig.token}`;
   const res = await fetch(`${ghUrl()}?ref=${encodeURIComponent(ghConfig.branch || 'main')}`, { headers });
   if(res.status === 404){
-    tasks = [];
-    absences = [];
-    reports = [];
-    fileSha = null;
-    return { isNew: true };
+    return { tasks: [], absences: [], reports: [], sha: null, isNew: true };
   }
   if(res.status === 401 || res.status === 403){
     throw new Error("토큰이 유효하지 않거나 권한이 없습니다. 설정을 확인해주세요.");
@@ -537,19 +538,41 @@ async function fetchRemoteData(){
     throw new Error(`불러오기 실패 (HTTP ${res.status})`);
   }
   const json = await res.json();
-  fileSha = json.sha;
   let data;
   try{
     data = JSON.parse(b64ToUtf8(json.content.replace(/\n/g, '')));
   }catch(e){
     throw new Error("데이터 파일 형식이 올바르지 않습니다.");
   }
-  tasks = Array.isArray(data.tasks) ? data.tasks : [];
-  absences = Array.isArray(data.absences) ? data.absences : [];
-  reports = Array.isArray(data.reports) ? data.reports : [];
-  tasks.forEach(t => { if(!Array.isArray(t.dueHistory)) t.dueHistory = []; });
-  absences.forEach(a => { if(!TYPE_META[a.type]) a.type = LEGACY_TYPE_MAP[a.type] || "etc"; });
-  return { isNew: false };
+  const freshTasks = Array.isArray(data.tasks) ? data.tasks : [];
+  const freshAbsences = Array.isArray(data.absences) ? data.absences : [];
+  const freshReports = Array.isArray(data.reports) ? data.reports : [];
+  freshTasks.forEach(t => { if(!Array.isArray(t.dueHistory)) t.dueHistory = []; });
+  freshAbsences.forEach(a => { if(!TYPE_META[a.type]) a.type = LEGACY_TYPE_MAP[a.type] || "etc"; });
+  return { tasks: freshTasks, absences: freshAbsences, reports: freshReports, sha: json.sha, isNew: false };
+}
+
+async function fetchRemoteData(){
+  const fresh = await fetchRemoteRaw();
+  tasks = fresh.tasks;
+  absences = fresh.absences;
+  reports = fresh.reports;
+  fileSha = fresh.sha;
+  taskDirty.clear();
+  absenceDirty.clear();
+  reportDirty.clear();
+  return { isNew: fresh.isNew };
+}
+
+// freshArr(원격 최신 목록)을 기준으로, 이번 세션에서 아직 저장되지 못한 로컬 변경(dirtyMap)만
+// 그 위에 얹어 병합한다. 다른 사람이 그 사이에 추가/수정한 항목은 그대로 유지된다.
+function mergeByKey(freshArr, dirtyMap, keyFn){
+  const map = new Map(freshArr.map(x => [keyFn(x), x]));
+  dirtyMap.forEach((val, key) => {
+    if(val === 'DELETE') map.delete(key);
+    else map.set(key, val);
+  });
+  return Array.from(map.values());
 }
 
 async function saveRemoteData(message){
@@ -580,6 +603,30 @@ async function saveRemoteData(message){
   }
   const json = await res.json();
   fileSha = json.content.sha;
+  taskDirty.clear();
+  absenceDirty.clear();
+  reportDirty.clear();
+}
+
+// 저장 중 다른 사람이 먼저 저장해서 409 충돌이 나면, 최신 원격 데이터를 받아와서
+// 그 위에 "내가 지금 세션에서 바꾼 항목"만 다시 얹은 뒤 자동으로 재저장을 시도한다.
+// 서로 다른 항목을 건드린 경우라면 화면에 아무 알림 없이 자동으로 해결된다.
+async function resolveConflictAndRetry(message, attemptsLeft){
+  if(attemptsLeft === undefined) attemptsLeft = 3;
+  const fresh = await fetchRemoteRaw();
+  tasks = mergeByKey(fresh.tasks, taskDirty, x => x.id);
+  absences = mergeByKey(fresh.absences, absenceDirty, x => x.id);
+  reports = mergeByKey(fresh.reports, reportDirty, x => x.weekStart);
+  fileSha = fresh.sha;
+  render();
+  try{
+    await saveRemoteData(message);
+  }catch(err){
+    if(err && err.conflict && attemptsLeft > 1){
+      return resolveConflictAndRetry(message, attemptsLeft - 1);
+    }
+    throw err;
+  }
 }
 
 function setSyncStatus(state, message){
@@ -604,9 +651,14 @@ function persist(message){
     })
     .catch(async (err) => {
       if(err && err.conflict){
-        alert("다른 사람이 방금 먼저 저장했습니다. 최신 데이터를 다시 불러옵니다. 방금 변경한 내용은 다시 입력해주세요.");
-        try{ await fetchRemoteData(); }catch(e){}
-        setSyncStatus("error", "충돌 발생 - 다시 불러옴");
+        setSyncStatus("saving", "충돌 감지 - 자동 병합 중...");
+        try{
+          await resolveConflictAndRetry(message);
+          setSyncStatus("idle", "충돌 자동 해결 · " + nowTimeLabel());
+        }catch(e2){
+          alert("다른 사람과 동시에 저장하면서 충돌이 발생했고, 자동 해결에도 실패했습니다: " + (e2.message || e2) + "\n화면을 새로고침한 뒤 다시 시도해주세요.");
+          setSyncStatus("error", "충돌 자동 해결 실패");
+        }
       } else {
         alert("저장 실패: " + (err.message || err));
         setSyncStatus("error", "저장 오류");
@@ -1104,6 +1156,7 @@ function saveWeeklyReport(alsoSend){
   entry.email = email;
   entry.savedAt = nowIso;
   if(alsoSend) entry.sentAt = nowIso;
+  reportDirty.set(entry.weekStart, entry);
 
   if(email) localStorage.setItem("weeklyReportEmail", email);
   render();
@@ -1239,7 +1292,9 @@ function addTask(){
     alert("업무 내용과 마감일자를 입력해주세요.");
     return;
   }
-  tasks.push({id: cid(), team, title, owner, due, progress, memo, dueHistory: [], includeInReport: true});
+  const newTask = {id: cid(), team, title, owner, due, progress, memo, dueHistory: [], includeInReport: true};
+  tasks.push(newTask);
+  taskDirty.set(newTask.id, newTask);
   document.getElementById("inTitle").value = "";
   document.getElementById("inOwner").value = "";
   document.getElementById("inDue").value = "";
@@ -1264,6 +1319,7 @@ function editProgress(id){
   t.progress = num;
   if(num >= 100){ if(!t.completedAt) t.completedAt = new Date().toISOString(); }
   else { delete t.completedAt; }
+  taskDirty.set(t.id, t);
   render();
   persist(`진행율 수정: ${t.title} → ${num}%`);
 }
@@ -1274,6 +1330,7 @@ function markComplete(id){
   if(!t) return;
   t.progress = 100;
   t.completedAt = new Date().toISOString();
+  taskDirty.set(t.id, t);
   render();
   persist(`업무 완료 처리: ${t.title}`);
 }
@@ -1285,6 +1342,7 @@ function reopenTask(id){
   if(!confirm("완료 처리를 취소하고 다시 진행중으로 되돌릴까요?")) return;
   t.progress = 90;
   delete t.completedAt;
+  taskDirty.set(t.id, t);
   render();
   persist(`업무 완료 취소: ${t.title}`);
 }
@@ -1294,6 +1352,7 @@ function deleteTask(id){
   if(!confirm("이 업무를 삭제할까요?")) return;
   const removed = tasks.find(t=>t.id===id);
   tasks = tasks.filter(t=>t.id!==id);
+  taskDirty.set(id, 'DELETE');
   render();
   persist(`업무 삭제: ${removed ? removed.title : id}`);
 }
@@ -1303,6 +1362,7 @@ function toggleReportInclude(id){
   const t = tasks.find(x=>x.id===id);
   if(!t) return;
   t.includeInReport = t.includeInReport === false ? true : false;
+  taskDirty.set(t.id, t);
   persist(`주간보고 포함 변경: ${t.title} → ${t.includeInReport ? '포함' : '제외'}`);
 }
 
@@ -1323,7 +1383,9 @@ function addAbsence(){
     alert("종료일은 시작일보다 빠를 수 없습니다.");
     return;
   }
-  absences.push({id: cid(), team, person, type, start, end, memo});
+  const newAbsence = {id: cid(), team, person, type, start, end, memo};
+  absences.push(newAbsence);
+  absenceDirty.set(newAbsence.id, newAbsence);
   document.getElementById("absPerson").value = "";
   document.getElementById("absStart").value = "";
   document.getElementById("absEnd").value = "";
@@ -1398,6 +1460,7 @@ function saveAbsenceEdit(id){
   a.start = start;
   a.end = end;
   a.memo = document.getElementById("modalAbsMemo").value.trim();
+  absenceDirty.set(a.id, a);
   closeModal();
   render();
   persist(`일정 수정: ${a.person}`);
@@ -1407,6 +1470,7 @@ function deleteAbsence(id){
   if(!confirm("이 일정을 삭제할까요?")) return;
   const removed = absences.find(a=>a.id===id);
   absences = absences.filter(a=>a.id!==id);
+  absenceDirty.set(id, 'DELETE');
   closeModal();
   render();
   persist(`일정 삭제: ${removed ? removed.person : id}`);
@@ -1472,6 +1536,7 @@ function saveDueEdit(id){
     t.due = newDue;
     changed = true;
   }
+  if(changed) taskDirty.set(t.id, t);
   closeModal();
   render();
   if(changed) persist(`마감일 수정: ${t.title}`);
@@ -1514,6 +1579,7 @@ function saveMemoEdit(id){
   const newMemo = document.getElementById("modalMemo").value.trim();
   const changed = newMemo !== (t.memo || '');
   t.memo = newMemo;
+  if(changed) taskDirty.set(t.id, t);
   closeModal();
   render();
   if(changed) persist(`기타 내용 수정: ${t.title}`);
