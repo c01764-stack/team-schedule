@@ -185,6 +185,14 @@
 
   .add-form.absence-form{grid-template-columns:100px 130px 90px 140px 140px 1fr 110px;}
 
+  .report-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  .report-header .cal-label{font-size:15px;font-weight:800;min-width:200px;text-align:center;color:#6d28d9;}
+  .report-send-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+  .report-send-row input{flex:1;min-width:220px;padding:10px 14px;border:2px solid var(--border);border-radius:12px;font-size:13px;font-family:inherit;}
+  .report-send-row input:focus{outline:none;border-color:var(--violet);}
+  .report-send-row button{white-space:nowrap;}
+  .report-preview{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;font-family:inherit;font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word;box-shadow:0 10px 28px rgba(30,20,70,.12);color:var(--text);}
+
   .cal-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
   .cal-header .cal-label{font-size:15px;font-weight:800;min-width:100px;text-align:center;color:#6d28d9;}
   .cal-nav{background:#fff;border:2px solid var(--border);border-radius:999px;width:32px;height:32px;cursor:pointer;font-size:15px;color:var(--violet);}
@@ -379,6 +387,7 @@
     <div class="tab" data-tab="edu">교육</div>
     <div class="tab" data-tab="etc">기타</div>
     <div class="tab" data-tab="absence">주요 일정</div>
+    <div class="tab" data-tab="report">주간업무보고</div>
   </div>
 
   <div id="content"></div>
@@ -428,6 +437,26 @@ let tasks = [];
 let absences = [];
 let activeTab = "all";
 let calState = { year: new Date().getFullYear(), month: new Date().getMonth() };
+
+function mondayOf(d){
+  const dd = new Date(d);
+  const day = dd.getDay(); // 0=일 ... 6=토
+  const diff = day === 0 ? -6 : 1 - day; // 월요일로 이동
+  dd.setDate(dd.getDate() + diff);
+  dd.setHours(0,0,0,0);
+  return dd;
+}
+let weekState = { monday: mondayOf(new Date()) };
+function shiftWeek(delta){
+  const d = new Date(weekState.monday);
+  d.setDate(d.getDate() + delta*7);
+  weekState.monday = d;
+  renderContent();
+}
+function goCurrentWeek(){
+  weekState.monday = mondayOf(new Date());
+  renderContent();
+}
 let ghConfig = null;
 try{ ghConfig = JSON.parse(localStorage.getItem(GH_CONFIG_KEY) || "null"); }catch(e){ ghConfig = null; }
 let fileSha = null;
@@ -465,7 +494,7 @@ function updateAdminUI(){
     btn.title = isAdmin ? "관리자 모드 (켜짐) - 클릭 시 끄기" : "관리자 모드 켜기";
   }
   const taskForm = document.getElementById("taskAddForm");
-  if(taskForm) taskForm.style.display = (isAdmin && activeTab !== "absence") ? "grid" : "none";
+  if(taskForm) taskForm.style.display = (isAdmin && activeTab !== "absence" && activeTab !== "report") ? "grid" : "none";
 }
 
 function ghUrl(){
@@ -788,7 +817,7 @@ function teamTable(teamKey){
         <h2>${meta.label}</h2>
         <span class="count">(진행 ${active.length}건 · 완료 ${completed.length}건)</span>
       </div>
-      <div class="table-scroll" style="border:2px solid ${meta.color};border-radius:16px;">
+      <div class="table-scroll" style="border:2px solid #4b5563;border-radius:16px;">
         <table>
           <thead>
             <tr>
@@ -800,7 +829,7 @@ function teamTable(teamKey){
       </div>
       <details class="completed-details">
         <summary>완료된 업무 (${completed.length}건)</summary>
-        <div class="table-scroll" style="border:2px solid ${meta.color};border-radius:16px;">
+        <div class="table-scroll" style="border:2px solid #4b5563;border-radius:16px;">
           <table>
             <thead>
               <tr>
@@ -901,6 +930,90 @@ function renderAbsenceCalendar(){
   `;
 }
 
+function buildWeeklyReportText(monday){
+  const sunday = new Date(monday); sunday.setDate(sunday.getDate() + 6);
+  const startStr = fmtLocalDate(monday);
+  const endStr = fmtLocalDate(sunday);
+
+  const lines = [];
+  lines.push(`[주간업무보고] ${startStr} ~ ${endStr}`);
+  lines.push("");
+
+  let totalActive = 0, totalDone = 0, totalOverdue = 0, progressSum = 0, progressCount = 0;
+
+  ["safety","edu","etc"].forEach(teamKey => {
+    const meta = TEAM_META[teamKey];
+    const teamTasks = tasks.filter(t => t.team === teamKey);
+    const doneThisWeek = teamTasks.filter(t => t.progress >= 100 && t.completedAt && fmtLocalDate(new Date(t.completedAt)) >= startStr && fmtLocalDate(new Date(t.completedAt)) <= endStr);
+    const dueThisWeek = teamTasks.filter(t => t.progress < 100 && t.due >= startStr && t.due <= endStr);
+    const overdue = teamTasks.filter(t => t.progress < 100 && t.due < todayStr());
+
+    teamTasks.forEach(t => { progressSum += Number(t.progress); progressCount++; });
+    totalActive += teamTasks.filter(t=>t.progress<100).length;
+    totalDone += teamTasks.filter(t=>t.progress>=100).length;
+    totalOverdue += overdue.length;
+
+    lines.push(`■ ${meta.label}`);
+    lines.push(`- 이번 주 완료: ${doneThisWeek.length}건`);
+    doneThisWeek.forEach(t => lines.push(`  · ${t.title} (${t.owner || '-'})`));
+    lines.push(`- 이번 주 마감 예정: ${dueThisWeek.length}건`);
+    dueThisWeek.forEach(t => lines.push(`  · ${t.title} (${t.owner || '-'}) - ${t.progress}% - ${t.due} 마감`));
+    lines.push(`- 지연(마감 초과 미완료): ${overdue.length}건`);
+    overdue.forEach(t => lines.push(`  · ${t.title} (${t.owner || '-'}) - ${t.progress}% - ${t.due} 마감이었음`));
+    lines.push("");
+  });
+
+  const weekAbsences = absences.filter(a => a.start <= endStr && a.end >= startStr);
+  lines.push(`■ 주요 일정 (외근/점검/교육/휴가 등, 이번 주)`);
+  if(!weekAbsences.length){
+    lines.push("- 해당 없음");
+  } else {
+    weekAbsences.forEach(a => {
+      const meta = TEAM_META[a.team];
+      const type = TYPE_META[a.type] || TYPE_META.etc;
+      lines.push(`- ${a.person} (${meta.label}) - ${type.label} - ${a.start}~${a.end}${a.memo ? ' - ' + a.memo : ''}`);
+    });
+  }
+  lines.push("");
+
+  const avgProgress = progressCount ? Math.round(progressSum / progressCount) : 0;
+  lines.push(`■ 전체 요약`);
+  lines.push(`- 전체 진행중: ${totalActive}건 / 완료: ${totalDone}건 / 지연: ${totalOverdue}건`);
+  lines.push(`- 전체 평균 진행율: ${avgProgress}%`);
+
+  return { subject: `[주간업무보고] ${startStr} ~ ${endStr}`, body: lines.join("\n"), startStr, endStr };
+}
+
+function renderWeeklyReport(){
+  const report = buildWeeklyReportText(weekState.monday);
+  const savedEmail = localStorage.getItem("weeklyReportEmail") || "";
+  return `
+    <div class="report-header">
+      <button class="cal-nav" onclick="shiftWeek(-1)">‹</button>
+      <div class="cal-label">${report.startStr} ~ ${report.endStr}</div>
+      <button class="cal-nav" onclick="shiftWeek(1)">›</button>
+      <button class="cal-today-btn" onclick="goCurrentWeek()">이번 주</button>
+    </div>
+    <div class="report-send-row">
+      <input type="email" id="reportEmail" placeholder="받는사람 이메일 (예: manager@company.com)" value="${escapeHtml(savedEmail)}">
+      <button class="btn-primary" onclick="sendWeeklyReport()">이메일로 보내기</button>
+    </div>
+    <pre class="report-preview">${escapeHtml(report.body)}</pre>
+  `;
+}
+
+function sendWeeklyReport(){
+  const email = document.getElementById("reportEmail").value.trim();
+  if(!email){
+    alert("받는사람 이메일을 입력해주세요.");
+    return;
+  }
+  localStorage.setItem("weeklyReportEmail", email);
+  const report = buildWeeklyReportText(weekState.monday);
+  const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(report.subject)}&body=${encodeURIComponent(report.body)}`;
+  window.location.href = mailtoUrl;
+}
+
 function changeMonth(delta){
   calState.month += delta;
   if(calState.month < 0){ calState.month = 11; calState.year--; }
@@ -921,6 +1034,8 @@ function renderContent(){
     el.innerHTML = teamTable("safety") + teamTable("edu") + teamTable("etc");
   } else if(activeTab === "absence"){
     el.innerHTML = renderAbsenceCalendar();
+  } else if(activeTab === "report"){
+    el.innerHTML = renderWeeklyReport();
   } else {
     el.innerHTML = teamTable(activeTab);
   }
