@@ -133,7 +133,8 @@
       "due": "2026-08-07",
       "progress": 10,
       "memo": "",
-      "dueHistory": []
+      "dueHistory": [],
+      "includeInReport": false
     },
     {
       "id": "tecwfcrbc",
