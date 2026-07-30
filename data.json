@@ -168,6 +168,17 @@
       "progress": 90,
       "memo": "",
       "dueHistory": []
+    },
+    {
+      "id": "tl5hd782x",
+      "team": "edu",
+      "title": "아카데미 사업계획서 작성",
+      "owner": "주현수",
+      "due": "2026-08-21",
+      "progress": 10,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
