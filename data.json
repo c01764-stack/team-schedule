@@ -78,6 +78,16 @@
       "progress": 5,
       "memo": "",
       "dueHistory": []
+    },
+    {
+      "id": "tygqlm8ab",
+      "team": "safety",
+      "title": "SHE 평가 서류 제출",
+      "owner": "이재혁",
+      "due": "2026-07-31",
+      "progress": 90,
+      "memo": "",
+      "dueHistory": []
     }
   ],
   "absences": [
