@@ -93,9 +93,9 @@
   .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:16px;}
   table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(30,20,70,.14);}
   th,td{padding:12px 13px;font-size:14.5px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top;}
-  td:nth-child(1){min-width:200px;}
-  td:nth-child(2),td:nth-child(3),td:nth-child(4),td:nth-child(6){white-space:nowrap;}
-  th:nth-child(2),th:nth-child(3),th:nth-child(4),th:nth-child(6){white-space:nowrap;}
+  .table-scroll td:nth-child(1){min-width:200px;font-weight:700;color:var(--text);}
+  .table-scroll td:nth-child(2),.table-scroll td:nth-child(3),.table-scroll td:nth-child(4),.table-scroll td:nth-child(6){white-space:nowrap;}
+  .table-scroll th:nth-child(2),.table-scroll th:nth-child(3),.table-scroll th:nth-child(4),.table-scroll th:nth-child(6){white-space:nowrap;}
   th{background:linear-gradient(135deg,#f5f3ff,#fdf2f8);color:#7c3aed;font-weight:700;font-size:12px;}
   tr:last-child td{border-bottom:none;}
   tr.row-overdue td{background:#fff1f2;}
@@ -962,8 +962,6 @@ function buildWeeklyReportText(monday){
   ["safety","etc"].forEach(teamKey => {
     const meta = TEAM_META[teamKey];
     const teamTasks = tasks.filter(t => t.team === teamKey);
-    const doneThisWeek = teamTasks.filter(t => t.progress >= 100 && t.completedAt && fmtLocalDate(new Date(t.completedAt)) >= startStr && fmtLocalDate(new Date(t.completedAt)) <= endStr);
-    const dueThisWeek = teamTasks.filter(t => t.progress < 100 && t.due >= startStr && t.due <= endStr);
     const overdue = teamTasks.filter(t => t.progress < 100 && t.due < todayStr());
 
     teamTasks.forEach(t => { progressSum += Number(t.progress); progressCount++; });
@@ -972,12 +970,11 @@ function buildWeeklyReportText(monday){
     totalOverdue += overdue.length;
 
     lines.push(`■ ${meta.label}`);
-    lines.push(`- 이번 주 완료: ${doneThisWeek.length}건`);
-    doneThisWeek.forEach(t => lines.push(`  · ${t.title} (${t.owner || '-'})`));
-    lines.push(`- 이번 주 마감 예정: ${dueThisWeek.length}건`);
-    dueThisWeek.forEach(t => lines.push(`  · ${t.title} (${t.owner || '-'}) - ${t.progress}% - ${t.due} 마감`));
-    lines.push(`- 지연(마감 초과 미완료): ${overdue.length}건`);
-    overdue.forEach(t => lines.push(`  · ${t.title} (${t.owner || '-'}) - ${t.progress}% - ${t.due} 마감이었음`));
+    if(!teamTasks.length){
+      lines.push("- 등록된 업무가 없습니다.");
+    } else {
+      teamTasks.forEach(t => lines.push(`- ${t.title} / ${t.progress}% - ${t.memo || '-'}`));
+    }
     lines.push("");
   });
 
@@ -989,7 +986,8 @@ function buildWeeklyReportText(monday){
     weekAbsences.forEach(a => {
       const meta = TEAM_META[a.team];
       const type = TYPE_META[a.type] || TYPE_META.etc;
-      lines.push(`- ${a.person} (${meta.label}) - ${type.label} - ${a.start}~${a.end}${a.memo ? ' - ' + a.memo : ''}`);
+      const dateRange = a.start === a.end ? a.start : `${a.start}~${a.end}`;
+      lines.push(`- ${a.person} (${meta.label}) - ${type.label} - ${dateRange}${a.memo ? ' - ' + a.memo : ''}`);
     });
   }
   lines.push("");
