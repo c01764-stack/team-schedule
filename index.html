@@ -978,18 +978,28 @@ function buildWeeklyReportText(monday){
     lines.push("");
   });
 
-  const weekAbsences = absences.filter(a => a.start <= endStr && a.end >= startStr);
-  lines.push(`■ 주요 일정 (외근/점검/교육/휴가 등, 이번 주)`);
-  if(!weekAbsences.length){
-    lines.push("- 해당 없음");
-  } else {
-    weekAbsences.forEach(a => {
-      const meta = TEAM_META[a.team];
-      const type = TYPE_META[a.type] || TYPE_META.etc;
-      const dateRange = a.start === a.end ? a.start : `${a.start}~${a.end}`;
-      lines.push(`- ${a.person} (${meta.label}) - ${type.label} - ${dateRange}${a.memo ? ' - ' + a.memo : ''}`);
-    });
-  }
+  const nextMonday = new Date(monday); nextMonday.setDate(nextMonday.getDate() + 7);
+  const nextFriday = new Date(nextMonday); nextFriday.setDate(nextFriday.getDate() + 4);
+  const nextStartStr = fmtLocalDate(nextMonday);
+  const nextEndStr = fmtLocalDate(nextFriday);
+
+  const formatAbsenceLine = a => {
+    const meta = TEAM_META[a.team];
+    const type = TYPE_META[a.type] || TYPE_META.etc;
+    const dateRange = a.start === a.end ? a.start : `${a.start}~${a.end}`;
+    return `- ${a.person} (${meta.label}) - ${type.label} - ${dateRange}${a.memo ? ' - ' + a.memo : ''}`;
+  };
+
+  lines.push(`■ 주요 일정 (외근/점검/교육/휴가 등)`);
+  lines.push(`[이번주 ${startStr} ~ ${endStr}]`);
+  const thisWeekAbsences = absences.filter(a => a.start <= endStr && a.end >= startStr);
+  if(!thisWeekAbsences.length) lines.push("- 해당 없음");
+  else thisWeekAbsences.forEach(a => lines.push(formatAbsenceLine(a)));
+
+  lines.push(`[다음주 ${nextStartStr} ~ ${nextEndStr}]`);
+  const nextWeekAbsences = absences.filter(a => a.start <= nextEndStr && a.end >= nextStartStr);
+  if(!nextWeekAbsences.length) lines.push("- 해당 없음");
+  else nextWeekAbsences.forEach(a => lines.push(formatAbsenceLine(a)));
   lines.push("");
 
   const avgProgress = progressCount ? Math.round(progressSum / progressCount) : 0;
