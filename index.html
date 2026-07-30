@@ -201,6 +201,7 @@
   .report-archive-item:hover{border-color:var(--violet);background:var(--edu-tint);}
   .report-archive-status{color:var(--sub);}
   .report-archive-empty{font-size:13px;color:var(--sub);padding:8px 0;}
+  .report-hint{font-size:11.5px;color:var(--sub);margin:-6px 0 12px;}
 
   .cal-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
   .cal-header .cal-label{font-size:15px;font-weight:800;min-width:100px;text-align:center;color:#6d28d9;}
@@ -1017,6 +1018,11 @@ function renderWeeklyReport(){
         <button class="btn-ghost" onclick="saveWeeklyReport(false)">저장만 하기</button>
         <button class="btn-primary" onclick="saveWeeklyReport(true)">이메일로 보내기</button>
       </div>
+      <div class="report-send-row">
+        <button class="btn-ghost" onclick="exportReportPDF()">🖨 PDF로 만들기</button>
+        <button class="btn-ghost" onclick="exportReportWord()">📄 Word로 다운로드</button>
+      </div>
+      <p class="report-hint">※ 이메일에 파일을 자동으로 첨부할 수는 없어요. PDF/Word를 먼저 저장한 뒤, "이메일로 보내기"로 메일 앱이 열리면 저장한 파일을 직접 첨부해주세요.</p>
       <textarea id="reportBody" class="report-preview report-editable" rows="18">${escapeHtml(bodyText)}</textarea>
     `
     : `<pre class="report-preview">${escapeHtml(bodyText)}</pre>`;
@@ -1086,6 +1092,68 @@ function saveWeeklyReport(alsoSend){
     const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(generated.subject)}&body=${encodeURIComponent(bodyText)}`;
     window.location.href = mailtoUrl;
   }
+}
+
+function currentReportBodyText(){
+  const el = document.getElementById("reportBody");
+  return el ? el.value : buildWeeklyReportText(weekState.monday).body;
+}
+
+function exportReportPDF(){
+  const generated = buildWeeklyReportText(weekState.monday);
+  const bodyText = currentReportBodyText();
+  const win = window.open('', '_blank');
+  if(!win){ alert("팝업이 차단되었습니다. 팝업 차단을 해제한 뒤 다시 시도해주세요."); return; }
+  win.document.write(`
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+      <meta charset="UTF-8">
+      <title>${escapeHtml(generated.subject)}</title>
+      <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" />
+      <style>
+        body{font-family:'Pretendard Variable',Pretendard,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;padding:40px;color:#1a1a1a;}
+        h1{font-size:20px;margin-bottom:20px;}
+        pre{white-space:pre-wrap;word-break:break-word;font-size:13px;line-height:1.8;font-family:inherit;}
+      </style>
+    </head>
+    <body>
+      <h1>${escapeHtml(generated.subject)}</h1>
+      <pre>${escapeHtml(bodyText)}</pre>
+      <script>
+        window.onload = function(){ setTimeout(function(){ window.print(); }, 300); };
+      </` + `script>
+    </body>
+    </html>
+  `);
+  win.document.close();
+}
+
+function exportReportWord(){
+  const generated = buildWeeklyReportText(weekState.monday);
+  const bodyText = currentReportBodyText();
+  const htmlBody = escapeHtml(bodyText).replace(/\n/g, '<br>');
+  const doc = `
+    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+    <head>
+      <meta charset="UTF-8">
+      <title>${escapeHtml(generated.subject)}</title>
+    </head>
+    <body style="font-family:'Malgun Gothic',sans-serif;font-size:11pt;">
+      <h2>${escapeHtml(generated.subject)}</h2>
+      <p>${htmlBody}</p>
+    </body>
+    </html>
+  `;
+  const blob = new Blob(['﻿', doc], { type: 'application/msword;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `주간업무보고_${generated.startStr}_${generated.endStr}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function changeMonth(delta){
