@@ -102,6 +102,16 @@
       "progress": 10,
       "memo": "",
       "dueHistory": []
+    },
+    {
+      "id": "tykjuwd4h",
+      "team": "edu",
+      "title": "휴넷 세부 운영계획 수립",
+      "owner": "주현수",
+      "due": "2026-08-12",
+      "progress": 20,
+      "memo": "",
+      "dueHistory": []
     }
   ],
   "absences": [
