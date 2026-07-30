@@ -123,7 +123,8 @@
       "due": "2026-08-12",
       "progress": 0,
       "memo": "",
-      "dueHistory": []
+      "dueHistory": [],
+      "includeInReport": false
     },
     {
       "id": "ti4zvl673",
