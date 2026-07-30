@@ -303,6 +303,97 @@
     .summary{grid-template-columns:repeat(2,1fr);}
     .cal-cell{min-height:48px;}
   }
+
+  /* ============ 다크 테마 (2번 디자인) ============ */
+  [data-theme="dark"]{
+    --safety:#ffa94d;
+    --safety-tint:rgba(255,169,77,.16);
+    --edu:#a78bfa;
+    --edu-tint:rgba(167,139,250,.18);
+    --etc:#2dd4bf;
+    --etc-tint:rgba(45,212,191,.16);
+    --bg:#0a0f1e;
+    --card:#131c30;
+    --border:#26324a;
+    --text:#e7ecf7;
+    --sub:#8b96b3;
+    --red:#fb7185;
+    --orange:#fbbf24;
+    --violet:#22d3ee;
+  }
+  [data-theme="dark"] body{
+    background:
+      radial-gradient(circle at 12% -10%, rgba(34,211,238,.14), transparent 42%),
+      radial-gradient(circle at 88% 108%, rgba(167,139,250,.14), transparent 46%),
+      var(--bg);
+  }
+  [data-theme="dark"] header h1{
+    background:linear-gradient(135deg,#22d3ee,#818cf8 45%,#f472b6);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 14px rgba(34,211,238,.35));
+  }
+  [data-theme="dark"] .setup-banner{background:linear-gradient(135deg,rgba(251,191,36,.14),rgba(244,63,94,.08));border:2px solid rgba(251,191,36,.4);border-radius:16px;padding:14px 16px;margin-bottom:22px;font-size:13px;color:#fbbf24;}
+  [data-theme="dark"] .setup-banner button{margin-left:8px;background:linear-gradient(135deg,#fbbf24,#fb923c);color:#1a1206;border:none;border-radius:999px;padding:7px 14px;font-size:12px;cursor:pointer;font-weight:700;}
+  [data-theme="dark"] .today-badge{box-shadow:0 3px 10px rgba(34,211,238,.18);}
+  [data-theme="dark"] .stat-card{box-shadow:0 10px 28px rgba(34,211,238,.10);}
+  [data-theme="dark"] .stat-card.done{background:linear-gradient(180deg,rgba(74,222,128,.12),var(--card) 60%);}
+  [data-theme="dark"] .stat-card.overdue{background:linear-gradient(180deg,rgba(251,113,133,.12),var(--card) 60%);}
+  [data-theme="dark"] .stat-card.progress{background:linear-gradient(180deg,rgba(56,189,248,.12),var(--card) 60%);}
+  [data-theme="dark"] .tab{background:var(--card);box-shadow:0 4px 14px rgba(34,211,238,.07);}
+  [data-theme="dark"] .tab.active{color:#fff;background:linear-gradient(135deg,#0891b2,#4f46e5);box-shadow:0 0 16px rgba(34,211,238,.45);}
+  [data-theme="dark"] .add-form{box-shadow:0 10px 28px rgba(34,211,238,.09);}
+  [data-theme="dark"] .add-form button{background:linear-gradient(135deg,#0891b2,#4f46e5);box-shadow:0 4px 12px rgba(34,211,238,.3);}
+  [data-theme="dark"] table{box-shadow:0 10px 30px rgba(34,211,238,.09);}
+  [data-theme="dark"] th{background:linear-gradient(135deg,rgba(99,102,241,.16),rgba(236,72,153,.08));color:#67e8f9;}
+  [data-theme="dark"] tr.row-overdue td{background:rgba(251,113,133,.10);}
+  [data-theme="dark"] tbody tr:hover td{background:rgba(255,255,255,.03);}
+  [data-theme="dark"] .bar-bg{background:rgba(255,255,255,.08);}
+  [data-theme="dark"] .badge.done{background:rgba(74,222,128,.16);color:#86efac;}
+  [data-theme="dark"] .badge.ongoing{background:rgba(56,189,248,.16);color:#7dd3fc;}
+  [data-theme="dark"] .badge.overdue{background:rgba(251,113,133,.18);color:#fda4af;}
+  [data-theme="dark"] .row-actions button{background:var(--card);}
+  [data-theme="dark"] .row-actions button.del:hover{background:rgba(251,113,133,.16);border-color:#fb7185;}
+  [data-theme="dark"] .memo-view-btn{background:rgba(99,102,241,.16);color:#c4b5fd;}
+  [data-theme="dark"] .memo-view-btn:hover{background:rgba(99,102,241,.28);}
+  [data-theme="dark"] .memo-view{background:rgba(255,255,255,.04);}
+  [data-theme="dark"] .hist-link{color:#c4b5fd;}
+  [data-theme="dark"] .hist-link:hover{background:rgba(167,139,250,.3);}
+  [data-theme="dark"] .hist-link.empty-hist{background:rgba(255,255,255,.05);}
+  [data-theme="dark"] .modal-overlay{background:rgba(2,6,23,.72);}
+  [data-theme="dark"] .modal-box{background:var(--card);border:1px solid var(--border);box-shadow:0 16px 40px rgba(0,0,0,.55);}
+  [data-theme="dark"] .modal-box h3{color:#67e8f9;}
+  [data-theme="dark"] .modal-actions .btn-primary{background:linear-gradient(135deg,#0891b2,#4f46e5);box-shadow:0 4px 12px rgba(34,211,238,.35);}
+  [data-theme="dark"] .modal-actions .btn-ghost{background:rgba(255,255,255,.06);}
+  [data-theme="dark"] .absence-banner{background:linear-gradient(135deg,rgba(99,102,241,.10),rgba(236,72,153,.08));box-shadow:0 10px 28px rgba(34,211,238,.08);}
+  [data-theme="dark"] .absence-banner h3{color:#f472b6;}
+  [data-theme="dark"] .absence-chip{border:1px solid var(--border);background:var(--card);box-shadow:0 2px 8px rgba(0,0,0,.3);}
+  [data-theme="dark"] .type-badge.inspect{background:rgba(99,102,241,.18);color:#a5b4fc;}
+  [data-theme="dark"] .type-badge.training{background:rgba(217,70,239,.16);color:#f0abfc;}
+  [data-theme="dark"] .type-badge.leave{background:rgba(245,158,11,.16);color:#fcd34d;}
+  [data-theme="dark"] .type-badge.etc{background:rgba(45,212,191,.16);color:#5eead4;}
+  [data-theme="dark"] .absence-status.upcoming{background:rgba(56,189,248,.16);color:#7dd3fc;}
+  [data-theme="dark"] .absence-status.active{background:rgba(251,113,133,.16);color:#fda4af;}
+  [data-theme="dark"] .absence-status.done{background:rgba(255,255,255,.06);color:var(--sub);}
+  [data-theme="dark"] .report-header .cal-label{color:#67e8f9;}
+  [data-theme="dark"] .cal-header .cal-label{color:#67e8f9;}
+  [data-theme="dark"] .cal-nav{background:var(--card);}
+  [data-theme="dark"] .cal-today-btn{background:linear-gradient(135deg,#0891b2,#4f46e5);box-shadow:0 3px 12px rgba(34,211,238,.32);}
+  [data-theme="dark"] .cal-cell{box-shadow:0 4px 12px rgba(34,211,238,.06);}
+  [data-theme="dark"] .cal-cell.cal-other-month{background:rgba(255,255,255,.02);}
+  [data-theme="dark"] .cal-cell.cal-other-month .cal-daynum{color:#4b5878;}
+  [data-theme="dark"] .cal-cell.cal-today{box-shadow:0 0 0 2px rgba(34,211,238,.3);background:rgba(34,211,238,.08);}
+  [data-theme="dark"] .cal-cell.cal-other-month:nth-child(7n+1) .cal-daynum,
+[data-theme="dark"] .cal-cell.cal-other-month:nth-child(7n) .cal-daynum{color:#5a3a44;}
+  [data-theme="dark"] .cal-chip{background:rgba(255,255,255,.06);}
+  [data-theme="dark"] .cal-chip.safety{color:#fdba74;}
+  [data-theme="dark"] .cal-chip.edu{color:#d8b4fe;}
+  [data-theme="dark"] .cal-chip.etc{color:#5eead4;}
+  [data-theme="dark"] .icon-btn{box-shadow:0 2px 6px rgba(34,211,238,.15);}
+  [data-theme="dark"] .report-preview{box-shadow:0 10px 28px rgba(34,211,238,.08);}
+  @media (max-width: 640px){
+    [data-theme="dark"] .table-scroll tbody tr{border-color:var(--border);box-shadow:0 4px 12px rgba(34,211,238,.06);}
+    [data-theme="dark"] .table-scroll tr.row-overdue{background:rgba(251,113,133,.08);}
+  }
 </style>
 </head>
 <body>
@@ -318,6 +409,7 @@
         <span class="sync-status" id="syncStatus"></span>
         <button class="icon-btn" onclick="manualRefresh()" title="새로고침">⟳</button>
         <button class="icon-btn" id="adminToggleBtn" onclick="toggleAdminMode()" title="관리자 모드">🔒</button>
+        <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" title="디자인 1번/2번 전환">🌙</button>
         <button class="icon-btn" onclick="openSettings()" title="GitHub 동기화 설정">⚙</button>
       </div>
     </div>
@@ -493,6 +585,26 @@ let autoRefreshTimer = null;
 const ADMIN_PASSWORD = "safety2026";
 const ADMIN_KEY = "isAdminUnlocked_v1";
 let isAdmin = localStorage.getItem(ADMIN_KEY) === "1";
+
+// 디자인 1번(밝은 톤) / 2번(다크 테크) 전환. 기기별로 localStorage에 저장되어
+// 다음 방문 때도 마지막으로 고른 디자인이 유지된다.
+const THEME_KEY = "dashboardTheme_v1";
+function applyTheme(theme){
+  const dark = theme === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "dark" : "");
+  const btn = document.getElementById("themeToggleBtn");
+  if(btn){
+    btn.textContent = dark ? "☀️" : "🌙";
+    btn.title = dark ? "1번 디자인으로 전환" : "2번 디자인으로 전환";
+  }
+}
+function toggleTheme(){
+  const current = localStorage.getItem(THEME_KEY) === "dark" ? "dark" : "light";
+  const next = current === "dark" ? "light" : "dark";
+  localStorage.setItem(THEME_KEY, next);
+  applyTheme(next);
+}
+applyTheme(localStorage.getItem(THEME_KEY) === "dark" ? "dark" : "light");
 
 function toggleAdminMode(){
   if(isAdmin){
