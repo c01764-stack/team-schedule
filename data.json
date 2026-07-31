@@ -179,6 +179,17 @@
       "memo": "",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "tx1wcrcf1",
+      "team": "safety",
+      "title": "하반기 점검 자동화 보고",
+      "owner": "이재혁",
+      "due": "2026-08-07",
+      "progress": 50,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
