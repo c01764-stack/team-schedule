@@ -126,7 +126,7 @@
       "progress": 10,
       "memo": "",
       "dueHistory": [],
-      "includeInReport": false
+      "includeInReport": true
     },
     {
       "id": "tecwfcrbc",
