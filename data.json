@@ -6,7 +6,7 @@
       "title": "하반기 점검 자동화 세팅",
       "owner": "천재우",
       "due": "2026-08-14",
-      "progress": 5,
+      "progress": 30,
       "memo": "- 하반기 안전점검 ai 활용 자동화 세팅\n- 자동화 내용: 스마트폰 점검 및 점검결과표 자동 생성,\n   개선 요구서 이메일 자동 발송, 점검 현황 대시보드 자동 생성 및 보고",
       "dueHistory": [],
       "includeInReport": true
