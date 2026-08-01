@@ -170,6 +170,17 @@
       "memo": "",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "t7gr0god3",
+      "team": "edu",
+      "title": "하반기 CS 교육계획 수립",
+      "owner": "주현수",
+      "due": "2026-08-26",
+      "progress": 0,
+      "memo": "- CHM/CHMS 교육 운영 세부 계획수립",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
