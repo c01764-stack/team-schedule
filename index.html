@@ -728,11 +728,18 @@ async function saveRemoteData(message){
   reportDirty.clear();
 }
 
-// 저장 중 다른 사람이 먼저 저장해서 409 충돌이 나면, 최신 원격 데이터를 받아와서
-// 그 위에 "내가 지금 세션에서 바꾼 항목"만 다시 얹은 뒤 자동으로 재저장을 시도한다.
-// 서로 다른 항목을 건드린 경우라면 화면에 아무 알림 없이 자동으로 해결된다.
+function wait(ms){
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// 저장 중 다른 사람(또는 같은 기기의 다른 저장 시도)이 먼저 저장해서 409 충돌이 나면,
+// 최신 원격 데이터를 받아와서 그 위에 "내가 지금 세션에서 바꾼 항목"만 다시 얹은 뒤
+// 자동으로 재저장을 시도한다. 서로 다른 항목을 건드린 경우라면 화면에 아무 알림 없이
+// 자동으로 해결된다. 재시도 전 약간의 무작위 지연을 둬서, 여러 기기가 동시에 같은
+// 타이밍으로 재시도하다가 계속 서로 부딪히는 상황(lockstep)을 줄인다.
 async function resolveConflictAndRetry(message, attemptsLeft){
-  if(attemptsLeft === undefined) attemptsLeft = 3;
+  if(attemptsLeft === undefined) attemptsLeft = 5;
+  await wait(150 + Math.random() * 400);
   const fresh = await fetchRemoteRaw();
   tasks = mergeByKey(fresh.tasks, taskDirty, x => x.id);
   absences = mergeByKey(fresh.absences, absenceDirty, x => x.id);
@@ -756,6 +763,11 @@ function setSyncStatus(state, message){
   el.className = "sync-status" + (state ? " " + state : "");
 }
 
+// 같은 화면에서 여러 저장이 거의 동시에 발생하면(예: 체크박스를 여러 개 빠르게 클릭),
+// 저장 요청들이 서로 겹치면서 스스로와 충돌을 일으킬 수 있다. saveQueue로 실제
+// 네트워크 저장은 한 번에 하나씩만 순서대로 실행되도록 묶어서 이런 자체 충돌을 원천 차단한다.
+let saveQueue = Promise.resolve();
+
 function persist(message){
   if(!ghConfig) return;
   if(!ghConfig.token){
@@ -763,9 +775,14 @@ function persist(message){
     fetchRemoteData().catch(()=>{}).finally(render);
     return;
   }
+  saveQueue = saveQueue.then(() => doPersist(message));
+  return saveQueue;
+}
+
+function doPersist(message){
   isSaving = true;
   setSyncStatus("saving", "저장 중...");
-  saveRemoteData(message)
+  return saveRemoteData(message)
     .then(() => {
       setSyncStatus("idle", "동기화됨 · " + nowTimeLabel());
     })
