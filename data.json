@@ -192,6 +192,17 @@
       "memo": "",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "twugyxlww",
+      "team": "safety",
+      "title": "하반기 안전보건 점검 계획 수립",
+      "owner": "천재우",
+      "due": "2026-08-26",
+      "progress": 10,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
