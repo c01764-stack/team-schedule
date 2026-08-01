@@ -181,6 +181,17 @@
       "memo": "- CHM/CHMS 사업장 선정 및 일정 수립\n- 교육 운영 세부 내용 정리 등(결과 설문 등)",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "trkvu6sjp",
+      "team": "safety",
+      "title": "하반기 안전보건 점검 계획 수립",
+      "owner": "천재우",
+      "due": "2026-08-19",
+      "progress": 10,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
