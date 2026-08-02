@@ -275,6 +275,15 @@
       "start": "2026-08-03",
       "end": "2026-08-03",
       "memo": "연차"
+    },
+    {
+      "id": "t1gv7c9kp",
+      "team": "safety",
+      "person": "천재우",
+      "type": "inspect",
+      "start": "2026-08-03",
+      "end": "2026-08-03",
+      "memo": "KT&G 점검"
     }
   ],
   "reports": [
