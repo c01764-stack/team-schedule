@@ -189,11 +189,10 @@
       "title": "파일럿 차수 운영 일정 확정",
       "owner": "주현수",
       "due": "2026-08-05",
-      "progress": 100,
+      "progress": 90,
       "memo": "",
       "dueHistory": [],
-      "includeInReport": true,
-      "completedAt": "2026-08-02T22:46:13.854Z"
+      "includeInReport": true
     }
   ],
   "absences": [
