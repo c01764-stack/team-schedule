@@ -192,6 +192,17 @@
       "memo": "",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "twzt7r34g",
+      "team": "edu",
+      "title": "파일럿 차수 운영 일정 확정",
+      "owner": "주현수",
+      "due": "2026-08-05",
+      "progress": 20,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
