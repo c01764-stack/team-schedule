@@ -181,6 +181,15 @@
   .absence-chip.etc .dot{background:var(--etc);}
   .absence-empty{color:var(--sub);font-size:13px;}
 
+  .notice-banner:empty{display:none;}
+  .notice-banner{background:linear-gradient(135deg,#fff7e6,#fff1f2);border:1px solid var(--border);border-radius:18px;padding:14px 16px;margin-bottom:22px;box-shadow:0 10px 28px rgba(30,20,70,.14);}
+  .notice-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .notice-banner h3{margin:0;font-size:15.5px;color:#c2410c;font-weight:800;}
+  .notice-edit-btn{border:2px solid var(--border);background:#fff;border-radius:999px;padding:5px 13px;font-size:12px;cursor:pointer;color:var(--violet);font-weight:700;}
+  .notice-edit-btn:hover{background:var(--edu-tint);border-color:var(--violet);}
+  .notice-text{font-size:14px;line-height:1.7;color:var(--text);white-space:pre-wrap;word-break:break-word;}
+  .notice-updated{display:block;margin-top:10px;font-size:11.5px;color:var(--sub);}
+
   .type-badge{display:inline-block;padding:4px 11px;border-radius:999px;font-size:12px;font-weight:700;}
   .type-badge.inspect{background:#e0e7ff;color:#4338ca;}
   .type-badge.training{background:#fae8ff;color:#a21caf;}
@@ -371,6 +380,9 @@
   [data-theme="dark"] .absence-banner{background:linear-gradient(135deg,rgba(99,102,241,.10),rgba(236,72,153,.08));box-shadow:0 10px 28px rgba(34,211,238,.08);}
   [data-theme="dark"] .absence-banner h3{color:#f472b6;}
   [data-theme="dark"] .absence-chip{border:1px solid var(--border);background:var(--card);box-shadow:0 2px 8px rgba(0,0,0,.3);}
+  [data-theme="dark"] .notice-banner{background:linear-gradient(135deg,rgba(251,191,36,.12),rgba(244,63,94,.08));box-shadow:0 10px 28px rgba(34,211,238,.08);}
+  [data-theme="dark"] .notice-banner h3{color:#fbbf24;}
+  [data-theme="dark"] .notice-edit-btn{background:var(--card);}
   [data-theme="dark"] .type-badge.inspect{background:rgba(99,102,241,.18);color:#a5b4fc;}
   [data-theme="dark"] .type-badge.training{background:rgba(217,70,239,.16);color:#f0abfc;}
   [data-theme="dark"] .type-badge.leave{background:rgba(245,158,11,.16);color:#fcd34d;}
@@ -428,11 +440,13 @@
 
   <div class="absence-banner" id="absenceBanner"></div>
 
+  <div class="notice-banner" id="noticeBanner"></div>
+
   <div class="add-form" id="taskAddForm">
     <div>
       <label>팀</label>
       <select id="inTeam">
-        <option value="safety">안전관리</option>
+        <option value="safety">안전</option>
         <option value="edu">교육</option>
         <option value="etc">기타</option>
       </select>
@@ -464,7 +478,7 @@
     <div>
       <label>팀</label>
       <select id="absTeam">
-        <option value="safety">안전관리</option>
+        <option value="safety">안전</option>
         <option value="edu">교육</option>
         <option value="etc">기타</option>
       </select>
@@ -499,7 +513,7 @@
 
   <div class="tabs" id="tabs">
     <div class="tab active" data-tab="all">전체</div>
-    <div class="tab" data-tab="safety">안전관리</div>
+    <div class="tab" data-tab="safety">안전</div>
     <div class="tab" data-tab="edu">교육</div>
     <div class="tab" data-tab="etc">기타</div>
     <div class="tab" data-tab="absence">주요 일정</div>
@@ -517,7 +531,7 @@
 <script>
 const GH_CONFIG_KEY = "ghSyncConfig_v1";
 const TEAM_META = {
-  safety: {label:"안전관리", color:"var(--safety)", cls:"safety"},
+  safety: {label:"안전", color:"var(--safety)", cls:"safety"},
   edu: {label:"교육", color:"var(--edu)", cls:"edu"},
   etc: {label:"기타", color:"var(--etc)", cls:"etc"}
 };
@@ -552,11 +566,13 @@ function b64ToUtf8(str){ return decodeURIComponent(escape(atob(str))); }
 let tasks = [];
 let absences = [];
 let reports = []; // 주간업무보고 기록: {weekStart, weekEnd, body, email, savedAt, sentAt}
+let notice = { text: "", updatedAt: null }; // 주요 전달사항 (공지)
 // 충돌(409) 발생 시 자동 병합·재저장을 위해, 이번 세션에서 아직 저장에 성공하지 못한
 // 변경분만 추적한다. 값이 'DELETE'면 삭제, 그 외에는 최신 객체(참조)를 의미한다.
 let taskDirty = new Map();
 let absenceDirty = new Map();
 let reportDirty = new Map();
+let noticeDirty = false; // notice는 단일 객체라 id 기반 dirty map 대신 플래그로 추적
 let activeTab = "all";
 let calState = { year: new Date().getFullYear(), month: new Date().getMonth() };
 
@@ -649,7 +665,7 @@ async function fetchRemoteRaw(){
   if(ghConfig.token) headers["Authorization"] = `Bearer ${ghConfig.token}`;
   const res = await fetch(`${ghUrl()}?ref=${encodeURIComponent(ghConfig.branch || 'main')}`, { headers });
   if(res.status === 404){
-    return { tasks: [], absences: [], reports: [], sha: null, isNew: true };
+    return { tasks: [], absences: [], reports: [], notice: { text:"", updatedAt:null }, sha: null, isNew: true };
   }
   if(res.status === 401 || res.status === 403){
     throw new Error("토큰이 유효하지 않거나 권한이 없습니다. 설정을 확인해주세요.");
@@ -667,9 +683,10 @@ async function fetchRemoteRaw(){
   const freshTasks = Array.isArray(data.tasks) ? data.tasks : [];
   const freshAbsences = Array.isArray(data.absences) ? data.absences : [];
   const freshReports = Array.isArray(data.reports) ? data.reports : [];
+  const freshNotice = (data.notice && typeof data.notice.text === 'string') ? data.notice : { text:"", updatedAt:null };
   freshTasks.forEach(t => { if(!Array.isArray(t.dueHistory)) t.dueHistory = []; });
   freshAbsences.forEach(a => { if(!TYPE_META[a.type]) a.type = LEGACY_TYPE_MAP[a.type] || "etc"; });
-  return { tasks: freshTasks, absences: freshAbsences, reports: freshReports, sha: json.sha, isNew: false };
+  return { tasks: freshTasks, absences: freshAbsences, reports: freshReports, notice: freshNotice, sha: json.sha, isNew: false };
 }
 
 async function fetchRemoteData(){
@@ -677,10 +694,12 @@ async function fetchRemoteData(){
   tasks = fresh.tasks;
   absences = fresh.absences;
   reports = fresh.reports;
+  notice = fresh.notice;
   fileSha = fresh.sha;
   taskDirty.clear();
   absenceDirty.clear();
   reportDirty.clear();
+  noticeDirty = false;
   return { isNew: fresh.isNew };
 }
 
@@ -698,7 +717,7 @@ function mergeByKey(freshArr, dirtyMap, keyFn){
 async function saveRemoteData(message){
   const body = {
     message: message || "업데이트",
-    content: utf8ToB64(JSON.stringify({ tasks, absences, reports }, null, 2)),
+    content: utf8ToB64(JSON.stringify({ tasks, absences, reports, notice }, null, 2)),
     branch: ghConfig.branch || "main"
   };
   if(fileSha) body.sha = fileSha;
@@ -726,6 +745,7 @@ async function saveRemoteData(message){
   taskDirty.clear();
   absenceDirty.clear();
   reportDirty.clear();
+  noticeDirty = false;
 }
 
 function wait(ms){
@@ -744,6 +764,7 @@ async function resolveConflictAndRetry(message, attemptsLeft){
   tasks = mergeByKey(fresh.tasks, taskDirty, x => x.id);
   absences = mergeByKey(fresh.absences, absenceDirty, x => x.id);
   reports = mergeByKey(fresh.reports, reportDirty, x => x.weekStart);
+  if(!noticeDirty) notice = fresh.notice;
   fileSha = fresh.sha;
   render();
   try{
@@ -1102,6 +1123,61 @@ function renderAbsenceBanner(){
   el.innerHTML = `<h3>주요 일정 (${dayList.length}명)</h3>${nav}<div class="absence-chips">${chips}</div>`;
 }
 
+function renderNoticeBanner(){
+  const el = document.getElementById("noticeBanner");
+  if(!el) return;
+  const hasText = notice && notice.text && notice.text.trim();
+  const editBtn = isAdmin ? `<button class="notice-edit-btn" onclick="openEditNotice()">${hasText ? '수정' : '작성'}</button>` : '';
+  if(!hasText){
+    if(!isAdmin){ el.innerHTML = ''; return; }
+    el.innerHTML = `<h3>주요 전달사항</h3>${editBtn}<div class="absence-empty">등록된 전달사항이 없습니다.</div>`;
+    return;
+  }
+  const updatedLabel = notice.updatedAt ? `<span class="notice-updated">${formatDateTime(notice.updatedAt)} 업데이트</span>` : '';
+  el.innerHTML = `
+    <div class="notice-head"><h3>주요 전달사항</h3>${editBtn}</div>
+    <div class="notice-text">${escapeHtml(notice.text).replace(/\n/g,'<br>')}</div>
+    ${updatedLabel}
+  `;
+}
+
+function openEditNotice(){
+  if(!isAdmin){ alert("관리자 모드에서만 작성할 수 있습니다."); return; }
+  openModal(`
+    <h3>주요 전달사항 작성</h3>
+    <div class="field">
+      <label>내용</label>
+      <textarea id="modalNoticeText" rows="6" placeholder="팀 전체에 전달할 공지사항을 입력하세요">${escapeHtml(notice.text || '')}</textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" style="margin-right:auto;color:var(--red);" onclick="clearNotice()">비우기</button>
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-primary" onclick="saveNoticeEdit()">저장</button>
+    </div>
+  `);
+}
+
+function saveNoticeEdit(){
+  if(!isAdmin){ alert("관리자 모드에서만 작성할 수 있습니다."); return; }
+  const text = document.getElementById("modalNoticeText").value.trim();
+  const changed = text !== (notice.text || '');
+  notice = { text, updatedAt: new Date().toISOString() };
+  noticeDirty = true;
+  closeModal();
+  render();
+  if(changed) persist("주요 전달사항 수정");
+}
+
+function clearNotice(){
+  if(!isAdmin){ alert("관리자 모드에서만 변경할 수 있습니다."); return; }
+  if(!confirm("전달사항을 비울까요?")) return;
+  notice = { text: "", updatedAt: new Date().toISOString() };
+  noticeDirty = true;
+  closeModal();
+  render();
+  persist("주요 전달사항 비움");
+}
+
 function buildCalendarMatrix(year, month){
   const firstOfMonth = new Date(year, month, 1);
   const startWeekday = firstOfMonth.getDay();
@@ -1434,6 +1510,7 @@ function render(){
   updateSetupBanner();
   renderSummary();
   renderAbsenceBanner();
+  renderNoticeBanner();
   renderContent();
 }
 
@@ -1561,7 +1638,7 @@ function openEditAbsence(id){
     <div class="field">
       <label>팀</label>
       <select id="modalAbsTeam">
-        <option value="safety" ${a.team==='safety'?'selected':''}>안전관리</option>
+        <option value="safety" ${a.team==='safety'?'selected':''}>안전</option>
         <option value="edu" ${a.team==='edu'?'selected':''}>교육</option>
         <option value="etc" ${a.team==='etc'?'selected':''}>기타</option>
       </select>
