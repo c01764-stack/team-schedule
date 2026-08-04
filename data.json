@@ -29,9 +29,10 @@
       "title": "인사평가 제출",
       "owner": "천재우",
       "due": "2026-07-31",
-      "progress": 95,
+      "progress": 100,
       "memo": "",
-      "dueHistory": []
+      "dueHistory": [],
+      "completedAt": "2026-08-04T23:54:23.696Z"
     },
     {
       "id": "tyd3wmw9q",
