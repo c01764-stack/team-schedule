@@ -201,6 +201,17 @@
         }
       ],
       "includeInReport": true
+    },
+    {
+      "id": "tl3s8mf6a",
+      "team": "edu",
+      "title": "상반기 모니터링 피드백 영상",
+      "owner": "오혜지",
+      "due": "2026-08-31",
+      "progress": 10,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
