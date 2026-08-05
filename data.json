@@ -229,7 +229,7 @@
       "owner": "이재혁",
       "due": "2026-08-06",
       "progress": 0,
-      "memo": "둔산 유현종 팀장 문의 사항",
+      "memo": "둔산 유현종 팀장 문의\n- 보건위탁업체(cmi)에서 심혈관질환 조사 시행 필요 안내\n- 관련 내용 시행 여부 문의",
       "dueHistory": [],
       "includeInReport": true
     }
