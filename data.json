@@ -126,7 +126,7 @@
       "title": "정기 취합업무 자동화 세팅 (AI)",
       "owner": "이재혁",
       "due": "2026-08-07",
-      "progress": 90,
+      "progress": 100,
       "memo": "- 정기 취합 업무 내용:\n   안전교육, 건강검진, 업무일지, 위탁업체 보고서\n- 자동화 기능: \n   업로드 현황 대시보드 + 일괄 다운로드, 미업로드 사업장 문자 발송 등",
       "dueHistory": [
         {
@@ -136,7 +136,8 @@
           "reason": ""
         }
       ],
-      "includeInReport": true
+      "includeInReport": true,
+      "completedAt": "2026-08-05T01:51:05.974Z"
     },
     {
       "id": "tz4gc35a1",
