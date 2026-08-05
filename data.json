@@ -369,6 +369,15 @@
       "start": "2026-08-11",
       "end": "2026-08-11",
       "memo": "T-타워/시스템 회의"
+    },
+    {
+      "id": "tpm8ckmmg",
+      "team": "safety",
+      "person": "천재우",
+      "type": "leave",
+      "start": "2026-08-21",
+      "end": "2026-08-21",
+      "memo": ""
     }
   ],
   "reports": [
