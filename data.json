@@ -221,6 +221,17 @@
       "memo": "",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "tiaz5il0m",
+      "team": "safety",
+      "title": "심혈관계 질환 관련 문의사항 정리",
+      "owner": "이재혁",
+      "due": "2026-08-06",
+      "progress": 0,
+      "memo": "둔산 유현종 팀장 문의 사항",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
