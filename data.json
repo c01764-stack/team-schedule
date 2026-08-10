@@ -199,7 +199,7 @@
       "title": "파일럿 차수 교육 일정 확정",
       "owner": "주현수",
       "due": "2026-08-07",
-      "progress": 20,
+      "progress": 100,
       "memo": "4개 사업장(인재원, 성수, KT&G, 영시티)",
       "dueHistory": [
         {
@@ -209,7 +209,8 @@
           "reason": ""
         }
       ],
-      "includeInReport": true
+      "includeInReport": true,
+      "completedAt": "2026-08-10T08:07:14.070Z"
     },
     {
       "id": "tl3s8mf6a",
