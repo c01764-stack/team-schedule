@@ -104,10 +104,17 @@
       "team": "safety",
       "title": "사업장 TBM 계획 수립",
       "owner": "천재우",
-      "due": "2026-08-07",
+      "due": "2026-08-14",
       "progress": 40,
       "memo": "",
-      "dueHistory": [],
+      "dueHistory": [
+        {
+          "from": "2026-08-07",
+          "to": "2026-08-14",
+          "changedAt": "2026-08-10T11:53:29.465Z",
+          "reason": "사업장 현황 조사 추가 필요"
+        }
+      ],
       "includeInReport": true
     },
     {
