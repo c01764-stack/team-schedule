@@ -267,6 +267,17 @@
       "memo": "- 유해가스 측정기 현황 파악\n- 유해가스 측정기 지급 기준 수립\n- 구입비용, 센서교체 비용, 기판 오류로 인한 기기 교체 주기 등 고려",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "tnfyu59mj",
+      "team": "etc",
+      "title": "쉴더스 안전관리시스템 개발 관련 업무",
+      "owner": "천재우",
+      "due": "2026-08-31",
+      "progress": 30,
+      "memo": "- 공사업체 출입 간소화",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
