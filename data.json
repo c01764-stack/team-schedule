@@ -256,6 +256,17 @@
       "dueHistory": [],
       "includeInReport": true,
       "completedAt": "2026-08-10T08:15:10.592Z"
+    },
+    {
+      "id": "tasjfv4jm",
+      "team": "safety",
+      "title": "유해가스 측정기 구입 검토 및 실행",
+      "owner": "천재우",
+      "due": "2026-08-26",
+      "progress": 10,
+      "memo": "- 유해가스 측정기 현황 파악",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
