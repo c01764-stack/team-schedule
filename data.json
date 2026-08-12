@@ -290,6 +290,17 @@
       "memo": "- 개요: 정기 취합 자료 자동화 시스템에 업로드 안내\n- 대상: 전국 CHM 52개  사업장\n- 취합 내용: 업무일지, 건강검진, 교육, 위탁업체 보고서\n- 일정: 8월 자료부터 시스템에 업로드 안내",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "ta9kl7xyk",
+      "team": "etc",
+      "title": "사업장 마인드 교육 관련 방안",
+      "owner": "천재우",
+      "due": "2026-08-14",
+      "progress": 0,
+      "memo": "근무태만, 윤리, CS,",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
