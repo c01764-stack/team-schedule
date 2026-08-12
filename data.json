@@ -43,7 +43,7 @@
       "progress": 100,
       "memo": "- 박철수 팀장 소뇌경색으로 산재 신청\n- 보험가입자 의견서, 시실관계 확인서 작성",
       "dueHistory": [],
-      "includeInReport": true,
+      "includeInReport": false,
       "completedAt": "2026-07-31T02:22:25.589Z"
     },
     {
