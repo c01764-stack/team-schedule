@@ -109,10 +109,11 @@
       "title": "MSDS 개정안 시행 안내",
       "owner": "이재혁",
       "due": "2026-08-12",
-      "progress": 10,
+      "progress": 100,
       "memo": "- 산업안전보건법 개정안내\n- msds 관리 방법 번경\n- msds 관리 대장 작성 및 본사 보고",
       "dueHistory": [],
-      "includeInReport": true
+      "includeInReport": true,
+      "completedAt": "2026-08-12T06:08:02.937Z"
     },
     {
       "id": "ti4zvl673",
