@@ -317,10 +317,11 @@
       "title": "사업장 마인드 교육 관련 방안",
       "owner": "천재우",
       "due": "2026-08-14",
-      "progress": 0,
+      "progress": 100,
       "memo": "- 개요: 사업장 교육, 모니터링 등 전반 관리 방법 고민\n- 교육 내용: 근무 태만, 윤리, CS\n- 기본업무수칙 자체 점검 및 시행 작성 및 보고 완료(교육 담당 작성)",
       "dueHistory": [],
-      "includeInReport": true
+      "includeInReport": true,
+      "completedAt": "2026-08-14T00:24:07.560Z"
     },
     {
       "id": "tjzxpmr2t",
