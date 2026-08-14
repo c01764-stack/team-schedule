@@ -329,7 +329,7 @@
       "owner": "주현수",
       "due": "2026-09-30",
       "progress": 0,
-      "memo": "- 내용: 직원 배포용 수칩 제착",
+      "memo": "- 개요: 직원 배포용 수칩 제착\n- 수첩내용: 고객응대, 근무수칙 등",
       "dueHistory": [],
       "includeInReport": true
     }
