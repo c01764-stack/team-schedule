@@ -321,6 +321,17 @@
       "memo": "- 개요: 사업장 교육, 모니터링 등 전반 관리 방법 고민\n- 교육 내용: 근무 태만, 윤리, CS",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "tjzxpmr2t",
+      "team": "edu",
+      "title": "직원 수첩 제작",
+      "owner": "주현수",
+      "due": "2026-09-30",
+      "progress": 0,
+      "memo": "- 내용: 직원 배포용 수칩 제착",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
