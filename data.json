@@ -363,6 +363,17 @@
       "memo": "- 사실관계 확인서 근로복지공단 제출(14일)\n- 추가 사실관계확인서 제출 필요(21일까지)\n- 보험가입자 의견서 제출 필요(21일까지)",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "tp77cisq8",
+      "team": "safety",
+      "title": "안전관리 시스템 개발",
+      "owner": "천재우",
+      "due": "2026-08-21",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
