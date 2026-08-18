@@ -335,6 +335,17 @@
       "memo": "- 개요: 직원 배포용 수칩 제착\n- 수첩내용: 고객응대, 근무수칙 등",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "topooyqtu",
+      "team": "etc",
+      "title": "계약구조에 따른 안전관리 주요 내용 정리",
+      "owner": "천재우",
+      "due": "2026-08-20",
+      "progress": 10,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
