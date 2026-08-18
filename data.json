@@ -363,6 +363,17 @@
       "memo": "- 사실관계 확인서 근로복지공단 제출(14일)\n- 추가 사실관계확인서 제출 필요(21일까지)\n- 보험가입자 의견서 제출 필요(21일까지)",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "tz804aumg",
+      "team": "safety",
+      "title": "무재해활동 100일 포상 실행",
+      "owner": "이재혁",
+      "due": "2026-08-25",
+      "progress": 0,
+      "memo": "유산균 지급",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
