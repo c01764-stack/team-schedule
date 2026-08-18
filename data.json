@@ -346,6 +346,17 @@
       "memo": "",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "t05smgofs",
+      "team": "safety",
+      "title": "태평사옥 산업재해 대응",
+      "owner": "천재우",
+      "due": "2026-08-31",
+      "progress": 30,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
