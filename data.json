@@ -346,6 +346,17 @@
       "memo": "",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "t71ot61qa",
+      "team": "safety",
+      "title": "태평사업장 산업재해 대응",
+      "owner": "이재혁",
+      "due": "2026-08-21",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
