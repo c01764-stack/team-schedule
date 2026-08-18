@@ -135,7 +135,7 @@
       "title": "사업장 TBM 계획 수립",
       "owner": "천재우",
       "due": "2026-08-14",
-      "progress": 40,
+      "progress": 100,
       "memo": "- 사업장 현황 추가 조사 및 의견 수렴 필요",
       "dueHistory": [
         {
@@ -145,7 +145,8 @@
           "reason": "사업장 현황 조사 추가 필요"
         }
       ],
-      "includeInReport": true
+      "includeInReport": true,
+      "completedAt": "2026-08-18T00:16:16.493Z"
     },
     {
       "id": "tecwfcrbc",
