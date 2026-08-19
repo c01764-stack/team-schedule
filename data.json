@@ -385,6 +385,17 @@
       "memo": "- 업체 comm: 일정확인, 체크리스트 정리 등",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "t9nprqlav",
+      "team": "etc",
+      "title": "회사소개서 제작",
+      "owner": "천재우",
+      "due": "2026-10-09",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
