@@ -374,6 +374,17 @@
       "memo": "- 대상 사업장 유산균 구입/지급, 지출결의서 작성\n- 본리 외 4개 사업장, 총 715,800원",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "ttfcv2d18",
+      "team": "edu",
+      "title": "하반기 모니터링 진행",
+      "owner": "주현수",
+      "due": "2026-08-31",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
