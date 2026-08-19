@@ -340,7 +340,7 @@
       "progress": 0,
       "memo": "- 개요: 직원 배포용 수칩 제착\n- 수첩내용: 고객응대, 근무수칙 등",
       "dueHistory": [],
-      "includeInReport": true
+      "includeInReport": false
     },
     {
       "id": "topooyqtu",
