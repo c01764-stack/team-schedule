@@ -418,6 +418,17 @@
       "memo": "- 기업문화활동 내용 검토\n(CHM/CHMS 사전 회의 및 의견 취합/8월 마지막 주 회의)\n- 진행 보고서 작성 보고",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "toi55r964",
+      "team": "etc",
+      "title": "회사소개서 제작",
+      "owner": "천재우",
+      "due": "2026-10-09",
+      "progress": 5,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
