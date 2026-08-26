@@ -236,10 +236,17 @@
       "team": "edu",
       "title": "하반기 CS 교육계획 수립",
       "owner": "주현수",
-      "due": "2026-08-26",
+      "due": "2026-09-01",
       "progress": 5,
       "memo": "- CHM/CHMS 사업장 선정 및 일정 수립\n- 교육 운영 세부 내용 정리 등(결과 설문 등)\n- 교육 피드백 설문(Qr링크 활용)\n- 교육 실시 계획(안) 작성 보고(1page)\n8/26\n- 28일까지 CHM 일정 확인",
-      "dueHistory": [],
+      "dueHistory": [
+        {
+          "from": "2026-08-26",
+          "to": "2026-09-01",
+          "changedAt": "2026-08-26T00:55:17.667Z",
+          "reason": "기타"
+        }
+      ],
       "includeInReport": true
     },
     {
