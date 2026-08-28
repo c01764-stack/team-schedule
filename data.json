@@ -457,6 +457,17 @@
       "memo": "- 1차 초안 작성/목차 구성 및 내용 정리 >>> 11일까지\n(목차 및 내용정리, 업무 분담)\n- 디자인/제작사 미팅/3개 업체 >>> 18일까지\n(제작 프로세스 소요시간, 비용 등)",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "tlxo3941z",
+      "team": "safety",
+      "title": "본사 캐비넷 정리",
+      "owner": "이재혁",
+      "due": "2026-09-11",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
