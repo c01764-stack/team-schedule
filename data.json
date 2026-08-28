@@ -713,6 +713,15 @@
       "start": "2026-09-10",
       "end": "2026-09-10",
       "memo": "오후 반차"
+    },
+    {
+      "id": "ta7xxqo2l",
+      "team": "safety",
+      "person": "이재혁",
+      "type": "inspect",
+      "start": "2026-09-01",
+      "end": "2026-09-01",
+      "memo": "SK-P타워 점검"
     }
   ],
   "reports": [
