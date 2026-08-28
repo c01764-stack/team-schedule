@@ -396,10 +396,11 @@
       "title": "태평사업장 산업재해 대응",
       "owner": "이재혁",
       "due": "2026-08-21",
-      "progress": 10,
+      "progress": 100,
       "memo": "- 사실관계 확인서 근로복지공단 제출(14일)\n- 추가 사실관계확인서 제출 필요(21일까지)\n- 보험가입자 의견서 제출 필요(21일까지)\n- 최종 확인/검토(20일) 후 21일 발송예정\n- 사업주 의견 본부장님 피드백 수정 후 발송",
       "dueHistory": [],
-      "includeInReport": true
+      "includeInReport": true,
+      "completedAt": "2026-08-28T04:55:11.958Z"
     },
     {
       "id": "tz804aumg",
