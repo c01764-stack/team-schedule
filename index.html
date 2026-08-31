@@ -912,6 +912,11 @@ let ghConfig = null;
 try{ ghConfig = JSON.parse(localStorage.getItem(GH_CONFIG_KEY) || "null"); }catch(e){ ghConfig = null; }
 let fileSha = null;
 let isSaving = false;
+// 원격 데이터를 "한 번이라도 제대로 읽었는가". 읽지 못한 상태에서는
+// 계정 생성 화면을 띄우지도, 저장하지도 않는다. 읽기에 실패한 것을
+// "데이터가 없다"로 착각해서 기존 파일을 덮어쓰는 사고를 막기 위한 안전장치다.
+let dataLoaded = false;
+let loadError = null;
 let autoRefreshTimer = null;
 
 // isAdmin 은 이제 로그인한 계정의 역할(role === 'admin')로 결정된다.
@@ -1024,6 +1029,7 @@ function logout(){
 // 'ok'       : 통과
 function authState(){
   if(!ghConfig) return "nosetup";
+  if(!dataLoaded) return "loaderror";   // 아직 한 번도 못 읽었다
   if(!users.length) return "nousers";
   if(!currentUser) return "login";
   return "ok";
@@ -1048,6 +1054,23 @@ function renderAuthGate(){
       <h2>업무관리 대시보드</h2>
       <p class="auth-sub">먼저 GitHub 동기화 설정이 필요합니다. 저장소 정보와 토큰을 입력하면 팀 데이터를 불러옵니다.</p>
       <button class="btn-primary" onclick="openSettings()">동기화 설정하기</button>
+    `;
+    return false;
+  }
+
+  if(state === "loaderror"){
+    box.innerHTML = `
+      <h2>데이터를 불러오지 못했습니다</h2>
+      <p class="auth-sub">
+        저장소의 데이터 파일을 읽지 못했습니다. 잠시 후 다시 시도해주세요.<br>
+        <b>기존 데이터는 저장소에 그대로 있습니다.</b> 이 화면에서는 아무것도 저장되지 않으니 안심하셔도 됩니다.
+      </p>
+      ${loadError ? `<div class="pw-warn">${escapeHtml(String(loadError))}</div>` : ''}
+      <button class="btn-primary" onclick="loadInitial()">다시 불러오기</button>
+      <div class="auth-foot">
+        인터넷 연결이나 토큰이 문제일 수 있습니다.
+        <button onclick="openSettings()">동기화 설정 열기</button>
+      </div>
     `;
     return false;
   }
@@ -1506,12 +1529,13 @@ function ghUrl(){
 
 async function fetchRemoteRaw(){
   // 브라우저/중간 캐시가 예전 응답을 돌려주면 낡은 sha 로 저장을 시도하게 되고,
-  // 그러면 재시도를 아무리 해도 계속 충돌한다. 캐시를 확실히 끄고 매번 새로 받는다.
-  const headers = {
-    "Accept": "application/vnd.github+json",
-    "Cache-Control": "no-cache",
-    "Pragma": "no-cache"
-  };
+  // 그러면 재시도를 아무리 해도 계속 충돌한다. 그래서 캐시를 우회한다.
+  //
+  // 주의: 여기에 Cache-Control / Pragma 같은 요청 헤더를 넣으면 안 된다.
+  // GitHub API 가 CORS 로 허용하는 요청 헤더 목록에 그 둘이 없어서, 넣는 순간
+  // 사전 요청(preflight)이 거부되고 모든 읽기가 실패한다.
+  // 캐시 우회는 URL 뒤의 타임스탬프와 fetch 의 cache 옵션만으로 충분하다.
+  const headers = { "Accept": "application/vnd.github+json" };
   if(ghConfig.token) headers["Authorization"] = `Bearer ${ghConfig.token}`;
   const url = `${ghUrl()}?ref=${encodeURIComponent(ghConfig.branch || 'main')}&_=${Date.now()}`;
   const res = await fetch(url, { headers, cache: "no-store" });
@@ -1547,6 +1571,8 @@ async function fetchRemoteRaw(){
 // 새로고침 경로에서는 절대 쓰지 말 것 (그쪽은 refreshFromRemote 를 쓴다).
 async function loadRemoteData(){
   const fresh = await fetchRemoteRaw();
+  dataLoaded = true;
+  loadError = null;
   tasks = fresh.tasks;
   absences = fresh.absences;
   reports = fresh.reports;
@@ -1756,6 +1782,8 @@ function safeRender(){
 // 30초 뒤 자동 새로고침에 입력이 조용히 사라졌다.
 async function refreshFromRemote(){
   const fresh = await fetchRemoteRaw();
+  dataLoaded = true;
+  loadError = null;
   tasks    = mergeByKey(fresh.tasks,    taskDirty,    x => x.id);
   absences = mergeByKey(fresh.absences, absenceDirty, x => x.id);
   reports  = mergeByKey(fresh.reports,  reportDirty,  x => x.weekStart);
@@ -1839,6 +1867,11 @@ function currentCommitMessage(){
 function persist(message, opts){
   opts = opts || {};
   if(!ghConfig) return Promise.resolve();
+  if(!dataLoaded){
+    // 원격 파일을 읽지 못한 상태에서 저장하면 기존 내용을 통째로 날릴 수 있다.
+    alert("아직 서버에서 데이터를 불러오지 못했습니다. 연결이 복구된 뒤에 다시 시도해주세요.\n(기존 데이터를 덮어쓰지 않도록 저장을 막았습니다)");
+    return Promise.resolve(false);
+  }
   if(!ghConfig.token){
     alert("읽기 전용 모드입니다. 이 기기에서는 저장할 수 없습니다. 편집하려면 설정(⚙)에서 토큰을 입력해주세요.");
     return refreshFromRemote().catch(()=>{});
@@ -2017,8 +2050,9 @@ async function loadInitial(){
     }
     setSyncStatus("idle", (ghConfig.token ? "동기화됨" : "읽기 전용") + " · " + nowTimeLabel());
   }catch(err){
+    // 못 읽었으면 "데이터가 없다"가 아니라 "연결이 안 된다"로 다룬다.
+    loadError = err && (err.message || String(err));
     setSyncStatus("error", "연결 실패");
-    alert("GitHub 연결에 실패했습니다: " + (err.message || err) + "\n설정을 다시 확인해주세요.");
   }
   render();
   startAutoRefresh();
