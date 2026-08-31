@@ -873,6 +873,19 @@
   ],
   "notice": {
     "text": "★ 주요 일정 수시 업로드 필요  (점검/교육/외근/휴가/미팅 등)",
-    "updatedAt": "2026-08-12T07:41:39.869Z"
-  }
+    "updatedAt": "2026-08-12T07:41:39.869Z",
+    "noticeId": "n_legacy",
+    "reads": []
+  },
+  "users": [
+    {
+      "id": "c01764",
+      "name": "천재우",
+      "role": "admin",
+      "salt": "9cb0f9dea887e91f864c29d4ce08e868",
+      "hash": "34d29c4f83a57d0013ddf46ea9de7dc728eb965d999a90118a9522c891b00a82",
+      "iter": 150000,
+      "createdAt": "2026-08-31T12:58:43.424Z"
+    }
+  ]
 }
