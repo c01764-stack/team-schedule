@@ -106,7 +106,16 @@
 
   .user-chip{background:var(--card);border:2px solid var(--edu);border-radius:999px;padding:6px 14px;font-size:12.5px;
     font-weight:700;color:var(--text);box-shadow:0 3px 10px rgba(139,92,246,.15);white-space:nowrap;}
+  .user-chip{cursor:pointer;}
+  .user-chip:hover{border-color:var(--violet);}
   .user-chip .role{font-size:11px;color:var(--sub);font-weight:600;margin-left:5px;}
+  .user-chip.pw-temp{border-color:var(--orange);}
+  .pw-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--orange);margin-left:6px;
+    vertical-align:middle;box-shadow:0 0 0 3px rgba(245,158,11,.2);}
+  .pw-warn{background:#fff7e6;border:1.5px solid #fcd34d;color:#92400e;border-radius:12px;
+    padding:10px 12px;font-size:12px;font-weight:600;line-height:1.5;margin-bottom:14px;}
+  .acct-temp{display:inline-block;margin-left:5px;padding:2px 7px;border-radius:999px;
+    background:#fef3c7;color:#b45309;font-size:10px;font-weight:800;}
 
   /* ---------- 전달사항 읽음 확인 ---------- */
   .notice-reads{margin-top:12px;padding-top:11px;border-top:1px dashed var(--border);
@@ -131,7 +140,7 @@
   .acct-table{width:100%;border-collapse:collapse;margin-top:6px;}
   .acct-table{table-layout:fixed;}
   .acct-table th,.acct-table td{padding:8px 6px;font-size:12px;border-bottom:1px solid var(--border);text-align:left;vertical-align:middle;}
-  .acct-table col.a-id{width:90px;} .acct-table col.a-name{width:84px;} .acct-table col.a-role{width:66px;}
+  .acct-table col.a-id{width:90px;} .acct-table col.a-name{width:84px;} .acct-table col.a-role{width:98px;}
   .acct-table th{color:var(--sub);font-weight:700;font-size:11px;}
   .acct-table td.acct-actions{text-align:right;white-space:nowrap;}
   .acct-table button{border:1.5px solid var(--border);background:transparent;border-radius:999px;padding:4px 9px;
@@ -594,6 +603,8 @@
   [data-theme="dark"] .auth-box{box-shadow:0 20px 50px rgba(0,0,0,.55);}
   [data-theme="dark"] .auth-box h2{background:linear-gradient(135deg,#22d3ee,#818cf8 45%,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent;}
   [data-theme="dark"] .user-chip{box-shadow:0 3px 10px rgba(34,211,238,.18);}
+  [data-theme="dark"] .pw-warn{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.45);color:#fcd34d;}
+  [data-theme="dark"] .acct-temp{background:rgba(245,158,11,.18);color:#fcd34d;}
   [data-theme="dark"] .read-btn.done{background:rgba(74,222,128,.16);color:#86efac;border-color:rgba(74,222,128,.35);}
   [data-theme="dark"] .read-btn:disabled{background:rgba(255,255,255,.06);color:var(--sub);}
   [data-theme="dark"] .read-chip{background:rgba(74,222,128,.16);color:#86efac;}
@@ -883,9 +894,11 @@ const AUTH_KEY = "authSession_v1";
 const PBKDF2_ITER = 150000;
 const LEGACY_ADMIN_KEY = "isAdminUnlocked_v1"; // 예전 잠금 흔적 정리용
 
-let users = [];          // [{id, name, role, salt, hash, iter, createdAt}]
+let users = [];          // [{id, name, role, salt, hash, iter, createdAt, pwTemp}]
 let currentUser = null;  // {id, name, role}
-let usersDirty = false;  // 이번 세션에서 계정 목록을 바꿨는지
+// 계정 목록 전체가 아니라 "내가 바꾼 계정"만 추적한다. 두 사람이 동시에
+// 비밀번호를 바꿔도 서로의 변경이 사라지지 않게 하기 위해서다.
+let userDirty = new Map(); // userId -> 계정객체 | 'DELETE'
 
 function bytesToHex(bytes){
   return Array.from(bytes).map(b => b.toString(16).padStart(2,"0")).join("");
@@ -1112,8 +1125,9 @@ async function createFirstAdmin(){
   setAuthError("");
   try{
     const cred = await makeCredential(pw);
-    users = [{ id, name, role:"admin", ...cred, createdAt: new Date().toISOString() }];
-    usersDirty = true;
+    const admin = { id, name, role:"admin", ...cred, createdAt: new Date().toISOString(), pwTemp: false };
+    users = [admin];
+    userDirty.set(admin.id, admin);
     localStorage.setItem("lastLoginId", id);
     localStorage.removeItem(LEGACY_ADMIN_KEY);
     saveSession({ id, name, role:"admin" });
@@ -1126,6 +1140,94 @@ async function createFirstAdmin(){
   }
 }
 
+// ---------- 내 계정 (본인 비밀번호 변경) ----------
+// 관리자가 만들어준 초기 비밀번호를 쓰는 동안은 pwTemp 가 true 고,
+// 본인이 한 번 바꾸면 false 가 된다.
+function usingTempPassword(){
+  if(!currentUser) return false;
+  const u = findUser(currentUser.id);
+  return !!(u && u.pwTemp);
+}
+
+function openMyAccount(){
+  if(!currentUser) return;
+  const u = findUser(currentUser.id);
+  if(!u) return;
+  const temp = !!u.pwTemp;
+  openModal(`
+    <h3>내 계정</h3>
+    <p class="auth-sub" style="margin:-6px 0 14px;">
+      ${escapeHtml(u.name)} · ${escapeHtml(u.id)} · ${u.role === 'admin' ? '관리자' : '팀원'}
+    </p>
+    ${temp ? `<div class="pw-warn">관리자가 정해준 초기 비밀번호를 쓰고 있습니다. 본인만 아는 비밀번호로 바꿔주세요.</div>` : ''}
+    <div class="field">
+      <label>현재 비밀번호</label>
+      <input type="password" id="pwCur" autocomplete="current-password">
+    </div>
+    <div class="field">
+      <label>새 비밀번호</label>
+      <input type="password" id="pwNew" placeholder="8자 이상" autocomplete="new-password">
+    </div>
+    <div class="field">
+      <label>새 비밀번호 확인</label>
+      <input type="password" id="pwNew2" autocomplete="new-password">
+    </div>
+    <p class="auth-error" id="pwError"></p>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">닫기</button>
+      <button class="btn-primary" id="pwSaveBtn" onclick="changeMyPassword()">비밀번호 변경</button>
+    </div>
+  `);
+  const els = ["pwCur","pwNew","pwNew2"].map(id => document.getElementById(id));
+  els.forEach(el => el.addEventListener("keydown", e => { if(e.key === "Enter") changeMyPassword(); }));
+  setTimeout(()=>{ els[0].focus(); }, 50);
+}
+
+async function changeMyPassword(){
+  if(!currentUser) return;
+  const u = findUser(currentUser.id);
+  if(!u) return;
+  const btn = document.getElementById("pwSaveBtn");
+  const err = document.getElementById("pwError");
+  const setErr = m => { if(err) err.textContent = m || ""; };
+
+  const cur = document.getElementById("pwCur").value;
+  const nw  = document.getElementById("pwNew").value;
+  const nw2 = document.getElementById("pwNew2").value;
+
+  if(!cur){ setErr("현재 비밀번호를 입력해주세요."); return; }
+  if(nw.length < 8){ setErr("새 비밀번호는 8자 이상으로 정해주세요."); return; }
+  if(nw !== nw2){ setErr("새 비밀번호 확인이 일치하지 않습니다."); return; }
+  if(nw === cur){ setErr("지금 쓰는 비밀번호와 다르게 정해주세요."); return; }
+  if(!ghConfig || !ghConfig.token){
+    setErr("읽기 전용 모드에서는 비밀번호를 바꿀 수 없습니다. 설정(⚙)에서 토큰을 입력해주세요.");
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = "확인 중...";
+  setErr("");
+  try{
+    const ok = await verifyPassword(u, cur);
+    if(!ok){
+      btn.disabled = false; btn.textContent = "비밀번호 변경";
+      setErr("현재 비밀번호가 올바르지 않습니다.");
+      document.getElementById("pwCur").value = "";
+      document.getElementById("pwCur").focus();
+      return;
+    }
+    const cred = await makeCredential(nw);
+    Object.assign(u, cred, { pwTemp: false, pwChangedAt: new Date().toISOString() });
+    userDirty.set(u.id, u);
+    await persist("비밀번호 변경: " + u.name);
+    closeModal();
+    render();
+    alert("비밀번호를 변경했습니다.");
+  }catch(e){
+    btn.disabled = false; btn.textContent = "비밀번호 변경";
+    setErr("변경에 실패했습니다: " + (e.message || e));
+  }
+}
+
 // ---------- 팀원 계정 관리 (관리자 전용) ----------
 function openAccounts(){
   if(!isAdmin){ alert("관리자만 계정을 관리할 수 있습니다."); return; }
@@ -1133,7 +1235,7 @@ function openAccounts(){
     <tr>
       <td><b>${escapeHtml(u.id)}</b></td>
       <td>${escapeHtml(u.name)}</td>
-      <td><span class="acct-role ${u.role === 'admin' ? 'admin' : 'member'}">${u.role === 'admin' ? '관리자' : '팀원'}</span></td>
+      <td><span class="acct-role ${u.role === 'admin' ? 'admin' : 'member'}">${u.role === 'admin' ? '관리자' : '팀원'}</span>${u.pwTemp ? '<span class="acct-temp" title="초기 비밀번호를 아직 안 바꿨습니다">초기</span>' : ''}</td>
       <td class="acct-actions">
         <button onclick="resetAccountPassword('${escapeHtml(u.id)}')">비번 초기화</button>
         <button onclick="toggleAccountRole('${escapeHtml(u.id)}')">${u.role === 'admin' ? '팀원으로' : '관리자로'}</button>
@@ -1191,8 +1293,9 @@ async function addAccount(){
   btn.disabled = true; btn.textContent = "추가 중...";
   try{
     const cred = await makeCredential(pw);
-    users.push({ id, name, role, ...cred, createdAt: new Date().toISOString() });
-    usersDirty = true;
+    const acct = { id, name, role, ...cred, createdAt: new Date().toISOString(), pwTemp: true };
+    users.push(acct);
+    userDirty.set(acct.id, acct);
     await persist("계정 추가: " + name);
     openAccounts();
     alert(`${name}(${id}) 계정을 만들었습니다.\n초기 비밀번호를 본인에게 전달해주세요: ${pw}`);
@@ -1210,8 +1313,8 @@ async function resetAccountPassword(id){
   if(pw === null) return;
   if(pw.length < 8){ alert("비밀번호는 8자 이상이어야 합니다."); return; }
   const cred = await makeCredential(pw);
-  Object.assign(u, cred);
-  usersDirty = true;
+  Object.assign(u, cred, { pwTemp: true });
+  userDirty.set(u.id, u);
   await persist("비밀번호 초기화: " + u.name);
   openAccounts();
   alert(`${u.name}의 비밀번호를 변경했습니다.\n본인에게 전달해주세요: ${pw}`);
@@ -1228,7 +1331,7 @@ async function toggleAccountRole(id){
   }
   if(!confirm(`${u.name}을(를) ${next === "admin" ? "관리자" : "팀원"}으로 바꿀까요?`)) return;
   u.role = next;
-  usersDirty = true;
+  userDirty.set(u.id, u);
   syncCurrentUser();
   await persist("역할 변경: " + u.name);
   openAccounts();
@@ -1253,7 +1356,7 @@ async function deleteAccount(id){
     notice.reads = notice.reads.filter(r => r.userId !== u.id);
     noticeTextDirty = true;
   }
-  usersDirty = true;
+  userDirty.set(u.id, 'DELETE');
   const wasMe = currentUser && currentUser.id === u.id;
   await persist("계정 삭제: " + u.name);
   if(wasMe){ clearSession(); syncCurrentUser(); render(); return; }
@@ -1284,8 +1387,12 @@ function updateAdminUI(){
   const chip = document.getElementById("userChip");
   if(chip){
     if(currentUser){
+      const temp = usingTempPassword();
       chip.style.display = "";
-      chip.innerHTML = `${escapeHtml(currentUser.name)}<span class="role">${isAdmin ? '관리자' : '팀원'}</span>`;
+      chip.className = "user-chip" + (temp ? " pw-temp" : "");
+      chip.title = temp ? "초기 비밀번호를 쓰고 있습니다 — 클릭해서 변경하세요" : "내 계정 / 비밀번호 변경";
+      chip.onclick = openMyAccount;
+      chip.innerHTML = `${escapeHtml(currentUser.name)}<span class="role">${isAdmin ? '관리자' : '팀원'}</span>${temp ? '<span class="pw-dot" aria-label="초기 비밀번호 사용 중"></span>' : ''}`;
     } else {
       chip.style.display = "none";
     }
@@ -1390,7 +1497,7 @@ async function fetchRemoteData(){
   clearMemoDirty();
   noticeTextDirty = false;
   myReadDirty = null;
-  usersDirty = false;
+  userDirty.clear();
   syncCurrentUser();
   return { isNew: fresh.isNew };
 }
@@ -1537,7 +1644,7 @@ async function saveRemoteData(message){
   clearMemoDirty();
   noticeTextDirty = false;
   myReadDirty = null;
-  usersDirty = false;
+  userDirty.clear();
 }
 
 function wait(ms){
@@ -1558,7 +1665,7 @@ async function resolveConflictAndRetry(message, attemptsLeft){
   reports = mergeByKey(fresh.reports, reportDirty, x => x.weekStart);
   notice = mergeNotice(fresh.notice);
   memos = mergeMemos(fresh.memos);
-  if(!usersDirty) users = fresh.users;
+  users = mergeByKey(fresh.users, userDirty, u => u.id);
   syncCurrentUser();
   fileSha = fresh.sha;
   render();
