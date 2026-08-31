@@ -210,7 +210,7 @@
       "title": "HR 관련 현황 조사(FM사)",
       "owner": "천재우",
       "due": "2026-08-28",
-      "progress": 35,
+      "progress": 100,
       "memo": "- FM 학회 모임 참여사 확인 중\n- FM 학외에 요청 했으나 어려울 것 같음",
       "dueHistory": [
         {
@@ -219,7 +219,8 @@
           "changedAt": "2026-08-13T00:35:35.777Z",
           "reason": ""
         }
-      ]
+      ],
+      "completedAt": "2026-08-31T06:58:47.538Z"
     },
     {
       "id": "tcida7iqr",
