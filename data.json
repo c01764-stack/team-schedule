@@ -494,6 +494,17 @@
       "memo": "",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "t6nny2p65",
+      "team": "edu",
+      "title": "교육관리 시스템 관련 의견",
+      "owner": "주현수",
+      "due": "2026-09-07",
+      "progress": 10,
+      "memo": "- 사업작 교육시행 및 결과보고 간소화",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
