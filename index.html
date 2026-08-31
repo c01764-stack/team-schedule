@@ -83,6 +83,26 @@
   .add-form button{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;border-radius:12px;padding:10px 0;font-size:13px;cursor:pointer;font-weight:700;box-shadow:0 4px 12px rgba(139,92,246,.3);}
   .add-form button:hover{opacity:.92;transform:translateY(-1px);}
 
+  /* ---------- 저장 실패 알림 바 ---------- */
+  .save-error-bar{
+    position:fixed;left:0;right:0;bottom:0;z-index:150;
+    display:none;align-items:center;gap:14px;flex-wrap:wrap;
+    background:#fff1f2;border-top:2px solid #fca5a5;
+    padding:12px 20px;box-shadow:0 -6px 20px rgba(30,20,70,.14);
+  }
+  .save-error-text{flex:1 1 320px;font-size:13px;line-height:1.55;color:#9f1239;min-width:0;}
+  .save-error-text b{color:#be123c;}
+  .save-error-reason{display:block;font-size:11.5px;color:var(--sub);margin-top:3px;word-break:break-word;}
+  .save-error-btn{
+    flex-shrink:0;border:none;border-radius:999px;padding:10px 20px;font-size:13px;font-weight:700;
+    font-family:inherit;cursor:pointer;background:linear-gradient(135deg,#f43f5e,#e11d48);color:#fff;
+    box-shadow:0 4px 12px rgba(244,63,94,.32);
+  }
+  .save-error-btn:hover{transform:translateY(-1px);}
+  .save-error-btn:disabled{background:#f1f0f7;color:var(--sub);box-shadow:none;cursor:default;transform:none;}
+  /* 알림 바가 본문 아래쪽을 가리지 않도록 여백을 준다 */
+  body.has-save-error .wrap{padding-bottom:130px;}
+
   /* ---------- 로그인 게이트 ---------- */
   .auth-overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:20px;
     background:radial-gradient(circle at 10% -10%,rgba(99,102,241,.16),transparent 46%),
@@ -433,6 +453,9 @@
     .add-form, .add-form.absence-form{grid-template-columns:1fr;padding:12px;gap:8px;margin-bottom:16px;}
     .add-form button{padding:12px 0;margin-top:2px;}
     .form-toggle{display:block;}
+    .save-error-bar{padding:11px 14px;gap:10px;}
+    .save-error-text{font-size:12.5px;flex:1 1 100%;}
+    .save-error-btn{width:100%;padding:11px 0;}
     .auth-box{padding:24px 20px;border-radius:18px;}
     .auth-box h2{font-size:19px;}
     .user-chip{padding:5px 11px;font-size:11.5px;}
@@ -610,6 +633,9 @@
   [data-theme="dark"] .modal-box h3{color:#67e8f9;}
   [data-theme="dark"] .modal-actions .btn-primary{background:linear-gradient(135deg,#0891b2,#4f46e5);box-shadow:0 4px 12px rgba(34,211,238,.35);}
   [data-theme="dark"] .modal-actions .btn-ghost{background:rgba(255,255,255,.06);}
+  [data-theme="dark"] .save-error-bar{background:#2a1220;border-top-color:rgba(251,113,133,.5);}
+  [data-theme="dark"] .save-error-text{color:#fda4af;}
+  [data-theme="dark"] .save-error-text b{color:#fecdd3;}
   [data-theme="dark"] .auth-box{box-shadow:0 20px 50px rgba(0,0,0,.55);}
   [data-theme="dark"] .auth-box h2{background:linear-gradient(135deg,#22d3ee,#818cf8 45%,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent;}
   [data-theme="dark"] .user-chip{box-shadow:0 3px 10px rgba(34,211,238,.18);}
@@ -791,6 +817,8 @@
   <div id="content"></div>
 
 </div>
+
+<div class="save-error-bar" id="saveErrorBar" style="display:none;"></div>
 
 <div class="auth-overlay" id="authOverlay">
   <div class="auth-box" id="authBox"></div>
@@ -1142,7 +1170,12 @@ async function createFirstAdmin(){
     localStorage.removeItem(LEGACY_ADMIN_KEY);
     saveSession({ id, name, role:"admin" });
     syncCurrentUser();
-    await persist("관리자 계정 생성: " + name);
+    const ok = await persist("관리자 계정 생성: " + name, { immediate: true });
+    if(!ok){
+      btn.disabled = false; btn.textContent = "관리자 계정 만들기";
+      setAuthError("계정을 저장하지 못했습니다. 잠시 후 [관리자 계정 만들기]를 다시 눌러주세요.");
+      return;
+    }
     render();
   }catch(e){
     btn.disabled = false; btn.textContent = "관리자 계정 만들기";
@@ -1228,7 +1261,12 @@ async function changeMyPassword(){
     const cred = await makeCredential(nw);
     Object.assign(u, cred, { pwTemp: false, pwChangedAt: new Date().toISOString() });
     userDirty.set(u.id, u);
-    await persist("비밀번호 변경: " + u.name);
+    const saved = await persist("비밀번호 변경: " + u.name, { immediate: true });
+    if(!saved){
+      btn.disabled = false; btn.textContent = "비밀번호 변경";
+      setErr("아직 저장되지 않았습니다. 화면 아래 [다시 시도]를 눌러주세요.");
+      return;
+    }
     closeModal();
     render();
     alert("비밀번호를 변경했습니다.");
@@ -1306,9 +1344,13 @@ async function addAccount(){
     const acct = { id, name, role, ...cred, createdAt: new Date().toISOString(), pwTemp: true };
     users.push(acct);
     userDirty.set(acct.id, acct);
-    await persist("계정 추가: " + name);
+    const ok = await persist("계정 추가: " + name, { immediate: true });
     openAccounts();
-    alert(`${name}(${id}) 계정을 만들었습니다.\n초기 비밀번호를 본인에게 전달해주세요: ${pw}`);
+    if(ok){
+      alert(`${name}(${id}) 계정을 만들었습니다.\n초기 비밀번호를 본인에게 전달해주세요: ${pw}`);
+    }else{
+      alert(`${name}(${id}) 계정을 아직 저장하지 못했습니다.\n화면 아래 [다시 시도]를 눌러 저장한 뒤에 비밀번호를 전달해주세요.`);
+    }
   }catch(e){
     btn.disabled = false; btn.textContent = "계정 추가";
     setAcctError("추가 실패: " + (e.message || e));
@@ -1325,9 +1367,11 @@ async function resetAccountPassword(id){
   const cred = await makeCredential(pw);
   Object.assign(u, cred, { pwTemp: true });
   userDirty.set(u.id, u);
-  await persist("비밀번호 초기화: " + u.name);
+  const ok = await persist("비밀번호 초기화: " + u.name, { immediate: true });
   openAccounts();
-  alert(`${u.name}의 비밀번호를 변경했습니다.\n본인에게 전달해주세요: ${pw}`);
+  alert(ok
+    ? `${u.name}의 비밀번호를 변경했습니다.\n본인에게 전달해주세요: ${pw}`
+    : `${u.name}의 새 비밀번호를 아직 저장하지 못했습니다.\n화면 아래 [다시 시도]를 눌러 저장한 뒤에 전달해주세요.`);
 }
 
 async function toggleAccountRole(id){
@@ -1343,7 +1387,7 @@ async function toggleAccountRole(id){
   u.role = next;
   userDirty.set(u.id, u);
   syncCurrentUser();
-  await persist("역할 변경: " + u.name);
+  await persist("역할 변경: " + u.name, { immediate: true });
   openAccounts();
 }
 
@@ -1368,7 +1412,7 @@ async function deleteAccount(id){
   }
   userDirty.set(u.id, 'DELETE');
   const wasMe = currentUser && currentUser.id === u.id;
-  await persist("계정 삭제: " + u.name);
+  await persist("계정 삭제: " + u.name, { immediate: true });
   if(wasMe){ clearSession(); syncCurrentUser(); render(); return; }
   openAccounts();
 }
@@ -1461,9 +1505,16 @@ function ghUrl(){
 }
 
 async function fetchRemoteRaw(){
-  const headers = { "Accept": "application/vnd.github+json" };
+  // 브라우저/중간 캐시가 예전 응답을 돌려주면 낡은 sha 로 저장을 시도하게 되고,
+  // 그러면 재시도를 아무리 해도 계속 충돌한다. 캐시를 확실히 끄고 매번 새로 받는다.
+  const headers = {
+    "Accept": "application/vnd.github+json",
+    "Cache-Control": "no-cache",
+    "Pragma": "no-cache"
+  };
   if(ghConfig.token) headers["Authorization"] = `Bearer ${ghConfig.token}`;
-  const res = await fetch(`${ghUrl()}?ref=${encodeURIComponent(ghConfig.branch || 'main')}`, { headers });
+  const url = `${ghUrl()}?ref=${encodeURIComponent(ghConfig.branch || 'main')}&_=${Date.now()}`;
+  const res = await fetch(url, { headers, cache: "no-store" });
   if(res.status === 404){
     return { tasks: [], absences: [], reports: [], notice: normalizeNotice(null), users: [], memos: [], sha: null, isNew: true };
   }
@@ -1492,7 +1543,9 @@ async function fetchRemoteRaw(){
            notice: freshNotice, users: freshUsers, memos: freshMemos, sha: json.sha, isNew: false };
 }
 
-async function fetchRemoteData(){
+// 최초 로드/설정 변경 때만 쓰는 "전체 교체". 저장 안 된 로컬 변경이 있으면 사라지므로
+// 새로고침 경로에서는 절대 쓰지 말 것 (그쪽은 refreshFromRemote 를 쓴다).
+async function loadRemoteData(){
   const fresh = await fetchRemoteRaw();
   tasks = fresh.tasks;
   absences = fresh.absences;
@@ -1620,7 +1673,12 @@ function mergeByKey(freshArr, dirtyMap, keyFn){
   return Array.from(map.values());
 }
 
+// 편집이 일어날 때마다 1 씩 올라간다. 저장 요청을 만든 시점 이후에 새 편집이
+// 들어왔다면, 저장이 성공해도 그 편집은 아직 반영된 게 아니므로 dirty 를 지우면 안 된다.
+let changeSeq = 0;
+
 async function saveRemoteData(message){
+  const seqAtSend = changeSeq;
   const body = {
     message: message || "업데이트",
     content: utf8ToB64(JSON.stringify({ tasks, absences, reports, notice, users, memos }, null, 2)),
@@ -1636,57 +1694,104 @@ async function saveRemoteData(message){
     },
     body: JSON.stringify(body)
   });
-  if(res.status === 409){
-    const err = new Error("충돌");
-    err.conflict = true;
-    throw err;
-  }
   if(!res.ok){
     let msg = `저장 실패 (HTTP ${res.status})`;
     try{ const errJson = await res.json(); if(errJson.message) msg = errJson.message; }catch(e){}
-    throw new Error(msg);
+    const err = new Error(msg);
+    err.status = res.status;
+    // 409/422 = 그 사이 누가 먼저 저장함(sha 불일치). 최신본을 받아 병합 후 다시 시도하면 된다.
+    if(res.status === 409 || res.status === 422) err.conflict = true;
+    // 429(요청 과다) / 5xx(깃허브 일시 장애)도 잠깐 기다렸다 다시 하면 대개 성공한다.
+    else if(res.status === 429 || res.status >= 500) err.transient = true;
+    throw err;
   }
   const json = await res.json();
   fileSha = json.content.sha;
-  taskDirty.clear();
-  absenceDirty.clear();
-  reportDirty.clear();
-  clearMemoDirty();
-  noticeTextDirty = false;
-  myReadDirty = null;
-  userDirty.clear();
+
+  if(changeSeq === seqAtSend){
+    // 보내는 사이에 새 편집이 없었다 -> 전부 반영 완료
+    taskDirty.clear();
+    absenceDirty.clear();
+    reportDirty.clear();
+    clearMemoDirty();
+    noticeTextDirty = false;
+    myReadDirty = null;
+    userDirty.clear();
+    pendingMessages = [];
+    return true;
+  }
+  // 보내는 사이에 새 편집이 들어왔다 -> dirty 를 남겨두고 한 번 더 저장하게 한다
+  return false;
+}
+
+// 재시도해서 해결될 수 있는 오류인가? (네트워크 끊김은 fetch 가 TypeError 를 던진다)
+function isRetryableSaveError(err){
+  if(!err) return false;
+  if(err.conflict || err.transient) return true;
+  if(err.name === "TypeError") return true;
+  return false;
 }
 
 function wait(ms){
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// 저장 중 다른 사람(또는 같은 기기의 다른 저장 시도)이 먼저 저장해서 409 충돌이 나면,
-// 최신 원격 데이터를 받아와서 그 위에 "내가 지금 세션에서 바꾼 항목"만 다시 얹은 뒤
-// 자동으로 재저장을 시도한다. 서로 다른 항목을 건드린 경우라면 화면에 아무 알림 없이
-// 자동으로 해결된다. 재시도 전 약간의 무작위 지연을 둬서, 여러 기기가 동시에 같은
-// 타이밍으로 재시도하다가 계속 서로 부딪히는 상황(lockstep)을 줄인다.
-async function resolveConflictAndRetry(message, attemptsLeft){
-  if(attemptsLeft === undefined) attemptsLeft = 5;
-  await wait(150 + Math.random() * 400);
+// 아직 서버에 반영되지 못한 내 변경이 남아 있는가?
+function hasUnsavedChanges(){
+  return taskDirty.size > 0 || absenceDirty.size > 0 || reportDirty.size > 0 ||
+         memoDirty.size > 0 || memoCommentDirty.size > 0 || memoCommentDeleted.size > 0 ||
+         memoReadDirty.size > 0 || userDirty.size > 0 ||
+         noticeTextDirty || !!myReadDirty;
+}
+
+// 입력 중이면 화면을 다시 그리지 않는다 (쓰던 글이 날아가지 않도록).
+function safeRender(){
+  if(isEditingField()) return;
+  render();
+}
+
+// 원격 최신본을 받아 그 위에 "내가 아직 저장 못 한 변경"만 다시 얹는다.
+// 자동 새로고침·수동 새로고침·충돌 재시도 모두 이 경로를 쓴다.
+// 예전에는 새로고침이 로컬 변경을 통째로 버려서, 저장이 한 번 실패하면
+// 30초 뒤 자동 새로고침에 입력이 조용히 사라졌다.
+async function refreshFromRemote(){
   const fresh = await fetchRemoteRaw();
-  tasks = mergeByKey(fresh.tasks, taskDirty, x => x.id);
+  tasks    = mergeByKey(fresh.tasks,    taskDirty,    x => x.id);
   absences = mergeByKey(fresh.absences, absenceDirty, x => x.id);
-  reports = mergeByKey(fresh.reports, reportDirty, x => x.weekStart);
-  notice = mergeNotice(fresh.notice);
-  memos = mergeMemos(fresh.memos);
-  users = mergeByKey(fresh.users, userDirty, u => u.id);
+  reports  = mergeByKey(fresh.reports,  reportDirty,  x => x.weekStart);
+  notice   = mergeNotice(fresh.notice);
+  memos    = mergeMemos(fresh.memos);
+  users    = mergeByKey(fresh.users,    userDirty,    u => u.id);
   syncCurrentUser();
   fileSha = fresh.sha;
-  render();
-  try{
-    await saveRemoteData(message);
-  }catch(err){
-    if(err && err.conflict && attemptsLeft > 1){
-      return resolveConflictAndRetry(message, attemptsLeft - 1);
+  safeRender();
+  return fresh;
+}
+
+// 충돌이 나면 최신 원격본을 받아 그 위에 내 변경만 다시 얹고(rebase) 재시도한다.
+// 재시도 간격은 점점 늘리고(지수 백오프) 무작위 흔들림을 줘서, 여러 기기가 같은
+// 박자로 계속 부딪히는 상황을 피한다.
+async function attemptSaveWithRetry(){
+  const MAX = 7;   // 전부 소진해도 약 12초 안에 결론이 나도록 잡았다
+  let lastErr = null;
+  for(let i = 0; i < MAX; i++){
+    isSaving = true;
+    setSyncStatus("saving", i === 0 ? "저장 중..." : `다시 저장 중... (${i}/${MAX - 1})`);
+    try{
+      return await saveRemoteData(currentCommitMessage());
+    }catch(err){
+      lastErr = err;
+      if(!isRetryableSaveError(err)) throw err;
+      const backoff = Math.min(3000, 250 * Math.pow(2, i)) * (0.6 + Math.random() * 0.8);
+      await wait(backoff);
+      try{
+        await refreshFromRemote();   // 최신본 위에 내 변경을 다시 얹는다
+      }catch(e){
+        // 불러오기까지 실패하면 다음 회차에서 다시 시도한다
+      }
     }
-    throw err;
   }
+  throw lastErr || new Error("저장에 실패했습니다.");
 }
 
 // 사용자가 입력창(댓글·주간보고 등)에 커서를 두고 있으면 자동 새로고침으로
@@ -1705,49 +1810,142 @@ function setSyncStatus(state, message){
   el.className = "sync-status" + (state ? " " + state : "");
 }
 
-// 같은 화면에서 여러 저장이 거의 동시에 발생하면(예: 체크박스를 여러 개 빠르게 클릭),
-// 저장 요청들이 서로 겹치면서 스스로와 충돌을 일으킬 수 있다. saveQueue로 실제
-// 네트워크 저장은 한 번에 하나씩만 순서대로 실행되도록 묶어서 이런 자체 충돌을 원천 차단한다.
-let saveQueue = Promise.resolve();
+// ============================================================
+//  저장 스케줄러
+//  ------------------------------------------------------------
+//  편집할 때마다 곧바로 커밋하면, 빠르게 여러 번 입력하는 것만으로도
+//  커밋이 줄줄이 생기고 서로 충돌한다. 짧게 모았다가 한 번에 저장한다.
+//   - 마지막 편집 후 0.7초 조용하면 저장
+//   - 계속 입력 중이어도 2.5초에 한 번은 저장 (무한 대기 방지)
+//   - 계정/비밀번호처럼 즉시성이 중요한 건 immediate 로 바로 저장
+// ============================================================
+const SAVE_DEBOUNCE_MS = 700;
+const SAVE_MAX_WAIT_MS = 2500;
 
-function persist(message){
-  if(!ghConfig) return;
+let saveTimer = null;
+let firstPendingAt = 0;
+let pendingMessages = [];
+let saveInFlight = false;
+let saveInFlightPromise = Promise.resolve();
+let saveAgain = false;
+let saveFailed = false;
+
+function currentCommitMessage(){
+  if(!pendingMessages.length) return "업데이트";
+  if(pendingMessages.length === 1) return pendingMessages[0];
+  return `${pendingMessages[0]} 외 ${pendingMessages.length - 1}건`;
+}
+
+function persist(message, opts){
+  opts = opts || {};
+  if(!ghConfig) return Promise.resolve();
   if(!ghConfig.token){
     alert("읽기 전용 모드입니다. 이 기기에서는 저장할 수 없습니다. 편집하려면 설정(⚙)에서 토큰을 입력해주세요.");
-    fetchRemoteData().catch(()=>{}).finally(render);
-    return;
+    return refreshFromRemote().catch(()=>{});
   }
-  saveQueue = saveQueue.then(() => doPersist(message));
-  return saveQueue;
+  changeSeq++;
+  if(message) pendingMessages.push(message);
+  if(opts.immediate){
+    if(saveTimer){ clearTimeout(saveTimer); saveTimer = null; }
+    return runSaveLoop();
+  }
+  scheduleSave();
+  return Promise.resolve();
 }
 
-function doPersist(message){
-  isSaving = true;
-  setSyncStatus("saving", "저장 중...");
-  return saveRemoteData(message)
-    .then(() => {
-      setSyncStatus("idle", "동기화됨 · " + nowTimeLabel());
-    })
-    .catch(async (err) => {
-      if(err && err.conflict){
-        setSyncStatus("saving", "충돌 감지 - 자동 병합 중...");
-        try{
-          await resolveConflictAndRetry(message);
-          setSyncStatus("idle", "충돌 자동 해결 · " + nowTimeLabel());
-        }catch(e2){
-          alert("다른 사람과 동시에 저장하면서 충돌이 발생했고, 자동 해결에도 실패했습니다: " + (e2.message || e2) + "\n화면을 새로고침한 뒤 다시 시도해주세요.");
-          setSyncStatus("error", "충돌 자동 해결 실패");
-        }
-      } else {
-        alert("저장 실패: " + (err.message || err));
-        setSyncStatus("error", "저장 오류");
-      }
-    })
-    .finally(() => {
-      isSaving = false;
-      render();
-    });
+function scheduleSave(){
+  const now = Date.now();
+  if(!firstPendingAt) firstPendingAt = now;
+  if(saveTimer) clearTimeout(saveTimer);
+  const waited = now - firstPendingAt;
+  const delay = Math.max(0, Math.min(SAVE_DEBOUNCE_MS, SAVE_MAX_WAIT_MS - waited));
+  setSyncStatus("saving", "저장 대기 중...");
+  saveTimer = setTimeout(() => { saveTimer = null; runSaveLoop(); }, delay);
 }
+
+// 실제 네트워크 저장은 항상 한 번에 하나만. 저장 도중 들어온 편집은
+// 현재 저장이 끝난 뒤 한 번 더 돌려서 반영한다.
+function runSaveLoop(){
+  if(saveInFlight){ saveAgain = true; return saveInFlightPromise; }
+  saveInFlight = true;
+  let ok = false;
+  saveInFlightPromise = (async () => {
+    try{
+      let guard = 0;
+      do{
+        saveAgain = false;
+        if(saveTimer){ clearTimeout(saveTimer); saveTimer = null; }
+        firstPendingAt = 0;
+        const flushed = await attemptSaveWithRetry();
+        guard++;
+        if(flushed && !saveAgain && !hasUnsavedChanges()) break;
+      } while(guard < 20);
+      saveFailed = false;
+      hideSaveError();
+      setSyncStatus("idle", "동기화됨 · " + nowTimeLabel());
+      // 계속 입력 중이라 위 루프에서 다 못 비웠으면 조금 뒤 한 번 더 저장한다
+      if(hasUnsavedChanges()) scheduleSave();
+      ok = true;
+    }catch(err){
+      // 여기까지 왔다면 재시도로도 안 된 것. 입력 내용은 그대로 두고
+      // 화면 아래에 다시 시도 버튼을 띄운다. (절대 버리지 않는다)
+      saveFailed = true;
+      setSyncStatus("error", "저장 실패 — 다시 시도");
+      showSaveError(err);
+    }finally{
+      isSaving = false;
+      saveInFlight = false;
+      safeRender();
+    }
+    return ok;
+  })();
+  return saveInFlightPromise;
+}
+
+function retrySaveNow(){
+  // 이미 저장이 돌고 있으면 runSaveLoop 가 알아서 한 번 더 돌게 표시만 해준다.
+  // 재시도하는 동안에도 알림 바는 남겨둔다 — 저장 안 된 게 있다는 사실이
+  // 화면에서 사라지면 사용자가 다 된 줄 알고 창을 닫을 수 있다.
+  const bar = document.getElementById("saveErrorBar");
+  if(bar && bar.style.display !== "none"){
+    bar.innerHTML = `
+      <div class="save-error-text"><b>다시 저장하는 중입니다…</b> 입력하신 내용은 그대로 있습니다.</div>
+      <button class="save-error-btn" disabled>저장 중…</button>
+    `;
+  }
+  setSyncStatus("saving", "다시 저장 중...");
+  runSaveLoop();
+}
+
+function showSaveError(err){
+  const bar = document.getElementById("saveErrorBar");
+  if(!bar) return;
+  const reason = (err && (err.message || err)) || "알 수 없는 오류";
+  bar.innerHTML = `
+    <div class="save-error-text">
+      <b>저장하지 못한 변경이 있습니다.</b>
+      입력하신 내용은 화면에 그대로 남아 있습니다 — 다시 시도를 눌러주세요.
+      <span class="save-error-reason">${escapeHtml(String(reason))}</span>
+    </div>
+    <button class="save-error-btn" onclick="retrySaveNow()">다시 시도</button>
+  `;
+  bar.style.display = "flex";
+  document.body.classList.add("has-save-error");
+}
+
+function hideSaveError(){
+  const bar = document.getElementById("saveErrorBar");
+  if(bar) bar.style.display = "none";
+  document.body.classList.remove("has-save-error");
+}
+
+// 저장 안 된 변경이 있는 채로 창을 닫으려 하면 브라우저가 경고를 띄운다.
+window.addEventListener("beforeunload", (e) => {
+  if(hasUnsavedChanges()){
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
 
 function updateSetupBanner(){
   const banner = document.getElementById("setupBanner");
@@ -1813,7 +2011,7 @@ async function loadInitial(){
   }
   setSyncStatus("loading", "불러오는 중...");
   try{
-    const result = await fetchRemoteData();
+    const result = await loadRemoteData();
     if(result.isNew && ghConfig.token && users.length){
       await saveRemoteData("초기 데이터 파일 생성");
     }
@@ -1828,28 +2026,35 @@ async function loadInitial(){
 
 async function manualRefresh(){
   if(!ghConfig){ openSettings(); return; }
-  if(isSaving) return;
+  if(saveInFlight) return;
+  // 저장 못 한 변경이 남아 있으면, 새로고침이 아니라 저장을 다시 시도하는 게 맞다.
+  // (예전에는 여기서 새로고침을 해버려서 입력이 사라졌다)
+  if(saveFailed || hasUnsavedChanges()){
+    retrySaveNow();
+    return;
+  }
   setSyncStatus("loading", "불러오는 중...");
   try{
-    await fetchRemoteData();
+    await refreshFromRemote();
     setSyncStatus("idle", "동기화됨 · " + nowTimeLabel());
   }catch(err){
     setSyncStatus("error", "불러오기 실패");
   }
-  render();
 }
 
 function startAutoRefresh(){
   if(autoRefreshTimer) clearInterval(autoRefreshTimer);
   autoRefreshTimer = setInterval(async () => {
-    if(isSaving || !ghConfig) return;
-    if(document.getElementById("modalOverlay").classList.contains("open")) return; // 모달 열려있으면 건너뜀
-    if(isEditingField()) return; // 뭔가 입력 중이면 화면을 다시 그리지 않는다
+    if(!ghConfig) return;
+    if(saveInFlight || saveTimer) return;                 // 저장 중이거나 저장 대기 중
+    if(hasUnsavedChanges()) return;                       // 아직 못 보낸 내 변경이 있으면 건드리지 않는다
+    if(document.hidden) return;                           // 다른 탭을 보고 있으면 쉰다
+    if(document.getElementById("modalOverlay").classList.contains("open")) return;
+    if(isEditingField()) return;                          // 뭔가 입력 중
     try{
-      await fetchRemoteData();
+      await refreshFromRemote();
       setSyncStatus("idle", (ghConfig.token ? "동기화됨" : "읽기 전용") + " · " + nowTimeLabel());
-      render();
-    }catch(e){ /* silent on background poll */ }
+    }catch(e){ /* 백그라운드 폴링은 조용히 실패 */ }
   }, 30000);
 }
 
