@@ -48,6 +48,7 @@
   header p{margin:0;color:var(--sub);font-size:13px;}
   .today-badge{background:var(--card);border:2px solid var(--edu);border-radius:999px;padding:8px 16px;font-size:13px;color:var(--text);font-weight:600;box-shadow:0 3px 10px rgba(139,92,246,.15);}
   .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+  .header-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
   .header-actions{display:flex;align-items:center;gap:8px;}
   .sync-status{font-size:12px;color:var(--sub);white-space:nowrap;font-weight:600;}
   .sync-status.saving{color:var(--orange);}
@@ -82,6 +83,68 @@
   .add-form button{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;border-radius:12px;padding:10px 0;font-size:13px;cursor:pointer;font-weight:700;box-shadow:0 4px 12px rgba(139,92,246,.3);}
   .add-form button:hover{opacity:.92;transform:translateY(-1px);}
 
+  /* ---------- 로그인 게이트 ---------- */
+  .auth-overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:20px;
+    background:radial-gradient(circle at 10% -10%,rgba(99,102,241,.16),transparent 46%),
+               radial-gradient(circle at 90% 106%,rgba(236,72,153,.14),transparent 48%),var(--bg);}
+  .auth-overlay.open{display:flex;}
+  body.auth-locked .wrap{display:none;}
+  .auth-box{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:30px 28px;
+    width:400px;max-width:100%;box-shadow:0 20px 50px rgba(30,20,70,.20);}
+  .auth-box h2{margin:0 0 4px;font-size:22px;font-weight:800;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6 45%,#ec4899);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .auth-box .auth-sub{margin:0 0 20px;font-size:12.5px;color:var(--sub);line-height:1.55;}
+  .auth-box .field{margin-bottom:12px;}
+  .auth-box label{display:block;font-size:12px;color:var(--sub);margin-bottom:5px;font-weight:700;}
+  .auth-box input{width:100%;padding:11px 13px;border:2px solid var(--border);border-radius:12px;
+    font-size:14px;font-family:inherit;background:var(--card);color:var(--text);}
+  .auth-box input:focus{outline:none;border-color:var(--violet);}
+  .auth-box .btn-primary{width:100%;padding:13px 0;margin-top:6px;font-size:14px;}
+  .auth-error{font-size:12.5px;color:var(--red);font-weight:700;margin:10px 0 0;min-height:17px;}
+  .auth-foot{margin-top:18px;padding-top:14px;border-top:1px solid var(--border);font-size:11.5px;color:var(--sub);line-height:1.6;}
+  .auth-foot button{background:none;border:none;color:var(--violet);font-weight:700;cursor:pointer;font-size:11.5px;font-family:inherit;padding:0;text-decoration:underline;}
+
+  .user-chip{background:var(--card);border:2px solid var(--edu);border-radius:999px;padding:6px 14px;font-size:12.5px;
+    font-weight:700;color:var(--text);box-shadow:0 3px 10px rgba(139,92,246,.15);white-space:nowrap;}
+  .user-chip .role{font-size:11px;color:var(--sub);font-weight:600;margin-left:5px;}
+
+  /* ---------- 전달사항 읽음 확인 ---------- */
+  .notice-reads{margin-top:12px;padding-top:11px;border-top:1px dashed var(--border);
+    display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;}
+  .read-btn{border:none;border-radius:999px;padding:8px 16px;font-size:12.5px;font-weight:700;
+    font-family:inherit;cursor:pointer;white-space:nowrap;
+    background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;box-shadow:0 3px 10px rgba(245,158,11,.32);}
+  .read-btn:hover{transform:translateY(-1px);}
+  .read-btn.done{background:#dcfce7;color:#15803d;box-shadow:none;border:1.5px solid #86efac;}
+  .read-btn:disabled{background:#f1f0f7;color:var(--sub);box-shadow:none;cursor:not-allowed;transform:none;}
+  .read-count{font-size:12.5px;font-weight:800;color:var(--text);white-space:nowrap;}
+  .read-chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .read-chip{display:inline-flex;align-items:center;gap:5px;background:#dcfce7;color:#15803d;
+    border-radius:999px;padding:4px 11px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+  .read-chip.unread{background:#f1f0f7;color:var(--sub);}
+  .read-chip .at{font-weight:600;opacity:.75;font-size:10.5px;}
+  .read-sep{font-size:11px;color:var(--sub);font-weight:800;align-self:center;
+    padding-left:6px;margin-left:2px;border-left:1px solid var(--border);}
+  .read-note{font-size:11.5px;color:var(--sub);flex-basis:100%;}
+
+  /* ---------- 계정 관리 ---------- */
+  .acct-table{width:100%;border-collapse:collapse;margin-top:6px;}
+  .acct-table{table-layout:fixed;}
+  .acct-table th,.acct-table td{padding:8px 6px;font-size:12px;border-bottom:1px solid var(--border);text-align:left;vertical-align:middle;}
+  .acct-table col.a-id{width:90px;} .acct-table col.a-name{width:84px;} .acct-table col.a-role{width:66px;}
+  .acct-table th{color:var(--sub);font-weight:700;font-size:11px;}
+  .acct-table td.acct-actions{text-align:right;white-space:nowrap;}
+  .acct-table button{border:1.5px solid var(--border);background:transparent;border-radius:999px;padding:4px 9px;
+    font-size:11px;cursor:pointer;color:var(--violet);font-weight:700;font-family:inherit;margin-left:4px;}
+  .acct-table button.del{color:var(--red);}
+  .acct-role{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:700;}
+  .acct-role.admin{background:#ede9fe;color:#6d28d9;}
+  .acct-role.member{background:#e0f2fe;color:#0369a1;}
+  .acct-add{margin-top:16px;padding-top:14px;border-top:1px solid var(--border);}
+  .acct-add h4{margin:0 0 10px;font-size:13px;font-weight:800;color:var(--text);}
+  .acct-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .acct-grid .full{grid-column:1 / 3;}
+
   .form-toggle{
     display:none;width:100%;margin-bottom:16px;padding:13px 0;
     background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;border-radius:14px;
@@ -99,19 +162,19 @@
   .team-title .count{font-size:13px;color:var(--sub);font-weight:600;}
 
   .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:16px;}
-  table{width:100%;min-width:1010px;table-layout:fixed;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(30,20,70,.14);}
-  th,td{padding:11px 12px;font-size:14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:middle;}
-  th{white-space:nowrap;}
+  .table-scroll table{width:100%;min-width:1010px;table-layout:fixed;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(30,20,70,.14);}
+  .table-scroll th,.table-scroll td{padding:11px 12px;font-size:14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:middle;}
+  .table-scroll th{white-space:nowrap;}
   .table-scroll td[data-label="업무 내용"]{font-weight:700;color:var(--text);}
   .table-scroll td[data-label="담당자"],.table-scroll td[data-label="마감일자"],.table-scroll td[data-label="D-Day"],.table-scroll td[data-label="완료일"],.table-scroll td[data-label="상태"]{white-space:nowrap;}
-  th{background:linear-gradient(135deg,#f5f3ff,#fdf2f8);color:#7c3aed;font-weight:700;font-size:12px;}
+  .table-scroll th{background:linear-gradient(135deg,#f5f3ff,#fdf2f8);color:#7c3aed;font-weight:700;font-size:12px;}
   col.c-report{width:56px;} col.c-owner{width:88px;} col.c-due{width:146px;}
   col.c-dday{width:74px;} col.c-prog{width:152px;} col.c-status{width:78px;}
   col.c-memo{width:88px;} col.c-actions{width:302px;}
   td[data-label="업무 내용"]{word-break:break-word;}
-  tr:last-child td{border-bottom:none;}
-  tr.row-overdue td{background:#fff1f2;}
-  tbody tr:hover td{background:#faf9ff;}
+  .table-scroll tr:last-child td{border-bottom:none;}
+  .table-scroll tr.row-overdue td{background:#fff1f2;}
+  .table-scroll tbody tr:hover td{background:#faf9ff;}
 
   .progress-cell{display:flex;align-items:center;gap:8px;min-width:0;}
   .bar-bg{flex:1;height:9px;background:#eee9fb;border-radius:999px;overflow:hidden;}
@@ -135,8 +198,8 @@
   .row-actions button.del:hover{background:#ffe4e6;border-color:#fca5a5;}
   .locked-hint{opacity:.5;font-size:14px;cursor:default;}
 
-  tr.row-completed td{color:var(--sub);}
-  tr.row-completed .badge.done{color:var(--green);}
+  .table-scroll tr.row-completed td{color:var(--sub);}
+  .table-scroll tr.row-completed .badge.done{color:var(--green);}
 
   details.completed-details{margin-top:12px;}
   details.completed-details > summary{cursor:pointer;list-style:none;font-size:13px;color:var(--sub);padding:6px 2px;display:flex;align-items:center;gap:6px;user-select:none;}
@@ -162,6 +225,7 @@
   .modal-overlay{position:fixed;inset:0;background:rgba(76,29,149,.35);display:none;align-items:center;justify-content:center;z-index:100;}
   .modal-overlay.open{display:flex;}
   .modal-box{background:#fff;border-radius:20px;padding:22px 24px;width:420px;max-width:92vw;max-height:80vh;overflow-y:auto;box-shadow:0 16px 40px rgba(76,29,149,.25);}
+  .modal-box.wide{width:600px;}
   .modal-box h3{margin:0 0 14px;font-size:17px;font-weight:800;color:#6d28d9;}
   .modal-box .field{margin-bottom:12px;}
   .modal-box label{display:block;font-size:12px;color:var(--sub);margin-bottom:4px;font-weight:700;}
@@ -278,8 +342,11 @@
     header > div:first-child{flex:1 1 100%;min-width:0;}
     header h1{font-size:19px;line-height:1.2;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     header p{font-size:12px;}
-    .header-right{flex-direction:row;align-items:center;justify-content:space-between;width:100%;gap:8px;}
-    .header-actions{gap:6px;}
+    .header-right{flex-direction:row;align-items:center;justify-content:space-between;
+      flex-wrap:wrap;width:100%;gap:7px;}
+    .header-meta{justify-content:flex-start;gap:6px;}
+    .header-actions{gap:6px;margin-left:auto;}
+    .sync-status{font-size:11px;}
     .today-badge{padding:5px 9px;font-size:11px;white-space:nowrap;}
     .icon-btn{width:30px;height:30px;font-size:13px;}
 
@@ -298,6 +365,19 @@
     .add-form, .add-form.absence-form{grid-template-columns:1fr;padding:12px;gap:8px;margin-bottom:16px;}
     .add-form button{padding:12px 0;margin-top:2px;}
     .form-toggle{display:block;}
+    .auth-box{padding:24px 20px;border-radius:18px;}
+    .auth-box h2{font-size:19px;}
+    .user-chip{padding:5px 11px;font-size:11.5px;}
+    .notice-reads{gap:7px 8px;}
+    .read-btn{padding:9px 14px;font-size:12px;}
+    .acct-grid{grid-template-columns:1fr;}
+    .acct-grid .full{grid-column:1;}
+    .acct-table thead{display:none;}
+    .acct-table, .acct-table tbody, .acct-table tr{display:block;width:100%;}
+    .acct-table tr{border-bottom:1px solid var(--border);padding:9px 0;}
+    .acct-table td{display:inline;border:none;padding:0 6px 0 0;}
+    .acct-table td.acct-actions{display:block;text-align:left;margin-top:7px;}
+    .acct-table button{margin:0 4px 0 0;padding:6px 10px;}
 
     .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;overflow-x:visible;}
     .tab{padding:9px 4px;font-size:12px;white-space:nowrap;text-align:center;overflow:hidden;text-overflow:ellipsis;}
@@ -440,10 +520,10 @@
   [data-theme="dark"] .tab.active{color:#fff;background:linear-gradient(135deg,#0891b2,#4f46e5);box-shadow:0 0 16px rgba(34,211,238,.45);}
   [data-theme="dark"] .add-form{box-shadow:0 10px 28px rgba(34,211,238,.09);}
   [data-theme="dark"] .add-form button{background:linear-gradient(135deg,#0891b2,#4f46e5);box-shadow:0 4px 12px rgba(34,211,238,.3);}
-  [data-theme="dark"] table{box-shadow:0 10px 30px rgba(34,211,238,.09);}
-  [data-theme="dark"] th{background:linear-gradient(135deg,rgba(99,102,241,.16),rgba(236,72,153,.08));color:#67e8f9;}
-  [data-theme="dark"] tr.row-overdue td{background:rgba(251,113,133,.10);}
-  [data-theme="dark"] tbody tr:hover td{background:rgba(255,255,255,.03);}
+  [data-theme="dark"] .table-scroll table{box-shadow:0 10px 30px rgba(34,211,238,.09);}
+  [data-theme="dark"] .table-scroll th{background:linear-gradient(135deg,rgba(99,102,241,.16),rgba(236,72,153,.08));color:#67e8f9;}
+  [data-theme="dark"] .table-scroll tr.row-overdue td{background:rgba(251,113,133,.10);}
+  [data-theme="dark"] .table-scroll tbody tr:hover td{background:rgba(255,255,255,.03);}
   [data-theme="dark"] .bar-bg{background:rgba(255,255,255,.08);}
   [data-theme="dark"] .badge.done{background:rgba(74,222,128,.16);color:#86efac;}
   [data-theme="dark"] .badge.ongoing{background:rgba(56,189,248,.16);color:#7dd3fc;}
@@ -461,6 +541,15 @@
   [data-theme="dark"] .modal-box h3{color:#67e8f9;}
   [data-theme="dark"] .modal-actions .btn-primary{background:linear-gradient(135deg,#0891b2,#4f46e5);box-shadow:0 4px 12px rgba(34,211,238,.35);}
   [data-theme="dark"] .modal-actions .btn-ghost{background:rgba(255,255,255,.06);}
+  [data-theme="dark"] .auth-box{box-shadow:0 20px 50px rgba(0,0,0,.55);}
+  [data-theme="dark"] .auth-box h2{background:linear-gradient(135deg,#22d3ee,#818cf8 45%,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  [data-theme="dark"] .user-chip{box-shadow:0 3px 10px rgba(34,211,238,.18);}
+  [data-theme="dark"] .read-btn.done{background:rgba(74,222,128,.16);color:#86efac;border-color:rgba(74,222,128,.35);}
+  [data-theme="dark"] .read-btn:disabled{background:rgba(255,255,255,.06);color:var(--sub);}
+  [data-theme="dark"] .read-chip{background:rgba(74,222,128,.16);color:#86efac;}
+  [data-theme="dark"] .read-chip.unread{background:rgba(255,255,255,.06);color:var(--sub);}
+  [data-theme="dark"] .acct-role.admin{background:rgba(139,92,246,.2);color:#c4b5fd;}
+  [data-theme="dark"] .acct-role.member{background:rgba(56,189,248,.16);color:#7dd3fc;}
   [data-theme="dark"] .btn-ghost{background:rgba(255,255,255,.06);border-color:var(--border);color:var(--text);}
   [data-theme="dark"] .btn-ghost:hover{background:rgba(34,211,238,.12);border-color:var(--violet);color:#67e8f9;}
   [data-theme="dark"] .btn-primary{background:linear-gradient(135deg,#0891b2,#4f46e5);box-shadow:0 4px 12px rgba(34,211,238,.35);}
@@ -508,11 +597,15 @@
       <h1 id="pageTitle">업무관리 대시보드</h1>
     </div>
     <div class="header-right">
-      <div class="today-badge" id="todayBadge"></div>
+      <div class="header-meta">
+        <div class="today-badge" id="todayBadge"></div>
+        <div class="user-chip" id="userChip" style="display:none;"></div>
+      </div>
       <div class="header-actions">
         <span class="sync-status" id="syncStatus"></span>
         <button class="icon-btn" onclick="manualRefresh()" title="새로고침">⟳</button>
-        <button class="icon-btn" id="adminToggleBtn" onclick="toggleAdminMode()" title="관리자 모드">🔒</button>
+        <button class="icon-btn" id="accountsBtn" onclick="openAccounts()" title="팀원 계정 관리" style="display:none;">👥</button>
+        <button class="icon-btn" id="logoutBtn" onclick="logout()" title="로그아웃">⏻</button>
         <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" title="디자인 1번/2번 전환">🌙</button>
         <button class="icon-btn" onclick="openSettings()" title="GitHub 동기화 설정">⚙</button>
       </div>
@@ -616,6 +709,10 @@
 
 </div>
 
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-box" id="authBox"></div>
+</div>
+
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-box" id="modalBox"></div>
 </div>
@@ -664,7 +761,11 @@ let notice = { text: "", updatedAt: null }; // 주요 전달사항 (공지)
 let taskDirty = new Map();
 let absenceDirty = new Map();
 let reportDirty = new Map();
-let noticeDirty = false; // notice는 단일 객체라 id 기반 dirty map 대신 플래그로 추적
+// notice 는 단일 객체라 id 기반 dirty map 대신 플래그로 추적한다.
+// 공지 본문 변경(noticeTextDirty)과 "내 읽음 확인" 변경(myReadDirty)은 서로 독립이라
+// 따로 추적해야, 여러 명이 동시에 확인 체크해도 서로의 기록을 덮어쓰지 않는다.
+let noticeTextDirty = false;
+let myReadDirty = null;  // null=변경없음 | 'ADD'=확인함 | 'REMOVE'=확인취소
 let activeTab = "all";
 let calState = { year: new Date().getFullYear(), month: new Date().getMonth() };
 
@@ -693,10 +794,395 @@ let fileSha = null;
 let isSaving = false;
 let autoRefreshTimer = null;
 
-// 관리자 모드: 서버 인증이 아닌 화면 UI 잠금입니다 (완전한 보안 아님, 실수 방지용).
-const ADMIN_PASSWORD = "safety2026";
-const ADMIN_KEY = "isAdminUnlocked_v1";
-let isAdmin = localStorage.getItem(ADMIN_KEY) === "1";
+// isAdmin 은 이제 로그인한 계정의 역할(role === 'admin')로 결정된다.
+// 예전의 하드코딩 비밀번호 방식은 제거됐다.
+let isAdmin = false;
+
+// ============================================================
+//  계정 / 로그인
+//  ------------------------------------------------------------
+//  ※ 이 앱에는 서버가 없다. 로그인은 data.json 안의 계정 목록과
+//    브라우저에서 대조하는 "신원 구분용" 장치이지, 외부인 차단
+//    수단이 아니다. data.json 자체는 저장소가 public 인 이상
+//    URL 을 아는 사람이면 누구나 내려받을 수 있다.
+//    비밀번호는 평문이 아니라 PBKDF2-SHA256(15만회) 해시로만
+//    저장하지만, 다른 서비스와 같은 비밀번호는 쓰지 말 것.
+// ============================================================
+const AUTH_KEY = "authSession_v1";
+const PBKDF2_ITER = 150000;
+const LEGACY_ADMIN_KEY = "isAdminUnlocked_v1"; // 예전 잠금 흔적 정리용
+
+let users = [];          // [{id, name, role, salt, hash, iter, createdAt}]
+let currentUser = null;  // {id, name, role}
+let usersDirty = false;  // 이번 세션에서 계정 목록을 바꿨는지
+
+function bytesToHex(bytes){
+  return Array.from(bytes).map(b => b.toString(16).padStart(2,"0")).join("");
+}
+function hexToBytes(hex){
+  const out = new Uint8Array(hex.length / 2);
+  for(let i = 0; i < out.length; i++) out[i] = parseInt(hex.substr(i*2, 2), 16);
+  return out;
+}
+function randomSaltHex(){
+  return bytesToHex(crypto.getRandomValues(new Uint8Array(16)));
+}
+
+// 브라우저 내장 PBKDF2 (네이티브라 15만회도 순식간에 끝난다)
+async function derivePasswordHash(password, saltHex, iter){
+  const key = await crypto.subtle.importKey(
+    "raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]
+  );
+  const bits = await crypto.subtle.deriveBits(
+    { name:"PBKDF2", salt: hexToBytes(saltHex), iterations: iter, hash:"SHA-256" },
+    key, 256
+  );
+  return bytesToHex(new Uint8Array(bits));
+}
+
+async function makeCredential(password){
+  const salt = randomSaltHex();
+  const hash = await derivePasswordHash(password, salt, PBKDF2_ITER);
+  return { salt, hash, iter: PBKDF2_ITER };
+}
+
+async function verifyPassword(user, password){
+  if(!user || !user.salt || !user.hash) return false;
+  const hash = await derivePasswordHash(password, user.salt, user.iter || PBKDF2_ITER);
+  return hash === user.hash;
+}
+
+function findUser(id){
+  const key = String(id || "").trim().toLowerCase();
+  return users.find(u => String(u.id).toLowerCase() === key) || null;
+}
+
+function loadSession(){
+  try{
+    const raw = JSON.parse(localStorage.getItem(AUTH_KEY) || "null");
+    if(!raw || !raw.userId) return null;
+    return raw;
+  }catch(e){ return null; }
+}
+function saveSession(user){
+  localStorage.setItem(AUTH_KEY, JSON.stringify({
+    userId: user.id, name: user.name, role: user.role, at: new Date().toISOString()
+  }));
+}
+function clearSession(){ localStorage.removeItem(AUTH_KEY); }
+
+// 저장된 세션의 계정이 아직 살아있는지 확인하고 currentUser 를 맞춘다.
+// (관리자가 계정을 지웠거나 역할을 바꿨으면 여기서 반영된다)
+function syncCurrentUser(){
+  const sess = loadSession();
+  if(!sess){ currentUser = null; isAdmin = false; return; }
+  if(!users.length){
+    // 아직 원격 데이터를 못 받아온 단계다. 여기서 세션을 지워버리면
+    // 새로고침할 때마다 다시 로그인해야 하므로, 계정 목록이 올 때까지 기다린다.
+    currentUser = null; isAdmin = false; return;
+  }
+  const u = findUser(sess.userId);
+  if(!u){ currentUser = null; isAdmin = false; clearSession(); return; }
+  currentUser = { id: u.id, name: u.name, role: u.role };
+  isAdmin = u.role === "admin";
+}
+
+function logout(){
+  if(!confirm("로그아웃할까요?")) return;
+  clearSession();
+  currentUser = null;
+  isAdmin = false;
+  render();
+}
+
+// ---------- 로그인 게이트 화면 ----------
+// 'nosetup'  : GitHub 동기화 설정 전
+// 'nousers'  : 계정이 하나도 없음 -> 최초 관리자 계정 생성
+// 'login'    : 로그인 필요
+// 'ok'       : 통과
+function authState(){
+  if(!ghConfig) return "nosetup";
+  if(!users.length) return "nousers";
+  if(!currentUser) return "login";
+  return "ok";
+}
+
+function renderAuthGate(){
+  const overlay = document.getElementById("authOverlay");
+  const box = document.getElementById("authBox");
+  const state = authState();
+
+  if(state === "ok"){
+    overlay.classList.remove("open");
+    document.body.classList.remove("auth-locked");
+    return true;
+  }
+
+  overlay.classList.add("open");
+  document.body.classList.add("auth-locked");
+
+  if(state === "nosetup"){
+    box.innerHTML = `
+      <h2>업무관리 대시보드</h2>
+      <p class="auth-sub">먼저 GitHub 동기화 설정이 필요합니다. 저장소 정보와 토큰을 입력하면 팀 데이터를 불러옵니다.</p>
+      <button class="btn-primary" onclick="openSettings()">동기화 설정하기</button>
+    `;
+    return false;
+  }
+
+  if(state === "nousers"){
+    if(!ghConfig.token){
+      box.innerHTML = `
+        <h2>계정 만들기</h2>
+        <p class="auth-sub">아직 등록된 계정이 없습니다. 첫 관리자 계정을 만들려면 쓰기 권한이 있는 GitHub 토큰이 필요합니다.</p>
+        <button class="btn-primary" onclick="openSettings()">설정에서 토큰 입력하기</button>
+      `;
+      return false;
+    }
+    box.innerHTML = `
+      <h2>첫 관리자 계정 만들기</h2>
+      <p class="auth-sub">이 계정으로 업무·일정 등록과 팀원 계정 관리를 하게 됩니다. 만든 뒤에 팀원 계정을 추가할 수 있습니다.</p>
+      <div class="field">
+        <label>아이디</label>
+        <input type="text" id="setupId" placeholder="영문/숫자 (예: cjw)" autocomplete="username">
+      </div>
+      <div class="field">
+        <label>이름</label>
+        <input type="text" id="setupName" placeholder="화면에 표시될 이름 (예: 천재우)">
+      </div>
+      <div class="field">
+        <label>비밀번호</label>
+        <input type="password" id="setupPw" placeholder="8자 이상" autocomplete="new-password">
+      </div>
+      <div class="field">
+        <label>비밀번호 확인</label>
+        <input type="password" id="setupPw2" autocomplete="new-password">
+      </div>
+      <p class="auth-error" id="authError"></p>
+      <button class="btn-primary" id="setupBtn" onclick="createFirstAdmin()">관리자 계정 만들기</button>
+      <div class="auth-foot">
+        이 로그인은 <b>누가 쓰는지 구분하기 위한 것</b>입니다. 저장소가 public 이면 데이터 파일 자체는
+        주소를 아는 사람이 내려받을 수 있으니, 다른 곳에서 쓰는 비밀번호는 사용하지 마세요.
+      </div>
+    `;
+    setTimeout(()=>{ const el=document.getElementById("setupId"); if(el) el.focus(); }, 50);
+    return false;
+  }
+
+  // state === 'login'
+  const lastId = localStorage.getItem("lastLoginId") || "";
+  box.innerHTML = `
+    <h2>업무관리 대시보드</h2>
+    <p class="auth-sub">아이디와 비밀번호를 입력해주세요.</p>
+    <div class="field">
+      <label>아이디</label>
+      <input type="text" id="loginId" value="${escapeHtml(lastId)}" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>비밀번호</label>
+      <input type="password" id="loginPw" autocomplete="current-password">
+    </div>
+    <p class="auth-error" id="authError"></p>
+    <button class="btn-primary" id="loginBtn" onclick="doLogin()">로그인</button>
+    <div class="auth-foot">
+      비밀번호를 잊으셨다면 관리자에게 초기화를 요청하세요.
+      <button onclick="openSettings()">동기화 설정</button>
+    </div>
+  `;
+  const idEl = document.getElementById("loginId");
+  const pwEl = document.getElementById("loginPw");
+  [idEl, pwEl].forEach(el => el.addEventListener("keydown", e => { if(e.key === "Enter") doLogin(); }));
+  setTimeout(()=>{ (lastId ? pwEl : idEl).focus(); }, 50);
+  return false;
+}
+
+function setAuthError(msg){
+  const el = document.getElementById("authError");
+  if(el) el.textContent = msg || "";
+}
+
+async function doLogin(){
+  const btn = document.getElementById("loginBtn");
+  const id = document.getElementById("loginId").value.trim();
+  const pw = document.getElementById("loginPw").value;
+  if(!id || !pw){ setAuthError("아이디와 비밀번호를 모두 입력해주세요."); return; }
+  const user = findUser(id);
+  btn.disabled = true; btn.textContent = "확인 중...";
+  setAuthError("");
+  let ok = false;
+  try{ ok = user ? await verifyPassword(user, pw) : false; }
+  catch(e){ setAuthError("이 브라우저에서는 로그인 처리를 할 수 없습니다: " + (e.message || e)); }
+  btn.disabled = false; btn.textContent = "로그인";
+  if(!ok){
+    setAuthError("아이디 또는 비밀번호가 올바르지 않습니다.");
+    const pwEl = document.getElementById("loginPw");
+    if(pwEl){ pwEl.value = ""; pwEl.focus(); }
+    return;
+  }
+  localStorage.setItem("lastLoginId", user.id);
+  localStorage.removeItem(LEGACY_ADMIN_KEY);
+  saveSession(user);
+  syncCurrentUser();
+  render();
+}
+
+async function createFirstAdmin(){
+  const btn = document.getElementById("setupBtn");
+  const id = document.getElementById("setupId").value.trim();
+  const name = document.getElementById("setupName").value.trim();
+  const pw = document.getElementById("setupPw").value;
+  const pw2 = document.getElementById("setupPw2").value;
+  if(!/^[A-Za-z0-9_.-]{3,20}$/.test(id)){ setAuthError("아이디는 영문·숫자 3~20자로 입력해주세요."); return; }
+  if(!name){ setAuthError("이름을 입력해주세요."); return; }
+  if(pw.length < 8){ setAuthError("비밀번호는 8자 이상으로 정해주세요."); return; }
+  if(pw !== pw2){ setAuthError("비밀번호 확인이 일치하지 않습니다."); return; }
+
+  btn.disabled = true; btn.textContent = "만드는 중...";
+  setAuthError("");
+  try{
+    const cred = await makeCredential(pw);
+    users = [{ id, name, role:"admin", ...cred, createdAt: new Date().toISOString() }];
+    usersDirty = true;
+    localStorage.setItem("lastLoginId", id);
+    localStorage.removeItem(LEGACY_ADMIN_KEY);
+    saveSession({ id, name, role:"admin" });
+    syncCurrentUser();
+    await persist("관리자 계정 생성: " + name);
+    render();
+  }catch(e){
+    btn.disabled = false; btn.textContent = "관리자 계정 만들기";
+    setAuthError("계정 생성에 실패했습니다: " + (e.message || e));
+  }
+}
+
+// ---------- 팀원 계정 관리 (관리자 전용) ----------
+function openAccounts(){
+  if(!isAdmin){ alert("관리자만 계정을 관리할 수 있습니다."); return; }
+  const rows = users.map(u => `
+    <tr>
+      <td><b>${escapeHtml(u.id)}</b></td>
+      <td>${escapeHtml(u.name)}</td>
+      <td><span class="acct-role ${u.role === 'admin' ? 'admin' : 'member'}">${u.role === 'admin' ? '관리자' : '팀원'}</span></td>
+      <td class="acct-actions">
+        <button onclick="resetAccountPassword('${escapeHtml(u.id)}')">비번 초기화</button>
+        <button onclick="toggleAccountRole('${escapeHtml(u.id)}')">${u.role === 'admin' ? '팀원으로' : '관리자로'}</button>
+        <button class="del" onclick="deleteAccount('${escapeHtml(u.id)}')">삭제</button>
+      </td>
+    </tr>
+  `).join("");
+
+  openModal(`
+    <h3>팀원 계정 관리</h3>
+    <table class="acct-table">
+      <colgroup><col class="a-id"><col class="a-name"><col class="a-role"><col></colgroup>
+      <thead><tr><th>아이디</th><th>이름</th><th>역할</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="acct-add">
+      <h4>계정 추가</h4>
+      <div class="acct-grid">
+        <div><label>아이디</label><input type="text" id="newAcctId" placeholder="영문/숫자"></div>
+        <div><label>이름</label><input type="text" id="newAcctName" placeholder="예: 이재혁"></div>
+        <div><label>초기 비밀번호</label><input type="text" id="newAcctPw" placeholder="8자 이상"></div>
+        <div><label>역할</label>
+          <select id="newAcctRole" style="width:100%;padding:9px 10px;border:2px solid var(--border);border-radius:12px;font-size:13px;font-family:inherit;background:var(--card);color:var(--text);">
+            <option value="member">팀원</option>
+            <option value="admin">관리자</option>
+          </select>
+        </div>
+      </div>
+      <p class="auth-error" id="acctError" style="margin-top:8px;"></p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">닫기</button>
+      <button class="btn-primary" id="acctAddBtn" onclick="addAccount()">계정 추가</button>
+    </div>
+  `, true);
+}
+
+function setAcctError(msg){
+  const el = document.getElementById("acctError");
+  if(el) el.textContent = msg || "";
+}
+
+async function addAccount(){
+  if(!isAdmin) return;
+  const btn = document.getElementById("acctAddBtn");
+  const id = document.getElementById("newAcctId").value.trim();
+  const name = document.getElementById("newAcctName").value.trim();
+  const pw = document.getElementById("newAcctPw").value;
+  const role = document.getElementById("newAcctRole").value;
+  if(!/^[A-Za-z0-9_.-]{3,20}$/.test(id)){ setAcctError("아이디는 영문·숫자 3~20자로 입력해주세요."); return; }
+  if(findUser(id)){ setAcctError("이미 있는 아이디입니다."); return; }
+  if(!name){ setAcctError("이름을 입력해주세요."); return; }
+  if(pw.length < 8){ setAcctError("초기 비밀번호는 8자 이상으로 정해주세요."); return; }
+
+  btn.disabled = true; btn.textContent = "추가 중...";
+  try{
+    const cred = await makeCredential(pw);
+    users.push({ id, name, role, ...cred, createdAt: new Date().toISOString() });
+    usersDirty = true;
+    await persist("계정 추가: " + name);
+    openAccounts();
+    alert(`${name}(${id}) 계정을 만들었습니다.\n초기 비밀번호를 본인에게 전달해주세요: ${pw}`);
+  }catch(e){
+    btn.disabled = false; btn.textContent = "계정 추가";
+    setAcctError("추가 실패: " + (e.message || e));
+  }
+}
+
+async function resetAccountPassword(id){
+  if(!isAdmin) return;
+  const u = findUser(id);
+  if(!u) return;
+  const pw = prompt(`${u.name}(${u.id})의 새 비밀번호를 입력하세요. (8자 이상)`);
+  if(pw === null) return;
+  if(pw.length < 8){ alert("비밀번호는 8자 이상이어야 합니다."); return; }
+  const cred = await makeCredential(pw);
+  Object.assign(u, cred);
+  usersDirty = true;
+  await persist("비밀번호 초기화: " + u.name);
+  openAccounts();
+  alert(`${u.name}의 비밀번호를 변경했습니다.\n본인에게 전달해주세요: ${pw}`);
+}
+
+async function toggleAccountRole(id){
+  if(!isAdmin) return;
+  const u = findUser(id);
+  if(!u) return;
+  const next = u.role === "admin" ? "member" : "admin";
+  if(next === "member" && users.filter(x => x.role === "admin").length <= 1){
+    alert("관리자가 최소 한 명은 있어야 합니다.");
+    return;
+  }
+  if(!confirm(`${u.name}을(를) ${next === "admin" ? "관리자" : "팀원"}으로 바꿀까요?`)) return;
+  u.role = next;
+  usersDirty = true;
+  syncCurrentUser();
+  await persist("역할 변경: " + u.name);
+  openAccounts();
+}
+
+async function deleteAccount(id){
+  if(!isAdmin) return;
+  const u = findUser(id);
+  if(!u) return;
+  if(u.role === "admin" && users.filter(x => x.role === "admin").length <= 1){
+    alert("마지막 관리자 계정은 삭제할 수 없습니다.");
+    return;
+  }
+  if(!confirm(`${u.name}(${u.id}) 계정을 삭제할까요? 전달사항 확인 기록에서도 빠집니다.`)) return;
+  users = users.filter(x => x.id !== u.id);
+  if(notice && Array.isArray(notice.reads)){
+    notice.reads = notice.reads.filter(r => r.userId !== u.id);
+    noticeTextDirty = true;
+  }
+  usersDirty = true;
+  const wasMe = currentUser && currentUser.id === u.id;
+  await persist("계정 삭제: " + u.name);
+  if(wasMe){ clearSession(); syncCurrentUser(); render(); return; }
+  openAccounts();
+}
 
 // 디자인 1번(밝은 톤) / 2번(다크 테크) 전환. 기기별로 localStorage에 저장되어
 // 다음 방문 때도 마지막으로 고른 디자인이 유지된다.
@@ -718,31 +1204,20 @@ function toggleTheme(){
 }
 applyTheme(localStorage.getItem(THEME_KEY) === "dark" ? "dark" : "light");
 
-function toggleAdminMode(){
-  if(isAdmin){
-    if(!confirm("관리자 모드를 끌까요? 이후에는 업무 테이블 수정이 잠깁니다.")) return;
-    isAdmin = false;
-    localStorage.removeItem(ADMIN_KEY);
-  } else {
-    const input = prompt("관리자 비밀번호를 입력하세요.");
-    if(input === null) return;
-    if(input !== ADMIN_PASSWORD){
-      alert("비밀번호가 올바르지 않습니다.");
-      return;
-    }
-    isAdmin = true;
-    localStorage.setItem(ADMIN_KEY, "1");
-  }
-  updateAdminUI();
-  render();
-}
-
 function updateAdminUI(){
-  const btn = document.getElementById("adminToggleBtn");
-  if(btn){
-    btn.textContent = isAdmin ? "🔓" : "🔒";
-    btn.title = isAdmin ? "관리자 모드 (켜짐) - 클릭 시 끄기" : "관리자 모드 켜기";
+  const chip = document.getElementById("userChip");
+  if(chip){
+    if(currentUser){
+      chip.style.display = "";
+      chip.innerHTML = `${escapeHtml(currentUser.name)}<span class="role">${isAdmin ? '관리자' : '팀원'}</span>`;
+    } else {
+      chip.style.display = "none";
+    }
   }
+  const acctBtn = document.getElementById("accountsBtn");
+  if(acctBtn) acctBtn.style.display = isAdmin ? "" : "none";
+  const outBtn = document.getElementById("logoutBtn");
+  if(outBtn) outBtn.style.display = currentUser ? "" : "none";
   syncForms();
 }
 
@@ -797,7 +1272,7 @@ async function fetchRemoteRaw(){
   if(ghConfig.token) headers["Authorization"] = `Bearer ${ghConfig.token}`;
   const res = await fetch(`${ghUrl()}?ref=${encodeURIComponent(ghConfig.branch || 'main')}`, { headers });
   if(res.status === 404){
-    return { tasks: [], absences: [], reports: [], notice: { text:"", updatedAt:null }, sha: null, isNew: true };
+    return { tasks: [], absences: [], reports: [], notice: normalizeNotice(null), users: [], sha: null, isNew: true };
   }
   if(res.status === 401 || res.status === 403){
     throw new Error("토큰이 유효하지 않거나 권한이 없습니다. 설정을 확인해주세요.");
@@ -815,10 +1290,12 @@ async function fetchRemoteRaw(){
   const freshTasks = Array.isArray(data.tasks) ? data.tasks : [];
   const freshAbsences = Array.isArray(data.absences) ? data.absences : [];
   const freshReports = Array.isArray(data.reports) ? data.reports : [];
-  const freshNotice = (data.notice && typeof data.notice.text === 'string') ? data.notice : { text:"", updatedAt:null };
+  const freshNotice = normalizeNotice(data.notice);
+  const freshUsers = Array.isArray(data.users) ? data.users : [];
   freshTasks.forEach(t => { if(!Array.isArray(t.dueHistory)) t.dueHistory = []; });
   freshAbsences.forEach(a => { if(!TYPE_META[a.type]) a.type = LEGACY_TYPE_MAP[a.type] || "etc"; });
-  return { tasks: freshTasks, absences: freshAbsences, reports: freshReports, notice: freshNotice, sha: json.sha, isNew: false };
+  return { tasks: freshTasks, absences: freshAbsences, reports: freshReports,
+           notice: freshNotice, users: freshUsers, sha: json.sha, isNew: false };
 }
 
 async function fetchRemoteData(){
@@ -827,16 +1304,57 @@ async function fetchRemoteData(){
   absences = fresh.absences;
   reports = fresh.reports;
   notice = fresh.notice;
+  users = fresh.users;
   fileSha = fresh.sha;
   taskDirty.clear();
   absenceDirty.clear();
   reportDirty.clear();
-  noticeDirty = false;
+  noticeTextDirty = false;
+  myReadDirty = null;
+  usersDirty = false;
+  syncCurrentUser();
   return { isNew: fresh.isNew };
 }
 
 // freshArr(원격 최신 목록)을 기준으로, 이번 세션에서 아직 저장되지 못한 로컬 변경(dirtyMap)만
 // 그 위에 얹어 병합한다. 다른 사람이 그 사이에 추가/수정한 항목은 그대로 유지된다.
+// 예전 data.json 에는 notice 에 text/updatedAt 만 있었다. 읽음 확인용 필드를 채워준다.
+function normalizeNotice(raw){
+  const n = (raw && typeof raw.text === 'string') ? raw : { text:"", updatedAt:null };
+  return {
+    text: n.text || "",
+    updatedAt: n.updatedAt || null,
+    noticeId: n.noticeId || (n.text ? "n_legacy" : null),
+    reads: Array.isArray(n.reads) ? n.reads : []
+  };
+}
+
+// 원격 최신 공지 위에 "내가 이번 세션에서 바꾼 것"만 다시 얹는다.
+// - 본문을 내가 고쳤으면 내 본문이 이기고,
+// - 읽음 기록은 다른 사람이 그 사이에 누른 것까지 살려서 합친다.
+function mergeNotice(fresh){
+  const f = normalizeNotice(fresh);
+  let base;
+  if(noticeTextDirty){
+    base = {
+      text: notice.text,
+      updatedAt: notice.updatedAt,
+      noticeId: notice.noticeId,
+      // 같은 공지라면 남들이 그 사이 누른 확인까지 살리고, 새 공지면 내가 만든 목록을 쓴다
+      reads: (f.noticeId === notice.noticeId ? f.reads.slice() : (notice.reads || []).slice())
+    };
+  } else {
+    base = { text: f.text, updatedAt: f.updatedAt, noticeId: f.noticeId, reads: f.reads.slice() };
+  }
+  if(myReadDirty && currentUser){
+    base.reads = base.reads.filter(r => r.userId !== currentUser.id);
+    if(myReadDirty === 'ADD'){
+      base.reads.push({ userId: currentUser.id, name: currentUser.name, at: new Date().toISOString() });
+    }
+  }
+  return base;
+}
+
 function mergeByKey(freshArr, dirtyMap, keyFn){
   const map = new Map(freshArr.map(x => [keyFn(x), x]));
   dirtyMap.forEach((val, key) => {
@@ -849,7 +1367,7 @@ function mergeByKey(freshArr, dirtyMap, keyFn){
 async function saveRemoteData(message){
   const body = {
     message: message || "업데이트",
-    content: utf8ToB64(JSON.stringify({ tasks, absences, reports, notice }, null, 2)),
+    content: utf8ToB64(JSON.stringify({ tasks, absences, reports, notice, users }, null, 2)),
     branch: ghConfig.branch || "main"
   };
   if(fileSha) body.sha = fileSha;
@@ -877,7 +1395,9 @@ async function saveRemoteData(message){
   taskDirty.clear();
   absenceDirty.clear();
   reportDirty.clear();
-  noticeDirty = false;
+  noticeTextDirty = false;
+  myReadDirty = null;
+  usersDirty = false;
 }
 
 function wait(ms){
@@ -896,7 +1416,9 @@ async function resolveConflictAndRetry(message, attemptsLeft){
   tasks = mergeByKey(fresh.tasks, taskDirty, x => x.id);
   absences = mergeByKey(fresh.absences, absenceDirty, x => x.id);
   reports = mergeByKey(fresh.reports, reportDirty, x => x.weekStart);
-  if(!noticeDirty) notice = fresh.notice;
+  notice = mergeNotice(fresh.notice);
+  if(!usersDirty) users = fresh.users;
+  syncCurrentUser();
   fileSha = fresh.sha;
   render();
   try{
@@ -1025,7 +1547,7 @@ async function loadInitial(){
   setSyncStatus("loading", "불러오는 중...");
   try{
     const result = await fetchRemoteData();
-    if(result.isNew && ghConfig.token){
+    if(result.isNew && ghConfig.token && users.length){
       await saveRemoteData("초기 데이터 파일 생성");
     }
     setSyncStatus("idle", (ghConfig.token ? "동기화됨" : "읽기 전용") + " · " + nowTimeLabel());
@@ -1054,6 +1576,7 @@ function startAutoRefresh(){
   if(autoRefreshTimer) clearInterval(autoRefreshTimer);
   autoRefreshTimer = setInterval(async () => {
     if(isSaving || !ghConfig) return;
+    if(document.getElementById("modalOverlay").classList.contains("open")) return; // 모달 열려있으면 건너뜀
     try{
       await fetchRemoteData();
       setSyncStatus("idle", (ghConfig.token ? "동기화됨" : "읽기 전용") + " · " + nowTimeLabel());
@@ -1271,6 +1794,49 @@ function renderAbsenceBanner(){
   el.innerHTML = `<h3>주요 일정 (${dayList.length}명)</h3>${nav}<div class="absence-chips">${chips}</div>`;
 }
 
+function noticeReads(){
+  return Array.isArray(notice.reads) ? notice.reads : [];
+}
+function myRead(){
+  if(!currentUser) return null;
+  return noticeReads().find(r => r.userId === currentUser.id) || null;
+}
+
+// 전달사항 아래에 "누가 확인했는지" 줄을 그린다.
+function renderNoticeReads(){
+  const reads = noticeReads();
+  const total = users.length;
+  const readIds = new Set(reads.map(r => r.userId));
+  const unread = users.filter(u => !readIds.has(u.id));
+  const mine = myRead();
+  const readOnly = !ghConfig || !ghConfig.token;
+
+  const btn = readOnly
+    ? `<button class="read-btn" disabled title="읽기 전용 모드에서는 확인 체크를 저장할 수 없습니다">확인 체크 불가</button>`
+    : (mine
+      ? `<button class="read-btn done" onclick="toggleNoticeRead()" title="누르면 확인을 취소합니다">✓ 확인함</button>`
+      : `<button class="read-btn" onclick="toggleNoticeRead()">확인했습니다</button>`);
+
+  const chips = reads
+    .slice()
+    .sort((a,b) => String(a.at).localeCompare(String(b.at)))
+    .map(r => `<span class="read-chip">${escapeHtml(r.name || r.userId)}<span class="at">${r.at ? formatDateTime(r.at).slice(5) : ''}</span></span>`)
+    .join("");
+
+  const unreadChips = unread.length
+    ? `<span class="read-sep">미확인</span>` + unread.map(u => `<span class="read-chip unread">${escapeHtml(u.name)}</span>`).join("")
+    : "";
+
+  return `
+    <div class="notice-reads">
+      ${btn}
+      <span class="read-count">확인 ${reads.length}/${total}명</span>
+      <div class="read-chips">${chips}${unreadChips}</div>
+      ${readOnly ? '<span class="read-note">이 기기는 읽기 전용 모드입니다. 설정(⚙)에서 토큰을 넣으면 확인 체크를 할 수 있습니다.</span>' : ''}
+    </div>
+  `;
+}
+
 function renderNoticeBanner(){
   const el = document.getElementById("noticeBanner");
   if(!el) return;
@@ -1278,7 +1844,7 @@ function renderNoticeBanner(){
   const editBtn = isAdmin ? `<button class="notice-edit-btn" onclick="openEditNotice()">${hasText ? '수정' : '작성'}</button>` : '';
   if(!hasText){
     if(!isAdmin){ el.innerHTML = ''; return; }
-    el.innerHTML = `<h3>주요 전달사항</h3>${editBtn}<div class="absence-empty">등록된 전달사항이 없습니다.</div>`;
+    el.innerHTML = `<div class="notice-head"><h3>주요 전달사항</h3>${editBtn}</div><div class="absence-empty">등록된 전달사항이 없습니다.</div>`;
     return;
   }
   const updatedLabel = notice.updatedAt ? `<span class="notice-updated">${formatDateTime(notice.updatedAt)} 업데이트</span>` : '';
@@ -1286,7 +1852,27 @@ function renderNoticeBanner(){
     <div class="notice-head"><h3>주요 전달사항</h3>${editBtn}</div>
     <div class="notice-text">${escapeHtml(notice.text).replace(/\n/g,'<br>')}</div>
     ${updatedLabel}
+    ${renderNoticeReads()}
   `;
+}
+
+function toggleNoticeRead(){
+  if(!currentUser) return;
+  if(!ghConfig || !ghConfig.token){
+    alert("읽기 전용 모드에서는 확인 체크를 저장할 수 없습니다. 설정(⚙)에서 토큰을 입력해주세요.");
+    return;
+  }
+  const mine = myRead();
+  const reads = noticeReads().filter(r => r.userId !== currentUser.id);
+  if(!mine){
+    reads.push({ userId: currentUser.id, name: currentUser.name, at: new Date().toISOString() });
+    myReadDirty = 'ADD';
+  } else {
+    myReadDirty = 'REMOVE';
+  }
+  notice.reads = reads;
+  render();
+  persist(mine ? `전달사항 확인 취소: ${currentUser.name}` : `전달사항 확인: ${currentUser.name}`);
 }
 
 function openEditNotice(){
@@ -1309,18 +1895,35 @@ function saveNoticeEdit(){
   if(!isAdmin){ alert("관리자 모드에서만 작성할 수 있습니다."); return; }
   const text = document.getElementById("modalNoticeText").value.trim();
   const changed = text !== (notice.text || '');
-  notice = { text, updatedAt: new Date().toISOString() };
-  noticeDirty = true;
+  if(!changed){ closeModal(); return; }
+
+  const prevReads = noticeReads();
+  let keepReads = false;
+  if(prevReads.length){
+    // 오타 수정처럼 사소한 변경이면 굳이 다시 확인받을 필요가 없으니 물어본다.
+    keepReads = !confirm(
+      `내용이 바뀌었습니다.\n\n기존 확인 기록 ${prevReads.length}명을 지우고 팀원들에게 다시 확인받을까요?\n\n` +
+      `[확인] 기록을 지우고 다시 받기\n[취소] 오타 수정이라 기존 확인 기록 유지`
+    );
+  }
+
+  notice = {
+    text,
+    updatedAt: new Date().toISOString(),
+    noticeId: keepReads ? (notice.noticeId || cid()) : ("n_" + cid()),
+    reads: keepReads ? prevReads : []
+  };
+  noticeTextDirty = true;
   closeModal();
   render();
-  if(changed) persist("주요 전달사항 수정");
+  persist("주요 전달사항 수정");
 }
 
 function clearNotice(){
   if(!isAdmin){ alert("관리자 모드에서만 변경할 수 있습니다."); return; }
-  if(!confirm("전달사항을 비울까요?")) return;
-  notice = { text: "", updatedAt: new Date().toISOString() };
-  noticeDirty = true;
+  if(!confirm("전달사항을 비울까요? 확인 기록도 함께 지워집니다.")) return;
+  notice = { text: "", updatedAt: new Date().toISOString(), noticeId: null, reads: [] };
+  noticeTextDirty = true;
   closeModal();
   render();
   persist("주요 전달사항 비움");
@@ -1653,6 +2256,10 @@ function escapeHtml(str){
 }
 
 function render(){
+  syncCurrentUser();
+  updateAdminUI();
+  // 로그인 전에는 대시보드를 그리지 않고 게이트 화면만 띄운다.
+  if(!renderAuthGate()) return;
   document.getElementById("todayBadge").textContent = "오늘: " + todayStr();
   document.getElementById("pageTitle").textContent = `업무관리 대시보드: ${new Date().getMonth() + 1}월`;
   updateSetupBanner();
@@ -1866,8 +2473,10 @@ function formatDateTime(iso){
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-function openModal(html){
-  document.getElementById("modalBox").innerHTML = html;
+function openModal(html, wide){
+  const box = document.getElementById("modalBox");
+  box.innerHTML = html;
+  box.classList.toggle("wide", !!wide);
   document.getElementById("modalOverlay").classList.add("open");
 }
 function closeModal(){
@@ -2009,7 +2618,9 @@ document.getElementById("tabs").addEventListener("click", (e)=>{
   renderContent();
 });
 
+syncCurrentUser();
 updateAdminUI();
+renderAuthGate();
 loadInitial();
 </script>
 </body>
