@@ -886,6 +886,15 @@
       "hash": "34d29c4f83a57d0013ddf46ea9de7dc728eb965d999a90118a9522c891b00a82",
       "iter": 150000,
       "createdAt": "2026-08-31T12:58:43.424Z"
+    },
+    {
+      "id": "c04897",
+      "name": "이재혁",
+      "role": "member",
+      "salt": "158da2ae1b3f3f070c597fbff4202ad6",
+      "hash": "2c6be8c43e963e6b12bbc0acc4c9e8f8fac488ad337996452a7930267ff656e4",
+      "iter": 150000,
+      "createdAt": "2026-08-31T13:01:11.956Z"
     }
   ]
 }
