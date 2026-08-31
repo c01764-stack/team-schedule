@@ -904,6 +904,15 @@
       "hash": "c6705a2487fdfdddbace6a3cc0b1963dbd4944e1e757fe0a77bc344fc9223cb4",
       "iter": 150000,
       "createdAt": "2026-08-31T13:01:32.309Z"
+    },
+    {
+      "id": "c05474",
+      "name": "주현수",
+      "role": "member",
+      "salt": "3ce07f5542f4c69d316a3d4a1142f057",
+      "hash": "48bf6375a3db7b5c3f5aba60f9dde0a1821b02041adaf80bcef1e97a704d7298",
+      "iter": 150000,
+      "createdAt": "2026-08-31T13:01:50.367Z"
     }
   ]
 }
