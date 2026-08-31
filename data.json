@@ -914,5 +914,19 @@
       "iter": 150000,
       "createdAt": "2026-08-31T13:01:50.367Z"
     }
+  ],
+  "memos": [
+    {
+      "id": "m_tk4moxb1c",
+      "toUserId": "c04897",
+      "toName": "이재혁",
+      "text": "판교 테크원 점검 결과 보고 필요",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-08-31T13:26:07.962Z",
+      "updatedAt": "2026-08-31T13:26:07.962Z",
+      "readAt": null,
+      "comments": []
+    }
   ]
 }
