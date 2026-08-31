@@ -926,7 +926,15 @@
       "createdAt": "2026-08-31T13:26:07.962Z",
       "updatedAt": "2026-08-31T13:26:07.962Z",
       "readAt": null,
-      "comments": []
+      "comments": [
+        {
+          "id": "c_tmeo5zs7u",
+          "userId": "c01764",
+          "name": "천재우",
+          "text": "ㄴㅇㄻㄴㅁㅇㄹ",
+          "at": "2026-08-31T13:26:19.450Z"
+        }
+      ]
     }
   ]
 }
