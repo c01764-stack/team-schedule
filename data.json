@@ -483,6 +483,17 @@
       "memo": "",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "tjta8ydu6",
+      "team": "safety",
+      "title": "SKON 평가 서류 제출",
+      "owner": "이재혁",
+      "due": "2026-09-04",
+      "progress": 10,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
