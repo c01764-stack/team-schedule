@@ -355,36 +355,45 @@
   .report-hint{font-size:11.5px;color:var(--sub);margin:-6px 0 12px;}
 
   .cal-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-  .cal-header .cal-label{font-size:15px;font-weight:800;min-width:100px;text-align:center;color:#6d28d9;}
+  .cal-header .cal-label{font-size:17px;font-weight:800;min-width:112px;text-align:center;color:#6d28d9;}
   .cal-nav{background:#fff;border:2px solid var(--border);border-radius:999px;width:32px;height:32px;cursor:pointer;font-size:15px;color:var(--violet);}
   .cal-nav:hover{background:var(--edu-tint);border-color:var(--violet);}
   .cal-today-btn{margin-left:auto;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:999px;padding:7px 14px;font-size:12px;cursor:pointer;color:#fff;font-weight:700;box-shadow:0 3px 10px rgba(139,92,246,.3);}
   .cal-today-btn:hover{opacity:.9;}
 
-  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:28px;}
-  .cal-weekday{text-align:center;font-size:12px;color:var(--sub);font-weight:700;padding:4px 0;}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;margin-bottom:28px;}
+  .cal-weekday{text-align:center;font-size:14px;color:var(--sub);font-weight:700;padding:6px 0;min-width:0;}
   .cal-weekday:first-child{color:var(--red);}
   .cal-weekday:last-child{color:var(--blue);}
-  .cal-cell{background:var(--card);border:1px solid var(--border);border-radius:14px;min-height:96px;padding:6px;display:flex;flex-direction:column;gap:4px;box-shadow:0 4px 12px rgba(30,20,70,.08);}
+  .cal-cell{background:var(--card);border:1px solid var(--border);border-radius:14px;min-height:112px;padding:8px;display:flex;flex-direction:column;gap:5px;box-shadow:0 4px 12px rgba(30,20,70,.08);}
   .cal-cell.cal-other-month{background:#f7f6fc;}
   .cal-cell.cal-other-month .cal-daynum{color:#c7cbd3;}
   .cal-cell.cal-today{border-color:var(--violet);box-shadow:0 0 0 2px rgba(139,92,246,.25);background:var(--edu-tint);}
-  .cal-daynum{font-size:12px;font-weight:700;color:var(--sub);}
+  .cal-daynum{font-size:14.5px;font-weight:800;color:var(--text);}
   .cal-cell:nth-child(7n+1) .cal-daynum{color:var(--red);}
   .cal-cell:nth-child(7n) .cal-daynum{color:var(--blue);}
   .cal-cell.cal-other-month:nth-child(7n+1) .cal-daynum,
   .cal-cell.cal-other-month:nth-child(7n) .cal-daynum{color:#dfc9c9;}
   .cal-today .cal-daynum{color:var(--violet) !important;}
-  .cal-chips{display:flex;flex-direction:column;gap:3px;overflow:hidden;}
-  .cal-chip{font-size:10.5px;padding:3px 7px;border-radius:999px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:none;background:#eef1f5;font-weight:600;}
+  .cal-chips{display:flex;flex-direction:column;gap:3px;overflow:hidden;min-width:0;}
+  .cal-chip{font-size:13px;padding:5px 9px;border-radius:999px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:none;background:#eef1f5;font-weight:700;line-height:1.25;}
   .cal-chip.safety{background:var(--safety-tint);color:#c2410c;}
   .cal-chip.edu{background:var(--edu-tint);color:#6d28d9;}
   .cal-chip.etc{background:var(--etc-tint);color:#0f766e;}
-  .cal-chip-type{opacity:.7;margin-left:2px;}
+  .cal-chip-type{opacity:.75;margin-left:3px;font-weight:600;}
 
   /* ---------- Responsive ---------- */
-  @media (max-width: 860px){
+  /* 태블릿 폭에서는 입력 폼의 고정 컬럼 합계가 화면보다 넓어 가로 스크롤이 생겼다.
+     2열로 접어서 화면 안에 들어오게 한다. */
+  @media (max-width: 980px){
+    .add-form, .add-form.absence-form{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .add-form button{grid-column:1 / -1;padding:11px 0;}
+  }
+  @media (max-width: 900px){
     .summary{grid-template-columns:repeat(3,1fr);}
+    /* 칸이 좁아지는 구간에서는 일정 칩을 한 단계 줄여 이름이 잘리지 않게 한다 */
+    .cal-chip{font-size:11.5px;padding:4px 7px;}
+    .cal-cell{min-height:100px;padding:6px;}
   }
 
   @media (max-width: 640px){
@@ -519,14 +528,14 @@
     .memo-view{max-height:60vh;}
 
     .cal-header{gap:6px;}
-    .cal-header .cal-label{font-size:13px;min-width:76px;}
+    .cal-header .cal-label{font-size:15px;min-width:86px;}
     .cal-nav{width:26px;height:26px;font-size:13px;}
     .cal-today-btn{padding:5px 9px;font-size:11px;}
     .cal-grid{gap:3px;margin-bottom:20px;}
-    .cal-weekday{font-size:10.5px;padding:2px 0;}
-    .cal-cell{min-height:58px;padding:3px;border-radius:6px;gap:2px;}
-    .cal-daynum{font-size:10px;}
-    .cal-chip{font-size:8.5px;padding:1px 3px;border-radius:3px;}
+    .cal-weekday{font-size:12px;padding:3px 0;}
+    .cal-cell{min-height:72px;padding:4px;border-radius:8px;gap:3px;}
+    .cal-daynum{font-size:12px;}
+    .cal-chip{font-size:10.5px;padding:2px 5px;border-radius:5px;font-weight:700;}
     .cal-chip-type{display:none;}
 
     .modal-box{padding:16px;width:92vw;}
@@ -537,7 +546,8 @@
     .stat-card{padding:8px 8px;}
     .stat-card .num{font-size:16.5px;}
     .stat-card .label{font-size:10px;}
-    .cal-cell{min-height:48px;}
+    .cal-cell{min-height:66px;}
+    .cal-chip{font-size:10px;padding:2px 4px;}
   }
 
   /* ============ 다크 테마 (2번 디자인) ============ */
