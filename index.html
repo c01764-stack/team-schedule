@@ -156,6 +156,60 @@
     padding-left:6px;margin-left:2px;border-left:1px solid var(--border);}
   .read-note{font-size:11.5px;color:var(--sub);flex-basis:100%;}
 
+  /* ---------- 미확인 강조 (은은한 맥박) ----------
+     내가 아직 확인 체크를 안 한 전달사항에만 붙는다.
+     .needs-ack : 배너/카드 테두리+배경이 1.8초 주기로 부드럽게 밝아졌다 돌아옴
+     .ack-badge : "확인 필요" 배지가 같은 주기로 숨쉬듯 깜빡임
+     .read-btn.urgent : 확인 버튼이 살짝 커졌다 작아짐
+     동작 최소화 설정(prefers-reduced-motion)에서는 애니메이션 없이 정적 강조만 남긴다. */
+  @keyframes ackPulse{
+    0%,100%{ border-color:var(--orange); box-shadow:0 0 0 0 rgba(245,158,11,.30), 0 6px 20px rgba(30,20,70,.10); }
+    50%    { border-color:#fb923c;       box-shadow:0 0 0 7px rgba(245,158,11,.02), 0 6px 22px rgba(245,158,11,.28); }
+  }
+  @keyframes ackBadge{
+    0%,100%{ opacity:1;  transform:scale(1); }
+    50%    { opacity:.45; transform:scale(.96); }
+  }
+  @keyframes ackBtn{
+    0%,100%{ transform:scale(1);    box-shadow:0 3px 10px rgba(245,158,11,.32); }
+    50%    { transform:scale(1.045); box-shadow:0 5px 18px rgba(245,158,11,.50); }
+  }
+  @keyframes ackDot{
+    0%,100%{ opacity:1;  box-shadow:0 0 0 0 rgba(244,63,94,.45); }
+    50%    { opacity:.55; box-shadow:0 0 0 5px rgba(244,63,94,0); }
+  }
+
+  .notice-banner.needs-ack,
+  .memo-card.needs-ack{
+    border:2px solid var(--orange);
+    animation:ackPulse 1.8s ease-in-out infinite;
+  }
+  .memo-card.needs-ack{ background:#fffdf5; }
+  .ack-badge{
+    display:inline-flex;align-items:center;gap:5px;
+    background:var(--red);color:#fff;border-radius:999px;
+    padding:3px 11px;font-size:11.5px;font-weight:800;white-space:nowrap;
+    animation:ackBadge 1.8s ease-in-out infinite;
+  }
+  .ack-badge::before{
+    content:"";width:6px;height:6px;border-radius:50%;background:#fff;
+    animation:ackDot 1.8s ease-in-out infinite;
+  }
+  .read-btn.urgent{ animation:ackBtn 1.8s ease-in-out infinite; }
+  .memo-mine-count.urgent{ animation:ackBadge 1.8s ease-in-out infinite; }
+  /* 미확인 건이 몇 개인지 헤더에서 바로 보이도록 */
+  .ack-count{font-size:11.5px;font-weight:700;color:var(--red);white-space:nowrap;}
+
+  @media (prefers-reduced-motion: reduce){
+    .notice-banner.needs-ack,
+    .memo-card.needs-ack,
+    .ack-badge,.ack-badge::before,
+    .read-btn.urgent,
+    .memo-mine-count.urgent{ animation:none; }
+    .notice-banner.needs-ack,
+    .memo-card.needs-ack{ box-shadow:0 0 0 3px rgba(245,158,11,.22), 0 6px 20px rgba(30,20,70,.10); }
+  }
+
   /* ---------- 계정 관리 ---------- */
   .acct-table{width:100%;border-collapse:collapse;margin-top:6px;}
   .acct-table{table-layout:fixed;}
@@ -295,7 +349,7 @@
   .notice-banner:empty{display:none;}
   .notice-banner{background:linear-gradient(135deg,#fff7e6,#fff1f2);border:1px solid var(--border);border-radius:18px;padding:12px 16px;margin-bottom:18px;box-shadow:0 6px 20px rgba(30,20,70,.10);}
   .notice-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-  .notice-banner h3{margin:0;font-size:15.5px;color:#c2410c;font-weight:800;}
+  .notice-banner h3{margin:0;font-size:15.5px;color:#c2410c;font-weight:800;display:flex;align-items:center;gap:8px;}
   .notice-edit-btn{border:2px solid var(--border);background:#fff;border-radius:999px;padding:5px 13px;font-size:12px;cursor:pointer;color:var(--violet);font-weight:700;}
   .notice-edit-btn:hover{background:var(--edu-tint);border-color:var(--violet);}
   .notice-text{font-size:14px;line-height:1.7;color:var(--text);white-space:pre-wrap;word-break:break-word;}
@@ -662,6 +716,21 @@
   [data-theme="dark"] .memo-mine-count{background:rgba(251,113,133,.2);color:#fda4af;}
   [data-theme="dark"] .memo-card{box-shadow:0 2px 8px rgba(0,0,0,.3);}
   [data-theme="dark"] .memo-card.to-me{box-shadow:0 4px 14px rgba(34,211,238,.2);}
+  /* 미확인 강조 — 다크 모드 */
+  [data-theme="dark"] .memo-card.needs-ack{background:rgba(251,191,36,.08);}
+  [data-theme="dark"] .notice-banner.needs-ack,
+  [data-theme="dark"] .memo-card.needs-ack{animation:ackPulseDark 1.8s ease-in-out infinite;}
+  @keyframes ackPulseDark{
+    0%,100%{ border-color:var(--orange); box-shadow:0 0 0 0 rgba(251,191,36,.28), 0 8px 22px rgba(0,0,0,.35); }
+    50%    { border-color:#fcd34d;       box-shadow:0 0 0 7px rgba(251,191,36,.02), 0 8px 26px rgba(251,191,36,.30); }
+  }
+  [data-theme="dark"] .ack-badge{background:var(--red);color:#1b1030;}
+  [data-theme="dark"] .ack-badge::before{background:#1b1030;}
+  [data-theme="dark"] .ack-count{color:#fda4af;}
+  @media (prefers-reduced-motion: reduce){
+    [data-theme="dark"] .notice-banner.needs-ack,
+    [data-theme="dark"] .memo-card.needs-ack{animation:none;box-shadow:0 0 0 3px rgba(251,191,36,.22),0 8px 22px rgba(0,0,0,.35);}
+  }
   [data-theme="dark"] .memo-status.wait{background:rgba(245,158,11,.18);color:#fcd34d;}
   [data-theme="dark"] .memo-status.done{background:rgba(74,222,128,.16);color:#86efac;}
   [data-theme="dark"] .memo-manage button{background:transparent;}
@@ -2322,7 +2391,7 @@ function renderNoticeReads(){
     ? `<button class="read-btn" disabled title="읽기 전용 모드에서는 확인 체크를 저장할 수 없습니다">확인 체크 불가</button>`
     : (mine
       ? `<button class="read-btn done" onclick="toggleNoticeRead()" title="누르면 확인을 취소합니다">✓ 확인함</button>`
-      : `<button class="read-btn" onclick="toggleNoticeRead()">확인했습니다</button>`);
+      : `<button class="read-btn urgent" onclick="toggleNoticeRead()">확인했습니다</button>`);
 
   const chips = reads
     .slice()
@@ -2350,13 +2419,18 @@ function renderNoticeBanner(){
   const hasText = notice && notice.text && notice.text.trim();
   const editBtn = isAdmin ? `<button class="notice-edit-btn" onclick="openEditNotice()">${hasText ? '수정' : '작성'}</button>` : '';
   if(!hasText){
+    el.classList.remove('needs-ack');
     if(!isAdmin){ el.innerHTML = ''; return; }
     el.innerHTML = `<div class="notice-head"><h3>주요 전달사항</h3>${editBtn}</div><div class="absence-empty">등록된 전달사항이 없습니다.</div>`;
     return;
   }
+  // 로그인한 내가 아직 확인 체크를 안 했으면 배너 전체를 맥박 강조한다.
+  const needsAck = !!currentUser && !myRead();
+  el.classList.toggle('needs-ack', needsAck);
+  const ackBadge = needsAck ? `<span class="ack-badge">확인 필요</span>` : '';
   const updatedLabel = notice.updatedAt ? `<span class="notice-updated">${formatDateTime(notice.updatedAt)} 업데이트</span>` : '';
   el.innerHTML = `
-    <div class="notice-head"><h3>주요 전달사항</h3>${editBtn}</div>
+    <div class="notice-head"><h3>주요 전달사항 ${ackBadge}</h3>${editBtn}</div>
     <div class="notice-text">${escapeHtml(notice.text).replace(/\n/g,'<br>')}</div>
     ${updatedLabel}
     ${renderNoticeReads()}
@@ -2375,9 +2449,14 @@ function memoCard(m){
   const readOnly = !ghConfig || !ghConfig.token;
   const done = !!m.readAt;
 
+  // 나에게 온 건데 아직 확인 안 했으면 = 내가 처리해야 할 건. 카드 전체를 맥박 강조한다.
+  const needsAck = isTarget && !done;
+
   const status = done
     ? `<span class="memo-status done">✓ ${escapeHtml(m.toName)} 확인 · ${formatDateTime(m.readAt).slice(5)}</span>`
-    : `<span class="memo-status wait">미확인</span>`;
+    : (needsAck
+      ? `<span class="ack-badge">확인 필요</span>`
+      : `<span class="memo-status wait">미확인</span>`);
 
   const manageBtns = canManage
     ? `<span class="memo-manage">
@@ -2389,7 +2468,7 @@ function memoCard(m){
   const readBtn = (isTarget && !readOnly)
     ? (done
         ? `<button class="read-btn done" onclick="toggleMemoRead('${m.id}')" title="누르면 확인을 취소합니다">✓ 확인함</button>`
-        : `<button class="read-btn" onclick="toggleMemoRead('${m.id}')">확인했습니다</button>`)
+        : `<button class="read-btn urgent" onclick="toggleMemoRead('${m.id}')">확인했습니다</button>`)
     : '';
 
   const comments = m.comments.map(c => {
@@ -2414,7 +2493,7 @@ function memoCard(m){
        </div>`;
 
   return `
-    <div class="memo-card ${isTarget ? 'to-me' : ''} ${done ? 'is-done' : ''}">
+    <div class="memo-card ${isTarget ? 'to-me' : ''} ${done ? 'is-done' : ''} ${needsAck ? 'needs-ack' : ''}">
       <div class="memo-card-head">
         <span class="memo-to">→ ${escapeHtml(m.toName)}${findUser(m.toUserId) ? '' : ' <span class="memo-gone">(삭제된 계정)</span>'}</span>
         ${status}
@@ -2465,7 +2544,7 @@ function renderMemoBanner(){
     : '';
 
   const myOpen = currentUser ? open.filter(m => m.toUserId === currentUser.id).length : 0;
-  const mine = myOpen ? `<span class="memo-mine-count">나에게 ${myOpen}건</span>` : '';
+  const mine = myOpen ? `<span class="memo-mine-count urgent">나에게 ${myOpen}건</span>` : '';
 
   el.innerHTML = `
     <div class="notice-head"><h3>개인 전달사항 ${mine}</h3>${addBtn}</div>
@@ -3019,6 +3098,20 @@ function render(){
   renderNoticeBanner();
   renderMemoBanner();
   renderContent();
+  updateAckTitle();
+}
+
+// 탭을 켜두고 다른 일을 하고 있어도 알 수 있게, 내가 확인 안 한 건수를
+// 브라우저 탭 제목 앞에 붙인다. (0건이면 원래 제목으로 되돌림)
+var BASE_TITLE = null;
+function updateAckTitle(){
+  if(BASE_TITLE === null) BASE_TITLE = document.title.replace(/^\(\d+\)\s*/, '');
+  let n = 0;
+  if(currentUser){
+    if(notice && notice.text && notice.text.trim() && !myRead()) n++;
+    n += memos.filter(m => m.toUserId === currentUser.id && !m.readAt).length;
+  }
+  document.title = n ? `(${n}) ${BASE_TITLE}` : BASE_TITLE;
 }
 
 function addTask(){
