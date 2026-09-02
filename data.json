@@ -890,15 +890,16 @@
   },
   "users": [
     {
-  "id": "c01764",
-  "name": "천재우",
-  "role": "admin",
-  "salt": "1ff98d5c68a0f7db6a6bed209af5f123",
-  "hash": "533a617cd9a7a8f04839c05fa60606c9080918ffa9ea9853442a529b85f9776d",
-  "iter": 150000,
-  "createdAt": "2026-08-31T12:58:43.424Z",
-  "pwTemp": true
-},
+      "id": "c01764",
+      "name": "천재우",
+      "role": "admin",
+      "salt": "6b26ee0756c64f7ce6c9fe22509aa734",
+      "hash": "2d371fbf72fd7f45fce4f9d70c0ecc84430dd1965cccf1810c959d69ebd69fee",
+      "iter": 150000,
+      "createdAt": "2026-08-31T12:58:43.424Z",
+      "pwTemp": false,
+      "pwChangedAt": "2026-09-02T01:07:19.091Z"
+    },
     {
       "id": "c04897",
       "name": "이재혁",
