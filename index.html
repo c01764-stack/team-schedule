@@ -114,6 +114,10 @@
   .auth-box h2{margin:0 0 4px;font-size:22px;font-weight:800;
     background:linear-gradient(135deg,#6366f1,#8b5cf6 45%,#ec4899);-webkit-background-clip:text;background-clip:text;color:transparent;}
   .auth-box .auth-sub{margin:0 0 20px;font-size:12.5px;color:var(--sub);line-height:1.55;}
+  .auth-spinner{width:26px;height:26px;margin:4px auto 6px;border-radius:50%;
+    border:3px solid var(--border);border-top-color:var(--violet);animation:authSpin .8s linear infinite;}
+  @keyframes authSpin{to{transform:rotate(360deg);}}
+  @media (prefers-reduced-motion: reduce){ .auth-spinner{animation-duration:2.4s;} }
   .auth-box .field{margin-bottom:12px;}
   .auth-box label{display:block;font-size:12px;color:var(--sub);margin-bottom:5px;font-weight:700;}
   .auth-box input{width:100%;padding:11px 13px;border:2px solid var(--border);border-radius:12px;
@@ -789,8 +793,8 @@
   </header>
 
   <div class="setup-banner" id="setupBanner" style="display:none;">
-    아직 GitHub 동기화가 설정되지 않았습니다. 설정을 완료해야 팀원들과 데이터가 공유됩니다.
-    <button onclick="openSettings()">지금 설정하기</button>
+    지금은 <b>보기 전용</b>입니다. 확인 체크·댓글·업무 입력을 저장하려면 GitHub 토큰이 필요합니다.
+    <button onclick="openSettings()">토큰 입력하기</button>
   </div>
 
   <div class="summary" id="summary"></div>
@@ -977,8 +981,20 @@ function goCurrentWeek(){
   weekState.monday = mondayOf(new Date());
   renderContent();
 }
+// 이 대시보드가 바라보는 저장소는 하나로 고정돼 있다. 그래서 저장소 정보는
+// 코드에 내장해두고, 처음 들어오는 사람도 아무 설정 없이 바로 로그인 화면을 본다.
+// (public 저장소라 읽기는 토큰이 필요 없다. 토큰은 "저장"할 때만 쓴다.)
+const DEFAULT_GH = { owner: "c01764-stack", repo: "team-schedule", path: "data.json", branch: "main", token: "" };
+
 let ghConfig = null;
 try{ ghConfig = JSON.parse(localStorage.getItem(GH_CONFIG_KEY) || "null"); }catch(e){ ghConfig = null; }
+// 저장된 설정이 없으면 기본 저장소로 시작한다(토큰 없이 읽기 전용).
+// 예전에 저장해둔 설정이 있으면 그대로 쓰되, 빠진 항목만 기본값으로 채운다.
+ghConfig = Object.assign({}, DEFAULT_GH, ghConfig || {});
+if(!ghConfig.owner) ghConfig.owner = DEFAULT_GH.owner;
+if(!ghConfig.repo)  ghConfig.repo  = DEFAULT_GH.repo;
+if(!ghConfig.path)  ghConfig.path  = DEFAULT_GH.path;
+if(!ghConfig.branch) ghConfig.branch = DEFAULT_GH.branch;
 let fileSha = null;
 let isSaving = false;
 // 원격 데이터를 "한 번이라도 제대로 읽었는가". 읽지 못한 상태에서는
@@ -987,6 +1003,9 @@ let isSaving = false;
 let dataLoaded = false;
 let loadError = null;
 let autoRefreshTimer = null;
+// 마지막으로 원격 데이터를 읽은 시각. 토큰 없이(익명으로) 읽을 때는 GitHub 가
+// 시간당 60회로 제한하므로, 자동 새로고침 간격을 늘리는 데 쓴다.
+let lastRemoteReadAt = 0;
 
 // isAdmin 은 이제 로그인한 계정의 역할(role === 'admin')로 결정된다.
 // 예전의 하드코딩 비밀번호 방식은 제거됐다.
@@ -1098,7 +1117,8 @@ function logout(){
 // 'ok'       : 통과
 function authState(){
   if(!ghConfig) return "nosetup";
-  if(!dataLoaded) return "loaderror";   // 아직 한 번도 못 읽었다
+  // 아직 한 번도 못 읽었다 — 불러오는 중인지, 실패한 것인지 구분한다.
+  if(!dataLoaded) return loadError ? "loaderror" : "loading";
   if(!users.length) return "nousers";
   if(!currentUser) return "login";
   return "ok";
@@ -1117,6 +1137,15 @@ function renderAuthGate(){
 
   overlay.classList.add("open");
   document.body.classList.add("auth-locked");
+
+  if(state === "loading"){
+    box.innerHTML = `
+      <h2>업무관리 대시보드</h2>
+      <p class="auth-sub">불러오는 중입니다...</p>
+      <div class="auth-spinner"></div>
+    `;
+    return false;
+  }
 
   if(state === "nosetup"){
     box.innerHTML = `
@@ -1612,8 +1641,14 @@ async function fetchRemoteRaw(){
     return { tasks: [], absences: [], reports: [], notice: normalizeNotice(null), users: [], memos: [], sha: null, isNew: true };
   }
   if(res.status === 401 || res.status === 403){
+    // 토큰 없이 읽을 때는 시간당 횟수 제한(60회)에 걸릴 수 있다. 원인을 구분해서 알려준다.
+    const remaining = res.headers.get("X-RateLimit-Remaining");
+    if(!ghConfig.token && remaining === "0"){
+      throw new Error("GitHub 조회 횟수 제한에 걸렸습니다. 잠시 후 다시 시도하거나, 설정(⚙)에서 토큰을 넣으면 제한이 크게 늘어납니다.");
+    }
     throw new Error("토큰이 유효하지 않거나 권한이 없습니다. 설정을 확인해주세요.");
   }
+  lastRemoteReadAt = Date.now();
   if(!res.ok){
     throw new Error(`불러오기 실패 (HTTP ${res.status})`);
   }
@@ -2052,34 +2087,40 @@ window.addEventListener("beforeunload", (e) => {
 function updateSetupBanner(){
   const banner = document.getElementById("setupBanner");
   if(!banner) return;
-  banner.style.display = ghConfig ? "none" : "block";
+  // 저장소 정보는 코드에 내장돼 있으므로, 이제 안내가 필요한 건 "토큰이 없는 상태"뿐이다.
+  banner.style.display = (ghConfig && ghConfig.token) ? "none" : "block";
 }
 
 function openSettings(){
   openModal(`
     <h3>GitHub 동기화 설정</h3>
-    <p style="font-size:12px;color:var(--sub);margin:-6px 0 14px;">데이터를 저장할 GitHub 저장소 정보를 입력하세요. 저장소는 미리 만들어 두어야 합니다.</p>
-    <div class="field">
-      <label>GitHub 사용자명 / 조직</label>
-      <input type="text" id="cfgOwner" value="${escapeHtml(ghConfig?.owner || '')}" placeholder="예: myaccount">
-    </div>
-    <div class="field">
-      <label>저장소 이름</label>
-      <input type="text" id="cfgRepo" value="${escapeHtml(ghConfig?.repo || '')}" placeholder="예: team-schedule">
-    </div>
-    <div class="field">
-      <label>데이터 파일 경로</label>
-      <input type="text" id="cfgPath" value="${escapeHtml(ghConfig?.path || 'data.json')}">
-    </div>
-    <div class="field">
-      <label>브랜치</label>
-      <input type="text" id="cfgBranch" value="${escapeHtml(ghConfig?.branch || 'main')}">
-    </div>
+    <p style="font-size:12px;color:var(--sub);margin:-6px 0 14px;">저장소 정보는 이미 입력돼 있습니다. <b>아래 토큰만 넣으면</b> 확인 체크·업무 입력이 저장됩니다. 토큰이 없으면 보기만 가능합니다.</p>
     <div class="field">
       <label>Personal Access Token</label>
       <input type="password" id="cfgToken" value="${escapeHtml(ghConfig?.token || '')}" placeholder="ghp_... 또는 github_pat_...">
-      <p style="font-size:11px;color:var(--sub);margin:4px 0 0;">비워두면 읽기 전용 모드로 저장됩니다 (조회만 가능, 추가/수정 불가). 토큰 입력이 계속 실패하는 기기에서 사용하세요.</p>
+      <p style="font-size:11px;color:var(--sub);margin:4px 0 0;">비워두면 보기 전용입니다 (조회만 가능, 확인 체크·추가·수정 불가).</p>
     </div>
+    <details style="margin-top:4px;">
+      <summary style="cursor:pointer;font-size:12px;color:var(--sub);font-weight:700;">저장소 정보 (평소에는 건드릴 필요 없습니다)</summary>
+      <div style="margin-top:10px;">
+        <div class="field">
+          <label>GitHub 사용자명 / 조직</label>
+          <input type="text" id="cfgOwner" value="${escapeHtml(ghConfig?.owner || '')}" placeholder="예: myaccount">
+        </div>
+        <div class="field">
+          <label>저장소 이름</label>
+          <input type="text" id="cfgRepo" value="${escapeHtml(ghConfig?.repo || '')}" placeholder="예: team-schedule">
+        </div>
+        <div class="field">
+          <label>데이터 파일 경로</label>
+          <input type="text" id="cfgPath" value="${escapeHtml(ghConfig?.path || 'data.json')}">
+        </div>
+        <div class="field">
+          <label>브랜치</label>
+          <input type="text" id="cfgBranch" value="${escapeHtml(ghConfig?.branch || 'main')}">
+        </div>
+      </div>
+    </details>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeModal()">취소</button>
       <button class="btn-primary" onclick="saveSettings()">저장하고 불러오기</button>
@@ -2097,7 +2138,7 @@ function saveSettings(){
     alert("사용자명과 저장소는 필수입니다.");
     return;
   }
-  if(!token && !confirm("토큰 없이 저장하면 읽기 전용 모드로 동작합니다. 업무 추가/수정은 불가능하고 보기만 가능합니다. 계속할까요?")) return;
+  if(!token && !confirm("토큰 없이 저장하면 보기 전용으로 동작합니다. 확인 체크·댓글·업무 추가/수정이 불가능합니다. 계속할까요?")) return;
   ghConfig = { owner, repo, path, branch, token };
   localStorage.setItem(GH_CONFIG_KEY, JSON.stringify(ghConfig));
   closeModal();
@@ -2111,6 +2152,8 @@ async function loadInitial(){
     render();
     return;
   }
+  loadError = null;          // 다시 시도할 때는 "불러오는 중" 화면부터 보여준다
+  renderAuthGate();
   setSyncStatus("loading", "불러오는 중...");
   try{
     const result = await loadRemoteData();
@@ -2128,7 +2171,7 @@ async function loadInitial(){
 }
 
 async function manualRefresh(){
-  if(!ghConfig){ openSettings(); return; }
+  // 새로고침(읽기)은 토큰이 없어도 된다.
   if(saveInFlight) return;
   // 저장 못 한 변경이 남아 있으면, 새로고침이 아니라 저장을 다시 시도하는 게 맞다.
   // (예전에는 여기서 새로고침을 해버려서 입력이 사라졌다)
@@ -2154,6 +2197,8 @@ function startAutoRefresh(){
     if(document.hidden) return;                           // 다른 탭을 보고 있으면 쉰다
     if(document.getElementById("modalOverlay").classList.contains("open")) return;
     if(isEditingField()) return;                          // 뭔가 입력 중
+    // 토큰이 없으면 익명 조회라 시간당 60회 제한이 있다. 3분에 한 번만 읽는다.
+    if(!ghConfig.token && Date.now() - lastRemoteReadAt < 180000) return;
     try{
       await refreshFromRemote();
       setSyncStatus("idle", (ghConfig.token ? "동기화됨" : "읽기 전용") + " · " + nowTimeLabel());
@@ -3116,7 +3161,7 @@ function updateAckTitle(){
 
 function addTask(){
   if(!isAdmin){ alert("관리자 모드에서만 업무를 추가할 수 있습니다."); return; }
-  if(!ghConfig){ openSettings(); return; }
+  if(!ghConfig.token){ openSettings(); return; }
   const team = document.getElementById("inTeam").value;
   const title = document.getElementById("inTitle").value.trim();
   const owner = document.getElementById("inOwner").value.trim();
@@ -3203,7 +3248,7 @@ function toggleReportInclude(id){
 }
 
 function addAbsence(){
-  if(!ghConfig){ openSettings(); return; }
+  if(!ghConfig.token){ openSettings(); return; }
   const team = document.getElementById("absTeam").value;
   const person = document.getElementById("absPerson").value.trim();
   const type = document.getElementById("absType").value;
