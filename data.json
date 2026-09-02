@@ -974,6 +974,7 @@
       "createdAt": "2026-09-02T00:05:10.758Z",
       "updatedAt": "2026-09-02T00:05:42.011Z",
       "readAt": null,
+      "doneAt": null,
       "comments": []
     },
     {
@@ -986,6 +987,20 @@
       "createdAt": "2026-09-02T00:05:33.069Z",
       "updatedAt": "2026-09-02T00:05:33.069Z",
       "readAt": "2026-09-02T07:40:17.371Z",
+      "doneAt": null,
+      "comments": []
+    },
+    {
+      "id": "m_t8f6xldpx",
+      "toUserId": "c01764",
+      "toName": "천재우",
+      "text": "ㄴㄻㅇㄻ",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-02T14:58:06.673Z",
+      "updatedAt": "2026-09-02T14:58:06.673Z",
+      "readAt": null,
+      "doneAt": null,
       "comments": []
     }
   ]
