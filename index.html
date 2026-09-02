@@ -408,13 +408,18 @@
     box-shadow:var(--shadow-soft);transition:box-shadow .15s;}
   .memo-card:hover{box-shadow:var(--shadow-card);}
   .memo-card.to-me{border-color:var(--violet);box-shadow:0 1px 2px rgba(139,92,246,.20), 0 10px 22px rgba(139,92,246,.22);}
-  /* 확인 완료 건은 목록에 그대로 남되, 아직 처리할 것과 구분되게 한 톤 낮춘다. */
+  /* 완료된 건은 목록에 그대로 남되, 아직 처리할 것과 구분되게 한 톤 낮춘다. */
   .memo-card.is-done{background:#fbfbfe;}
   .memo-card.is-done .memo-text{color:var(--sub);}
+  /* 1단계만 마친 건 — 왼쪽에 파란 띠를 둘러 "진행 중"임을 표시 */
+  .memo-card.is-doing{border-left:4px solid #3b82f6;}
+  /* 확인·완료 시각 기록 줄 */
+  .memo-trail{margin-top:8px;font-size:11px;font-weight:600;color:var(--sub);}
   .memo-card-head{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin-bottom:7px;}
   .memo-to{font-size:13.5px;font-weight:800;color:var(--text);}
   .memo-status{border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:700;white-space:nowrap;}
   .memo-status.wait{background:#fef3c7;color:#b45309;}
+  .memo-status.doing{background:#dbeafe;color:#1d4ed8;}
   .memo-status.done{background:#dcfce7;color:#15803d;}
   .memo-by{font-size:11.5px;color:var(--sub);font-weight:600;}
   .memo-gone{font-size:11px;color:var(--sub);font-weight:600;}
@@ -423,7 +428,17 @@
     font-size:11px;cursor:pointer;color:var(--violet);font-weight:700;font-family:inherit;}
   .memo-manage button.del{color:var(--red);}
   .memo-text{font-size:14px;line-height:1.65;color:var(--text);white-space:pre-wrap;word-break:break-word;}
-  .memo-actions-row{margin-top:10px;}
+  .memo-actions-row{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;}
+  /* 단계 번호를 버튼 앞에 동그라미로 붙인다 */
+  .read-btn b{display:inline-flex;align-items:center;justify-content:center;
+    width:16px;height:16px;border-radius:50%;margin-right:6px;font-size:10.5px;
+    background:rgba(255,255,255,.3);vertical-align:middle;}
+  .read-btn.done b,.read-btn:disabled b{background:rgba(0,0,0,.10);}
+  /* 2단계 — 확인을 마쳐 이제 누를 수 있는 상태 */
+  .read-btn.go-done{background:linear-gradient(135deg,#3b82f6,#2563eb);
+    box-shadow:0 3px 10px rgba(59,130,246,.32);}
+  /* 2단계 완료 */
+  .read-btn.done2{background:#dcfce7;color:#15803d;box-shadow:none;border:1.5px solid #4ade80;}
   .memo-comments{margin-top:10px;padding-top:9px;border-top:1px dashed var(--border);
     display:flex;flex-direction:column;gap:6px;}
   .memo-comment{display:flex;align-items:baseline;flex-wrap:wrap;gap:7px;font-size:12.5px;line-height:1.55;}
@@ -785,6 +800,9 @@
   }
   [data-theme="dark"] .memo-status.wait{background:rgba(245,158,11,.18);color:#fcd34d;}
   [data-theme="dark"] .memo-status.done{background:rgba(74,222,128,.16);color:#86efac;}
+  [data-theme="dark"] .memo-status.doing{background:rgba(59,130,246,.20);color:#93c5fd;}
+  [data-theme="dark"] .memo-card.is-doing{border-left-color:#38bdf8;}
+  [data-theme="dark"] .read-btn.done2{background:rgba(74,222,128,.16);color:#86efac;border-color:rgba(74,222,128,.4);}
   [data-theme="dark"] .memo-manage button{background:transparent;}
   [data-theme="dark"] .memo-comment .who{color:#c4b5fd;}
   [data-theme="dark"] .type-badge.inspect{background:rgba(99,102,241,.18);color:#a5b4fc;}
@@ -1012,7 +1030,8 @@ let memos = [];
 let memoDirty = new Map();          // memoId -> 메모객체 | 'DELETE'  (본문 생성/수정/삭제)
 let memoCommentDirty = new Map();   // commentId -> {memoId, comment}  (내가 단 댓글)
 let memoCommentDeleted = new Set(); // commentId                        (내가 지운 댓글)
-let memoReadDirty = new Map();      // memoId -> ISO문자열 | null       (내 확인 상태)
+let memoReadDirty = new Map();      // memoId -> ISO문자열 | null       (1단계: 내 확인 상태)
+let memoDoneDirty = new Map();      // memoId -> ISO문자열 | null       (2단계: 내 완료 상태)
 let memoDrafts = {};                // memoId -> 입력 중인 댓글 (재렌더링 때 유지)
 let activeTab = "all";
 let calState = { year: new Date().getFullYear(), month: new Date().getMonth() };
@@ -1801,7 +1820,8 @@ function normalizeMemo(m){
     byName: m.byName || "",
     createdAt: m.createdAt || null,
     updatedAt: m.updatedAt || null,
-    readAt: m.readAt || null,
+    readAt: m.readAt || null,   // 1단계 — 전달사항을 읽었다
+    doneAt: m.doneAt || null,   // 2단계 — 지시 내용을 처리했다
     comments: Array.isArray(m.comments) ? m.comments.slice() : []
   };
 }
@@ -1811,6 +1831,7 @@ function clearMemoDirty(){
   memoCommentDirty.clear();
   memoCommentDeleted.clear();
   memoReadDirty.clear();
+  memoDoneDirty.clear();
 }
 
 // 원격 최신 목록 위에 내 변경분만 종류별로 다시 얹는다.
@@ -1827,6 +1848,7 @@ function mergeMemos(freshMemos){
     if(remote){
       merged.comments = remote.comments.slice();
       if(!memoReadDirty.has(id)) merged.readAt = remote.readAt;
+      if(!memoDoneDirty.has(id)) merged.doneAt = remote.doneAt;
     }
     map.set(id, merged);
   });
@@ -1844,6 +1866,11 @@ function mergeMemos(freshMemos){
   memoReadDirty.forEach((at, id) => {
     const m = map.get(id);
     if(m) m.readAt = at;
+  });
+
+  memoDoneDirty.forEach((at, id) => {
+    const m = map.get(id);
+    if(m) m.doneAt = at;
   });
 
   const out = Array.from(map.values());
@@ -1953,7 +1980,7 @@ function wait(ms){
 function hasUnsavedChanges(){
   return taskDirty.size > 0 || absenceDirty.size > 0 || reportDirty.size > 0 ||
          memoDirty.size > 0 || memoCommentDirty.size > 0 || memoCommentDeleted.size > 0 ||
-         memoReadDirty.size > 0 || userDirty.size > 0 ||
+         memoReadDirty.size > 0 || memoDoneDirty.size > 0 || userDirty.size > 0 ||
          noticeTextDirty || !!myReadDirty;
 }
 
@@ -2577,7 +2604,7 @@ const MEMO_FOLD_DAYS = 30;
 // 그 건에 마지막으로 무슨 일이 있었던 시각. 작성/수정, 확인 체크, 마지막 댓글 중
 // 가장 최근 것을 쓴다. 오래된 건이라도 어제 댓글이 달렸으면 접지 않기 위해서다.
 function memoLastActivity(m){
-  const times = [m.createdAt, m.updatedAt, m.readAt]
+  const times = [m.createdAt, m.updatedAt, m.readAt, m.doneAt]
     .concat((m.comments || []).map(c => c.at))
     .map(v => Date.parse(v || ""))
     .filter(t => !isNaN(t));
@@ -2588,16 +2615,21 @@ function memoCard(m){
   const isTarget = currentUser && m.toUserId === currentUser.id;
   const canManage = isAdmin || (currentUser && m.byUserId === currentUser.id);
   const readOnly = !ghConfig || !ghConfig.token;
-  const done = !!m.readAt;
+  // 두 단계로 진행된다. 1단계 확인(readAt) → 2단계 완료(doneAt).
+  const read = !!m.readAt;
+  const done = !!m.doneAt;
 
-  // 나에게 온 건데 아직 확인 안 했으면 = 내가 처리해야 할 건. 카드 전체를 맥박 강조한다.
-  const needsAck = isTarget && !done;
+  // 나에게 온 건데 아직 읽지도 않았으면 = 가장 급한 상태. 카드 전체를 맥박 강조한다.
+  const needsAck = isTarget && !read;
 
+  const nm = escapeHtml(m.toName);
   const status = done
-    ? `<span class="memo-status done">✓ ${escapeHtml(m.toName)} 확인 · ${formatDateTime(m.readAt).slice(5)}</span>`
-    : (needsAck
-      ? `<span class="ack-badge">확인 필요</span>`
-      : `<span class="memo-status wait">미확인</span>`);
+    ? `<span class="memo-status done">✓✓ ${nm} 완료 · ${formatDateTime(m.doneAt).slice(5)}</span>`
+    : (read
+      ? `<span class="memo-status doing">✓ ${nm} 확인 · ${formatDateTime(m.readAt).slice(5)} · 완료 대기</span>`
+      : (needsAck
+        ? `<span class="ack-badge">확인 필요</span>`
+        : `<span class="memo-status wait">미확인</span>`));
 
   const manageBtns = canManage
     ? `<span class="memo-manage">
@@ -2606,11 +2638,16 @@ function memoCard(m){
        </span>`
     : '';
 
-  const readBtn = (isTarget && !readOnly)
-    ? (done
-        ? `<button class="read-btn done" onclick="toggleMemoRead('${m.id}')" title="누르면 확인을 취소합니다">✓ 확인함</button>`
-        : `<button class="read-btn urgent" onclick="toggleMemoRead('${m.id}')">확인했습니다</button>`)
-    : '';
+  // 1단계 버튼은 항상, 2단계 버튼은 1단계를 마친 뒤에만 누를 수 있다.
+  const step1 = read
+    ? `<button class="read-btn done" onclick="toggleMemoRead('${m.id}')" title="누르면 확인을 취소합니다"><b>1</b> ✓ 확인함</button>`
+    : `<button class="read-btn urgent" onclick="toggleMemoRead('${m.id}')"><b>1</b> 확인했습니다</button>`;
+  const step2 = done
+    ? `<button class="read-btn done2" onclick="toggleMemoDone('${m.id}')" title="누르면 완료를 취소합니다"><b>2</b> ✓ 완료함</button>`
+    : (read
+      ? `<button class="read-btn go-done" onclick="toggleMemoDone('${m.id}')"><b>2</b> 완료했습니다</button>`
+      : `<button class="read-btn" disabled title="먼저 1단계 확인을 눌러주세요"><b>2</b> 완료했습니다</button>`);
+  const readBtn = (isTarget && !readOnly) ? (step1 + step2) : '';
 
   const comments = m.comments.map(c => {
     const canDel = currentUser && (c.userId === currentUser.id || isAdmin);
@@ -2634,7 +2671,7 @@ function memoCard(m){
        </div>`;
 
   return `
-    <div class="memo-card ${isTarget ? 'to-me' : ''} ${done ? 'is-done' : ''} ${needsAck ? 'needs-ack' : ''}">
+    <div class="memo-card ${isTarget ? 'to-me' : ''} ${done ? 'is-done' : ''} ${read && !done ? 'is-doing' : ''} ${needsAck ? 'needs-ack' : ''}">
       <div class="memo-card-head">
         <span class="memo-to">→ ${escapeHtml(m.toName)}${findUser(m.toUserId) ? '' : ' <span class="memo-gone">(삭제된 계정)</span>'}</span>
         ${status}
@@ -2643,6 +2680,7 @@ function memoCard(m){
       </div>
       <div class="memo-text">${escapeHtml(m.text).replace(/\n/g,'<br>')}</div>
       ${readBtn ? `<div class="memo-actions-row">${readBtn}</div>` : ''}
+      ${done ? `<div class="memo-trail">확인 ${formatDateTime(m.readAt)} · 완료 ${formatDateTime(m.doneAt)}</div>` : ''}
       ${comments ? `<div class="memo-comments">${comments}</div>` : ''}
       ${replyBox}
     </div>
@@ -2670,37 +2708,45 @@ function renderMemoBanner(){
     return am !== bm ? am - bm : byNewest(a,b);
   };
 
-  // 확인한 전달사항도 지워지지 않는다. 다만 한 달이 지나 손댈 일이 없어진 건은
-  // 목록을 짧게 유지하려고 접어둔다. 지워지는 게 아니라 "지난 전달사항"으로 내려갈 뿐이다.
-  //  - 미확인: 나이와 상관없이 항상 펼쳐둔다 (아직 처리할 일이므로)
-  //  - 확인 완료: 마지막 활동(작성/확인/마지막 댓글)이 한 달 이내면 펼침, 넘으면 접힘
-  const open = memos.filter(m => !m.readAt).sort(meFirst);
-  const done = memos.filter(m => m.readAt).sort(byNewest);
+  // 세 무리로 나눈다. 미확인 → 확인했지만 미완료 → 완료.
+  // 완료된 건도 지워지지 않는다. 다만 한 달이 지나 더 손댈 일이 없어진 건만
+  // 목록을 짧게 유지하려고 "지난 전달사항"으로 접어둔다.
+  // 미확인·완료 대기는 나이와 상관없이 항상 펼쳐둔다 (아직 끝나지 않은 일이므로).
+  const unread  = memos.filter(m => !m.readAt).sort(meFirst);
+  const doing   = memos.filter(m => m.readAt && !m.doneAt).sort(meFirst);
+  const done    = memos.filter(m => m.doneAt).sort(byNewest);
 
   const cutoff = Date.now() - MEMO_FOLD_DAYS * 86400000;
   const recentDone = done.filter(m => memoLastActivity(m) >= cutoff);
   const oldDone    = done.filter(m => memoLastActivity(m) <  cutoff);
 
-  const shown = open.concat(recentDone);
-  const listHtml = shown.length === 0
+  const groups = [
+    { list: unread,     label: null },
+    { list: doing,      label: `확인함 · 완료 대기 ${doing.length}건` },
+    { list: recentDone, label: `완료 ${recentDone.length}건` }
+  ].filter(g => g.list.length);
+
+  const listHtml = groups.length === 0
     ? `<div class="absence-empty">최근 전달사항이 없습니다. 아래 "지난 전달사항"에 기록이 남아 있습니다.</div>`
-    : shown.map((m, i) => {
-    // 미확인 구간과 확인 완료 구간 사이에 한 줄짜리 구분선을 넣는다.
-    const divider = (i === open.length && open.length && recentDone.length)
-      ? `<div class="memo-divider"><span>확인 완료 ${recentDone.length}건</span></div>` : '';
-    return divider + memoCard(m);
-  }).join("");
+    : groups.map((g, gi) => {
+        // 무리가 바뀌는 자리에만 한 줄짜리 구분선을 넣는다.
+        const divider = (gi > 0 && g.label)
+          ? `<div class="memo-divider"><span>${g.label}</span></div>` : '';
+        return divider + g.list.map(memoCard).join("");
+      }).join("");
 
   const oldHtml = oldDone.length
     ? `<details class="completed-details memo-old">
-         <summary>지난 전달사항 (${MEMO_FOLD_DAYS}일 지난 확인 완료 건 ${oldDone.length}건)</summary>
+         <summary>지난 전달사항 (${MEMO_FOLD_DAYS}일 지난 완료 건 ${oldDone.length}건)</summary>
          <div class="memo-list">${oldDone.map(memoCard).join("")}</div>
        </details>`
     : '';
 
-  const myOpen = currentUser ? open.filter(m => m.toUserId === currentUser.id).length : 0;
+  // "나에게 N건" 은 내가 아직 끝내지 않은 것(미확인 + 완료 대기)을 센다.
+  const myOpen = currentUser
+    ? memos.filter(m => m.toUserId === currentUser.id && !m.doneAt).length : 0;
   const mine = myOpen ? `<span class="memo-mine-count urgent">나에게 ${myOpen}건</span>` : '';
-  const total = `<span class="memo-total">전체 ${memos.length}건 · 미확인 ${open.length}건</span>`;
+  const total = `<span class="memo-total">전체 ${memos.length}건 · 미확인 ${unread.length} · 완료 대기 ${doing.length}</span>`;
 
   el.innerHTML = `
     <div class="notice-head"><h3>개인 전달사항 ${mine}${total}</h3>${addBtn}</div>
@@ -2757,9 +2803,10 @@ function saveMemoNote(id){
     m.toName = target.name;
     m.text = text;
     m.updatedAt = now;
-    if(targetChanged) m.readAt = null; // 받는 사람이 바뀌면 확인 기록은 무효
+    // 받는 사람이 바뀌면 앞사람의 확인·완료 기록은 무효다
+    if(targetChanged){ m.readAt = null; m.doneAt = null; }
     memoDirty.set(m.id, m);
-    if(targetChanged) memoReadDirty.set(m.id, null);
+    if(targetChanged){ memoReadDirty.set(m.id, null); memoDoneDirty.set(m.id, null); }
     closeModal(); render();
     persist("개인 전달사항 수정: " + target.name);
     return;
@@ -2770,7 +2817,7 @@ function saveMemoNote(id){
     toUserId: target.id, toName: target.name,
     text,
     byUserId: currentUser ? currentUser.id : "", byName: currentUser ? currentUser.name : "",
-    createdAt: now, updatedAt: now, readAt: null, comments: []
+    createdAt: now, updatedAt: now, readAt: null, doneAt: null, comments: []
   };
   memos.push(memo);
   memoDirty.set(memo.id, memo);
@@ -2786,6 +2833,7 @@ function deleteMemoNote(id){
   memos = memos.filter(x => x.id !== id);
   memoDirty.set(id, 'DELETE');
   memoReadDirty.delete(id);
+  memoDoneDirty.delete(id);
   delete memoDrafts[id];
   render();
   persist("개인 전달사항 삭제");
@@ -2800,10 +2848,33 @@ function toggleMemoRead(id){
     return;
   }
   const next = m.readAt ? null : new Date().toISOString();
+  // 확인을 취소하면 그 위에 쌓인 완료도 같이 풀어야 앞뒤가 맞는다
+  if(!next && m.doneAt){
+    if(!confirm("이미 완료 처리한 건입니다. 확인을 취소하면 완료도 함께 취소됩니다. 계속할까요?")) return;
+    m.doneAt = null;
+    memoDoneDirty.set(id, null);
+  }
   m.readAt = next;
   memoReadDirty.set(id, next);
   render();
   persist(next ? `개인 전달사항 확인: ${currentUser.name}` : `개인 전달사항 확인 취소: ${currentUser.name}`);
+}
+
+// 2단계 — 지시받은 일을 처리하고 나서 누른다. 1단계(확인)를 거쳐야만 누를 수 있다.
+function toggleMemoDone(id){
+  const m = memos.find(x => x.id === id);
+  if(!m || !currentUser) return;
+  if(m.toUserId !== currentUser.id){ alert("받는 사람 본인만 완료 체크를 할 수 있습니다."); return; }
+  if(!ghConfig || !ghConfig.token){
+    alert("읽기 전용 모드에서는 완료 체크를 저장할 수 없습니다. 설정(⚙)에서 토큰을 입력해주세요.");
+    return;
+  }
+  if(!m.readAt){ alert("먼저 [확인했습니다]를 눌러주세요."); return; }
+  const next = m.doneAt ? null : new Date().toISOString();
+  m.doneAt = next;
+  memoDoneDirty.set(id, next);
+  render();
+  persist(next ? `개인 전달사항 완료: ${currentUser.name}` : `개인 전달사항 완료 취소: ${currentUser.name}`);
 }
 
 function addMemoComment(id){
@@ -3265,7 +3336,8 @@ function updateAckTitle(){
   let n = 0;
   if(currentUser){
     if(notice && notice.text && notice.text.trim() && !myRead()) n++;
-    n += memos.filter(m => m.toUserId === currentUser.id && !m.readAt).length;
+    // 나에게 온 것 중 아직 완료하지 않은 건 (확인만 한 것도 포함)
+    n += memos.filter(m => m.toUserId === currentUser.id && !m.doneAt).length;
   }
   document.title = n ? `(${n}) ${BASE_TITLE}` : BASE_TITLE;
 }
