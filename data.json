@@ -913,10 +913,11 @@
       "id": "c04897",
       "name": "이재혁",
       "role": "member",
-      "salt": "158da2ae1b3f3f070c597fbff4202ad6",
-      "hash": "2c6be8c43e963e6b12bbc0acc4c9e8f8fac488ad337996452a7930267ff656e4",
+      "salt": "d079b847b328f5195601c6416f894279",
+      "hash": "2158f274f52ce9fa60d5f7362744238f9e2eb063e9152495062e67f8e6921d8b",
       "iter": 150000,
-      "createdAt": "2026-08-31T13:01:11.956Z"
+      "createdAt": "2026-08-31T13:01:11.956Z",
+      "pwTemp": true
     },
     {
       "id": "c05651",
