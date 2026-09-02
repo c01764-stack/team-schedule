@@ -578,6 +578,17 @@
       "memo": "",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "tje6ynih5",
+      "team": "safety",
+      "title": "안전/보건 위탁업체 견적 확인",
+      "owner": "천재우",
+      "due": "2026-09-04",
+      "progress": 35,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
