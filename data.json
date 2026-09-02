@@ -879,6 +879,15 @@
       "start": "2026-09-09",
       "end": "2026-09-09",
       "memo": "쉴더스 협의체 회의 / 본사 / 16시"
+    },
+    {
+      "id": "t60mpiwmx",
+      "team": "safety",
+      "person": "이재혁",
+      "type": "inspect",
+      "start": "2026-09-03",
+      "end": "2026-09-03",
+      "memo": "sk-p타워 점검 준비"
     }
   ],
   "reports": [
