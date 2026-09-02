@@ -987,6 +987,18 @@
       "updatedAt": "2026-09-02T00:05:33.069Z",
       "readAt": "2026-09-02T07:40:17.371Z",
       "comments": []
+    },
+    {
+      "id": "m_tolccn7aq",
+      "toUserId": "c01764",
+      "toName": "천재우",
+      "text": "ㅁㄴㅇㄻㄴㅇㄹ",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-02T14:57:30.449Z",
+      "updatedAt": "2026-09-02T14:57:30.449Z",
+      "readAt": null,
+      "comments": []
     }
   ]
 }
