@@ -544,10 +544,17 @@
       "team": "safety",
       "title": "SKON 평가 서류 제출",
       "owner": "이재혁",
-      "due": "2026-09-04",
+      "due": "2026-09-07",
       "progress": 10,
       "memo": "",
-      "dueHistory": [],
+      "dueHistory": [
+        {
+          "from": "2026-09-04",
+          "to": "2026-09-07",
+          "changedAt": "2026-09-02T07:32:39.723Z",
+          "reason": "SKON 사이트 계정 확인 필요"
+        }
+      ],
       "includeInReport": true
     },
     {
