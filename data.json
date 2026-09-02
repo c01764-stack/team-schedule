@@ -976,18 +976,6 @@
       "updatedAt": "2026-09-02T00:05:33.069Z",
       "readAt": "2026-09-02T07:40:17.371Z",
       "comments": []
-    },
-    {
-      "id": "m_t0wu4v2v8",
-      "toUserId": "c04897",
-      "toName": "이재혁",
-      "text": "본사 게시판 이달의 활동 현행화(9월)",
-      "byUserId": "c01764",
-      "byName": "천재우",
-      "createdAt": "2026-09-02T07:46:48.109Z",
-      "updatedAt": "2026-09-02T07:46:48.109Z",
-      "readAt": null,
-      "comments": []
     }
   ]
 }
