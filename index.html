@@ -2,8 +2,18 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>업무관리 대시보드</title>
+
+<!-- 홈 화면에 설치해서 앱처럼 쓰기 위한 설정 (PWA) -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#117a3a">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Work Diary">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" />
 <style>
   :root{
@@ -61,6 +71,20 @@
   .sync-status.error{color:var(--red);}
   .icon-btn{background:var(--card);border:1px solid var(--border);border-radius:999px;width:34px;height:34px;cursor:pointer;font-size:15px;color:var(--violet);box-shadow:0 2px 6px rgba(99,102,241,.12);}
   .icon-btn:hover{background:var(--edu-tint);transform:translateY(-1px);}
+  /* 앱 설치 버튼 — 아이콘 버튼과 같은 줄에 두되 글자가 들어가므로 폭만 늘린다 */
+  .install-btn{width:auto;padding:0 13px;font-size:12.5px;font-weight:800;font-family:inherit;
+    color:#fff;background:linear-gradient(135deg,#22c55e,#117a3a);border-color:#117a3a;
+    box-shadow:0 2px 8px rgba(17,122,58,.30);}
+  .install-btn:hover{background:linear-gradient(135deg,#16a34a,#0d5f2d);}
+  /* 새 버전 알림 띠 — 화면 아래에 붙는다 */
+  .upd-bar{position:fixed;left:0;right:0;bottom:0;z-index:300;display:none;
+    align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
+    padding:11px 14px;font-size:13px;font-weight:700;color:#fff;
+    background:linear-gradient(135deg,#16a34a,#0d5f2d);box-shadow:0 -4px 18px rgba(0,0,0,.22);}
+  .upd-bar.open{display:flex;}
+  .upd-bar button{border:none;border-radius:999px;padding:7px 15px;font-size:12.5px;font-weight:800;
+    font-family:inherit;cursor:pointer;background:#fff;color:#0d5f2d;}
+  .upd-bar button.ghost{background:transparent;color:#dcfce7;text-decoration:underline;padding:7px 4px;}
   .modal-box textarea{width:100%;padding:8px 9px;border:2px solid var(--border);border-radius:12px;font-size:12px;font-family:inherit;resize:vertical;}
   .setup-banner{background:linear-gradient(135deg,#fff3e0,#ffe4ec);border:2px solid #ffd39a;border-radius:0;padding:14px 16px;margin-bottom:22px;font-size:13px;color:#92400e;box-shadow:var(--shadow-soft);}
   .setup-banner button{margin-left:8px;background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;border:none;border-radius:999px;padding:7px 14px;font-size:12px;cursor:pointer;font-weight:700;}
@@ -811,6 +835,7 @@
         <button class="icon-btn" id="accountsBtn" onclick="openAccounts()" title="팀원 계정 관리" style="display:none;">👥</button>
         <button class="icon-btn" id="logoutBtn" onclick="logout()" title="로그아웃">⏻</button>
         <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" title="디자인 1번/2번 전환">🌙</button>
+        <button class="icon-btn install-btn" id="installBtn" onclick="installApp()" title="이 대시보드를 앱처럼 홈 화면에 설치" style="display:none;">앱 설치</button>
         <button class="icon-btn" onclick="openSettings()" title="GitHub 동기화 설정">⚙</button>
       </div>
     </div>
@@ -919,6 +944,12 @@
 
 <div class="auth-overlay" id="authOverlay">
   <div class="auth-box" id="authBox"></div>
+</div>
+
+<div class="upd-bar" id="updBar">
+  <span>새 버전이 준비됐습니다.</span>
+  <button class="apply">지금 새로고침</button>
+  <button class="ghost later">나중에</button>
 </div>
 
 <div class="modal-overlay" id="modalOverlay">
@@ -1195,6 +1226,19 @@ function renderAuthGate(){
   }
 
   if(state === "loaderror"){
+    // 앱으로 설치해두면 오프라인에서도 화면은 뜬다. 그때는 원인을 분명히 알려준다.
+    if(!navigator.onLine){
+      box.innerHTML = `
+        <h2>오프라인입니다</h2>
+        <p class="auth-sub">
+          인터넷에 연결되면 자동으로 최신 내용을 불러옵니다.<br>
+          <b>기존 데이터는 저장소에 그대로 있습니다.</b>
+        </p>
+        <button class="btn-primary" onclick="loadInitial()">다시 시도</button>
+      `;
+      window.addEventListener('online', () => loadInitial(), { once: true });
+      return false;
+    }
     box.innerHTML = `
       <h2>데이터를 불러오지 못했습니다</h2>
       <p class="auth-sub">
@@ -3579,6 +3623,109 @@ syncCurrentUser();
 updateAdminUI();
 renderAuthGate();
 loadInitial();
+
+// ============================================================
+//  앱으로 설치하기 (PWA)
+//  - 서비스 워커가 앱 껍데기를 캐시해서 두 번째부터 바로 뜬다
+//  - 안드로이드/PC 크롬은 beforeinstallprompt 로 설치 창을 띄울 수 있고,
+//    아이폰 사파리는 그 이벤트가 없으므로 수동 방법을 안내한다
+// ============================================================
+let deferredInstall = null;
+
+function isStandalone(){
+  return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+}
+
+function updateInstallBtn(){
+  const btn = document.getElementById('installBtn');
+  if(!btn) return;
+  // 이미 앱으로 실행 중이면 숨긴다. 그 외에는 항상 보여주고,
+  // 자동 설치 창이 없으면 눌렀을 때 방법을 안내한다.
+  btn.style.display = isStandalone() ? 'none' : '';
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstall = e;
+  updateInstallBtn();
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredInstall = null;
+  updateInstallBtn();
+});
+
+async function installApp(){
+  if(deferredInstall){
+    deferredInstall.prompt();
+    try{ await deferredInstall.userChoice; }catch(e){}
+    deferredInstall = null;
+    updateInstallBtn();
+    return;
+  }
+  installHelp();
+}
+
+function installHelp(){
+  const ua = navigator.userAgent;
+  let how;
+  if(/iPhone|iPad|iPod/i.test(ua)){
+    how = "사파리에서 아래쪽 <b>공유 버튼(↑)</b> → <b>홈 화면에 추가</b>를 누르세요.";
+  } else if(/SamsungBrowser/i.test(ua)){
+    how = "삼성 인터넷 오른쪽 아래 <b>≡ 메뉴</b> → <b>현재 페이지 추가</b> → <b>홈 화면</b>을 누르세요.";
+  } else if(/Android/i.test(ua)){
+    how = "크롬 오른쪽 위 <b>⋮ 메뉴</b> → <b>앱 설치</b> 또는 <b>홈 화면에 추가</b>를 누르세요.";
+  } else {
+    how = "크롬·엣지 주소창 오른쪽 끝의 <b>설치 아이콘(⊕)</b>을 누르거나, <b>⋮ 메뉴 → 앱 → 이 사이트 설치</b>를 선택하세요.";
+  }
+  openModal(`
+    <h3>앱으로 설치하기</h3>
+    <p style="font-size:13px;line-height:1.7;color:var(--text);margin:0 0 10px;">${how}</p>
+    <p style="font-size:12px;line-height:1.6;color:var(--sub);margin:0;">
+      설치하면 홈 화면에 <b>Work Diary</b> 아이콘이 생기고, 주소창 없이 앱처럼 열립니다.
+      데이터는 지금과 똑같이 GitHub 저장소를 씁니다.
+    </p>
+    <div class="modal-actions"><button class="btn-primary" onclick="closeModal()">확인</button></div>
+  `);
+}
+
+// 새 버전이 올라오면 아래에 띠를 띄운다
+function showUpdateBar(worker){
+  const bar = document.getElementById('updBar');
+  if(!bar) return;
+  bar.classList.add('open');
+  bar.querySelector('.apply').onclick = () => {
+    worker.postMessage('skipWaiting');
+    bar.classList.remove('open');
+  };
+  bar.querySelector('.later').onclick = () => bar.classList.remove('open');
+}
+
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+  window.addEventListener('load', async () => {
+    try{
+      const reg = await navigator.serviceWorker.register('sw.js', { scope: './' });
+      if(reg.waiting) showUpdateBar(reg.waiting);
+      reg.addEventListener('updatefound', () => {
+        const nw = reg.installing;
+        if(!nw) return;
+        nw.addEventListener('statechange', () => {
+          // 이미 다른 버전이 돌고 있는 상태에서 새 워커가 대기로 들어오면 = 업데이트
+          if(nw.state === 'installed' && navigator.serviceWorker.controller) showUpdateBar(nw);
+        });
+      });
+    }catch(e){ /* 설치 실패해도 앱은 그대로 동작한다 */ }
+  });
+
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if(reloading) return;
+    reloading = true;
+    location.reload();
+  });
+}
+
+updateInstallBtn();
 </script>
 </body>
 </html>
