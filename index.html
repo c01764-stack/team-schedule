@@ -1072,19 +1072,33 @@ function findUser(id){
   return users.find(u => String(u.id).toLowerCase() === key) || null;
 }
 
+// 로그인은 24시간 유지된다. 로그인한 시각(at)을 함께 저장해두고,
+// 하루가 지난 세션은 읽는 순간 만료 처리해서 다시 로그인 화면을 띄운다.
+// (하루 안에는 새로고침·탭 닫았다 다시 열기·브라우저 재시작 모두 그대로 유지)
+// 예전 판에는 만료가 아예 없어서 "한 번 로그인하면 영원히 통과"였다.
+const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
+
 function loadSession(){
   try{
     const raw = JSON.parse(localStorage.getItem(AUTH_KEY) || "null");
     if(!raw || !raw.userId) return null;
+    const at = Date.parse(raw.at || "");
+    // at 이 없거나(예전 판 세션) 하루가 지났으면 만료다.
+    if(!at || Date.now() - at >= SESSION_TTL_MS){ clearSession(); return null; }
     return raw;
   }catch(e){ return null; }
 }
 function saveSession(user){
-  localStorage.setItem(AUTH_KEY, JSON.stringify({
-    userId: user.id, name: user.name, role: user.role, at: new Date().toISOString()
-  }));
+  try{
+    localStorage.setItem(AUTH_KEY, JSON.stringify({
+      userId: user.id, name: user.name, role: user.role, at: new Date().toISOString()
+    }));
+  }catch(e){ /* 시크릿 모드 등에서 막히면 이번 탭에서만 유지되지 않을 뿐이다 */ }
 }
-function clearSession(){ localStorage.removeItem(AUTH_KEY); }
+function clearSession(){
+  try{ localStorage.removeItem(AUTH_KEY); }catch(e){}
+  try{ sessionStorage.removeItem(AUTH_KEY); }catch(e){}   // 이전 판 흔적 정리
+}
 
 // 저장된 세션의 계정이 아직 살아있는지 확인하고 currentUser 를 맞춘다.
 // (관리자가 계정을 지웠거나 역할을 바꿨으면 여기서 반영된다)
@@ -1228,6 +1242,7 @@ function renderAuthGate(){
     <p class="auth-error" id="authError"></p>
     <button class="btn-primary" id="loginBtn" onclick="doLogin()">로그인</button>
     <div class="auth-foot">
+      한 번 로그인하면 24시간 동안 유지되고, 그 뒤에는 다시 로그인해야 합니다.<br>
       비밀번호를 잊으셨다면 관리자에게 초기화를 요청하세요.
       <button onclick="openSettings()">동기화 설정</button>
     </div>
