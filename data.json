@@ -950,6 +950,18 @@
       "updatedAt": "2026-09-02T00:05:33.069Z",
       "readAt": null,
       "comments": []
+    },
+    {
+      "id": "m_tx5adnov7",
+      "toUserId": "c01764",
+      "toName": "천재우",
+      "text": "9월",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-02T00:08:59.786Z",
+      "updatedAt": "2026-09-02T00:08:59.786Z",
+      "readAt": null,
+      "comments": []
     }
   ]
 }
