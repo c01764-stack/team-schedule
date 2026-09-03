@@ -10,7 +10,7 @@
  * ※ 아이콘이나 index.html 을 바꿔 올릴 때는 아래 CACHE 이름의 날짜를 반드시 올릴 것.
  *    그래야 이미 설치한 기기가 새 파일을 받아간다.
  */
-const CACHE = 'workdiary-2026-09-02b';
+const CACHE = 'workdiary-2026-09-03a';
 
 const SHELL = [
   './',

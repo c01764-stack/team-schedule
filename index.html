@@ -214,11 +214,13 @@
   }
 
   .notice-banner.needs-ack,
-  .memo-card.needs-ack{
+  .memo-card.needs-ack,
+  .routine-card.needs-ack{
     border:2px solid var(--orange);
     animation:ackPulse 1.8s ease-in-out infinite;
   }
-  .memo-card.needs-ack{ background:#fffdf5; }
+  .memo-card.needs-ack,
+  .routine-card.needs-ack{ background:#fffdf5; }
   .ack-badge{
     display:inline-flex;align-items:center;gap:5px;
     background:var(--red);color:#fff;border-radius:999px;
@@ -230,18 +232,22 @@
     animation:ackDot 1.8s ease-in-out infinite;
   }
   .read-btn.urgent{ animation:ackBtn 1.8s ease-in-out infinite; }
-  .memo-mine-count.urgent{ animation:ackBadge 1.8s ease-in-out infinite; }
+  .memo-mine-count.urgent,
+  .routine-mine-count.urgent{ animation:ackBadge 1.8s ease-in-out infinite; }
   /* 미확인 건이 몇 개인지 헤더에서 바로 보이도록 */
   .ack-count{font-size:11.5px;font-weight:700;color:var(--red);white-space:nowrap;}
 
   @media (prefers-reduced-motion: reduce){
     .notice-banner.needs-ack,
     .memo-card.needs-ack,
+    .routine-card.needs-ack,
     .ack-badge,.ack-badge::before,
     .read-btn.urgent,
-    .memo-mine-count.urgent{ animation:none; }
+    .memo-mine-count.urgent,
+    .routine-mine-count.urgent{ animation:none; }
     .notice-banner.needs-ack,
-    .memo-card.needs-ack{ box-shadow:0 0 0 3px rgba(245,158,11,.22), 0 6px 20px rgba(30,20,70,.10); }
+    .memo-card.needs-ack,
+    .routine-card.needs-ack{ box-shadow:0 0 0 3px rgba(245,158,11,.22), 0 6px 20px rgba(30,20,70,.10); }
   }
 
   /* ---------- 계정 관리 ---------- */
@@ -455,6 +461,48 @@
   .memo-reply .btn-primary{padding:8px 16px;font-size:12.5px;flex-shrink:0;}
   .memo-reply-note{margin-top:8px;font-size:11.5px;color:var(--sub);}
 
+  /* ── 정기업무 ─────────────────────────────────────────────
+     주/월/분기 등 반복되는 업무. 배너는 "지금 챙겨야 할 것"만 보여주고,
+     전체 목록과 등록은 [정기업무] 탭에서 한다. */
+  .routine-banner{background:linear-gradient(135deg,#fff7ed,#fefce8);border:1px solid var(--border);border-radius:0;
+    padding:12px 16px;margin-bottom:18px;box-shadow:0 6px 20px rgba(30,20,70,.10);}
+  .routine-banner:empty{display:none;}
+  .routine-banner h3{margin:0;font-size:15.5px;color:#b45309;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .routine-mine-count{background:#fecdd3;color:#be123c;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:800;}
+  .routine-list{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+  .routine-card{background:var(--card);border:1px solid var(--border);border-radius:0;padding:11px 14px;
+    box-shadow:var(--shadow-soft);transition:box-shadow .15s;}
+  .routine-card:hover{box-shadow:var(--shadow-card);}
+  .routine-card.to-me{border-color:var(--violet);box-shadow:0 1px 2px rgba(139,92,246,.20), 0 10px 22px rgba(139,92,246,.22);}
+  .routine-card.is-done{background:#fbfbfe;}
+  .routine-card.is-late{border-left:4px solid var(--red);}
+  .routine-card.is-today{border-left:4px solid #f59e0b;}
+  .routine-card.is-soon{border-left:4px solid #3b82f6;}
+  .routine-card-head{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;}
+  .routine-title{font-size:13.5px;font-weight:800;color:var(--text);}
+  .routine-owner{font-size:11.5px;color:var(--sub);font-weight:700;}
+  .routine-when{font-size:11.5px;color:var(--sub);font-weight:600;}
+  .routine-memo{margin-top:6px;font-size:12.5px;line-height:1.6;color:var(--sub);white-space:pre-wrap;word-break:break-word;}
+  .routine-actions{margin-top:9px;display:flex;flex-wrap:wrap;gap:8px;}
+  .rt-chip{border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+  .rt-chip.late{background:#ffe4e6;color:#be123c;}
+  .rt-chip.today{background:#fef3c7;color:#b45309;}
+  .rt-chip.soon{background:#dbeafe;color:#1d4ed8;}
+  .rt-chip.done{background:#dcfce7;color:#15803d;}
+  .rt-chip.freq{background:#ede9fe;color:#6d28d9;}
+  .rt-chip.off{background:#f1f5f9;color:var(--sub);}
+  /* 정기업무 탭 목록 */
+  .routine-manage{margin-left:auto;display:flex;gap:5px;}
+  .routine-manage button{border:1.5px solid var(--border);background:transparent;border-radius:999px;padding:4px 10px;
+    font-size:11px;cursor:pointer;color:var(--violet);font-weight:700;font-family:inherit;}
+  .routine-manage button.del{color:var(--red);}
+  .routine-hist{margin-top:8px;font-size:11px;color:var(--sub);font-weight:600;line-height:1.6;}
+  .routine-empty{font-size:13px;color:var(--sub);padding:14px 2px;}
+  .routine-sec{margin-bottom:22px;}
+  .routine-sec h3{margin:0 0 10px;font-size:15px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .routine-add-btn{border:none;border-radius:999px;padding:7px 15px;font-size:12.5px;font-weight:700;cursor:pointer;
+    font-family:inherit;color:#fff;background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 3px 10px rgba(139,92,246,.30);}
+
   .type-badge{display:inline-block;padding:4px 11px;border-radius:999px;font-size:12px;font-weight:700;}
   .type-badge.inspect{background:#e0e7ff;color:#4338ca;}
   .type-badge.training{background:#fae8ff;color:#a21caf;}
@@ -556,6 +604,10 @@
     .memo-banner{padding:11px 13px;margin-bottom:14px;}
     .memo-banner h3{font-size:14px;}
     .memo-card{padding:11px 12px;}
+    .routine-banner{padding:11px 12px;}
+    .routine-card{padding:10px 12px;}
+    .routine-title{font-size:13px;}
+    .routine-card-head{gap:5px 8px;}
     .memo-text{font-size:13.5px;}
     .memo-card-head{gap:5px 8px;}
     .memo-manage{margin-left:0;width:100%;}
@@ -785,8 +837,10 @@
   [data-theme="dark"] .memo-card.to-me{box-shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 22px rgba(34,211,238,.20);}
   /* 미확인 강조 — 다크 모드 */
   [data-theme="dark"] .memo-card.needs-ack{background:rgba(251,191,36,.08);}
+  [data-theme="dark"] .routine-card.needs-ack{background:rgba(251,191,36,.08);}
   [data-theme="dark"] .notice-banner.needs-ack,
-  [data-theme="dark"] .memo-card.needs-ack{animation:ackPulseDark 1.8s ease-in-out infinite;}
+  [data-theme="dark"] .memo-card.needs-ack,
+  [data-theme="dark"] .routine-card.needs-ack{animation:ackPulseDark 1.8s ease-in-out infinite;}
   @keyframes ackPulseDark{
     0%,100%{ border-color:var(--orange); box-shadow:0 0 0 0 rgba(251,191,36,.28), 0 8px 22px rgba(0,0,0,.35); }
     50%    { border-color:#fcd34d;       box-shadow:0 0 0 7px rgba(251,191,36,.02), 0 8px 26px rgba(251,191,36,.30); }
@@ -796,7 +850,8 @@
   [data-theme="dark"] .ack-count{color:#fda4af;}
   @media (prefers-reduced-motion: reduce){
     [data-theme="dark"] .notice-banner.needs-ack,
-    [data-theme="dark"] .memo-card.needs-ack{animation:none;box-shadow:0 0 0 3px rgba(251,191,36,.22),0 8px 22px rgba(0,0,0,.35);}
+    [data-theme="dark"] .memo-card.needs-ack,
+    [data-theme="dark"] .routine-card.needs-ack{animation:none;box-shadow:0 0 0 3px rgba(251,191,36,.22),0 8px 22px rgba(0,0,0,.35);}
   }
   [data-theme="dark"] .memo-status.wait{background:rgba(245,158,11,.18);color:#fcd34d;}
   [data-theme="dark"] .memo-status.done{background:rgba(74,222,128,.16);color:#86efac;}
@@ -804,6 +859,23 @@
   [data-theme="dark"] .memo-card.is-doing{border-left-color:#38bdf8;}
   [data-theme="dark"] .read-btn.done2{background:rgba(74,222,128,.16);color:#86efac;border-color:rgba(74,222,128,.4);}
   [data-theme="dark"] .memo-manage button{background:transparent;}
+  /* 정기업무 — 다크 모드 */
+  [data-theme="dark"] .routine-banner{background:linear-gradient(135deg,rgba(245,158,11,.10),rgba(234,179,8,.07));
+    box-shadow:0 6px 20px rgba(251,191,36,.07);}
+  [data-theme="dark"] .routine-banner h3{color:#fcd34d;}
+  [data-theme="dark"] .routine-mine-count{background:rgba(251,113,133,.2);color:#fda4af;}
+  [data-theme="dark"] .routine-card{box-shadow:var(--shadow-soft);}
+  [data-theme="dark"] .routine-card:hover{box-shadow:var(--shadow-card);}
+  [data-theme="dark"] .routine-card.is-done{background:rgba(255,255,255,.03);}
+  [data-theme="dark"] .routine-card.to-me{box-shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 22px rgba(34,211,238,.20);}
+  [data-theme="dark"] .routine-card.is-soon{border-left-color:#38bdf8;}
+  [data-theme="dark"] .rt-chip.late{background:rgba(244,63,94,.20);color:#fda4af;}
+  [data-theme="dark"] .rt-chip.today{background:rgba(245,158,11,.18);color:#fcd34d;}
+  [data-theme="dark"] .rt-chip.soon{background:rgba(59,130,246,.20);color:#93c5fd;}
+  [data-theme="dark"] .rt-chip.done{background:rgba(74,222,128,.16);color:#86efac;}
+  [data-theme="dark"] .rt-chip.freq{background:rgba(139,92,246,.20);color:#c4b5fd;}
+  [data-theme="dark"] .rt-chip.off{background:rgba(255,255,255,.06);color:var(--sub);}
+  [data-theme="dark"] .routine-manage button{background:transparent;}
   [data-theme="dark"] .memo-comment .who{color:#c4b5fd;}
   [data-theme="dark"] .type-badge.inspect{background:rgba(99,102,241,.18);color:#a5b4fc;}
   [data-theme="dark"] .type-badge.training{background:rgba(217,70,239,.16);color:#f0abfc;}
@@ -871,6 +943,8 @@
   <div class="notice-banner" id="noticeBanner"></div>
 
   <div class="memo-banner" id="memoBanner"></div>
+
+  <div class="routine-banner" id="routineBanner"></div>
 
   <button class="form-toggle" id="taskFormToggle" style="display:none;" onclick="toggleAddForm('taskAddForm')">+ 업무 추가</button>
 
@@ -950,6 +1024,7 @@
     <div class="tab" data-tab="safety">안전</div>
     <div class="tab" data-tab="edu">교육</div>
     <div class="tab" data-tab="etc">기타</div>
+    <div class="tab" data-tab="routine">정기업무</div>
     <div class="tab" data-tab="absence">주요 일정</div>
     <div class="tab" data-tab="report">주간업무보고</div>
   </div>
@@ -1033,6 +1108,12 @@ let memoCommentDeleted = new Set(); // commentId                        (내가 
 let memoReadDirty = new Map();      // memoId -> ISO문자열 | null       (1단계: 내 확인 상태)
 let memoDoneDirty = new Map();      // memoId -> ISO문자열 | null       (2단계: 내 완료 상태)
 let memoDrafts = {};                // memoId -> 입력 중인 댓글 (재렌더링 때 유지)
+
+// 정기업무(반복 업무). 규칙 본문은 관리자가, 발생일별 완료 체크는 담당자 본인이
+// 건드리므로 dirty 를 둘로 나눠 추적한다.
+let routines = [];
+let routineDirty = new Map();       // routineId -> 규칙객체 | 'DELETE'
+let routineDoneDirty = new Map();   // "routineId|YYYY-MM-DD" -> 완료기록 | null(취소)
 let activeTab = "all";
 let calState = { year: new Date().getFullYear(), month: new Date().getMonth() };
 
@@ -1708,7 +1789,7 @@ function applyFormState(formId, toggleId, active, label){
 
 function syncForms(){
   applyFormState("taskAddForm", "taskFormToggle",
-    isAdmin && activeTab !== "absence" && activeTab !== "report", "+ 업무 추가");
+    isAdmin && activeTab !== "absence" && activeTab !== "report" && activeTab !== "routine", "+ 업무 추가");
   applyFormState("absenceAddForm", "absenceFormToggle",
     activeTab === "absence", "+ 일정 추가");
 }
@@ -1740,7 +1821,7 @@ async function fetchRemoteRaw(){
   const url = `${ghUrl()}?ref=${encodeURIComponent(ghConfig.branch || 'main')}&_=${Date.now()}`;
   const res = await fetch(url, { headers, cache: "no-store" });
   if(res.status === 404){
-    return { tasks: [], absences: [], reports: [], notice: normalizeNotice(null), users: [], memos: [], sha: null, isNew: true };
+    return { tasks: [], absences: [], reports: [], notice: normalizeNotice(null), users: [], memos: [], routines: [], sha: null, isNew: true };
   }
   if(res.status === 401 || res.status === 403){
     // 토큰 없이 읽을 때는 시간당 횟수 제한(60회)에 걸릴 수 있다. 원인을 구분해서 알려준다.
@@ -1767,10 +1848,12 @@ async function fetchRemoteRaw(){
   const freshNotice = normalizeNotice(data.notice);
   const freshUsers = Array.isArray(data.users) ? data.users : [];
   const freshMemos = (Array.isArray(data.memos) ? data.memos : []).map(normalizeMemo);
+  const freshRoutines = (Array.isArray(data.routines) ? data.routines : []).map(normalizeRoutine);
   freshTasks.forEach(t => { if(!Array.isArray(t.dueHistory)) t.dueHistory = []; });
   freshAbsences.forEach(a => { if(!TYPE_META[a.type]) a.type = LEGACY_TYPE_MAP[a.type] || "etc"; });
   return { tasks: freshTasks, absences: freshAbsences, reports: freshReports,
-           notice: freshNotice, users: freshUsers, memos: freshMemos, sha: json.sha, isNew: false };
+           notice: freshNotice, users: freshUsers, memos: freshMemos, routines: freshRoutines,
+           sha: json.sha, isNew: false };
 }
 
 // 최초 로드/설정 변경 때만 쓰는 "전체 교체". 저장 안 된 로컬 변경이 있으면 사라지므로
@@ -1785,11 +1868,13 @@ async function loadRemoteData(){
   notice = fresh.notice;
   users = fresh.users;
   memos = fresh.memos;
+  routines = fresh.routines || [];
   fileSha = fresh.sha;
   taskDirty.clear();
   absenceDirty.clear();
   reportDirty.clear();
   clearMemoDirty();
+  clearRoutineDirty();
   noticeTextDirty = false;
   myReadDirty = null;
   userDirty.clear();
@@ -1921,7 +2006,7 @@ async function saveRemoteData(message){
   const seqAtSend = changeSeq;
   const body = {
     message: message || "업데이트",
-    content: utf8ToB64(JSON.stringify({ tasks, absences, reports, notice, users, memos }, null, 2)),
+    content: utf8ToB64(JSON.stringify({ tasks, absences, reports, notice, users, memos, routines }, null, 2)),
     branch: ghConfig.branch || "main"
   };
   if(fileSha) body.sha = fileSha;
@@ -1954,6 +2039,7 @@ async function saveRemoteData(message){
     absenceDirty.clear();
     reportDirty.clear();
     clearMemoDirty();
+    clearRoutineDirty();
     noticeTextDirty = false;
     myReadDirty = null;
     userDirty.clear();
@@ -1981,6 +2067,7 @@ function hasUnsavedChanges(){
   return taskDirty.size > 0 || absenceDirty.size > 0 || reportDirty.size > 0 ||
          memoDirty.size > 0 || memoCommentDirty.size > 0 || memoCommentDeleted.size > 0 ||
          memoReadDirty.size > 0 || memoDoneDirty.size > 0 || userDirty.size > 0 ||
+         routineDirty.size > 0 || routineDoneDirty.size > 0 ||
          noticeTextDirty || !!myReadDirty;
 }
 
@@ -2003,6 +2090,7 @@ async function refreshFromRemote(){
   reports  = mergeByKey(fresh.reports,  reportDirty,  x => x.weekStart);
   notice   = mergeNotice(fresh.notice);
   memos    = mergeMemos(fresh.memos);
+  routines = mergeRoutines(fresh.routines);
   users    = mergeByKey(fresh.users,    userDirty,    u => u.id);
   syncCurrentUser();
   fileSha = fresh.sha;
@@ -3295,10 +3383,575 @@ function goToday(){
   renderContent();
 }
 
+// ============================================================
+//  정기업무 (반복 업무 알림)
+//  ------------------------------------------------------------
+//  주/월/분기/연 단위로 되풀이되는 일을 "규칙"으로 한 번만 등록해두면,
+//  해당 요일·날짜가 다가올 때 배너와 탭 제목으로 알려준다.
+//  업무 목록에 매번 새 항목을 만들지 않는다. 규칙(routine) 하나에
+//  발생일(occurrence)별 완료 기록만 쌓이는 구조라 데이터가 늘지 않고,
+//  지난 이력도 그대로 남는다.
+// ============================================================
+const ROUTINE_FREQ = {
+  weekly:    { label: "매주" },
+  monthly:   { label: "매월" },
+  quarterly: { label: "분기" },
+  yearly:    { label: "매년" }
+};
+const WEEKDAY_KO = ["일","월","화","수","목","금","토"];
+// 지난 발생일을 몇 개월까지 거슬러 살펴볼지 (지연 건 탐지 범위)
+const ROUTINE_LOOKBACK_DAYS = 400;
+
+function normalizeRoutine(r){
+  const num = (v, def, min, max) => {
+    const n = Number(v);
+    if(!isFinite(n)) return def;
+    return Math.max(min, Math.min(max, Math.round(n)));
+  };
+  return {
+    id: r.id,
+    title: r.title || "",
+    team: TEAM_META[r.team] ? r.team : "etc",
+    ownerId: r.ownerId || "",
+    ownerName: r.ownerName || "",
+    freq: ROUTINE_FREQ[r.freq] ? r.freq : "monthly",
+    weekday: num(r.weekday, 1, 0, 6),      // 매주: 0=일 ~ 6=토
+    day: num(r.day, 1, 0, 31),             // 날짜. 0 이면 "말일"
+    qMonth: num(r.qMonth, 1, 1, 3),        // 분기: 분기 안에서 몇 번째 달
+    month: num(r.month, 1, 1, 12),         // 매년: 몇 월
+    leadDays: num(r.leadDays, 3, 0, 30),   // 며칠 전부터 미리 알림
+    memo: r.memo || "",
+    active: r.active !== false,
+    createdAt: r.createdAt || null,
+    updatedAt: r.updatedAt || null,
+    byUserId: r.byUserId || "",
+    byName: r.byName || "",
+    // 발생일(YYYY-MM-DD) -> {at, byUserId, byName}
+    done: (r.done && typeof r.done === "object" && !Array.isArray(r.done)) ? Object.assign({}, r.done) : {}
+  };
+}
+
+function clearRoutineDirty(){
+  routineDirty.clear();
+  routineDoneDirty.clear();
+}
+
+function doneKey(routineId, dateStr){ return routineId + "|" + dateStr; }
+
+// 규칙 본문(관리자)과 발생일별 완료 체크(담당자)는 서로 다른 사람 손에서
+// 동시에 일어난다. 따로 추적해 두었다가 원격 최신본 위에 각각 다시 얹는다.
+function mergeRoutines(freshRoutines){
+  const map = new Map((freshRoutines || []).map(r => [r.id, normalizeRoutine(r)]));
+
+  routineDirty.forEach((val, id) => {
+    if(val === 'DELETE'){ map.delete(id); return; }
+    const remote = map.get(id);
+    const merged = normalizeRoutine(val);
+    // 규칙 내용은 내 것을 쓰되, 그 사이 남들이 남긴 완료 기록은 살린다
+    if(remote) merged.done = Object.assign({}, remote.done);
+    map.set(id, merged);
+  });
+
+  routineDoneDirty.forEach((rec, key) => {
+    const i = key.indexOf('|');
+    const r = map.get(key.slice(0, i));
+    if(!r) return;
+    const dk = key.slice(i + 1);
+    if(rec === null) delete r.done[dk];
+    else r.done[dk] = rec;
+  });
+
+  return Array.from(map.values());
+}
+
+// ---------- 발생일 계산 ----------
+function lastDayOfMonth(y, m){ return new Date(y, m + 1, 0).getDate(); }  // m 은 0-based
+function dayKey(y, m, d){ return `${y}-${pad2(m + 1)}-${pad2(d)}`; }
+// day 가 0 이면 그 달의 말일. 31일처럼 없는 날짜는 말일로 당긴다(2월 31일 → 2월 28/29일).
+function resolveDay(y, m, day){
+  const last = lastDayOfMonth(y, m);
+  return day === 0 ? last : Math.min(day, last);
+}
+function parseDayStr(s){
+  const [y, m, d] = String(s).split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+function daysBetween(aStr, bStr){
+  return Math.round((parseDayStr(bStr) - parseDayStr(aStr)) / 86400000);
+}
+
+// [fromStr, toStr] 구간에 들어오는 발생일 목록(오름차순)
+function routineOccurrences(r, fromStr, toStr){
+  const out = [];
+  const from = parseDayStr(fromStr), to = parseDayStr(toStr);
+  if(from > to) return out;
+
+  if(r.freq === "weekly"){
+    const d = new Date(from);
+    const diff = (r.weekday - d.getDay() + 7) % 7;
+    d.setDate(d.getDate() + diff);
+    while(d <= to){
+      out.push(fmtLocalDate(d));
+      d.setDate(d.getDate() + 7);
+    }
+    return out;
+  }
+
+  // 월 단위 규칙들은 구간에 걸친 달을 훑으며 해당 날짜를 만든다
+  let y = from.getFullYear(), m = from.getMonth();
+  const endY = to.getFullYear(), endM = to.getMonth();
+  while(y < endY || (y === endY && m <= endM)){
+    let hit = false;
+    if(r.freq === "monthly") hit = true;
+    else if(r.freq === "quarterly") hit = (m % 3) === (r.qMonth - 1);   // 1·4·7·10월 기준 + 오프셋
+    else if(r.freq === "yearly") hit = (m === r.month - 1);
+    if(hit){
+      const s = dayKey(y, m, resolveDay(y, m, r.day));
+      const dt = parseDayStr(s);
+      if(dt >= from && dt <= to) out.push(s);
+    }
+    m++; if(m > 11){ m = 0; y++; }
+  }
+  return out;
+}
+
+function routineWhenLabel(r){
+  if(r.freq === "weekly") return `매주 ${WEEKDAY_KO[r.weekday]}요일`;
+  const dayLabel = r.day === 0 ? "말일" : `${r.day}일`;
+  if(r.freq === "monthly") return `매월 ${dayLabel}`;
+  if(r.freq === "quarterly"){
+    const months = [0,1,2,3].map(i => (r.qMonth - 1) + i * 3 + 1).join("·");
+    return `분기별 (${months}월) ${dayLabel}`;
+  }
+  return `매년 ${r.month}월 ${dayLabel}`;
+}
+
+function routineDoneAt(r, dateStr){
+  const rec = r.done ? r.done[dateStr] : null;
+  return rec && rec.at ? rec : null;
+}
+
+// 이 규칙에서 "지금 챙겨야 할 것"을 뽑는다.
+//  - late : 지나갔는데 아직 완료 체크가 없는 가장 최근 발생일 (한 건만)
+//  - due  : 오늘이 발생일인데 아직 미완료
+//  - soon : 미리 알림 기간(leadDays)에 들어온 다음 발생일, 아직 미완료
+// 완료 체크를 하면 그 건은 목록에서 알림 대상에서 빠지고, 정기업무 탭의 이력에 남는다.
+// 규칙을 만들기 전의 날짜까지 거슬러 "지연"으로 잡으면 안 된다.
+// 등록일과 조회 범위(400일) 중 더 늦은 쪽에서 시작한다.
+function routineStartStr(r, todayS){
+  const back = fmtLocalDate(new Date(parseDayStr(todayS).getTime() - ROUTINE_LOOKBACK_DAYS * 86400000));
+  const born = r.createdAt ? String(r.createdAt).slice(0, 10) : "";
+  return (born && born > back) ? born : back;
+}
+
+function routineAlerts(r, todayS){
+  if(!r.active) return [];
+  const from = routineStartStr(r, todayS);
+  const to   = fmtLocalDate(new Date(parseDayStr(todayS).getTime() + Math.max(r.leadDays, 0) * 86400000));
+  const occs = routineOccurrences(r, from, to);
+  const alerts = [];
+
+  // 지연은 "직전 한 차례"만 본다. 더 옛날 것까지 거슬러 올리면, 오늘 것을 처리한
+  // 순간 몇 달 전 누락이 튀어나와 끝없이 밀린 일처럼 보인다. 지난 기록은 탭에서 본다.
+  const past = occs.filter(d => d < todayS);
+  if(past.length){
+    const d = past[past.length - 1];
+    if(!routineDoneAt(r, d)) alerts.push({ routine: r, date: d, kind: "late", diff: daysBetween(d, todayS) });
+  }
+  const upcoming = occs.filter(d => d >= todayS && !routineDoneAt(r, d));
+  if(upcoming.length){
+    const d = upcoming[0];
+    const diff = daysBetween(todayS, d);
+    alerts.push({ routine: r, date: d, kind: diff === 0 ? "due" : "soon", diff });
+  }
+  return alerts;
+}
+
+function allRoutineAlerts(){
+  const t = todayStr();
+  const out = [];
+  routines.forEach(r => { routineAlerts(r, t).forEach(a => out.push(a)); });
+  // 급한 것부터: 지연 → 오늘 → 임박. 같은 급이면 날짜순.
+  const rank = { late: 0, due: 1, soon: 2 };
+  out.sort((a, b) => {
+    if(rank[a.kind] !== rank[b.kind]) return rank[a.kind] - rank[b.kind];
+    return a.date.localeCompare(b.date);
+  });
+  return out;
+}
+
+// 나에게 온 것 중 "지금 해야 하는" 건수 (지연 + 오늘). 탭 제목 배지에 쓴다.
+function myRoutineDueCount(){
+  if(!currentUser) return 0;
+  return allRoutineAlerts().filter(a =>
+    a.routine.ownerId === currentUser.id && (a.kind === "late" || a.kind === "due")).length;
+}
+
+// 다음 발생일 (완료 여부와 무관하게 달력상 다음 차례)
+function routineNextDate(r, todayS){
+  const to = fmtLocalDate(new Date(parseDayStr(todayS).getTime() + 400 * 86400000));
+  const occs = routineOccurrences(r, todayS, to);
+  return occs.length ? occs[0] : null;
+}
+
+// ---------- 화면 ----------
+function alertChip(a){
+  if(a.kind === "late") return `<span class="rt-chip late">지연 ${a.diff}일</span>`;
+  if(a.kind === "due")  return `<span class="rt-chip today">오늘</span>`;
+  return `<span class="rt-chip soon">D-${a.diff}</span>`;
+}
+
+function routineAlertCard(a){
+  const r = a.routine;
+  const isMine = currentUser && r.ownerId === currentUser.id;
+  const readOnly = !ghConfig || !ghConfig.token;
+  // 내 담당인데 이미 날짜가 됐거나 지났으면 = 지금 해야 할 일. 카드를 맥박 강조한다.
+  const needsAck = isMine && (a.kind === "late" || a.kind === "due");
+  const badge = needsAck ? `<span class="ack-badge">${a.kind === "late" ? "지연" : "오늘 마감"}</span>` : "";
+  const btn = (isMine && !readOnly && a.kind !== "soon")
+    ? `<button class="read-btn urgent" onclick="toggleRoutineDone('${r.id}','${a.date}')">완료했습니다</button>`
+    : (isMine && !readOnly
+      ? `<button class="read-btn" onclick="toggleRoutineDone('${r.id}','${a.date}')">미리 완료 처리</button>` : "");
+
+  return `
+    <div class="routine-card ${isMine ? 'to-me' : ''} ${needsAck ? 'needs-ack' : ''} is-${a.kind === 'due' ? 'today' : a.kind}">
+      <div class="routine-card-head">
+        <span class="routine-title">${escapeHtml(r.title)}</span>
+        ${alertChip(a)}
+        ${badge}
+        <span class="routine-owner">담당 ${escapeHtml(r.ownerName || '미지정')}</span>
+        <span class="routine-when">${a.date} · ${routineWhenLabel(r)}</span>
+      </div>
+      ${r.memo ? `<div class="routine-memo">${escapeHtml(r.memo)}</div>` : ''}
+      ${btn ? `<div class="routine-actions">${btn}</div>` : ''}
+    </div>`;
+}
+
+function renderRoutineBanner(){
+  const el = document.getElementById("routineBanner");
+  if(!el) return;
+  const alerts = allRoutineAlerts();
+  if(!alerts.length){ el.innerHTML = ""; return; }
+
+  // 내 것을 위로 올린다
+  const mineFirst = (a, b) => {
+    const am = currentUser && a.routine.ownerId === currentUser.id ? 0 : 1;
+    const bm = currentUser && b.routine.ownerId === currentUser.id ? 0 : 1;
+    return am - bm;
+  };
+  const sorted = alerts.slice().sort((a, b) => mineFirst(a, b) || 0);
+
+  const myNow = myRoutineDueCount();
+  const mine = myNow ? `<span class="routine-mine-count urgent">내가 할 일 ${myNow}건</span>` : "";
+  const lateN = alerts.filter(a => a.kind === "late").length;
+  const dueN  = alerts.filter(a => a.kind === "due").length;
+  const soonN = alerts.filter(a => a.kind === "soon").length;
+  const total = `<span class="memo-total">지연 ${lateN} · 오늘 ${dueN} · 예정 ${soonN}</span>`;
+
+  el.innerHTML = `
+    <div class="notice-head"><h3>정기업무 알림 ${mine}${total}</h3>
+      <button class="notice-edit-btn" onclick="openRoutineTab()">정기업무 관리</button></div>
+    <div class="routine-list">${sorted.map(routineAlertCard).join("")}</div>`;
+}
+
+function openRoutineTab(){
+  activeTab = "routine";
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === "routine"));
+  updateAdminUI();
+  renderContent();
+  const el = document.getElementById("content");
+  if(el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// 정기업무 탭 — 등록된 규칙 전체와 최근 이력
+function routineListCard(r){
+  const t = todayStr();
+  const isMine = currentUser && r.ownerId === currentUser.id;
+  const readOnly = !ghConfig || !ghConfig.token;
+  const next = routineNextDate(r, t);
+  const alerts = routineAlerts(r, t);
+  // 알림 구간에 없는 건은 다음 차례까지 며칠 남았는지만 조용히 보여준다
+  const chip = alerts.length
+    ? alertChip(alerts[0])
+    : (next ? `<span class="rt-chip off">D-${daysBetween(t, next)}</span>` : `<span class="rt-chip off">예정 없음</span>`);
+
+  // 최근 발생일 5개의 처리 상태
+  const pastOccs = routineOccurrences(r, routineStartStr(r, t), t).slice(-5).reverse();
+  const hist = pastOccs.length
+    ? pastOccs.map(d => {
+        const rec = routineDoneAt(r, d);
+        return rec
+          ? `${d} <b style="color:#15803d;">완료</b>(${escapeHtml(rec.byName || '')})`
+          : `${d} <b style="color:#be123c;">미완료</b>`;
+      }).join(" &nbsp;·&nbsp; ")
+    : "지난 기록 없음";
+
+  const manage = isAdmin
+    ? `<span class="routine-manage">
+         <button onclick="openEditRoutine('${r.id}')">수정</button>
+         <button onclick="toggleRoutineActive('${r.id}')">${r.active ? '중지' : '재개'}</button>
+         <button class="del" onclick="deleteRoutine('${r.id}')">삭제</button>
+       </span>` : "";
+
+  // 담당자는 오늘/지연 건을 여기서도 바로 처리할 수 있다
+  const actionable = alerts.filter(a => a.kind === "late" || a.kind === "due");
+  const btns = (isMine && !readOnly)
+    ? actionable.map(a => `<button class="read-btn ${a.kind === 'late' ? 'urgent' : 'go-done'}"
+         onclick="toggleRoutineDone('${r.id}','${a.date}')">${a.date} 완료 처리</button>`).join("")
+    : "";
+  // 방금 완료한 건은 되돌릴 수 있게
+  const undo = (isMine && !readOnly && pastOccs.length && routineDoneAt(r, pastOccs[0]))
+    ? `<button class="read-btn done" onclick="toggleRoutineDone('${r.id}','${pastOccs[0]}')" title="누르면 완료를 취소합니다">${pastOccs[0]} ✓ 완료함</button>`
+    : "";
+
+  return `
+    <div class="routine-card ${isMine ? 'to-me' : ''} ${r.active ? '' : 'is-done'}">
+      <div class="routine-card-head">
+        <span class="team-dot ${TEAM_META[r.team].cls}"></span>
+        <span class="routine-title">${escapeHtml(r.title)}</span>
+        <span class="rt-chip freq">${ROUTINE_FREQ[r.freq].label}</span>
+        ${r.active ? chip : `<span class="rt-chip off">중지됨</span>`}
+        <span class="routine-owner">담당 ${escapeHtml(r.ownerName || '미지정')}</span>
+        ${manage}
+      </div>
+      <div class="routine-when">${routineWhenLabel(r)} · 미리 알림 ${r.leadDays}일 전${next ? ` · 다음 ${next}` : ''}</div>
+      ${r.memo ? `<div class="routine-memo">${escapeHtml(r.memo)}</div>` : ''}
+      ${(btns || undo) ? `<div class="routine-actions">${btns}${undo}</div>` : ''}
+      <div class="routine-hist">최근 기록 — ${hist}</div>
+    </div>`;
+}
+
+function renderRoutineTab(){
+  const addBtn = isAdmin
+    ? `<button class="routine-add-btn" onclick="openNewRoutine()">+ 정기업무 추가</button>` : "";
+  if(!routines.length){
+    return `<div class="routine-sec">
+      <h3>정기업무 ${addBtn}</h3>
+      <div class="routine-empty">등록된 정기업무가 없습니다.${isAdmin ? ' 위 버튼으로 추가하세요.' : ''}</div>
+    </div>`;
+  }
+  const t = todayStr();
+  const sorted = routines.slice().sort((a, b) => {
+    if(a.active !== b.active) return a.active ? -1 : 1;
+    const an = routineNextDate(a, t) || "9999-12-31";
+    const bn = routineNextDate(b, t) || "9999-12-31";
+    return an.localeCompare(bn) || String(a.title).localeCompare(String(b.title));
+  });
+  const active = sorted.filter(r => r.active);
+  const off = sorted.filter(r => !r.active);
+  const offHtml = off.length
+    ? `<details class="completed-details" style="margin-top:12px;">
+         <summary>중지된 정기업무 (${off.length}건)</summary>
+         <div class="routine-list">${off.map(routineListCard).join("")}</div>
+       </details>` : "";
+  return `<div class="routine-sec">
+      <h3>정기업무 <span class="routine-when">${active.length}건 운영 중</span> ${addBtn}</h3>
+      <div class="routine-list">${active.map(routineListCard).join("")}</div>
+      ${offHtml}
+    </div>`;
+}
+
+// ---------- 등록 / 수정 ----------
+function openNewRoutine(){ openRoutineForm(null); }
+function openEditRoutine(id){
+  const r = routines.find(x => x.id === id);
+  if(r) openRoutineForm(r);
+}
+
+function openRoutineForm(r){
+  if(!isAdmin){ alert("관리자만 정기업무를 등록·수정할 수 있습니다."); return; }
+  const sel = (v, cur) => v === cur ? "selected" : "";
+  const userOpts = users.map(u =>
+    `<option value="${escapeHtml(u.id)}" ${r && r.ownerId === u.id ? 'selected' : ''}>${escapeHtml(u.name)} (${escapeHtml(u.id)})</option>`).join("");
+  const dayOpts = ['<option value="0" ' + (r && r.day === 0 ? 'selected' : '') + '>말일</option>']
+    .concat(Array.from({length:31}, (_,i) => i+1).map(d =>
+      `<option value="${d}" ${r && r.day === d ? 'selected' : ''}>${d}일</option>`)).join("");
+  const monthOpts = Array.from({length:12}, (_,i) => i+1).map(m =>
+    `<option value="${m}" ${r && r.month === m ? 'selected' : ''}>${m}월</option>`).join("");
+  const wdOpts = WEEKDAY_KO.map((w, i) =>
+    `<option value="${i}" ${r ? (r.weekday === i ? 'selected' : '') : (i === 1 ? 'selected' : '')}>${w}요일</option>`).join("");
+  const qOpts = [1,2,3].map(q =>
+    `<option value="${q}" ${r && r.qMonth === q ? 'selected' : ''}>${[q, q+3, q+6, q+9].join('·')}월</option>`).join("");
+  const inp = "width:100%;padding:9px 10px;border:2px solid var(--border);border-radius:12px;font-size:13px;font-family:inherit;background:var(--card);color:var(--text);";
+
+  openModal(`
+    <h3>${r ? '정기업무 수정' : '정기업무 등록'}</h3>
+    <div class="field">
+      <label>업무 내용</label>
+      <input type="text" id="rtTitle" maxlength="120" style="${inp}" placeholder="예: 주간 안전점검 결과 취합" value="${r ? escapeHtml(r.title) : ''}">
+    </div>
+    <div class="acct-grid">
+      <div class="field">
+        <label>팀</label>
+        <select id="rtTeam" style="${inp}">
+          <option value="safety" ${r ? sel('safety', r.team) : ''}>안전</option>
+          <option value="edu" ${r ? sel('edu', r.team) : ''}>교육</option>
+          <option value="etc" ${r ? sel('etc', r.team) : 'selected'}>기타</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>담당자</label>
+        <select id="rtOwner" style="${inp}">${userOpts}</select>
+      </div>
+      <div class="field">
+        <label>반복 주기</label>
+        <select id="rtFreq" style="${inp}" onchange="syncRoutineFields(this.value)">
+          <option value="weekly" ${r ? sel('weekly', r.freq) : ''}>매주</option>
+          <option value="monthly" ${r ? sel('monthly', r.freq) : 'selected'}>매월</option>
+          <option value="quarterly" ${r ? sel('quarterly', r.freq) : ''}>분기마다</option>
+          <option value="yearly" ${r ? sel('yearly', r.freq) : ''}>매년</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>미리 알림</label>
+        <select id="rtLead" style="${inp}">
+          ${[0,1,2,3,5,7,10,14,30].map(d => `<option value="${d}" ${r ? (r.leadDays === d ? 'selected' : '') : (d === 3 ? 'selected' : '')}>${d === 0 ? '당일에만' : d + '일 전부터'}</option>`).join("")}
+        </select>
+      </div>
+      <div class="field" id="rfWeek" style="display:none;">
+        <label>요일</label>
+        <select id="rtWeekday" style="${inp}">${wdOpts}</select>
+      </div>
+      <div class="field" id="rfQuarter" style="display:none;">
+        <label>해당 월</label>
+        <select id="rtQMonth" style="${inp}">${qOpts}</select>
+      </div>
+      <div class="field" id="rfYear" style="display:none;">
+        <label>월</label>
+        <select id="rtMonth" style="${inp}">${monthOpts}</select>
+      </div>
+      <div class="field" id="rfDay" style="display:none;">
+        <label>날짜</label>
+        <select id="rtDay" style="${inp}">${dayOpts}</select>
+      </div>
+    </div>
+    <div class="field">
+      <label>메모 (선택)</label>
+      <textarea id="rtMemo" rows="3" maxlength="500" placeholder="무엇을 어떻게 해야 하는지 간단히">${r ? escapeHtml(r.memo) : ''}</textarea>
+    </div>
+    <p class="report-hint" style="margin:0;">해당 요일·날짜가 되면 상단에 알림이 뜹니다. 완료 체크는 담당자 본인만 할 수 있습니다.</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-primary" onclick="saveRoutine(${r ? `'${r.id}'` : 'null'})">${r ? '수정' : '등록'}</button>
+    </div>
+  `, true);
+  // 주기에 맞는 칸만 열어둔다. 월/분기/연은 "날짜" 칸을 함께 쓴다.
+  const f = r ? r.freq : "monthly";
+  document.getElementById("rtFreq").value = f;
+  syncRoutineFields(f);
+  setTimeout(() => { const t = document.getElementById("rtTitle"); if(t) t.focus(); }, 50);
+}
+
+// 주기별로 필요한 입력칸만 보인다: 매주=요일 / 매월=날짜 / 분기=해당 월+날짜 / 매년=월+날짜
+function syncRoutineFields(freq){
+  const set = (id, on) => { const el = document.getElementById(id); if(el) el.style.display = on ? "" : "none"; };
+  set("rfWeek", freq === "weekly");
+  set("rfQuarter", freq === "quarterly");
+  set("rfYear", freq === "yearly");
+  set("rfDay", freq !== "weekly");
+}
+
+function saveRoutine(id){
+  if(!isAdmin){ alert("관리자만 등록·수정할 수 있습니다."); return; }
+  if(!ghConfig.token){ openSettings(); return; }
+  const title = document.getElementById("rtTitle").value.trim();
+  if(!title){ alert("업무 내용을 입력해주세요."); return; }
+  const ownerId = document.getElementById("rtOwner").value;
+  const owner = findUser(ownerId);
+  if(!owner){ alert("담당자를 선택해주세요."); return; }
+  const freq = document.getElementById("rtFreq").value;
+  const now = new Date().toISOString();
+
+  const payload = {
+    title,
+    team: document.getElementById("rtTeam").value,
+    ownerId: owner.id,
+    ownerName: owner.name,
+    freq,
+    weekday: Number(document.getElementById("rtWeekday").value),
+    day: Number(document.getElementById("rtDay").value),
+    qMonth: Number(document.getElementById("rtQMonth").value),
+    month: Number(document.getElementById("rtMonth").value),
+    leadDays: Number(document.getElementById("rtLead").value),
+    memo: document.getElementById("rtMemo").value.trim()
+  };
+
+  if(id){
+    const idx = routines.findIndex(x => x.id === id);
+    if(idx < 0) return;
+    const merged = normalizeRoutine(Object.assign({}, routines[idx], payload, { updatedAt: now }));
+    routines[idx] = merged;
+    routineDirty.set(merged.id, merged);
+    closeModal(); render();
+    persist("정기업무 수정: " + title);
+    return;
+  }
+
+  const r = normalizeRoutine(Object.assign({
+    id: "r_" + cid(),
+    active: true,
+    createdAt: now, updatedAt: now,
+    byUserId: currentUser ? currentUser.id : "",
+    byName: currentUser ? currentUser.name : "",
+    done: {}
+  }, payload));
+  routines.push(r);
+  routineDirty.set(r.id, r);
+  closeModal(); render();
+  persist("정기업무 등록: " + title);
+}
+
+function toggleRoutineActive(id){
+  if(!isAdmin){ alert("관리자만 처리할 수 있습니다."); return; }
+  const r = routines.find(x => x.id === id);
+  if(!r) return;
+  r.active = !r.active;
+  r.updatedAt = new Date().toISOString();
+  routineDirty.set(r.id, r);
+  render();
+  persist(`정기업무 ${r.active ? '재개' : '중지'}: ${r.title}`);
+}
+
+function deleteRoutine(id){
+  if(!isAdmin){ alert("관리자만 삭제할 수 있습니다."); return; }
+  const r = routines.find(x => x.id === id);
+  if(!r) return;
+  if(!confirm(`"${r.title}" 정기업무를 삭제할까요?\n지금까지의 완료 기록도 함께 사라집니다.`)) return;
+  routines = routines.filter(x => x.id !== id);
+  routineDirty.set(id, 'DELETE');
+  render();
+  persist("정기업무 삭제: " + r.title);
+}
+
+// 발생일 단위 완료 체크 — 담당자 본인만. 한 번 더 누르면 취소된다.
+function toggleRoutineDone(id, dateStr){
+  const r = routines.find(x => x.id === id);
+  if(!r) return;
+  if(!currentUser || r.ownerId !== currentUser.id){
+    alert("담당자 본인만 완료 체크를 할 수 있습니다.");
+    return;
+  }
+  if(!ghConfig.token){ openSettings(); return; }
+  const had = !!routineDoneAt(r, dateStr);
+  if(had){
+    if(!confirm(`${dateStr} 완료 처리를 취소할까요?`)) return;
+    delete r.done[dateStr];
+    routineDoneDirty.set(doneKey(id, dateStr), null);
+  } else {
+    r.done[dateStr] = { at: new Date().toISOString(), byUserId: currentUser.id, byName: currentUser.name };
+    routineDoneDirty.set(doneKey(id, dateStr), r.done[dateStr]);
+  }
+  render();
+  persist(`정기업무 ${had ? '완료 취소' : '완료'}: ${r.title} (${dateStr})`);
+}
+
+
 function renderContent(){
   const el = document.getElementById("content");
   if(activeTab === "all"){
     el.innerHTML = teamTable("safety") + teamTable("edu") + teamTable("etc");
+  } else if(activeTab === "routine"){
+    el.innerHTML = renderRoutineTab();
   } else if(activeTab === "absence"){
     el.innerHTML = renderAbsenceCalendar();
   } else if(activeTab === "report"){
@@ -3324,6 +3977,7 @@ function render(){
   renderAbsenceBanner();
   renderNoticeBanner();
   renderMemoBanner();
+  renderRoutineBanner();
   renderContent();
   updateAckTitle();
 }
@@ -3338,6 +3992,8 @@ function updateAckTitle(){
     if(notice && notice.text && notice.text.trim() && !myRead()) n++;
     // 나에게 온 것 중 아직 완료하지 않은 건 (확인만 한 것도 포함)
     n += memos.filter(m => m.toUserId === currentUser.id && !m.doneAt).length;
+    // 오늘 해야 하거나 이미 지난 내 정기업무
+    n += myRoutineDueCount();
   }
   document.title = n ? `(${n}) ${BASE_TITLE}` : BASE_TITLE;
 }
