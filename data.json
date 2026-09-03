@@ -1028,6 +1028,26 @@
       "byUserId": "c01764",
       "byName": "천재우",
       "done": {}
+    },
+    {
+      "id": "r_t65vh2ono",
+      "title": "주간업무일지 작성",
+      "team": "safety",
+      "ownerId": "c01764",
+      "ownerName": "천재우",
+      "freq": "weekly",
+      "weekday": 4,
+      "day": 0,
+      "qMonth": 1,
+      "month": 1,
+      "leadDays": 0,
+      "memo": "주간업무보고 작성 후 오시훈 이사님 보고",
+      "active": true,
+      "createdAt": "2026-09-03T07:20:00.636Z",
+      "updatedAt": "2026-09-03T07:20:00.636Z",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "done": {}
     }
   ]
 }
