@@ -1009,26 +1009,6 @@
   ],
   "routines": [
     {
-      "id": "r_trpqp85ri",
-      "title": "ㄴㅁㅇㄻㅇ",
-      "team": "etc",
-      "ownerId": "c00000",
-      "ownerName": "박보검",
-      "freq": "weekly",
-      "weekday": 4,
-      "day": 0,
-      "qMonth": 1,
-      "month": 1,
-      "leadDays": 0,
-      "memo": "ㅁㄴㅇㄻㄴㅇㄹ",
-      "active": true,
-      "createdAt": "2026-09-03T09:15:18.730Z",
-      "updatedAt": "2026-09-03T09:15:18.730Z",
-      "byUserId": "c01764",
-      "byName": "천재우",
-      "done": {}
-    },
-    {
       "id": "r_tinbnr9ax",
       "title": "ㅁㄴㅇㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹ",
       "team": "edu",
