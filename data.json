@@ -1017,32 +1017,5 @@
       "comments": []
     }
   ],
-  "routines": [
-    {
-      "id": "r_tozl3isp8",
-      "title": "주간업무일지 작성",
-      "team": "safety",
-      "ownerId": "c00000",
-      "ownerName": "박보검",
-      "freq": "weekly",
-      "weekday": 4,
-      "day": 0,
-      "qMonth": 1,
-      "month": 1,
-      "leadDays": 0,
-      "memo": "ㅁㄴㅇㄹ",
-      "active": true,
-      "createdAt": "2026-09-03T09:12:07.746Z",
-      "updatedAt": "2026-09-03T09:12:07.746Z",
-      "byUserId": "c01764",
-      "byName": "천재우",
-      "done": {
-        "2026-09-03": {
-          "at": "2026-09-03T09:12:57.227Z",
-          "byUserId": "c00000",
-          "byName": "박보검"
-        }
-      }
-    }
-  ]
+  "routines": []
 }
