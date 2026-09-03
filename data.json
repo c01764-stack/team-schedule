@@ -1007,26 +1007,5 @@
       "comments": []
     }
   ],
-  "routines": [
-    {
-      "id": "r_t06447lff",
-      "title": "주간업무보고",
-      "team": "safety",
-      "ownerId": "c01764",
-      "ownerName": "천재우",
-      "freq": "weekly",
-      "weekday": 4,
-      "day": 0,
-      "qMonth": 1,
-      "month": 1,
-      "leadDays": 0,
-      "memo": "ㄴㅈㅅㄷㅅㄷㅅㅌㄴ",
-      "active": true,
-      "createdAt": "2026-09-03T10:01:14.170Z",
-      "updatedAt": "2026-09-03T10:01:14.170Z",
-      "byUserId": "c01764",
-      "byName": "천재우",
-      "done": {}
-    }
-  ]
+  "routines": []
 }
