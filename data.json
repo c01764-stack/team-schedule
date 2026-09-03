@@ -1010,26 +1010,6 @@
   ],
   "routines": [
     {
-      "id": "r_trws8byyk",
-      "title": "주간업무일지 작성",
-      "team": "edu",
-      "ownerId": "c00000",
-      "ownerName": "박보검",
-      "freq": "weekly",
-      "weekday": 4,
-      "day": 0,
-      "qMonth": 1,
-      "month": 1,
-      "leadDays": 0,
-      "memo": "주간 업무일지 작성 후 오시훈 이사, 천재우 팀장에게 보고",
-      "active": true,
-      "createdAt": "2026-09-03T06:50:55.166Z",
-      "updatedAt": "2026-09-03T06:52:10.442Z",
-      "byUserId": "c01764",
-      "byName": "천재우",
-      "done": {}
-    },
-    {
       "id": "r_t65vh2ono",
       "title": "주간업무일지 작성",
       "team": "safety",
