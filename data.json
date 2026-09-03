@@ -969,16 +969,6 @@
       "hash": "48bf6375a3db7b5c3f5aba60f9dde0a1821b02041adaf80bcef1e97a704d7298",
       "iter": 150000,
       "createdAt": "2026-08-31T13:01:50.367Z"
-    },
-    {
-      "id": "c00000",
-      "name": "박보검",
-      "role": "member",
-      "salt": "9e7457c527bf66ca3025444db58fa005",
-      "hash": "703338c501880bf37da83eb275362a96ffeae72c03359e310c985ed7d35cd421",
-      "iter": 150000,
-      "createdAt": "2026-09-03T09:14:56.152Z",
-      "pwTemp": true
     }
   ],
   "memos": [
