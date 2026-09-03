@@ -991,8 +991,8 @@
       "byName": "천재우",
       "createdAt": "2026-09-02T00:05:10.758Z",
       "updatedAt": "2026-09-02T00:05:42.011Z",
-      "readAt": "2026-09-03T04:39:44.002Z",
-      "doneAt": "2026-09-03T04:39:49.055Z",
+      "readAt": null,
+      "doneAt": null,
       "comments": [
         {
           "id": "c_t68wndma9",
