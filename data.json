@@ -1043,6 +1043,26 @@
           "byName": "박보검"
         }
       }
+    },
+    {
+      "id": "r_tmfcrhohp",
+      "title": "asdfasdfa",
+      "team": "safety",
+      "ownerId": "c00000",
+      "ownerName": "박보검",
+      "freq": "weekly",
+      "weekday": 4,
+      "day": 0,
+      "qMonth": 1,
+      "month": 1,
+      "leadDays": 0,
+      "memo": "asdfasdf",
+      "active": true,
+      "createdAt": "2026-09-03T09:13:44.465Z",
+      "updatedAt": "2026-09-03T09:13:44.465Z",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "done": {}
     }
   ]
 }
