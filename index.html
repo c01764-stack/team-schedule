@@ -504,6 +504,7 @@
   .routine-sec h3{margin:0 0 10px;font-size:15px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
   .routine-add-btn{border:none;border-radius:999px;padding:7px 15px;font-size:12.5px;font-weight:700;cursor:pointer;
     font-family:inherit;color:#fff;background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 3px 10px rgba(139,92,246,.30);}
+  .routine-add-btn.ghost{background:transparent;color:var(--violet);border:1.5px solid var(--border);box-shadow:none;}
 
   .type-badge{display:inline-block;padding:4px 11px;border-radius:999px;font-size:12px;font-weight:700;}
   .type-badge.inspect{background:#e0e7ff;color:#4338ca;}
@@ -3701,8 +3702,9 @@ function routineListCard(r){
 }
 
 function renderRoutineTab(){
-  const addBtn = isAdmin
-    ? `<button class="routine-add-btn" onclick="openNewRoutine()">+ 정기업무 추가</button>` : "";
+  const addBtn = (isAdmin
+      ? `<button class="routine-add-btn" onclick="openNewRoutine()">+ 정기업무 추가</button>` : "")
+    + `<button class="routine-add-btn ghost" onclick="openRoutinePopupNow()">알림 다시 보기</button>`;
   if(!routines.length){
     return `<div class="routine-sec">
       <h3>정기업무 ${addBtn}</h3>
@@ -3927,7 +3929,8 @@ function toggleRoutineDone(id, dateStr){
 
 // ---------- 접속 시 알림 팝업 ----------
 //  내 담당인데 오늘이거나 이미 날짜가 지난 정기업무가 있으면, 그날 처음 접속할 때
-//  화면 가운데 창으로 띄운다. 메인 화면은 건드리지 않는다 — 전체 목록은 [정기업무] 탭.
+//  화면 가운데 창으로 띄운다. 관리자에게는 팀원 현황도 아래에 함께 보여준다.
+//  메인 화면은 건드리지 않는다 — 전체 목록은 [정기업무] 탭.
 //  하루에 한 번만 뜬다(사용자별로 따로 기억). 새로고침할 때마다 뜨면 금방 거슬린다.
 const ROUTINE_POPUP_KEY = "routinePopupSeen_v1";
 let routinePopupShownFor = null;   // 이번 페이지에서 이미 띄워준 사용자
@@ -3956,51 +3959,78 @@ function myRoutineDueAlerts(){
     a.routine.ownerId === currentUser.id && (a.kind === "late" || a.kind === "due"));
 }
 
+// 관리자 화면에만 함께 보여주는 팀원 현황. 완료 체크는 담당자 본인만 하므로 보기 전용이다.
+function teamRoutineDueAlerts(){
+  if(!isAdmin) return [];
+  return allRoutineAlerts().filter(a =>
+    (!currentUser || a.routine.ownerId !== currentUser.id) && (a.kind === "late" || a.kind === "due"));
+}
+
 function maybeShowRoutinePopup(){
   if(!dataLoaded || !currentUser) return;
   if(routinePopupShownFor === currentUser.id) return;          // 이번 접속에서 이미 띄움
   if(document.getElementById("modalOverlay").classList.contains("open")) return;  // 다른 창이 떠 있으면 방해하지 않는다
   if(routinePopupSeenToday()) return;
-  if(!myRoutineDueAlerts().length) return;
+  if(!myRoutineDueAlerts().length && !teamRoutineDueAlerts().length) return;
   routinePopupShownFor = currentUser.id;
   markRoutinePopupSeen();
   renderRoutinePopup();
 }
 
-function renderRoutinePopup(){
-  const list = myRoutineDueAlerts();
-  const lateN = list.filter(a => a.kind === "late").length;
-  const dueN  = list.filter(a => a.kind === "due").length;
+// [정기업무] 탭의 "알림 다시 보기" — 하루 한 번 규칙과 무관하게 지금 띄운다
+function openRoutinePopupNow(){
+  if(!currentUser) return;
+  renderRoutinePopup(true);
+}
 
-  const body = list.length
-    ? `<div class="rt-popup-list">${list.map(a => {
-        const r = a.routine;
-        return `
-          <div class="routine-card is-${a.kind === 'due' ? 'today' : 'late'}">
-            <div class="routine-card-head">
-              <span class="routine-title">${escapeHtml(r.title)}</span>
-              ${alertChip(a)}
-              <span class="routine-when">${a.date} · ${routineWhenLabel(r)}</span>
-            </div>
-            ${r.memo ? `<div class="routine-memo">${escapeHtml(r.memo)}</div>` : ''}
-            <div class="routine-actions">
-              <button class="read-btn ${a.kind === 'late' ? 'urgent' : 'go-done'}"
-                onclick="routinePopupDone('${r.id}','${a.date}')">완료했습니다</button>
-            </div>
-          </div>`;
-      }).join("")}</div>`
-    : `<div class="rt-popup-empty">오늘 처리할 정기업무를 모두 마쳤습니다.</div>`;
+function routinePopupCard(a, canDo){
+  const r = a.routine;
+  return `
+    <div class="routine-card is-${a.kind === 'due' ? 'today' : 'late'}">
+      <div class="routine-card-head">
+        <span class="routine-title">${escapeHtml(r.title)}</span>
+        ${alertChip(a)}
+        ${canDo ? '' : `<span class="routine-owner">담당 ${escapeHtml(r.ownerName || '미지정')}</span>`}
+        <span class="routine-when">${a.date} · ${routineWhenLabel(r)}</span>
+      </div>
+      ${r.memo ? `<div class="routine-memo">${escapeHtml(r.memo)}</div>` : ''}
+      ${canDo ? `<div class="routine-actions">
+          <button class="read-btn ${a.kind === 'late' ? 'urgent' : 'go-done'}"
+            onclick="routinePopupDone('${r.id}','${a.date}')">완료했습니다</button>
+        </div>` : ''}
+    </div>`;
+}
 
-  const lead = list.length
+function renderRoutinePopup(manual){
+  const mine = myRoutineDueAlerts();
+  const team = teamRoutineDueAlerts();
+  const lateN = mine.filter(a => a.kind === "late").length;
+  const dueN  = mine.filter(a => a.kind === "due").length;
+
+  const mineHtml = mine.length
+    ? `<div class="rt-popup-list">${mine.map(a => routinePopupCard(a, true)).join("")}</div>`
+    : `<div class="rt-popup-empty">${team.length ? '내가 맡은 정기업무는 지금 처리할 것이 없습니다.' : '오늘 처리할 정기업무를 모두 마쳤습니다.'}</div>`;
+
+  // 관리자에게만 붙는 팀원 현황. 완료 체크 버튼은 없다(담당자 본인만 가능).
+  const teamHtml = team.length
+    ? `<div class="memo-divider" style="margin-top:14px;"><span>팀원 현황 ${team.length}건</span></div>
+       <div class="rt-popup-list">${team.map(a => routinePopupCard(a, false)).join("")}</div>`
+    : '';
+
+  const lead = mine.length
     ? `<p class="rt-popup-lead"><b>${escapeHtml(currentUser ? currentUser.name : '')}</b>님이 맡은 정기업무 중
        ${lateN ? `기한이 지난 것 <b style="color:var(--red);">${lateN}건</b>` : ''}${lateN && dueN ? ', ' : ''}${dueN ? `오늘 해야 할 것 <b style="color:var(--orange);">${dueN}건</b>` : ''}이 있습니다.</p>`
-    : '';
+    : (team.length
+      ? `<p class="rt-popup-lead">지금 처리해야 할 팀 정기업무 <b style="color:var(--red);">${team.length}건</b>이 있습니다.</p>`
+      : '');
 
   openModal(`
     <h3>정기업무 알림</h3>
     ${lead}
-    ${body}
-    <p class="rt-popup-foot">이 창은 하루에 한 번만 뜹니다. 전체 목록은 [정기업무] 탭에서 볼 수 있습니다.</p>
+    ${mineHtml}
+    ${teamHtml}
+    <p class="rt-popup-foot">${manual ? '지금은 [알림 다시 보기]로 연 창입니다.' : '이 창은 하루에 한 번만 뜹니다.'}
+      완료 체크는 담당자 본인만 할 수 있습니다.</p>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeModal(); openRoutineTab();">정기업무 탭 열기</button>
       <button class="btn-primary" onclick="closeModal()">닫기</button>
