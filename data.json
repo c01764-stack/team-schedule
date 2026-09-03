@@ -572,6 +572,17 @@
       "memo": "- 서울산업안전컨설팅, 한도산업보건 견적 요청\n- 총 합계 12,900원",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "t352dlrrw",
+      "team": "etc",
+      "title": "회사소개서 제작",
+      "owner": "천재우",
+      "due": "2026-10-23",
+      "progress": 10,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
