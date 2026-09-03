@@ -1007,26 +1007,5 @@
       "comments": []
     }
   ],
-  "routines": [
-    {
-      "id": "r_tinbnr9ax",
-      "title": "ㅁㄴㅇㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹ",
-      "team": "edu",
-      "ownerId": "c11111",
-      "ownerName": "박",
-      "freq": "weekly",
-      "weekday": 5,
-      "day": 0,
-      "qMonth": 1,
-      "month": 1,
-      "leadDays": 1,
-      "memo": "ㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹ",
-      "active": true,
-      "createdAt": "2026-09-03T09:17:04.669Z",
-      "updatedAt": "2026-09-03T09:17:04.669Z",
-      "byUserId": "c01764",
-      "byName": "천재우",
-      "done": {}
-    }
-  ]
+  "routines": []
 }
