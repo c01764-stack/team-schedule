@@ -1048,6 +1048,26 @@
       "byUserId": "c01764",
       "byName": "천재우",
       "done": {}
+    },
+    {
+      "id": "r_t5d1crubz",
+      "title": "ㄴㅇㄻㄴ",
+      "team": "safety",
+      "ownerId": "c00000",
+      "ownerName": "박보검",
+      "freq": "weekly",
+      "weekday": 4,
+      "day": 0,
+      "qMonth": 1,
+      "month": 1,
+      "leadDays": 0,
+      "memo": "ㅁㄴㅇㄻㅇ",
+      "active": true,
+      "createdAt": "2026-09-03T07:20:32.431Z",
+      "updatedAt": "2026-09-03T07:20:32.431Z",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "done": {}
     }
   ]
 }
