@@ -94,6 +94,9 @@
   .stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift);}
   .stat-card .num{font-size:26px;font-weight:800;}
   .stat-card .label{font-size:12px;color:var(--sub);margin-top:2px;font-weight:600;}
+  /* 평균 진행율이 무엇의 평균인지 카드 안에서 바로 보이게 */
+  .stat-note{display:inline-block;margin-left:5px;font-size:10px;font-weight:700;color:var(--sub);
+    background:var(--bg);border:1px solid var(--border);border-radius:999px;padding:1px 6px;vertical-align:1px;white-space:nowrap;}
   .stat-card.done{border-left-color:var(--green);background:linear-gradient(180deg,#f0fdf4,var(--card) 40%);}
   .stat-card.done .num{color:var(--green);}
   .stat-card.overdue{border-left-color:var(--red);background:linear-gradient(180deg,#fff1f2,var(--card) 40%);}
@@ -232,8 +235,7 @@
     animation:ackDot 1.8s ease-in-out infinite;
   }
   .read-btn.urgent{ animation:ackBtn 1.8s ease-in-out infinite; }
-  .memo-mine-count.urgent,
-  .routine-mine-count.urgent{ animation:ackBadge 1.8s ease-in-out infinite; }
+  .memo-mine-count.urgent{ animation:ackBadge 1.8s ease-in-out infinite; }
   /* 미확인 건이 몇 개인지 헤더에서 바로 보이도록 */
   .ack-count{font-size:11.5px;font-weight:700;color:var(--red);white-space:nowrap;}
 
@@ -243,8 +245,7 @@
     .routine-card.needs-ack,
     .ack-badge,.ack-badge::before,
     .read-btn.urgent,
-    .memo-mine-count.urgent,
-    .routine-mine-count.urgent{ animation:none; }
+    .memo-mine-count.urgent{ animation:none; }
     .notice-banner.needs-ack,
     .memo-card.needs-ack,
     .routine-card.needs-ack{ box-shadow:0 0 0 3px rgba(245,158,11,.22), 0 6px 20px rgba(30,20,70,.10); }
@@ -357,6 +358,12 @@
   .modal-box input{width:100%;padding:9px 10px;border:2px solid var(--border);border-radius:12px;font-size:13px;font-family:inherit;}
   .modal-box input:focus{outline:none;border-color:var(--violet);}
   .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;}
+  /* 접속 시 뜨는 정기업무 알림 팝업 */
+  .rt-popup-lead{font-size:13px;line-height:1.65;color:var(--text);margin:0 0 4px;}
+  .rt-popup-list{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+  .rt-popup-list .routine-card{border-left-width:4px;}
+  .rt-popup-foot{font-size:11.5px;color:var(--sub);margin:12px 0 0;line-height:1.6;}
+  .rt-popup-empty{font-size:13px;color:#15803d;font-weight:700;padding:14px 2px;}
   .modal-actions button{border:none;border-radius:999px;padding:9px 18px;font-size:13px;cursor:pointer;font-weight:700;}
   .btn-primary,.btn-ghost{border:none;border-radius:999px;padding:10px 18px;font-size:13px;cursor:pointer;font-weight:700;font-family:inherit;transition:transform .12s,opacity .12s;}
   .btn-primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;box-shadow:0 4px 12px rgba(139,92,246,.35);}
@@ -464,11 +471,6 @@
   /* ── 정기업무 ─────────────────────────────────────────────
      주/월/분기 등 반복되는 업무. 배너는 "지금 챙겨야 할 것"만 보여주고,
      전체 목록과 등록은 [정기업무] 탭에서 한다. */
-  .routine-banner{background:linear-gradient(135deg,#fff7ed,#fefce8);border:1px solid var(--border);border-radius:0;
-    padding:12px 16px;margin-bottom:18px;box-shadow:0 6px 20px rgba(30,20,70,.10);}
-  .routine-banner:empty{display:none;}
-  .routine-banner h3{margin:0;font-size:15.5px;color:#b45309;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-  .routine-mine-count{background:#fecdd3;color:#be123c;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:800;}
   .routine-list{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
   .routine-card{background:var(--card);border:1px solid var(--border);border-radius:0;padding:11px 14px;
     box-shadow:var(--shadow-soft);transition:box-shadow .15s;}
@@ -594,6 +596,7 @@
     .stat-card{padding:9px 10px;border-left-width:4px;border-radius:0;box-shadow:var(--shadow-soft);}
     .stat-card .num{font-size:18px;}
     .stat-card .label{font-size:10.5px;margin-top:0;}
+    .stat-note{display:block;margin-left:0;font-size:9px;padding:0 4px;border:none;background:none;}
 
     .absence-banner{padding:11px 13px;margin-bottom:14px;gap:6px 10px;}
     .absence-banner h3{font-size:14px;}
@@ -604,7 +607,6 @@
     .memo-banner{padding:11px 13px;margin-bottom:14px;}
     .memo-banner h3{font-size:14px;}
     .memo-card{padding:11px 12px;}
-    .routine-banner{padding:11px 12px;}
     .routine-card{padding:10px 12px;}
     .routine-title{font-size:13px;}
     .routine-card-head{gap:5px 8px;}
@@ -733,6 +735,7 @@
     .stat-card{padding:8px 8px;}
     .stat-card .num{font-size:16.5px;}
     .stat-card .label{font-size:10px;}
+    .stat-note{font-size:8.5px;}
     .cal-cell{min-height:66px;}
     .cal-chip{font-size:10px;padding:2px 4px;}
   }
@@ -775,6 +778,7 @@
   [data-theme="dark"] .setup-banner button{margin-left:8px;background:linear-gradient(135deg,#fbbf24,#fb923c);color:#1a1206;border:none;border-radius:999px;padding:7px 14px;font-size:12px;cursor:pointer;font-weight:700;}
   [data-theme="dark"] .today-badge{box-shadow:0 3px 10px rgba(34,211,238,.18);}
   [data-theme="dark"] .stat-card{box-shadow:var(--shadow-card);}
+  [data-theme="dark"] .stat-note{background:rgba(255,255,255,.05);}
   [data-theme="dark"] .stat-card:hover{box-shadow:var(--shadow-lift);}
   [data-theme="dark"] .stat-card.done{background:linear-gradient(180deg,rgba(74,222,128,.12),var(--card) 60%);}
   [data-theme="dark"] .stat-card.overdue{background:linear-gradient(180deg,rgba(251,113,133,.12),var(--card) 60%);}
@@ -860,10 +864,6 @@
   [data-theme="dark"] .read-btn.done2{background:rgba(74,222,128,.16);color:#86efac;border-color:rgba(74,222,128,.4);}
   [data-theme="dark"] .memo-manage button{background:transparent;}
   /* 정기업무 — 다크 모드 */
-  [data-theme="dark"] .routine-banner{background:linear-gradient(135deg,rgba(245,158,11,.10),rgba(234,179,8,.07));
-    box-shadow:0 6px 20px rgba(251,191,36,.07);}
-  [data-theme="dark"] .routine-banner h3{color:#fcd34d;}
-  [data-theme="dark"] .routine-mine-count{background:rgba(251,113,133,.2);color:#fda4af;}
   [data-theme="dark"] .routine-card{box-shadow:var(--shadow-soft);}
   [data-theme="dark"] .routine-card:hover{box-shadow:var(--shadow-card);}
   [data-theme="dark"] .routine-card.is-done{background:rgba(255,255,255,.03);}
@@ -943,8 +943,6 @@
   <div class="notice-banner" id="noticeBanner"></div>
 
   <div class="memo-banner" id="memoBanner"></div>
-
-  <div class="routine-banner" id="routineBanner"></div>
 
   <button class="form-toggle" id="taskFormToggle" style="display:none;" onclick="toggleAddForm('taskAddForm')">+ 업무 추가</button>
 
@@ -1272,6 +1270,7 @@ function syncCurrentUser(){
 }
 
 function logout(){
+  routinePopupShownFor = null;
   if(!confirm("로그아웃할까요?")) return;
   clearSession();
   currentUser = null;
@@ -2433,7 +2432,13 @@ function renderSummary(){
   const done = tasks.filter(t=>t.progress>=100).length;
   const overdue = tasks.filter(t=> dueInfo(t.due,t.progress).status==="지연").length;
   const ongoing = total - done - overdue;
-  const avg = total ? Math.round(tasks.reduce((s,t)=>s+Number(t.progress),0)/total) : 0;
+  // 평균 진행율은 "아직 남은 일이 얼마나 진행됐는가"를 보는 숫자다.
+  // 완료(100%) 건이 섞여 있으면 완료가 쌓일수록 저절로 올라가서, 실제로 밀린 일이
+  // 얼마나 진행됐는지가 가려진다. 그래서 완료 건은 빼고 계산한다.
+  const pending = tasks.filter(t => Number(t.progress) < 100);
+  const avg = pending.length
+    ? Math.round(pending.reduce((s,t)=>s+Number(t.progress),0)/pending.length)
+    : (total ? 100 : 0);   // 남은 일이 없으면 100% (업무 자체가 없으면 0%)
 
   const el = document.getElementById("summary");
   el.innerHTML = `
@@ -2441,7 +2446,7 @@ function renderSummary(){
     <div class="stat-card done"><div class="num">${done}</div><div class="label">완료</div></div>
     <div class="stat-card"><div class="num">${ongoing}</div><div class="label">진행중</div></div>
     <div class="stat-card overdue"><div class="num">${overdue}</div><div class="label">지연</div></div>
-    <div class="stat-card progress"><div class="num">${avg}%</div><div class="label">평균 진행율</div></div>
+    <div class="stat-card progress" title="완료된 업무는 빼고, 아직 진행 중인 ${pending.length}건의 평균입니다"><div class="num">${avg}%</div><div class="label">평균 진행율<span class="stat-note">완료 제외</span></div></div>
   `;
 }
 
@@ -3152,7 +3157,8 @@ function buildWeeklyReportText(monday){
     const teamTasks = tasks.filter(t => t.team === teamKey && t.includeInReport !== false);
     const overdue = teamTasks.filter(t => t.progress < 100 && t.due < todayStr());
 
-    teamTasks.forEach(t => { progressSum += Number(t.progress); progressCount++; });
+    // 대시보드와 같은 기준 — 완료(100%) 건은 평균에서 뺀다
+    teamTasks.forEach(t => { if(Number(t.progress) < 100){ progressSum += Number(t.progress); progressCount++; } });
     totalActive += teamTasks.filter(t=>t.progress<100).length;
     totalDone += teamTasks.filter(t=>t.progress>=100).length;
     totalOverdue += overdue.length;
@@ -3193,10 +3199,10 @@ function buildWeeklyReportText(monday){
   else nextWeekAbsences.forEach(a => lines.push(formatAbsenceLine(a)));
   lines.push("");
 
-  const avgProgress = progressCount ? Math.round(progressSum / progressCount) : 0;
+  const avgProgress = progressCount ? Math.round(progressSum / progressCount) : (totalDone ? 100 : 0);
   lines.push(`■ 전체 요약`);
   lines.push(`- 전체 진행중: ${totalActive}건 / 완료: ${totalDone}건 / 지연: ${totalOverdue}건`);
-  lines.push(`- 전체 평균 진행율: ${avgProgress}%`);
+  lines.push(`- 전체 평균 진행율(완료 제외): ${avgProgress}%`);
 
   return { subject: `[주간업무보고] ${startStr} ~ ${endStr}`, body: lines.join("\n"), startStr, endStr };
 }
@@ -3387,7 +3393,7 @@ function goToday(){
 //  정기업무 (반복 업무 알림)
 //  ------------------------------------------------------------
 //  주/월/분기/연 단위로 되풀이되는 일을 "규칙"으로 한 번만 등록해두면,
-//  해당 요일·날짜가 다가올 때 배너와 탭 제목으로 알려준다.
+//  해당 요일·날짜가 다가올 때 접속 시 팝업창과 탭 제목으로 알려준다.
 //  업무 목록에 매번 새 항목을 만들지 않는다. 규칙(routine) 하나에
 //  발생일(occurrence)별 완료 기록만 쌓이는 구조라 데이터가 늘지 않고,
 //  지난 이력도 그대로 남는다.
@@ -3625,33 +3631,6 @@ function routineAlertCard(a){
       ${r.memo ? `<div class="routine-memo">${escapeHtml(r.memo)}</div>` : ''}
       ${btn ? `<div class="routine-actions">${btn}</div>` : ''}
     </div>`;
-}
-
-function renderRoutineBanner(){
-  const el = document.getElementById("routineBanner");
-  if(!el) return;
-  const alerts = allRoutineAlerts();
-  if(!alerts.length){ el.innerHTML = ""; return; }
-
-  // 내 것을 위로 올린다
-  const mineFirst = (a, b) => {
-    const am = currentUser && a.routine.ownerId === currentUser.id ? 0 : 1;
-    const bm = currentUser && b.routine.ownerId === currentUser.id ? 0 : 1;
-    return am - bm;
-  };
-  const sorted = alerts.slice().sort((a, b) => mineFirst(a, b) || 0);
-
-  const myNow = myRoutineDueCount();
-  const mine = myNow ? `<span class="routine-mine-count urgent">내가 할 일 ${myNow}건</span>` : "";
-  const lateN = alerts.filter(a => a.kind === "late").length;
-  const dueN  = alerts.filter(a => a.kind === "due").length;
-  const soonN = alerts.filter(a => a.kind === "soon").length;
-  const total = `<span class="memo-total">지연 ${lateN} · 오늘 ${dueN} · 예정 ${soonN}</span>`;
-
-  el.innerHTML = `
-    <div class="notice-head"><h3>정기업무 알림 ${mine}${total}</h3>
-      <button class="notice-edit-btn" onclick="openRoutineTab()">정기업무 관리</button></div>
-    <div class="routine-list">${sorted.map(routineAlertCard).join("")}</div>`;
 }
 
 function openRoutineTab(){
@@ -3946,6 +3925,96 @@ function toggleRoutineDone(id, dateStr){
 }
 
 
+// ---------- 접속 시 알림 팝업 ----------
+//  내 담당인데 오늘이거나 이미 날짜가 지난 정기업무가 있으면, 그날 처음 접속할 때
+//  화면 가운데 창으로 띄운다. 메인 화면은 건드리지 않는다 — 전체 목록은 [정기업무] 탭.
+//  하루에 한 번만 뜬다(사용자별로 따로 기억). 새로고침할 때마다 뜨면 금방 거슬린다.
+const ROUTINE_POPUP_KEY = "routinePopupSeen_v1";
+let routinePopupShownFor = null;   // 이번 페이지에서 이미 띄워준 사용자
+
+function routinePopupSeenToday(){
+  if(!currentUser) return true;
+  try{
+    const seen = JSON.parse(localStorage.getItem(ROUTINE_POPUP_KEY) || "{}");
+    return seen[currentUser.id] === todayStr();
+  }catch(e){ return false; }
+}
+
+function markRoutinePopupSeen(){
+  if(!currentUser) return;
+  try{
+    const seen = JSON.parse(localStorage.getItem(ROUTINE_POPUP_KEY) || "{}");
+    seen[currentUser.id] = todayStr();
+    localStorage.setItem(ROUTINE_POPUP_KEY, JSON.stringify(seen));
+  }catch(e){ /* 저장이 막혀 있어도 팝업 자체는 뜬다 */ }
+}
+
+// 내가 담당인, 지금 해야 하는 건 (지연 + 오늘). 미리 알림(D-n)은 팝업까지 띄우지 않는다.
+function myRoutineDueAlerts(){
+  if(!currentUser) return [];
+  return allRoutineAlerts().filter(a =>
+    a.routine.ownerId === currentUser.id && (a.kind === "late" || a.kind === "due"));
+}
+
+function maybeShowRoutinePopup(){
+  if(!dataLoaded || !currentUser) return;
+  if(routinePopupShownFor === currentUser.id) return;          // 이번 접속에서 이미 띄움
+  if(document.getElementById("modalOverlay").classList.contains("open")) return;  // 다른 창이 떠 있으면 방해하지 않는다
+  if(routinePopupSeenToday()) return;
+  if(!myRoutineDueAlerts().length) return;
+  routinePopupShownFor = currentUser.id;
+  markRoutinePopupSeen();
+  renderRoutinePopup();
+}
+
+function renderRoutinePopup(){
+  const list = myRoutineDueAlerts();
+  const lateN = list.filter(a => a.kind === "late").length;
+  const dueN  = list.filter(a => a.kind === "due").length;
+
+  const body = list.length
+    ? `<div class="rt-popup-list">${list.map(a => {
+        const r = a.routine;
+        return `
+          <div class="routine-card is-${a.kind === 'due' ? 'today' : 'late'}">
+            <div class="routine-card-head">
+              <span class="routine-title">${escapeHtml(r.title)}</span>
+              ${alertChip(a)}
+              <span class="routine-when">${a.date} · ${routineWhenLabel(r)}</span>
+            </div>
+            ${r.memo ? `<div class="routine-memo">${escapeHtml(r.memo)}</div>` : ''}
+            <div class="routine-actions">
+              <button class="read-btn ${a.kind === 'late' ? 'urgent' : 'go-done'}"
+                onclick="routinePopupDone('${r.id}','${a.date}')">완료했습니다</button>
+            </div>
+          </div>`;
+      }).join("")}</div>`
+    : `<div class="rt-popup-empty">오늘 처리할 정기업무를 모두 마쳤습니다.</div>`;
+
+  const lead = list.length
+    ? `<p class="rt-popup-lead"><b>${escapeHtml(currentUser ? currentUser.name : '')}</b>님이 맡은 정기업무 중
+       ${lateN ? `기한이 지난 것 <b style="color:var(--red);">${lateN}건</b>` : ''}${lateN && dueN ? ', ' : ''}${dueN ? `오늘 해야 할 것 <b style="color:var(--orange);">${dueN}건</b>` : ''}이 있습니다.</p>`
+    : '';
+
+  openModal(`
+    <h3>정기업무 알림</h3>
+    ${lead}
+    ${body}
+    <p class="rt-popup-foot">이 창은 하루에 한 번만 뜹니다. 전체 목록은 [정기업무] 탭에서 볼 수 있습니다.</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal(); openRoutineTab();">정기업무 탭 열기</button>
+      <button class="btn-primary" onclick="closeModal()">닫기</button>
+    </div>
+  `);
+}
+
+// 팝업 안에서 완료 처리하면 목록을 그 자리에서 다시 그린다 (다 끝내면 완료 메시지로 바뀜)
+function routinePopupDone(id, dateStr){
+  toggleRoutineDone(id, dateStr);
+  // 토큰이 없어 설정 창이 대신 열린 경우에는 그 창을 덮어쓰지 않는다
+  if(ghConfig && ghConfig.token) renderRoutinePopup();
+}
+
 function renderContent(){
   const el = document.getElementById("content");
   if(activeTab === "all"){
@@ -3977,9 +4046,9 @@ function render(){
   renderAbsenceBanner();
   renderNoticeBanner();
   renderMemoBanner();
-  renderRoutineBanner();
   renderContent();
   updateAckTitle();
+  maybeShowRoutinePopup();
 }
 
 // 탭을 켜두고 다른 일을 하고 있어도 알 수 있게, 내가 확인 안 한 건수를
