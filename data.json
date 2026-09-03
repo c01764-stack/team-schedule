@@ -882,6 +882,15 @@
       "start": "2026-09-03",
       "end": "2026-09-03",
       "memo": "sk-p타워 점검 준비"
+    },
+    {
+      "id": "t3ieoxbl2",
+      "team": "safety",
+      "person": "천재우",
+      "type": "etc",
+      "start": "2026-09-08",
+      "end": "2026-09-08",
+      "memo": "FM 학외 정기 모임"
     }
   ],
   "reports": [
