@@ -596,6 +596,17 @@
       "memo": "- 본사 안전관리 서류 목록화 및 정리\n- 1층 캐비넷 서류 바인더 정리\n- 1층 바인더 옥상 캐비넷으로 일부 이동 필요",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "ty1rqqfqo",
+      "team": "edu",
+      "title": "휴넷  사이트 오픈",
+      "owner": "오혜지",
+      "due": "2026-09-10",
+      "progress": 10,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
