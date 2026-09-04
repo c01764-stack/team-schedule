@@ -583,7 +583,7 @@
       "title": "그룹웨어 메일 대용량 첨부 오류 관련",
       "owner": "천재우",
       "due": "2026-09-11",
-      "progress": 0,
+      "progress": 50,
       "memo": "9/4\n- 그룹웨어 메일로 SKT/네이트 메일에 대용량 첨부 할 경우,\n  첨부파일이 다운로드 되지 않는 오류 해결 필요(박보원 팀장)\n- 더존에 해당 내용 문의 함",
       "dueHistory": [],
       "includeInReport": true
