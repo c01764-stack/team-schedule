@@ -1057,19 +1057,6 @@
       "readAt": "2026-09-02T07:40:17.371Z",
       "doneAt": "2026-09-03T23:53:20.207Z",
       "comments": []
-    },
-    {
-      "id": "m_thboezhjo",
-      "toUserId": "c00000",
-      "toName": "박보검(테스트)",
-      "text": "주간업무일지 작성 및 보고 필요",
-      "byUserId": "c01764",
-      "byName": "천재우",
-      "createdAt": "2026-09-04T00:20:20.797Z",
-      "updatedAt": "2026-09-04T00:20:20.797Z",
-      "readAt": null,
-      "doneAt": null,
-      "comments": []
     }
   ],
   "routines": [
