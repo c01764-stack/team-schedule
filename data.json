@@ -978,6 +978,16 @@
       "hash": "48bf6375a3db7b5c3f5aba60f9dde0a1821b02041adaf80bcef1e97a704d7298",
       "iter": 150000,
       "createdAt": "2026-08-31T13:01:50.367Z"
+    },
+    {
+      "id": "c00000",
+      "name": "박보검(테스트)",
+      "role": "member",
+      "salt": "4fa7262f960376bf8301d08ed4250a3e",
+      "hash": "d568b9a3f02747536160802ad84100ba9cbf6a6c3943f0cf57ffa52de451f449",
+      "iter": 150000,
+      "createdAt": "2026-09-04T00:19:06.119Z",
+      "pwTemp": true
     }
   ],
   "memos": [
