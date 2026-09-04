@@ -493,6 +493,12 @@
   .rt-chip.done{background:#dcfce7;color:#15803d;}
   .rt-chip.freq{background:#ede9fe;color:#6d28d9;}
   .rt-chip.off{background:#f1f5f9;color:var(--sub);}
+  .rt-chip.wait{background:#fef3c7;color:#b45309;}
+  .rt-chip.doing{background:#dbeafe;color:#1d4ed8;}
+  /* 발생일 + 1·2단계 버튼 한 줄 */
+  .routine-step-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;}
+  .routine-step-date{font-size:11.5px;font-weight:800;color:var(--sub);margin-right:2px;white-space:nowrap;}
+  .routine-actions.rows{flex-direction:column;align-items:flex-start;gap:7px;}
   /* 정기업무 탭 목록 */
   .routine-manage{margin-left:auto;display:flex;gap:5px;}
   .routine-manage button{border:1.5px solid var(--border);background:transparent;border-radius:999px;padding:4px 10px;
@@ -876,6 +882,8 @@
   [data-theme="dark"] .rt-chip.done{background:rgba(74,222,128,.16);color:#86efac;}
   [data-theme="dark"] .rt-chip.freq{background:rgba(139,92,246,.20);color:#c4b5fd;}
   [data-theme="dark"] .rt-chip.off{background:rgba(255,255,255,.06);color:var(--sub);}
+  [data-theme="dark"] .rt-chip.wait{background:rgba(245,158,11,.18);color:#fcd34d;}
+  [data-theme="dark"] .rt-chip.doing{background:rgba(59,130,246,.20);color:#93c5fd;}
   [data-theme="dark"] .routine-manage button{background:transparent;}
   [data-theme="dark"] .memo-comment .who{color:#c4b5fd;}
   [data-theme="dark"] .type-badge.inspect{background:rgba(99,102,241,.18);color:#a5b4fc;}
@@ -3433,9 +3441,25 @@ function normalizeRoutine(r){
     updatedAt: r.updatedAt || null,
     byUserId: r.byUserId || "",
     byName: r.byName || "",
-    // 발생일(YYYY-MM-DD) -> {at, byUserId, byName}
-    done: (r.done && typeof r.done === "object" && !Array.isArray(r.done)) ? Object.assign({}, r.done) : {}
+    // 발생일(YYYY-MM-DD) -> {readAt(1단계 확인), at(2단계 완료), byUserId, byName}
+    done: normalizeRoutineDone(r.done)
   };
+}
+
+// 발생일별 체크 기록. 개인 전달사항처럼 1단계 확인(readAt) → 2단계 완료(at) 두 단계다.
+// 예전 판에는 at 하나뿐이었다 — 그 기록은 확인까지 마친 것으로 본다.
+function normalizeRoutineDone(raw){
+  const out = {};
+  if(!raw || typeof raw !== "object" || Array.isArray(raw)) return out;
+  Object.keys(raw).forEach(k => {
+    const v = raw[k];
+    if(!v || typeof v !== "object") return;
+    const at = v.at || null;
+    const readAt = v.readAt || at || null;   // 옛 기록 보정
+    if(!at && !readAt) return;
+    out[k] = { readAt, at, byUserId: v.byUserId || "", byName: v.byName || "" };
+  });
+  return out;
 }
 
 function clearRoutineDirty(){
@@ -3533,8 +3557,17 @@ function routineWhenLabel(r){
   return `매년 ${r.month}월 ${dayLabel}`;
 }
 
+function routineCheck(r, dateStr){
+  return (r.done && r.done[dateStr]) || null;
+}
+// 1단계 — 담당자가 "확인했다"고 누른 기록
+function routineReadAt(r, dateStr){
+  const rec = routineCheck(r, dateStr);
+  return rec && (rec.readAt || rec.at) ? rec : null;
+}
+// 2단계 — 실제로 처리를 마친 기록. 알림에서 빠지는 기준은 이쪽이다.
 function routineDoneAt(r, dateStr){
-  const rec = r.done ? r.done[dateStr] : null;
+  const rec = routineCheck(r, dateStr);
   return rec && rec.at ? rec : null;
 }
 
@@ -3563,13 +3596,13 @@ function routineAlerts(r, todayS){
   const past = occs.filter(d => d < todayS);
   if(past.length){
     const d = past[past.length - 1];
-    if(!routineDoneAt(r, d)) alerts.push({ routine: r, date: d, kind: "late", diff: daysBetween(d, todayS) });
+    if(!routineDoneAt(r, d)) alerts.push({ routine: r, date: d, kind: "late", diff: daysBetween(d, todayS), read: !!routineReadAt(r, d) });
   }
   const upcoming = occs.filter(d => d >= todayS && !routineDoneAt(r, d));
   if(upcoming.length){
     const d = upcoming[0];
     const diff = daysBetween(todayS, d);
-    alerts.push({ routine: r, date: d, kind: diff === 0 ? "due" : "soon", diff });
+    alerts.push({ routine: r, date: d, kind: diff === 0 ? "due" : "soon", diff, read: !!routineReadAt(r, d) });
   }
   return alerts;
 }
@@ -3606,6 +3639,28 @@ function alertChip(a){
   if(a.kind === "late") return `<span class="rt-chip late">지연 ${a.diff}일</span>`;
   if(a.kind === "due")  return `<span class="rt-chip today">오늘</span>`;
   return `<span class="rt-chip soon">D-${a.diff}</span>`;
+}
+
+// 1단계만 마친 건은 "확인함 · 완료 대기"로 구분해 보여준다
+function routineStepChip(a){
+  const rec = routineReadAt(a.routine, a.date);
+  if(!rec) return `<span class="rt-chip wait">미확인</span>`;
+  return `<span class="rt-chip doing">✓ 확인 · 완료 대기</span>`;
+}
+
+// 개인 전달사항과 같은 2단계 버튼. 2단계는 1단계를 마쳐야 눌린다.
+function routineStepButtons(r, dateStr){
+  const read = !!routineReadAt(r, dateStr);
+  const done = !!routineDoneAt(r, dateStr);
+  const step1 = read
+    ? `<button class="read-btn done" onclick="toggleRoutineRead('${r.id}','${dateStr}')" title="누르면 확인을 취소합니다"><b>1</b> ✓ 확인함</button>`
+    : `<button class="read-btn urgent" onclick="toggleRoutineRead('${r.id}','${dateStr}')"><b>1</b> 확인했습니다</button>`;
+  const step2 = done
+    ? `<button class="read-btn done2" onclick="toggleRoutineDone('${r.id}','${dateStr}')" title="누르면 완료를 취소합니다"><b>2</b> ✓ 완료함</button>`
+    : (read
+      ? `<button class="read-btn go-done" onclick="toggleRoutineDone('${r.id}','${dateStr}')"><b>2</b> 완료했습니다</button>`
+      : `<button class="read-btn" disabled title="먼저 1단계 확인을 눌러주세요"><b>2</b> 완료했습니다</button>`);
+  return step1 + step2;
 }
 
 function routineAlertCard(a){
@@ -3653,16 +3708,21 @@ function routineListCard(r){
   // 알림 구간에 없는 건은 다음 차례까지 며칠 남았는지만 조용히 보여준다
   const chip = alerts.length
     ? alertChip(alerts[0])
-    : (next ? `<span class="rt-chip off">D-${daysBetween(t, next)}</span>` : `<span class="rt-chip off">예정 없음</span>`);
+    : (next
+      ? (daysBetween(t, next) === 0
+        ? `<span class="rt-chip done">오늘 완료</span>`
+        : `<span class="rt-chip off">D-${daysBetween(t, next)}</span>`)
+      : `<span class="rt-chip off">예정 없음</span>`);
 
   // 최근 발생일 5개의 처리 상태
   const pastOccs = routineOccurrences(r, routineStartStr(r, t), t).slice(-5).reverse();
   const hist = pastOccs.length
     ? pastOccs.map(d => {
-        const rec = routineDoneAt(r, d);
-        return rec
-          ? `${d} <b style="color:#15803d;">완료</b>(${escapeHtml(rec.byName || '')})`
-          : `${d} <b style="color:#be123c;">미완료</b>`;
+        const done = routineDoneAt(r, d);
+        if(done) return `${d} <b style="color:#15803d;">완료</b>(${escapeHtml(done.byName || '')})`;
+        const read = routineReadAt(r, d);
+        if(read) return `${d} <b style="color:#1d4ed8;">확인만</b>(${escapeHtml(read.byName || '')})`;
+        return `${d} <b style="color:#be123c;">미확인</b>`;
       }).join(" &nbsp;·&nbsp; ")
     : "지난 기록 없음";
 
@@ -3673,15 +3733,14 @@ function routineListCard(r){
          <button class="del" onclick="deleteRoutine('${r.id}')">삭제</button>
        </span>` : "";
 
-  // 담당자는 오늘/지연 건을 여기서도 바로 처리할 수 있다
+  // 담당자는 오늘/지연 건을 여기서도 바로 처리할 수 있다 (확인 → 완료 2단계)
   const actionable = alerts.filter(a => a.kind === "late" || a.kind === "due");
   const btns = (isMine && !readOnly)
-    ? actionable.map(a => `<button class="read-btn ${a.kind === 'late' ? 'urgent' : 'go-done'}"
-         onclick="toggleRoutineDone('${r.id}','${a.date}')">${a.date} 완료 처리</button>`).join("")
+    ? actionable.map(a => `<div class="routine-step-row"><span class="routine-step-date">${a.date}</span>${routineStepButtons(r, a.date)}</div>`).join("")
     : "";
-  // 방금 완료한 건은 되돌릴 수 있게
-  const undo = (isMine && !readOnly && pastOccs.length && routineDoneAt(r, pastOccs[0]))
-    ? `<button class="read-btn done" onclick="toggleRoutineDone('${r.id}','${pastOccs[0]}')" title="누르면 완료를 취소합니다">${pastOccs[0]} ✓ 완료함</button>`
+  // 방금 마친 건은 되돌릴 수 있게 (가장 최근 발생일 한 건)
+  const undo = (isMine && !readOnly && pastOccs.length && !actionable.some(a => a.date === pastOccs[0]) && routineDoneAt(r, pastOccs[0]))
+    ? `<div class="routine-step-row"><span class="routine-step-date">${pastOccs[0]}</span>${routineStepButtons(r, pastOccs[0])}</div>`
     : "";
 
   return `
@@ -3696,7 +3755,7 @@ function routineListCard(r){
       </div>
       <div class="routine-when">${routineWhenLabel(r)} · 미리 알림 ${r.leadDays}일 전${next ? ` · 다음 ${next}` : ''}</div>
       ${r.memo ? `<div class="routine-memo">${escapeHtml(r.memo)}</div>` : ''}
-      ${(btns || undo) ? `<div class="routine-actions">${btns}${undo}</div>` : ''}
+      ${(btns || undo) ? `<div class="routine-actions rows">${btns}${undo}</div>` : ''}
       <div class="routine-hist">최근 기록 — ${hist}</div>
     </div>`;
 }
@@ -3904,24 +3963,63 @@ function deleteRoutine(id){
   persist("정기업무 삭제: " + r.title);
 }
 
-// 발생일 단위 완료 체크 — 담당자 본인만. 한 번 더 누르면 취소된다.
-function toggleRoutineDone(id, dateStr){
+// 발생일 단위 체크는 담당자 본인만, 개인 전달사항과 같은 2단계다.
+//   1단계 확인(readAt) — "알림을 봤고 내가 할 일이라는 걸 안다"
+//   2단계 완료(at)     — "실제로 처리했다". 알림에서 빠지는 기준은 2단계다.
+function routineCheckGuard(id, dateStr){
   const r = routines.find(x => x.id === id);
-  if(!r) return;
+  if(!r) return null;
   if(!currentUser || r.ownerId !== currentUser.id){
-    alert("담당자 본인만 완료 체크를 할 수 있습니다.");
+    alert("담당자 본인만 확인·완료 체크를 할 수 있습니다.");
+    return null;
+  }
+  if(!ghConfig.token){ openSettings(); return null; }
+  return r;
+}
+
+// 기록이 비면(확인도 완료도 없음) 아예 지워서 데이터가 늘지 않게 한다
+function saveRoutineCheck(r, dateStr, rec){
+  if(rec && (rec.readAt || rec.at)) r.done[dateStr] = rec;
+  else { delete r.done[dateStr]; rec = null; }
+  routineDoneDirty.set(doneKey(r.id, dateStr), rec);
+}
+
+// 1단계 — 확인. 취소하면 2단계 완료도 함께 풀린다(확인해야 완료할 수 있으므로).
+function toggleRoutineRead(id, dateStr){
+  const r = routineCheckGuard(id, dateStr);
+  if(!r) return;
+  const had = !!routineReadAt(r, dateStr);
+  if(had){
+    const wasDone = !!routineDoneAt(r, dateStr);
+    if(!confirm(`${dateStr} 확인을 취소할까요?${wasDone ? '\n완료 처리도 함께 취소됩니다.' : ''}`)) return;
+    saveRoutineCheck(r, dateStr, null);
+  } else {
+    const prev = routineCheck(r, dateStr) || {};
+    saveRoutineCheck(r, dateStr, {
+      readAt: new Date().toISOString(), at: prev.at || null,
+      byUserId: currentUser.id, byName: currentUser.name
+    });
+  }
+  render();
+  persist(`정기업무 ${had ? '확인 취소' : '확인'}: ${r.title} (${dateStr})`);
+}
+
+// 2단계 — 완료. 1단계를 마치기 전에는 누를 수 없다.
+function toggleRoutineDone(id, dateStr){
+  const r = routineCheckGuard(id, dateStr);
+  if(!r) return;
+  if(!routineReadAt(r, dateStr)){
+    alert("먼저 [1 확인했습니다]를 눌러주세요.");
     return;
   }
-  if(!ghConfig.token){ openSettings(); return; }
   const had = !!routineDoneAt(r, dateStr);
-  if(had){
-    if(!confirm(`${dateStr} 완료 처리를 취소할까요?`)) return;
-    delete r.done[dateStr];
-    routineDoneDirty.set(doneKey(id, dateStr), null);
-  } else {
-    r.done[dateStr] = { at: new Date().toISOString(), byUserId: currentUser.id, byName: currentUser.name };
-    routineDoneDirty.set(doneKey(id, dateStr), r.done[dateStr]);
-  }
+  if(had && !confirm(`${dateStr} 완료 처리를 취소할까요?`)) return;
+  const prev = routineCheck(r, dateStr) || {};
+  saveRoutineCheck(r, dateStr, {
+    readAt: prev.readAt || prev.at || new Date().toISOString(),
+    at: had ? null : new Date().toISOString(),
+    byUserId: currentUser.id, byName: currentUser.name
+  });
   render();
   persist(`정기업무 ${had ? '완료 취소' : '완료'}: ${r.title} (${dateStr})`);
 }
@@ -3986,18 +4084,16 @@ function openRoutinePopupNow(){
 function routinePopupCard(a, canDo){
   const r = a.routine;
   return `
-    <div class="routine-card is-${a.kind === 'due' ? 'today' : 'late'}">
+    <div class="routine-card is-${a.kind === 'due' ? 'today' : 'late'} ${a.read ? 'is-doing' : ''}">
       <div class="routine-card-head">
         <span class="routine-title">${escapeHtml(r.title)}</span>
         ${alertChip(a)}
+        ${routineStepChip(a)}
         ${canDo ? '' : `<span class="routine-owner">담당 ${escapeHtml(r.ownerName || '미지정')}</span>`}
         <span class="routine-when">${a.date} · ${routineWhenLabel(r)}</span>
       </div>
       ${r.memo ? `<div class="routine-memo">${escapeHtml(r.memo)}</div>` : ''}
-      ${canDo ? `<div class="routine-actions">
-          <button class="read-btn ${a.kind === 'late' ? 'urgent' : 'go-done'}"
-            onclick="routinePopupDone('${r.id}','${a.date}')">완료했습니다</button>
-        </div>` : ''}
+      ${canDo ? `<div class="routine-actions" onclick="routinePopupAfterClick()">${routineStepButtons(r, a.date)}</div>` : ''}
     </div>`;
 }
 
@@ -4038,11 +4134,14 @@ function renderRoutinePopup(manual){
   `);
 }
 
-// 팝업 안에서 완료 처리하면 목록을 그 자리에서 다시 그린다 (다 끝내면 완료 메시지로 바뀜)
-function routinePopupDone(id, dateStr){
-  toggleRoutineDone(id, dateStr);
-  // 토큰이 없어 설정 창이 대신 열린 경우에는 그 창을 덮어쓰지 않는다
-  if(ghConfig && ghConfig.token) renderRoutinePopup();
+// 팝업 안에서 확인·완료를 누르면 목록을 그 자리에서 다시 그린다.
+// (버튼의 onclick 이 먼저 끝난 뒤 그려야 해서 한 박자 미룬다)
+function routinePopupAfterClick(){
+  setTimeout(() => {
+    if(!document.getElementById("modalOverlay").classList.contains("open")) return;
+    // 토큰이 없어 설정 창이 대신 열린 경우에는 그 창을 덮어쓰지 않는다
+    if(ghConfig && ghConfig.token) renderRoutinePopup();
+  }, 0);
 }
 
 function renderContent(){
