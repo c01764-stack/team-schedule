@@ -1048,5 +1048,26 @@
       "comments": []
     }
   ],
-  "routines": []
+  "routines": [
+    {
+      "id": "r_tvakadzy6",
+      "title": "주간업무일지 작성 보고",
+      "team": "safety",
+      "ownerId": "c01764",
+      "ownerName": "천재우",
+      "freq": "weekly",
+      "weekday": 4,
+      "day": 0,
+      "qMonth": 1,
+      "month": 1,
+      "leadDays": 0,
+      "memo": "목요일 퇴근 전 주간업무일지 작성 후 오시훈 이사님 보고",
+      "active": true,
+      "createdAt": "2026-09-04T04:34:03.833Z",
+      "updatedAt": "2026-09-04T04:34:03.833Z",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "done": {}
+    }
+  ]
 }
