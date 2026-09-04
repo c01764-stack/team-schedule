@@ -512,17 +512,6 @@
       "includeInReport": true
     },
     {
-      "id": "tlxo3941z",
-      "team": "safety",
-      "title": "본사 캐비넷 정리",
-      "owner": "이재혁",
-      "due": "2026-09-11",
-      "progress": 0,
-      "memo": "",
-      "dueHistory": [],
-      "includeInReport": true
-    },
-    {
       "id": "tjta8ydu6",
       "team": "safety",
       "title": "SKON 평가 서류 제출",
