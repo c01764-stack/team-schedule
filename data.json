@@ -935,6 +935,15 @@
       "start": "2026-09-11",
       "end": "2026-09-11",
       "memo": "SKT 정밀안전진단/장안"
+    },
+    {
+      "id": "tzglhahfo",
+      "team": "safety",
+      "person": "천재우",
+      "type": "training",
+      "start": "2026-09-08",
+      "end": "2026-09-08",
+      "memo": "CS교육/CHMS/IDC 동작"
     }
   ],
   "reports": [
@@ -1132,6 +1141,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 등록: 이재혁"
+    },
+    {
+      "id": "l_twx6mjafhmtqgsy9d",
+      "at": "2026-09-06T23:50:43.057Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 추가: 천재우"
     }
   ]
 }
