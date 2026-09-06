@@ -1072,6 +1072,19 @@
       "readAt": null,
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_tmwzus82h",
+      "toUserId": "c05651",
+      "toName": "오혜지",
+      "text": "CHMS CS교육 확정 일자 등록",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-06T23:51:25.485Z",
+      "updatedAt": "2026-09-06T23:51:25.485Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -1148,6 +1161,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 삭제: 천재우"
+    },
+    {
+      "id": "l_tjcc375hcmtqgtv00",
+      "at": "2026-09-06T23:51:25.488Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 오혜지"
     }
   ]
 }
