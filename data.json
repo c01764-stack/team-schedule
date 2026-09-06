@@ -935,6 +935,15 @@
       "start": "2026-09-11",
       "end": "2026-09-11",
       "memo": "SKT 정밀안전진단/장안"
+    },
+    {
+      "id": "thaaxhay3",
+      "team": "edu",
+      "person": "주현수",
+      "type": "leave",
+      "start": "2026-09-07",
+      "end": "2026-09-07",
+      "memo": ""
     }
   ],
   "reports": [
@@ -1169,6 +1178,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 등록: 오혜지"
+    },
+    {
+      "id": "l_tblbogpfnmtqgumhf",
+      "at": "2026-09-06T23:52:01.107Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 추가: 주현수"
     }
   ]
 }
