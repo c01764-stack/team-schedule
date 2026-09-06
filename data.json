@@ -1102,5 +1102,15 @@
       "byName": "천재우",
       "done": {}
     }
+  ],
+  "logs": [
+    {
+      "id": "l_t7a1uxhhnmtqgobbb",
+      "at": "2026-09-06T23:47:06.695Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "login",
+      "message": "로그인"
+    }
   ]
 }
