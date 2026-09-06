@@ -1059,6 +1059,19 @@
       "readAt": "2026-09-02T07:40:17.371Z",
       "doneAt": "2026-09-03T23:53:20.207Z",
       "comments": []
+    },
+    {
+      "id": "m_tkwy1fivz",
+      "toUserId": "c04897",
+      "toName": "이재혁",
+      "text": "현장활동 보고서 작성(9월 1주)",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-06T23:48:58.222Z",
+      "updatedAt": "2026-09-06T23:48:58.222Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -1111,6 +1124,14 @@
       "name": "오혜지",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tw91hxyiwmtqgqpdd",
+      "at": "2026-09-06T23:48:58.225Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 이재혁"
     }
   ]
 }
