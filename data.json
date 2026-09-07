@@ -953,6 +953,15 @@
       "start": "2026-09-16",
       "end": "2026-09-16",
       "memo": "CHMS 성북 교육"
+    },
+    {
+      "id": "tf722o9gi",
+      "team": "edu",
+      "person": "오혜지",
+      "type": "training",
+      "start": "2026-09-15",
+      "end": "2026-09-15",
+      "memo": "CHMS IDC일산 교육"
     }
   ],
   "reports": [
@@ -1207,6 +1216,14 @@
     {
       "id": "l_t8aahd58cmtqh78sr",
       "at": "2026-09-07T00:01:49.899Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "일정 추가: 오혜지"
+    },
+    {
+      "id": "l_th5wsidiemtqh7uhh",
+      "at": "2026-09-07T00:02:18.005Z",
       "userId": "c05651",
       "name": "오혜지",
       "type": "change",
