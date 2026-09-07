@@ -1110,6 +1110,15 @@
       "start": "2026-09-14",
       "end": "2026-09-16",
       "memo": "부산 사업소(부암,데이터,안락) 하반기 산업안전점검"
+    },
+    {
+      "id": "tuhu6xihw",
+      "team": "safety",
+      "person": "이재혁",
+      "type": "leave",
+      "start": "2026-09-11",
+      "end": "2026-09-11",
+      "memo": "오후 반차"
     }
   ],
   "reports": [
@@ -1801,6 +1810,14 @@
     {
       "id": "l_tdqpe7ofkmtqz038x",
       "at": "2026-09-07T08:20:09.201Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "change",
+      "message": "일정 추가: 이재혁"
+    },
+    {
+      "id": "l_tw3e13jxqmtqz11b5",
+      "at": "2026-09-07T08:20:53.345Z",
       "userId": "c04897",
       "name": "이재혁",
       "type": "change",
