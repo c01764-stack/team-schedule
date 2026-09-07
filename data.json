@@ -1532,6 +1532,14 @@
       "name": "박보검(테스트)",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_ti899oudymtqshpnd",
+      "at": "2026-09-07T05:17:54.073Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
