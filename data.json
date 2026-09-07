@@ -1024,7 +1024,7 @@
       "type": "training",
       "start": "2026-10-21",
       "end": "2026-10-21",
-      "memo": "CHMS 대구중구 교육(변동 가능성 있음)"
+      "memo": "CHMS 대구중구 교육"
     },
     {
       "id": "t1vbp2gh3",
@@ -1487,6 +1487,14 @@
       "name": "천재우",
       "type": "change",
       "message": "전달사항 확인: 천재우"
+    },
+    {
+      "id": "l_twaheixvkmtqldrcx",
+      "at": "2026-09-07T01:58:52.353Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "일정 수정: 오혜지"
     }
   ]
 }
