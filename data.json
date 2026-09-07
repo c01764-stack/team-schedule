@@ -1092,6 +1092,15 @@
       "start": "2026-09-15",
       "end": "2026-09-15",
       "memo": "산업안전보건위원회/본사"
+    },
+    {
+      "id": "t2cjuh7ap",
+      "team": "safety",
+      "person": "이재혁",
+      "type": "inspect",
+      "start": "2026-09-08",
+      "end": "2026-09-08",
+      "memo": "SK-P타워 에스원 점검"
     }
   ],
   "reports": [
@@ -1771,6 +1780,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 추가: 하반기 CS교육 시행"
+    },
+    {
+      "id": "l_tzr1zyb1imtqyywus",
+      "at": "2026-09-07T08:19:14.260Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "change",
+      "message": "일정 추가: 이재혁"
     }
   ]
 }
