@@ -989,6 +989,15 @@
       "start": "2026-09-29",
       "end": "2026-09-29",
       "memo": "CHMS 여주에너지 교육"
+    },
+    {
+      "id": "tlyycn7vp",
+      "team": "edu",
+      "person": "오혜지",
+      "type": "training",
+      "start": "2026-09-17",
+      "end": "2026-09-17",
+      "memo": "CHMS 안양 교육"
     }
   ],
   "reports": [
@@ -1279,6 +1288,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "일정 추가: 주현수"
+    },
+    {
+      "id": "l_tnkolw8d4mtqhaxnp",
+      "at": "2026-09-07T00:04:42.085Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "일정 추가: 오혜지"
     }
   ]
 }
