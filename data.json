@@ -930,15 +930,6 @@
       "memo": "쉴더스 안전관리시스템 미팅/T-타워/3시"
     },
     {
-      "id": "toqujhtin",
-      "team": "safety",
-      "person": "천재우",
-      "type": "inspect",
-      "start": "2026-09-08",
-      "end": "2026-09-08",
-      "memo": "SKT 정밀안전진단/보라매"
-    },
-    {
       "id": "t89lhbsj7",
       "team": "edu",
       "person": "주현수",
@@ -1866,6 +1857,14 @@
       "name": "천재우",
       "type": "change",
       "message": "마감일 수정: 안전/보건 위탁업체 견적 확인"
+    },
+    {
+      "id": "l_t6q4fsndxmtrec3p4",
+      "at": "2026-09-07T15:29:23.896Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 삭제: 천재우"
     }
   ]
 }
