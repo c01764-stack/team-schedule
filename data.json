@@ -963,7 +963,7 @@
       "type": "etc",
       "start": "2026-09-08",
       "end": "2026-09-08",
-      "memo": "FM 학회 정기 모임"
+      "memo": "FM 학회 정기 모임/에스텍시스템/15:30"
     },
     {
       "id": "teacz55ym",
@@ -1869,6 +1869,14 @@
     {
       "id": "l_tafqxiweimtruqeq2",
       "at": "2026-09-07T23:08:25.226Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 수정: 천재우"
+    },
+    {
+      "id": "l_tdk156lahmtrurjzz",
+      "at": "2026-09-07T23:09:18.719Z",
       "userId": "c01764",
       "name": "천재우",
       "type": "change",
