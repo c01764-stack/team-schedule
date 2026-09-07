@@ -624,6 +624,20 @@
       "memo": "9/7\n- 증상조사표에 나온 내용을 어떻게 개선계획서에 반영 할지",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "tdf8qxdvq",
+      "team": "safety",
+      "title": "위험기계기구 점검 및 기록관리 시행",
+      "owner": "천재우",
+      "ownerId": "c01764",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-09-28",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
@@ -1665,6 +1679,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 수정: 근골격계 유해요인조사 시행"
+    },
+    {
+      "id": "l_tl1ztmmo5mtqtm9oc",
+      "at": "2026-09-07T05:49:26.268Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: 위험기계기구 점검 및 기록관리 시행"
     }
   ]
 }
