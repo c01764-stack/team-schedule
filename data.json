@@ -980,6 +980,15 @@
       "start": "2026-09-22",
       "end": "2026-09-22",
       "memo": "CHMS IDC양주 교육(변동 가능성 있음)"
+    },
+    {
+      "id": "tnz4iwqmq",
+      "team": "edu",
+      "person": "주현수",
+      "type": "training",
+      "start": "2026-09-29",
+      "end": "2026-09-29",
+      "memo": "CHMS 여주에너지 교육"
     }
   ],
   "reports": [
@@ -1258,6 +1267,14 @@
     {
       "id": "l_t1pail10dmtqh9h7w",
       "at": "2026-09-07T00:03:34.124Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "일정 추가: 주현수"
+    },
+    {
+      "id": "l_tktf2h6lzmtqhahvw",
+      "at": "2026-09-07T00:04:21.644Z",
       "userId": "c05651",
       "name": "오혜지",
       "type": "change",
