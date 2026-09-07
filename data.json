@@ -1091,7 +1091,7 @@
       "byName": "천재우",
       "createdAt": "2026-09-06T23:51:25.485Z",
       "updatedAt": "2026-09-06T23:51:25.485Z",
-      "readAt": null,
+      "readAt": "2026-09-07T00:00:52.331Z",
       "doneAt": null,
       "comments": []
     }
@@ -1186,6 +1186,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 추가: 주현수"
+    },
+    {
+      "id": "l_td1ooapksmtqh60dr",
+      "at": "2026-09-07T00:00:52.335Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "개인 전달사항 확인: 오혜지"
     }
   ]
 }
