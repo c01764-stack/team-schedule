@@ -1194,7 +1194,7 @@
       "byName": "천재우",
       "createdAt": "2026-09-07T00:46:44.553Z",
       "updatedAt": "2026-09-07T00:46:44.553Z",
-      "readAt": null,
+      "readAt": "2026-09-07T00:47:04.125Z",
       "doneAt": null,
       "comments": []
     }
@@ -1417,6 +1417,14 @@
       "name": "박보검(테스트)",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tyu4m8190mtqitf44",
+      "at": "2026-09-07T00:47:04.132Z",
+      "userId": "c00000",
+      "name": "박보검(테스트)",
+      "type": "change",
+      "message": "개인 전달사항 확인: 박보검(테스트)"
     }
   ]
 }
