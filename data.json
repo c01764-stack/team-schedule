@@ -1122,6 +1122,16 @@
       "iter": 150000,
       "createdAt": "2026-09-04T00:19:06.119Z",
       "pwTemp": true
+    },
+    {
+      "id": "c90005",
+      "name": "강문선",
+      "role": "member",
+      "salt": "cbefabda9f2475e756e212cb968cc84d",
+      "hash": "d38535a27835fa4f17b3ce1297973eff274f783b9e06856d0d4f129b6c96e703",
+      "iter": 150000,
+      "createdAt": "2026-09-07T00:48:48.906Z",
+      "pwTemp": true
     }
   ],
   "memos": [
@@ -1441,6 +1451,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tq55ji460mtqivnyi",
+      "at": "2026-09-07T00:48:48.906Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "계정 추가: 강문선"
     }
   ]
 }
