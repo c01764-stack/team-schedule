@@ -945,7 +945,7 @@
       "type": "etc",
       "start": "2026-09-09",
       "end": "2026-09-09",
-      "memo": "쉴더스 협의체 회의 / 본사 / 16시"
+      "memo": "쉴더스 협의체 회의 / CHM본사 / 16시"
     },
     {
       "id": "t60mpiwmx",
@@ -1877,6 +1877,14 @@
     {
       "id": "l_tdk156lahmtrurjzz",
       "at": "2026-09-07T23:09:18.719Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 수정: 천재우"
+    },
+    {
+      "id": "l_t035wghuhmtrus28q",
+      "at": "2026-09-07T23:09:42.362Z",
       "userId": "c01764",
       "name": "천재우",
       "type": "change",
