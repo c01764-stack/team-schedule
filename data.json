@@ -621,7 +621,7 @@
       "owner2Id": "",
       "due": "2026-09-28",
       "progress": 0,
-      "memo": "",
+      "memo": "9/7\n- 증상조사표에 나온 내용을 어떻게 개선계획서에 반영 할지",
       "dueHistory": [],
       "includeInReport": true
     }
@@ -1657,6 +1657,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 추가: 근골격계 유해요인조사 시행"
+    },
+    {
+      "id": "l_tglahsjq6mtqth4zf",
+      "at": "2026-09-07T05:45:26.907Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "기타 내용 수정: 근골격계 유해요인조사 시행"
     }
   ]
 }
