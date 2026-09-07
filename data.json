@@ -610,6 +610,20 @@
       "memo": "9/4\n- 9월10일 사이트 오픈 예정\n- 휴넷 담당자 Comm 필요\n(오픈 일정 및 임시 아이디 또는 컨텐츠 리스트 확인 가능 여부)\n- 사업소장 수강 필수 컨텐츠 정리(`26년9월 ~ `26년 12월)",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "tvu2b9zzb",
+      "team": "safety",
+      "title": "근골격계 유해요인조사 시행",
+      "owner": "이재혁",
+      "ownerId": "c04897",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-09-28",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
@@ -1635,6 +1649,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 완료 처리: 무재해활동 100일 포상 실행"
+    },
+    {
+      "id": "l_tkb2f47semtqtg4zh",
+      "at": "2026-09-07T05:44:40.253Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: 근골격계 유해요인조사 시행"
     }
   ]
 }
