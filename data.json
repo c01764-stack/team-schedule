@@ -1182,7 +1182,7 @@
       "byName": "천재우",
       "createdAt": "2026-09-06T23:48:58.222Z",
       "updatedAt": "2026-09-06T23:48:58.222Z",
-      "readAt": null,
+      "readAt": "2026-09-07T05:34:02.067Z",
       "doneAt": null,
       "comments": []
     },
@@ -1586,6 +1586,14 @@
       "name": "이재혁",
       "type": "change",
       "message": "개인 전달사항 확인 취소: 이재혁"
+    },
+    {
+      "id": "l_tdvcz6i8zmtqt2gkb",
+      "at": "2026-09-07T05:34:02.075Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "change",
+      "message": "개인 전달사항 확인: 이재혁"
     }
   ]
 }
