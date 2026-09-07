@@ -1372,6 +1372,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "개인 전달사항 완료: 오혜지"
+    },
+    {
+      "id": "l_t9zuqilnumtqis65i",
+      "at": "2026-09-07T00:46:05.862Z",
+      "userId": "c00000",
+      "name": "박보검(테스트)",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
