@@ -609,6 +609,20 @@
       "memo": "9/4\n- 9월10일 사이트 오픈 예정\n- 휴넷 담당자 Comm 필요\n(오픈 일정 및 임시 아이디 또는 컨텐츠 리스트 확인 가능 여부)\n- 사업소장 수강 필수 컨텐츠 정리(`26년9월 ~ `26년 12월)",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "tyxchytf9",
+      "team": "etc",
+      "title": "FM학회 기타 업무",
+      "owner": "박보검(테스트)",
+      "ownerId": "c00000",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-09-10",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
@@ -1459,6 +1473,14 @@
       "name": "천재우",
       "type": "change",
       "message": "계정 추가: 강문선"
+    },
+    {
+      "id": "l_trojwz893mtqkiix8",
+      "at": "2026-09-07T01:34:35.084Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: FM학회 기타 업무"
     }
   ]
 }
