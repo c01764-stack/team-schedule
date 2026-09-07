@@ -1182,7 +1182,7 @@
       "createdAt": "2026-09-06T23:51:25.485Z",
       "updatedAt": "2026-09-06T23:51:25.485Z",
       "readAt": "2026-09-07T00:00:52.331Z",
-      "doneAt": null,
+      "doneAt": "2026-09-07T00:09:21.115Z",
       "comments": []
     }
   ],
@@ -1364,6 +1364,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "일정 추가: 오혜지"
+    },
+    {
+      "id": "l_tkqebbcz7mtqhgwyk",
+      "at": "2026-09-07T00:09:21.116Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "개인 전달사항 완료: 오혜지"
     }
   ]
 }
