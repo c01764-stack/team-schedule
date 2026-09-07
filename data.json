@@ -348,7 +348,7 @@
       "id": "tasjfv4jm",
       "team": "safety",
       "title": "유해가스 측정기 구입 검토 및 실행",
-      "owner": "천재우",
+      "owner": "이재혁",
       "due": "2026-09-07",
       "progress": 50,
       "memo": "- 유해가스 측정기 보유 현황 파악\n- 유해가스 측정기 지급 기준 수립\n(구입비용, 센서교체 비용, 기판 오류로 인한 기기 교체 주기 등 고려)\n- SKT 사업장 측정기 수요 조사\n- 유해가스 측정기 지급 품의서 작성\n(지급 제품: 가스트론 제품, 600,000원)",
@@ -366,7 +366,10 @@
           "reason": ""
         }
       ],
-      "includeInReport": true
+      "includeInReport": true,
+      "ownerId": "c04897",
+      "owner2": "",
+      "owner2Id": ""
     },
     {
       "id": "tnfyu59mj",
@@ -1727,6 +1730,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 수정: 하반기 CS 교육계획 수립"
+    },
+    {
+      "id": "l_trshllwhqmtqvj8ez",
+      "at": "2026-09-07T06:43:03.899Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "담당자 변경: 유해가스 측정기 구입 검토 및 실행 (천재우 → 이재혁)"
     }
   ]
 }
