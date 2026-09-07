@@ -644,6 +644,20 @@
       "memo": "",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "tecp8a1gf",
+      "team": "edu",
+      "title": "하반기 CS교육 시행",
+      "owner": "주현수",
+      "ownerId": "c05474",
+      "owner2": "오혜지",
+      "owner2Id": "c05651",
+      "due": "2026-11-13",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
@@ -1749,6 +1763,14 @@
       "name": "천재우",
       "type": "change",
       "message": "담당자 변경: 상반기 모니터링 피드백 영상 (오혜지 → 주현수)"
+    },
+    {
+      "id": "l_t7bypf2z2mtqvm3ey",
+      "at": "2026-09-07T06:45:17.386Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: 하반기 CS교육 시행"
     }
   ]
 }
