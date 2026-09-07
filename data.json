@@ -1822,6 +1822,14 @@
       "name": "이재혁",
       "type": "change",
       "message": "일정 추가: 이재혁"
+    },
+    {
+      "id": "l_tzr3o3ls2mtr3elmo",
+      "at": "2026-09-07T10:23:24.672Z",
+      "userId": "c00000",
+      "name": "박보검(테스트)",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
