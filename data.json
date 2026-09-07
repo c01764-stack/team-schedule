@@ -1508,6 +1508,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "전달사항 확인: 오혜지"
+    },
+    {
+      "id": "l_ti2hbin1fmtqnzfdc",
+      "at": "2026-09-07T03:11:42.480Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
