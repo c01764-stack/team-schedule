@@ -1433,6 +1433,14 @@
       "name": "박보검(테스트)",
       "type": "change",
       "message": "개인 전달사항 완료: 박보검(테스트)"
+    },
+    {
+      "id": "l_ti4q4ik27mtqiv8z2",
+      "at": "2026-09-07T00:48:29.486Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
