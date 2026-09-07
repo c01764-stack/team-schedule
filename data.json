@@ -1034,6 +1034,15 @@
       "start": "2026-10-14",
       "end": "2026-10-14",
       "memo": "CHMS 광주동구 교육(변동 가능성 있음)"
+    },
+    {
+      "id": "ti9kdcjno",
+      "team": "safety",
+      "person": "천재우",
+      "type": "etc",
+      "start": "2026-09-15",
+      "end": "2026-09-15",
+      "memo": "산업안전보건위원회/본사"
     }
   ],
   "reports": [
@@ -1540,6 +1549,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_t1l4rgeg2mtqss3zq",
+      "at": "2026-09-07T05:25:59.222Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 추가: 천재우"
     }
   ]
 }
