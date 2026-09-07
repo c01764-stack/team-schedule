@@ -1101,6 +1101,15 @@
       "start": "2026-09-08",
       "end": "2026-09-08",
       "memo": "SK-P타워 에스원 점검"
+    },
+    {
+      "id": "thkedcsdz",
+      "team": "safety",
+      "person": "이재혁",
+      "type": "inspect",
+      "start": "2026-09-14",
+      "end": "2026-09-16",
+      "memo": "부산 사업소(부암,데이터,안락) 하반기 산업안전점검"
     }
   ],
   "reports": [
@@ -1784,6 +1793,14 @@
     {
       "id": "l_tzr1zyb1imtqyywus",
       "at": "2026-09-07T08:19:14.260Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "change",
+      "message": "일정 추가: 이재혁"
+    },
+    {
+      "id": "l_tdqpe7ofkmtqz038x",
+      "at": "2026-09-07T08:20:09.201Z",
       "userId": "c04897",
       "name": "이재혁",
       "type": "change",
