@@ -1481,6 +1481,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 추가: FM학회 기타 업무"
+    },
+    {
+      "id": "l_t05cn3gsomtqkiujo",
+      "at": "2026-09-07T01:34:50.148Z",
+      "userId": "c00000",
+      "name": "박보검(테스트)",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
