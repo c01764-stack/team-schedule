@@ -1184,6 +1184,19 @@
       "readAt": "2026-09-07T00:00:52.331Z",
       "doneAt": "2026-09-07T00:09:21.115Z",
       "comments": []
+    },
+    {
+      "id": "m_t1yw0a3rs",
+      "toUserId": "c00000",
+      "toName": "박보검(테스트)",
+      "text": "업무일지 작성",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-07T00:46:44.553Z",
+      "updatedAt": "2026-09-07T00:46:44.553Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -1388,6 +1401,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_t1ya0s6vhmtqit00k",
+      "at": "2026-09-07T00:46:44.564Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 박보검(테스트)"
     }
   ]
 }
