@@ -1409,6 +1409,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 등록: 박보검(테스트)"
+    },
+    {
+      "id": "l_tbmuxixacmtqit9fc",
+      "at": "2026-09-07T00:46:56.760Z",
+      "userId": "c00000",
+      "name": "박보검(테스트)",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
