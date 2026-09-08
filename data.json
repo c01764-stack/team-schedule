@@ -665,6 +665,20 @@
       "memo": "",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "tpupk1fiu",
+      "team": "safety",
+      "title": "서린 사업장 업무상 질병 관련",
+      "owner": "천재우",
+      "ownerId": "c01764",
+      "owner2": "이재혁",
+      "owner2Id": "c04897",
+      "due": "2026-09-18",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
@@ -1913,6 +1927,14 @@
       "name": "오혜지",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tt8xhauf9mtrzez39",
+      "at": "2026-09-08T01:19:29.829Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: 서린 사업장 업무상 질병 관련"
     }
   ]
 }
