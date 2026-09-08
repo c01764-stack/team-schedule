@@ -672,8 +672,8 @@
       "title": "서린 사업장 업무상 질병 관련",
       "owner": "천재우",
       "ownerId": "c01764",
-      "owner2": "이재혁",
-      "owner2Id": "c04897",
+      "owner2": "",
+      "owner2Id": "",
       "due": "2026-09-18",
       "progress": 0,
       "memo": "",
@@ -1935,6 +1935,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 추가: 서린 사업장 업무상 질병 관련"
+    },
+    {
+      "id": "l_thuuff42qmtrzf9bs",
+      "at": "2026-09-08T01:19:43.096Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "담당자 변경: 서린 사업장 업무상 질병 관련 (천재우/이재혁 → 천재우)"
     }
   ]
 }
