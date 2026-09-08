@@ -1905,6 +1905,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 수정: 천재우"
+    },
+    {
+      "id": "l_t2p61uo78mtrwlw1o",
+      "at": "2026-09-08T00:00:53.628Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
