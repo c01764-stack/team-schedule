@@ -1150,6 +1150,15 @@
       "start": "2026-09-30",
       "end": "2026-09-30",
       "memo": "CHM 티타워 교육"
+    },
+    {
+      "id": "tajmaa6qz",
+      "team": "etc",
+      "person": "주현수, 오혜지",
+      "type": "etc",
+      "start": "2026-10-08",
+      "end": "2026-10-08",
+      "memo": "나이스디앤알 모니터링 간담회"
     }
   ],
   "reports": [
@@ -2095,6 +2104,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "일정 추가: 오혜지"
+    },
+    {
+      "id": "l_tc5s9g1zrmttq0i2p",
+      "at": "2026-09-09T06:31:50.401Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "일정 추가: 주현수, 오혜지"
     }
   ]
 }
