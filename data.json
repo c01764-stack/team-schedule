@@ -527,7 +527,7 @@
       "owner": "이재혁",
       "due": "2026-09-07",
       "progress": 100,
-      "memo": "9/4\n- SKON 사이트에 서류 직접 등록, 금일 마감 예정",
+      "memo": "9/4\n- SKON 사이트에 서류 직접 등록, 금일 마감 예정\n9/9\n- 서류 제출 완료",
       "dueHistory": [
         {
           "from": "2026-09-04",
@@ -2007,6 +2007,14 @@
       "name": "오혜지",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tf4mx0u5mmttejnnw",
+      "at": "2026-09-09T01:10:48.716Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "기타 내용 수정: SKON 평가 서류 제출"
     }
   ]
 }
