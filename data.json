@@ -169,7 +169,7 @@
       "title": "안전작업 SOP 작성",
       "owner": "이재혁",
       "due": "2026-09-11",
-      "progress": 50,
+      "progress": 70,
       "memo": "- SOP 작성 항목 20여개 정리 후 보고\n- 작성 리스트 확정 후 작성\n- SOP + 수시 위험성평가표 작성",
       "dueHistory": [
         {
@@ -1983,6 +1983,14 @@
       "name": "이재혁",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_t97nq6f21mttc0oo1",
+      "at": "2026-09-09T00:00:04.321Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "change",
+      "message": "진행율 수정: 안전작업 SOP 작성 → 70%"
     }
   ]
 }
