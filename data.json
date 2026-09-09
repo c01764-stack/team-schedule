@@ -1132,6 +1132,15 @@
       "start": "2026-09-11",
       "end": "2026-09-11",
       "memo": "오후 반차"
+    },
+    {
+      "id": "txzk2ecq1",
+      "team": "edu",
+      "person": "오혜지",
+      "type": "training",
+      "start": "2026-09-29",
+      "end": "2026-09-29",
+      "memo": "CHM 장안 교육"
     }
   ],
   "reports": [
@@ -2061,6 +2070,14 @@
       "name": "주현수",
       "type": "change",
       "message": "일정 수정: 주현수"
+    },
+    {
+      "id": "l_t371ilifemttpyagw",
+      "at": "2026-09-09T06:30:07.232Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "일정 추가: 오혜지"
     }
   ]
 }
