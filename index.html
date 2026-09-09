@@ -418,6 +418,10 @@
   .absence-chip.edu .dot{background:var(--edu);}
   .absence-chip.etc .dot{background:var(--etc);}
   .absence-empty{color:var(--sub);font-size:14.5px;}
+  /* 교육관리에서 가져온 일정 — 여기서는 고칠 수 없다는 뜻으로 테두리 링과 꼬리표를 준다 */
+  .src-tag{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12.5px;font-weight:700;background:var(--edu-tint);color:#6d28d9;white-space:nowrap;}
+  .absence-chip.from-edu{box-shadow:0 2px 8px rgba(0,0,0,.06), inset 0 0 0 1.5px #c4b5fd;}
+  .absence-chip.from-edu:hover{box-shadow:0 4px 12px rgba(0,0,0,.12), inset 0 0 0 1.5px #a78bfa;}
 
   .notice-banner:empty{display:none;}
   .notice-banner{background:linear-gradient(135deg,#fff7e6,#fff1f2);border:1px solid var(--border);border-radius:0;padding:12px 16px;margin-bottom:18px;box-shadow:var(--shadow-card);}
@@ -686,6 +690,7 @@
   .cal-chip.safety{background:var(--safety-tint);color:#c2410c;}
   .cal-chip.edu{background:var(--edu-tint);color:#6d28d9;}
   .cal-chip.etc{background:var(--etc-tint);color:#0f766e;}
+  .cal-chip.from-edu{box-shadow:inset 0 0 0 1.5px #c4b5fd;}
   .cal-chip-type{opacity:.75;margin-left:3px;font-weight:600;}
 
   /* ---------- Responsive ---------- */
@@ -2838,6 +2843,7 @@ let bannerDate = new Date();
 
 function shiftBannerDay(delta){
   bannerDate.setDate(bannerDate.getDate() + delta);
+  ensureEduYears();
   renderAbsenceBanner();
 }
 
@@ -2846,10 +2852,137 @@ function goBannerToday(){
   renderAbsenceBanner();
 }
 
+/* ============================================================
+ *  교육관리 시스템 연동 (2026-09-09)
+ *    교육관리(chmedu)에 등록된 교육 차수를 주요 일정과 캘린더에 함께 보여준다.
+ *
+ *    · 그릴 때마다 교육관리에 물어보고 그대로 그리기만 한다.
+ *      data.json 에는 넣지 않는다 → 교육관리에서 등록·수정·삭제한 것이
+ *      사본 없이 그대로 따라오고, 저장 충돌이 생길 일이 없다.
+ *    · 서버에 못 닿아도 기존 화면은 그대로 뜬다 (조용히 넘어간다).
+ *    · 교육 일정은 여기서 고칠 수 없다 — 눌러보면 내용만 보여주고,
+ *      고치려면 교육관리로 넘어간다.
+ * ============================================================ */
+const EDU_API = "https://script.google.com/macros/s/AKfycbwadXMlEXJUo9a5i0ydl9vIEG30Fr6lcvAOyKKFj9C8n-hrqvqI5xwHaST6d7YnZpOoLA/exec";
+const EDU_APP = "https://chmsafety.github.io/chmedu/";
+const EDU_TTL_MS = 5 * 60 * 1000;      // 같은 해는 5분 안에 다시 묻지 않는다
+
+const eduCache = new Map();            // 연도 -> { at, items }
+const eduLoading = new Set();
+
+/** 교육관리가 준 한 건을 주요 일정 칩 모양으로 바꾼다 */
+function eduToAbsence(it){
+  const time = (it.start && it.end) ? `${it.start}~${it.end}` : (it.start || "");
+  const memo = [it.title, time, it.teacher ? "강사 " + it.teacher : ""]
+    .filter(Boolean).join(" · ");
+  return {
+    id: "EDU:" + it.id,
+    person: it.site || it.co || "교육",
+    team: "edu",
+    type: "training",
+    start: it.date,
+    end: it.date,
+    memo: memo,
+    fromEdu: true,
+    edu: it
+  };
+}
+
+function eduList(){
+  const out = [];
+  eduCache.forEach(v => { v.items.forEach(x => out.push(x)); });
+  return out;
+}
+
+/** 주요 일정·캘린더가 함께 그릴 목록. 저장 경로에서는 절대 쓰지 않는다. */
+function allAbsences(){
+  return absences.concat(eduList());
+}
+
+async function loadEduYear(year){
+  if(eduLoading.has(year)) return;
+  const hit = eduCache.get(year);
+  if(hit && Date.now() - hit.at < EDU_TTL_MS) return;
+  eduLoading.add(year);
+  try{
+    // 헤더는 붙이지 않는다 — 붙이면 preflight 가 생겨 Apps Script 가 막는다
+    const res = await fetch(`${EDU_API}?mode=eduCal&y=${year}&_=${Date.now()}`, { cache: "no-store" });
+    const data = await res.json();
+    if(!data || !data.ok || !Array.isArray(data.items)) throw new Error("bad response");
+    eduCache.set(year, { at: Date.now(), items: data.items.map(eduToAbsence) });
+    redrawAbsenceViews();
+  }catch(e){
+    // 교육관리가 잠깐 안 되더라도 대시보드는 그대로 돌아가야 한다
+    if(!eduCache.has(year)) eduCache.set(year, { at: Date.now() - EDU_TTL_MS + 30000, items: [] });
+    console.warn("[교육관리 연동] 일정을 불러오지 못했습니다:", e);
+  }finally{
+    eduLoading.delete(year);
+  }
+}
+
+/** 화면에 보이는 연도의 교육 일정을 챙긴다 (이미 있으면 아무 일도 하지 않는다) */
+function ensureEduYears(){
+  const years = new Set([
+    new Date().getFullYear(),
+    calState.year,
+    bannerDate.getFullYear()
+  ]);
+  years.forEach(y => { loadEduYear(y); });
+}
+
+/** 교육 일정만 새로 들어왔을 때 — 화면 전체를 다시 그리지 않는다 */
+function redrawAbsenceViews(){
+  try{
+    if(!dataLoaded) return;
+    renderAbsenceBanner();
+    if(activeTab === "absence") renderContent();
+  }catch(e){ /* 그리기 실패로 다른 일을 막지 않는다 */ }
+}
+
+function findEdu(id){
+  return eduList().find(x => x.id === id) || null;
+}
+
+/** 교육 일정을 눌렀을 때 — 보기 전용 */
+function openEduInfo(id){
+  const a = findEdu(id);
+  if(!a) return;
+  const e = a.edu || {};
+  const time = (e.start && e.end) ? `${e.start} ~ ${e.end}` : (e.start || "—");
+  const rows = [
+    ["교육일자", e.date || "—"],
+    ["시간", time],
+    ["회사 · 사업장", [e.co, e.site].filter(Boolean).join(" · ") || "—"],
+    ["과정", e.title || "—"],
+    ["교육 구분", e.kind || "—"],
+    ["강사", e.teacher || "—"],
+    ["참석", (e.attend || 0) + "명"],
+    ["상태", e.state || "—"]
+  ].map(([k, v]) => `<tr><th style="text-align:left;color:var(--sub);font-weight:600;padding:6px 14px 6px 0;white-space:nowrap;">${escapeHtml(k)}</th><td style="padding:6px 0;">${escapeHtml(String(v))}</td></tr>`).join("");
+  openModal(`
+    <h3>교육 일정</h3>
+    <p style="color:var(--sub);font-size:14px;margin:0 0 14px;">
+      교육관리 시스템에서 가져온 일정입니다. 여기서는 고칠 수 없고,
+      <b>교육관리</b>에서 바꾸면 이 화면에도 그대로 반영됩니다.
+    </p>
+    <table style="width:100%;border-collapse:collapse;font-size:14.5px;">${rows}</table>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">닫기</button>
+      <button class="btn-primary" onclick="window.open('${EDU_APP}','_blank','noopener')">교육관리에서 열기</button>
+    </div>
+  `);
+}
+
+/** 칩을 눌렀을 때 — 교육 일정이면 보기 전용 창, 아니면 원래 수정 창 */
+function openAbsenceChip(id){
+  if(String(id).indexOf("EDU:") === 0) openEduInfo(id);
+  else openEditAbsence(id);
+}
+
 function renderAbsenceBanner(){
   const dateStr = fmtLocalDate(bannerDate);
   const isToday = dateStr === todayStr();
-  const dayList = absences.filter(a => a.start <= dateStr && dateStr <= a.end)
+  const dayList = allAbsences().filter(a => a.start <= dateStr && dateStr <= a.end)
     .sort((a,b)=> TEAM_META[a.team].label.localeCompare(TEAM_META[b.team].label));
   const el = document.getElementById("absenceBanner");
   const label = `${Number(dateStr.slice(5,7))}월 ${Number(dateStr.slice(8,10))}일${isToday ? ' (오늘)' : ''}`;
@@ -2869,7 +3002,9 @@ function renderAbsenceBanner(){
     const meta = TEAM_META[a.team];
     const type = TYPE_META[a.type] || TYPE_META.etc;
     const memoPart = a.memo ? ` (${escapeHtml(a.memo)})` : '';
-    return `<div class="absence-chip ${meta.cls}" onclick="openEditAbsence('${a.id}')" title="클릭하면 세부 내용을 볼 수 있습니다"><span class="dot"></span>${escapeHtml(a.person)}${memoPart} <span class="type-badge ${type.cls}">${type.label}</span></div>`;
+    const srcTag = a.fromEdu ? ' <span class="src-tag">교육관리</span>' : '';
+    const tipTxt = a.fromEdu ? '교육관리에서 등록한 교육입니다. 클릭하면 내용을 볼 수 있습니다' : '클릭하면 세부 내용을 볼 수 있습니다';
+    return `<div class="absence-chip ${meta.cls}${a.fromEdu ? ' from-edu' : ''}" onclick="openAbsenceChip('${a.id}')" title="${tipTxt}"><span class="dot"></span>${escapeHtml(a.person)}${memoPart} <span class="type-badge ${type.cls}">${type.label}</span>${srcTag}</div>`;
   }).join("");
   el.innerHTML = `<h3>주요 일정 (${dayList.length}명)</h3>${nav}<div class="absence-chips">${chips}</div>`;
 }
@@ -3683,12 +3818,12 @@ function renderAbsenceCalendar(){
   const weekHeader = weekdayLabels.map(d => `<div class="cal-weekday">${d}</div>`).join("");
 
   const dayCells = cells.map(c => {
-    const dayAbsences = absences.filter(a => a.start <= c.dateStr && c.dateStr <= a.end);
+    const dayAbsences = allAbsences().filter(a => a.start <= c.dateStr && c.dateStr <= a.end);
     const chips = dayAbsences.map(a => {
       const meta = TEAM_META[a.team];
       const type = TYPE_META[a.type] || TYPE_META.etc;
-      const tip = `${a.person} · ${meta.label} · ${type.label}${a.memo ? ' · ' + a.memo : ''}`;
-      return `<div class="cal-chip ${meta.cls}" onclick="openEditAbsence('${a.id}')" title="${escapeHtml(tip)}">${escapeHtml(a.person)}<span class="cal-chip-type">${type.label}</span></div>`;
+      const tip = `${a.person} · ${meta.label} · ${type.label}${a.memo ? ' · ' + a.memo : ''}${a.fromEdu ? ' (교육관리)' : ''}`;
+      return `<div class="cal-chip ${meta.cls}${a.fromEdu ? ' from-edu' : ''}" onclick="openAbsenceChip('${a.id}')" title="${escapeHtml(tip)}">${escapeHtml(a.person)}<span class="cal-chip-type">${type.label}</span></div>`;
     }).join("");
     const classes = ["cal-cell"];
     if(!c.currentMonth) classes.push("cal-other-month");
@@ -3948,6 +4083,7 @@ function changeMonth(delta){
   calState.month += delta;
   if(calState.month < 0){ calState.month = 11; calState.year--; }
   if(calState.month > 11){ calState.month = 0; calState.year++; }
+  ensureEduYears();
   renderContent();
 }
 
@@ -3955,6 +4091,7 @@ function goToday(){
   const now = new Date();
   calState.year = now.getFullYear();
   calState.month = now.getMonth();
+  ensureEduYears();
   renderContent();
 }
 
@@ -4733,6 +4870,7 @@ function render(){
   updateSetupBanner();
   fillOwnerSelects();
   renderSummary();
+  ensureEduYears();
   renderAbsenceBanner();
   renderNoticeBanner();
   renderMemoBanner();
