@@ -1999,6 +1999,14 @@
       "name": "이재혁",
       "type": "change",
       "message": "진행율 수정: SKON 평가 서류 제출 → 100%"
+    },
+    {
+      "id": "l_t6kbfk0s7mttckfjl",
+      "at": "2026-09-09T00:15:25.617Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
