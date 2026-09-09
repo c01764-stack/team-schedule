@@ -334,7 +334,8 @@
       "includeInReport": true,
       "ownerId": "c05474",
       "owner2": "",
-      "owner2Id": ""
+      "owner2Id": "",
+      "completedAt": "2026-09-09T13:55:45.966Z"
     },
     {
       "id": "tiaz5il0m",
@@ -2226,6 +2227,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 수정: 상반기 모니터링 피드백 영상"
+    },
+    {
+      "id": "l_t3j5rpf42mtu5ve7r",
+      "at": "2026-09-09T13:55:45.975Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 완료 처리: 상반기 모니터링 피드백 영상"
     }
   ]
 }
