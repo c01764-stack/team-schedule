@@ -274,7 +274,8 @@
           "reason": ""
         }
       ],
-      "includeInReport": true
+      "includeInReport": true,
+      "completedAt": "2026-09-09T13:55:26.890Z"
     },
     {
       "id": "twugyxlww",
@@ -2209,6 +2210,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 수정: 하반기 CS 교육계획 수립"
+    },
+    {
+      "id": "l_t116olz3tmtu5uzhw",
+      "at": "2026-09-09T13:55:26.900Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 완료 처리: 하반기 CS 교육계획 수립"
     }
   ]
 }
