@@ -2032,6 +2032,14 @@
       "name": "천재우",
       "type": "change",
       "message": "주요 전달사항 수정"
+    },
+    {
+      "id": "l_ty6dm36vsmttpfyag",
+      "at": "2026-09-09T06:15:51.640Z",
+      "userId": "c05474",
+      "name": "주현수",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
