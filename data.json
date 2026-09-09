@@ -526,7 +526,7 @@
       "title": "SKON 평가 서류 제출",
       "owner": "이재혁",
       "due": "2026-09-07",
-      "progress": 90,
+      "progress": 100,
       "memo": "9/4\n- SKON 사이트에 서류 직접 등록, 금일 마감 예정",
       "dueHistory": [
         {
@@ -1991,6 +1991,14 @@
       "name": "이재혁",
       "type": "change",
       "message": "진행율 수정: 안전작업 SOP 작성 → 70%"
+    },
+    {
+      "id": "l_t8uwter20mttc0rjs",
+      "at": "2026-09-09T00:00:08.056Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "change",
+      "message": "진행율 수정: SKON 평가 서류 제출 → 100%"
     }
   ]
 }
