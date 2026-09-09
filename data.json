@@ -682,6 +682,20 @@
       "memo": "9/8\n- 이근석 소장 통화\n- 세차  근무자 팔꿈치 인대 부상, 본인 산재 신청 의사 없음\n- 산업재해 조사표 검토 및 제출 필요\n- 근골격계 유해요인조사 내용 체크 필요\n  (실제 개선 작업 진행 여부)\n- 고객사 구두 보고 필요",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "trcdp5x5l",
+      "team": "edu",
+      "title": "SKT 구성원 설문",
+      "owner": "주현수",
+      "ownerId": "c05474",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-10-16",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true
     }
   ],
   "absences": [
@@ -2235,6 +2249,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 완료 처리: 상반기 모니터링 피드백 영상"
+    },
+    {
+      "id": "l_t0f1w5d70mtu5x5pi",
+      "at": "2026-09-09T13:57:08.262Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: SKT 구성원 설문"
     }
   ]
 }
