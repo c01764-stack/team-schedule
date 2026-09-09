@@ -427,6 +427,22 @@
   .notice-edit-btn:hover{background:var(--edu-tint);border-color:var(--violet);}
   .notice-text{font-size:14px;line-height:1.7;color:var(--text);white-space:pre-wrap;word-break:break-word;}
   .notice-updated{display:block;margin-top:10px;font-size:11.5px;color:var(--sub);}
+  /* ---------- 형광펜 ---------- */
+  /* 실제 형광펜처럼 글자 아래쪽에 더 짙게 깔리고, 칠 끝이 살짝 번지게 한다 */
+  mark.hl{
+    background:linear-gradient(180deg, rgba(253,224,71,.45) 0%, rgba(250,204,21,.85) 45%, rgba(250,204,21,.85) 100%);
+    color:inherit;padding:1px 3px;margin:0 -1px;border-radius:2px;
+    box-decoration-break:clone;-webkit-box-decoration-break:clone;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+  .hl-tools{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:6px;}
+  .hl-btn{border:2px solid #facc15;background:#fef9c3;border-radius:999px;padding:5px 13px;
+    font-size:12px;font-weight:800;color:#854d0e;cursor:pointer;font-family:inherit;white-space:nowrap;}
+  .hl-btn:hover{background:#fde68a;}
+  .hl-hint{font-size:11px;color:var(--sub);line-height:1.45;}
+  .hl-preview{border:1.5px dashed var(--border);background:var(--card);padding:10px 12px;
+    min-height:52px;max-height:180px;overflow-y:auto;}
+  .hl-empty{color:var(--sub);font-size:12px;}
 
   /* ---------- 개인 전달사항 ---------- */
   .memo-banner:empty{display:none;}
@@ -712,6 +728,8 @@
     .notice-banner{padding:11px 13px;margin-bottom:14px;}
     .notice-banner h3{font-size:14px;}
     .notice-text{font-size:13px;}
+    .hl-hint{font-size:10.5px;flex:1 1 100%;}
+    .hl-preview{max-height:140px;}
     .memo-banner{padding:11px 13px;margin-bottom:14px;}
     .memo-banner h3{font-size:14px;}
     .memo-card{padding:11px 12px;}
@@ -979,6 +997,13 @@
   [data-theme="dark"] .memo-scope button.on{color:#06202b;}
   [data-theme="dark"] .memo-card.collapsed.is-done{background:rgba(255,255,255,.03);}
   [data-theme="dark"] .memo-dot.wait{background:#fbbf24;}
+  /* 어두운 화면에서는 형광펜을 옅게 깔고 글자를 밝게 둔다 (노란 바탕에 흰 글자는 안 읽힌다) */
+  [data-theme="dark"] mark.hl{
+    background:linear-gradient(180deg, rgba(250,204,21,.14) 0%, rgba(250,204,21,.30) 45%, rgba(250,204,21,.30) 100%);
+    color:#fde68a;
+  }
+  [data-theme="dark"] .hl-btn{background:rgba(250,204,21,.14);border-color:rgba(250,204,21,.55);color:#fde68a;}
+  [data-theme="dark"] .hl-btn:hover{background:rgba(250,204,21,.24);}
   [data-theme="dark"] .memo-col{background:var(--card);}
   [data-theme="dark"] .memo-col.me{box-shadow:0 1px 2px rgba(0,0,0,.5), 0 8px 18px rgba(34,211,238,.18);}
   [data-theme="dark"] .memo-col-head{background:linear-gradient(180deg,rgba(34,211,238,.08),transparent);}
@@ -2892,6 +2917,81 @@ function renderNoticeReads(){
   `;
 }
 
+// ---------- 형광펜 ----------
+// 저장은 그대로 글자만 한다. 강조할 부분을 ==이렇게== 감싸두고, 화면에 그릴 때만
+// <mark> 로 바꾼다. data.json 에 HTML 을 넣지 않으므로 예전 판에서도 글자가 그대로 보이고,
+// 병합·이스케이프 처리도 지금 구조를 하나도 안 건드린다.
+const HL_MARK = "==";
+// 줄을 넘어가지 않게 한 줄 안에서만 짝을 맞춘다. == 만 덩그러니 남은 경우는 그냥 글자로 둔다.
+// 안쪽에는 == 가 다시 나올 수 없다 — 한 줄에 여러 군데를 칠해도 각각 따로 잡히도록.
+// (=(?!=) 덕분에 ==a=b== 처럼 홑 = 는 글자로 통과한다)
+const HL_RE = /==((?:[^\n=]|=(?!=))+)==/g;
+
+function noticeRich(text){
+  // 반드시 이스케이프를 먼저 한다. == 는 이스케이프에 영향을 받지 않으므로
+  // 그 다음에 표시를 찾아도 안전하다(사용자 글자가 태그가 될 일이 없다).
+  return escapeHtml(text || '')
+    .replace(HL_RE, (m, inner) => `<mark class="hl">${inner}</mark>`)
+    .replace(/\n/g, '<br>');
+}
+// 형광펜 표시를 걷어낸 순수 글자 (요약 줄·내보내기용)
+function stripHl(text){ return String(text || '').replace(HL_RE, "$1"); }
+
+// 편집창에서 [형광펜] 버튼: 고른 부분을 == == 로 감싸고, 이미 칠해져 있으면 벗긴다.
+function toggleHighlight(taId, previewId){
+  const ta = document.getElementById(taId);
+  if(!ta) return;
+  const v = ta.value;
+  let s = ta.selectionStart, e = ta.selectionEnd;
+
+  if(s === e){
+    // 커서만 있는 경우 — 지금 칠해진 구간 안이면 벗겨준다
+    const around = findHlAround(v, s);
+    if(around){ s = around.start; e = around.end; }
+    else { alert("형광펜으로 칠할 부분을 먼저 드래그해서 선택해주세요."); ta.focus(); return; }
+  }
+  // 선택 앞뒤 공백은 표시 밖으로 밀어낸다 (형광펜 칠이 글자에 딱 맞게)
+  while(s < e && /\s/.test(v[s])) s++;
+  while(e > s && /\s/.test(v[e-1])) e--;
+  if(s === e){ ta.focus(); return; }
+
+  const sel = v.slice(s, e);
+  let next, ns, ne;
+  if(sel.startsWith(HL_MARK) && sel.endsWith(HL_MARK) && sel.length > 4){
+    next = v.slice(0, s) + sel.slice(2, -2) + v.slice(e);         // 선택 안에 표시가 있음 → 벗기기
+    ns = s; ne = e - 4;
+  } else if(v.slice(s - 2, s) === HL_MARK && v.slice(e, e + 2) === HL_MARK){
+    next = v.slice(0, s - 2) + sel + v.slice(e + 2);              // 선택 바로 밖에 표시가 있음 → 벗기기
+    ns = s - 2; ne = e - 2;
+  } else {
+    next = v.slice(0, s) + HL_MARK + sel + HL_MARK + v.slice(e);  // 칠하기
+    ns = s + 2; ne = e + 2;
+  }
+  ta.value = next;
+  ta.focus();
+  ta.setSelectionRange(ns, ne);
+  if(previewId) updateHlPreview(taId, previewId);
+}
+
+// 커서 위치가 이미 칠해진 구간 안인지 찾는다
+function findHlAround(v, pos){
+  HL_RE.lastIndex = 0;
+  let m;
+  while((m = HL_RE.exec(v)) !== null){
+    if(pos >= m.index && pos <= m.index + m[0].length){
+      return { start: m.index + 2, end: m.index + m[0].length - 2 };
+    }
+  }
+  return null;
+}
+
+function updateHlPreview(taId, previewId){
+  const ta = document.getElementById(taId), pv = document.getElementById(previewId);
+  if(!ta || !pv) return;
+  const t = ta.value.trim();
+  pv.innerHTML = t ? noticeRich(ta.value) : '<span class="hl-empty">내용을 입력하면 여기에 실제 화면 모습이 보입니다.</span>';
+}
+
 function renderNoticeBanner(){
   const el = document.getElementById("noticeBanner");
   if(!el) return;
@@ -2910,7 +3010,7 @@ function renderNoticeBanner(){
   const updatedLabel = notice.updatedAt ? `<span class="notice-updated">${formatDateTime(notice.updatedAt)} 업데이트</span>` : '';
   el.innerHTML = `
     <div class="notice-head"><h3>주요 전달사항 ${ackBadge}</h3>${editBtn}</div>
-    <div class="notice-text">${escapeHtml(notice.text).replace(/\n/g,'<br>')}</div>
+    <div class="notice-text">${noticeRich(notice.text)}</div>
     ${updatedLabel}
     ${renderNoticeReads()}
   `;
@@ -3488,7 +3588,17 @@ function openEditNotice(){
     <h3>주요 전달사항 작성</h3>
     <div class="field">
       <label>내용</label>
-      <textarea id="modalNoticeText" rows="6" placeholder="팀 전체에 전달할 공지사항을 입력하세요">${escapeHtml(notice.text || '')}</textarea>
+      <div class="hl-tools">
+        <button type="button" class="hl-btn" onclick="toggleHighlight('modalNoticeText','noticePreview')"
+                title="선택한 글자를 노란 형광펜으로 칠합니다 (다시 누르면 지워집니다)">🖍 형광펜</button>
+        <span class="hl-hint">강조할 부분을 드래그해서 선택한 뒤 누르세요. 이미 칠해진 곳을 다시 누르면 지워집니다.</span>
+      </div>
+      <textarea id="modalNoticeText" rows="6" placeholder="팀 전체에 전달할 공지사항을 입력하세요"
+                oninput="updateHlPreview('modalNoticeText','noticePreview')">${escapeHtml(notice.text || '')}</textarea>
+    </div>
+    <div class="field">
+      <label>미리보기</label>
+      <div class="hl-preview notice-text" id="noticePreview"></div>
     </div>
     <div class="modal-actions">
       <button class="btn-ghost" style="margin-right:auto;color:var(--red);" onclick="clearNotice()">비우기</button>
@@ -3496,6 +3606,8 @@ function openEditNotice(){
       <button class="btn-primary" onclick="saveNoticeEdit()">저장</button>
     </div>
   `);
+  updateHlPreview('modalNoticeText','noticePreview');
+  setTimeout(() => { const t = document.getElementById("modalNoticeText"); if(t) t.focus(); }, 50);
 }
 
 function saveNoticeEdit(){
