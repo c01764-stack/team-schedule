@@ -1013,7 +1013,7 @@
       "type": "inspect",
       "start": "2026-09-11",
       "end": "2026-09-11",
-      "memo": "SKT 정밀안전진단/장안"
+      "memo": "SKT정밀안전진단/장안"
     },
     {
       "id": "thaaxhay3",
@@ -2421,6 +2421,14 @@
     {
       "id": "l_tdrmkd9lymtv7czrk",
       "at": "2026-09-10T07:25:12.848Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 수정: 천재우"
+    },
+    {
+      "id": "l_tw9aupikbmtv7d37m",
+      "at": "2026-09-10T07:25:17.314Z",
       "userId": "c01764",
       "name": "천재우",
       "type": "change",
