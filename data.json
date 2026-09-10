@@ -1042,15 +1042,6 @@
       "memo": "CHMS IDC일산 교육"
     },
     {
-      "id": "txcdv9baf",
-      "team": "edu",
-      "person": "주현수",
-      "type": "training",
-      "start": "2026-09-10",
-      "end": "2026-09-10",
-      "memo": "CHMS 인재개발원 교육(변동 가능성 있음)"
-    },
-    {
       "id": "t46di9lsb",
       "team": "edu",
       "person": "주현수",
@@ -2281,6 +2272,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "진행율 수정: 휴넷  사이트 오픈 → 90%"
+    },
+    {
+      "id": "l_tw40qmd3zmtuuwpjd",
+      "at": "2026-09-10T01:36:37.705Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 삭제: 주현수"
     }
   ]
 }
