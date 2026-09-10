@@ -2265,6 +2265,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 수정: 서린 사업장 업무상 질병 관련"
+    },
+    {
+      "id": "l_ti0gtj8iwmtuudzib",
+      "at": "2026-09-10T01:22:04.163Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
