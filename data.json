@@ -1193,7 +1193,7 @@
       "type": "inspect",
       "start": "2026-09-15",
       "end": "2026-09-15",
-      "memo": "정밀안전진단/보라매"
+      "memo": "SKT정밀안전진단/보라매"
     }
   ],
   "reports": [
@@ -2417,6 +2417,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 추가: 천재우"
+    },
+    {
+      "id": "l_tdrmkd9lymtv7czrk",
+      "at": "2026-09-10T07:25:12.848Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 수정: 천재우"
     }
   ]
 }
