@@ -459,6 +459,9 @@
   .src-tag{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12.5px;font-weight:700;background:var(--edu-tint);color:#6d28d9;white-space:nowrap;}
   .absence-chip.from-edu{box-shadow:0 2px 8px rgba(0,0,0,.06), inset 0 0 0 1.5px #c4b5fd;}
   .absence-chip.from-edu:hover{box-shadow:0 4px 12px rgba(0,0,0,.12), inset 0 0 0 1.5px #a78bfa;}
+  .src-tag.src-safe{background:var(--safety-tint);color:#c2410c;}
+  .absence-chip.from-safe{box-shadow:0 2px 8px rgba(0,0,0,.06), inset 0 0 0 1.5px #fdba74;}
+  .absence-chip.from-safe:hover{box-shadow:0 4px 12px rgba(0,0,0,.12), inset 0 0 0 1.5px #fb923c;}
 
   .notice-banner:empty{display:none;}
   .notice-banner{background:linear-gradient(135deg,#fff7e6,#fff1f2);border:1px solid var(--border);border-radius:0;padding:12px 16px;margin-bottom:18px;box-shadow:var(--shadow-card);}
@@ -728,6 +731,7 @@
   .cal-chip.edu{background:var(--edu-tint);color:#6d28d9;}
   .cal-chip.etc{background:var(--etc-tint);color:#0f766e;}
   .cal-chip.from-edu{box-shadow:inset 0 0 0 1.5px #c4b5fd;}
+  .cal-chip.from-safe{box-shadow:inset 0 0 0 1.5px #fdba74;}
   .cal-chip-type{opacity:.75;margin-left:3px;font-weight:600;}
 
   /* ---------- Responsive ---------- */
@@ -2930,6 +2934,7 @@ function eduToAbsence(it){
     end: it.date,
     memo: memo,
     fromEdu: true,
+    src: "edu",
     edu: it
   };
 }
@@ -2942,7 +2947,19 @@ function eduList(){
 
 /** 주요 일정·캘린더가 함께 그릴 목록. 저장 경로에서는 절대 쓰지 않는다. */
 function allAbsences(){
-  return absences.concat(eduList());
+  return absences.concat(eduList(), safeList());
+}
+
+/* ============================================================
+ *  가져온 일정의 꼬리표 — 교육관리 / 안전보건점검
+ * ============================================================ */
+const LINK_SRC = {
+  edu:  { tag:"교육관리",     cls:"from-edu",  tagCls:"",          tip:"교육관리에서 등록한 교육입니다. 클릭하면 내용을 볼 수 있습니다" },
+  safe: { tag:"안전보건점검", cls:"from-safe", tagCls:" src-safe", tip:"안전보건점검 시스템의 점검 예정일입니다. 클릭하면 내용을 볼 수 있습니다" }
+};
+function linkSrc(a){
+  if(a && a.src && LINK_SRC[a.src]) return LINK_SRC[a.src];
+  return (a && a.fromEdu) ? LINK_SRC.edu : null;   // 예전 형태 호환
 }
 
 async function loadEduYear(year){
@@ -2966,15 +2983,17 @@ async function loadEduYear(year){
   }
 }
 
-/** 화면에 보이는 연도의 교육 일정을 챙긴다 (이미 있으면 아무 일도 하지 않는다) */
-function ensureEduYears(){
+/** 화면에 보이는 연도의 가져온 일정(교육·안전점검)을 챙긴다 (이미 있으면 아무 일도 하지 않는다) */
+function ensureLinkedYears(){
   const years = new Set([
     new Date().getFullYear(),
     calState.year,
     bannerDate.getFullYear()
   ]);
-  years.forEach(y => { loadEduYear(y); });
+  years.forEach(y => { loadEduYear(y); loadSafeYear(y); });
 }
+// 예전 이름 — 여러 곳에서 부르고 있어 그대로 둔다
+function ensureEduYears(){ ensureLinkedYears(); }
 
 /** 교육 일정만 새로 들어왔을 때 — 화면 전체를 다시 그리지 않는다 */
 function redrawAbsenceViews(){
@@ -3019,9 +3038,101 @@ function openEduInfo(id){
   `);
 }
 
-/** 칩을 눌렀을 때 — 교육 일정이면 보기 전용 창, 아니면 원래 수정 창 */
+/* ============================================================
+ *  안전보건점검 시스템 연동 — 점검 예정일을 주요 일정·캘린더에 함께 표시
+ *
+ *    · 교육관리 연동과 똑같은 방식이다. 안전보건점검 서버를 그때그때 읽어
+ *      화면에만 얹고, data.json 에는 넣지 않는다 → 점검일정에서 등록·이동·삭제한
+ *      것이 사본 없이 그대로 따라오고, 저장 충돌이 생길 일이 없다.
+ *    · 서버에 못 닿아도 기존 화면은 그대로 뜬다 (조용히 넘어간다).
+ *    · 여기서는 고칠 수 없다 — 눌러보면 내용만 보여주고,
+ *      고치려면 안전보건 관리시스템의 [점검일정] 으로 넘어간다.
+ *    · 일정표의 날짜는 '예정일' 이다. 실제 점검일자는 점검을 입력할 때 넣은
+ *      날짜라 서로 다를 수 있다.
+ * ============================================================ */
+const SAFE_API = "https://script.google.com/macros/s/AKfycbxXxTN3i6E8oxjdhYZhGwbc_QD3J016lui6Y8-Okh9b1k2F7rb4ua92W_FJQRE-TwaL0g/exec";
+const SAFE_APP = "https://chmsafety.github.io/safety-inspection/";
+const SAFE_TTL_MS = 5 * 60 * 1000;     // 같은 해는 5분 안에 다시 묻지 않는다
+
+const safeCache = new Map();           // 연도 -> { at, items }
+const safeLoading = new Set();
+
+/** 안전보건점검이 준 한 건을 주요 일정 칩 모양으로 바꾼다 */
+function safeToAbsence(it){
+  return {
+    id: "SAFE:" + it.id,
+    person: it.site || "점검",
+    team: "safety",
+    type: "inspect",
+    start: it.date,
+    end: it.date,
+    memo: it.inspector ? "점검자 " + it.inspector : "",
+    src: "safe",
+    safe: it
+  };
+}
+
+function safeList(){
+  const out = [];
+  safeCache.forEach(v => { v.items.forEach(x => out.push(x)); });
+  return out;
+}
+
+async function loadSafeYear(year){
+  if(safeLoading.has(year)) return;
+  const hit = safeCache.get(year);
+  if(hit && Date.now() - hit.at < SAFE_TTL_MS) return;
+  safeLoading.add(year);
+  try{
+    // 헤더는 붙이지 않는다 — 붙이면 preflight 가 생겨 Apps Script 가 막는다
+    const res = await fetch(`${SAFE_API}?mode=schedCal&y=${year}&_=${Date.now()}`, { cache: "no-store" });
+    const data = await res.json();
+    if(!data || !data.ok || !Array.isArray(data.items)) throw new Error("bad response");
+    safeCache.set(year, { at: Date.now(), items: data.items.map(safeToAbsence) });
+    redrawAbsenceViews();
+  }catch(e){
+    // 안전보건점검이 잠깐 안 되더라도 대시보드는 그대로 돌아가야 한다
+    if(!safeCache.has(year)) safeCache.set(year, { at: Date.now() - SAFE_TTL_MS + 30000, items: [] });
+    console.warn("[안전보건점검 연동] 점검일정을 불러오지 못했습니다:", e);
+  }finally{
+    safeLoading.delete(year);
+  }
+}
+
+function findSafe(id){
+  return safeList().find(x => x.id === id) || null;
+}
+
+/** 점검일정을 눌렀을 때 — 보기 전용 */
+function openSafeInfo(id){
+  const a = findSafe(id);
+  if(!a) return;
+  const s = a.safe || {};
+  const rows = [
+    ["점검 예정일", s.date || "—"],
+    ["사업장", s.site || "—"],
+    ["점검자", s.inspector || "(미지정)"]
+  ].map(([k, v]) => `<tr><th style="text-align:left;color:var(--sub);font-weight:600;padding:6px 14px 6px 0;white-space:nowrap;">${escapeHtml(k)}</th><td style="padding:6px 0;">${escapeHtml(String(v))}</td></tr>`).join("");
+  openModal(`
+    <h3>안전보건 점검일정</h3>
+    <p style="color:var(--sub);font-size:14px;margin:0 0 14px;">
+      안전보건 관리시스템에서 가져온 <b>예정일</b>입니다. 여기서는 고칠 수 없고,
+      <b>점검일정</b>에서 옮기거나 지우면 이 화면에도 그대로 반영됩니다.
+      실제 점검일자는 점검을 입력할 때 넣은 날짜라 예정일과 다를 수 있습니다.
+    </p>
+    <table style="width:100%;border-collapse:collapse;font-size:14.5px;">${rows}</table>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">닫기</button>
+      <button class="btn-primary" onclick="window.open('${SAFE_APP}','_blank','noopener')">안전보건 관리시스템에서 열기</button>
+    </div>
+  `);
+}
+
+/** 칩을 눌렀을 때 — 가져온 일정이면 보기 전용 창, 아니면 원래 수정 창 */
 function openAbsenceChip(id){
-  if(String(id).indexOf("EDU:") === 0) openEduInfo(id);
+  const key = String(id);
+  if(key.indexOf("EDU:") === 0) openEduInfo(id);
+  else if(key.indexOf("SAFE:") === 0) openSafeInfo(id);
   else openEditAbsence(id);
 }
 
@@ -3048,9 +3159,10 @@ function renderAbsenceBanner(){
     const meta = TEAM_META[a.team];
     const type = TYPE_META[a.type] || TYPE_META.etc;
     const memoPart = a.memo ? ` (${escapeHtml(a.memo)})` : '';
-    const srcTag = a.fromEdu ? ' <span class="src-tag">교육관리</span>' : '';
-    const tipTxt = a.fromEdu ? '교육관리에서 등록한 교육입니다. 클릭하면 내용을 볼 수 있습니다' : '클릭하면 세부 내용을 볼 수 있습니다';
-    return `<div class="absence-chip ${meta.cls}${a.fromEdu ? ' from-edu' : ''}" onclick="openAbsenceChip('${a.id}')" title="${tipTxt}"><span class="dot"></span>${escapeHtml(a.person)}${memoPart} <span class="type-badge ${type.cls}">${type.label}</span>${srcTag}</div>`;
+    const src = linkSrc(a);
+    const srcTag = src ? ` <span class="src-tag${src.tagCls}">${src.tag}</span>` : '';
+    const tipTxt = src ? src.tip : '클릭하면 세부 내용을 볼 수 있습니다';
+    return `<div class="absence-chip ${meta.cls}${src ? ' ' + src.cls : ''}" onclick="openAbsenceChip('${a.id}')" title="${tipTxt}"><span class="dot"></span>${escapeHtml(a.person)}${memoPart} <span class="type-badge ${type.cls}">${type.label}</span>${srcTag}</div>`;
   }).join("");
   el.innerHTML = `<h3>주요 일정 (${dayList.length}명)</h3>${nav}<div class="absence-chips">${chips}</div>`;
 }
@@ -3868,8 +3980,9 @@ function renderAbsenceCalendar(){
     const chips = dayAbsences.map(a => {
       const meta = TEAM_META[a.team];
       const type = TYPE_META[a.type] || TYPE_META.etc;
-      const tip = `${a.person} · ${meta.label} · ${type.label}${a.memo ? ' · ' + a.memo : ''}${a.fromEdu ? ' (교육관리)' : ''}`;
-      return `<div class="cal-chip ${meta.cls}${a.fromEdu ? ' from-edu' : ''}" onclick="openAbsenceChip('${a.id}')" title="${escapeHtml(tip)}">${escapeHtml(a.person)}<span class="cal-chip-type">${type.label}</span></div>`;
+      const src = linkSrc(a);
+      const tip = `${a.person} · ${meta.label} · ${type.label}${a.memo ? ' · ' + a.memo : ''}${src ? ' (' + src.tag + ')' : ''}`;
+      return `<div class="cal-chip ${meta.cls}${src ? ' ' + src.cls : ''}" onclick="openAbsenceChip('${a.id}')" title="${escapeHtml(tip)}">${escapeHtml(a.person)}<span class="cal-chip-type">${type.label}</span></div>`;
     }).join("");
     const classes = ["cal-cell"];
     if(!c.currentMonth) classes.push("cal-other-month");
