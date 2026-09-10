@@ -679,10 +679,18 @@
       "owner2": "",
       "owner2Id": "",
       "due": "2026-09-18",
-      "progress": 0,
+      "progress": 35,
       "memo": "9/8\n- 이근석 소장 통화\n- 세차  근무자 팔꿈치 인대 부상, 본인 산재 신청 의사 없음\n- 산업재해 조사표 검토 및 제출 필요\n- 근골격계 유해요인조사 내용 체크 필요\n  (실제 개선 작업 진행 여부)\n- 고객사 구두 보고 필요\n9/10\n- 서린에서 산업재해 조사표 및 근골격계 유해요인 조사표 받음\n- 내용 검토 필요",
       "dueHistory": [],
-      "includeInReport": true
+      "includeInReport": true,
+      "progressHistory": [
+        {
+          "at": "2026-09-10T13:26:04.546Z",
+          "p": 35,
+          "byUserId": "c01764",
+          "byName": "천재우"
+        }
+      ]
     },
     {
       "id": "trcdp5x5l",
@@ -2474,6 +2482,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tpoo9v515mtvk92bv",
+      "at": "2026-09-10T13:26:04.555Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "진행율 수정: 서린 사업장 업무상 질병 관련 → 35%"
     }
   ]
 }
