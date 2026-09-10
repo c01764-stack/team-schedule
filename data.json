@@ -2458,6 +2458,14 @@
       "name": "천재우",
       "type": "change",
       "message": "진행율 수정: 회사소개서 제작 → 15%"
+    },
+    {
+      "id": "l_txqw3klzsmtvj2cfg",
+      "at": "2026-09-10T12:52:51.436Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
