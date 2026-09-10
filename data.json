@@ -571,7 +571,7 @@
       "title": "안전/보건 위탁업체 견적 확인",
       "owner": "천재우",
       "due": "2026-09-11",
-      "progress": 35,
+      "progress": 100,
       "memo": "- 서울산업안전컨설팅, 한도산업보건 견적 요청\n- 총 합계 14,000원\n9/9\n- 견적서 받아서 본부장님 보고 완료",
       "dueHistory": [
         {
@@ -581,7 +581,8 @@
           "reason": ""
         }
       ],
-      "includeInReport": true
+      "includeInReport": true,
+      "completedAt": "2026-09-10T02:18:06.111Z"
     },
     {
       "id": "t352dlrrw",
@@ -2296,6 +2297,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 수정: 안전/보건 위탁업체 견적 확인"
+    },
+    {
+      "id": "l_tawl12snmmtuwe1m1",
+      "at": "2026-09-10T02:18:06.121Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 완료 처리: 안전/보건 위탁업체 견적 확인"
     }
   ]
 }
