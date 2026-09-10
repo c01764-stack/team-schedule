@@ -1132,15 +1132,6 @@
       "memo": "SK-P타워 에스원 점검"
     },
     {
-      "id": "thkedcsdz",
-      "team": "safety",
-      "person": "이재혁",
-      "type": "inspect",
-      "start": "2026-09-14",
-      "end": "2026-09-16",
-      "memo": "부산 사업소(부암,데이터,안락) 하반기 산업안전점검"
-    },
-    {
       "id": "tuhu6xihw",
       "team": "safety",
       "person": "이재혁",
@@ -2490,6 +2481,14 @@
       "name": "천재우",
       "type": "change",
       "message": "진행율 수정: 서린 사업장 업무상 질병 관련 → 35%"
+    },
+    {
+      "id": "l_t2c5essh2mtvkv3qd",
+      "at": "2026-09-10T13:43:12.805Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 삭제: 이재혁"
     }
   ]
 }
