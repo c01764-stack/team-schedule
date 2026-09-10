@@ -32,6 +32,7 @@
     --orange:#f59e0b;
     --green:#22c55e;
     --blue:#3b82f6;
+    --pg-line:#2563eb;
     --violet:#8b5cf6;
     --pink:#ec4899;
     /* 카드 입체감 — 가까운 그림자(윤곽)와 먼 그림자(깊이)를 겹쳐 쓴다.
@@ -306,6 +307,42 @@
   .bar-bg{flex:1;height:9px;background:#eee9fb;border-radius:999px;overflow:hidden;}
   .bar-fill{height:100%;border-radius:999px;}
   .prog-num{font-size:14.5px;color:var(--sub);width:38px;text-align:right;font-weight:700;}
+  /* 29차: 진행율 칸을 누르면 일자별 추이 그래프. 누를 수 있다는 걸 작은 그래프 아이콘과 hover 로 알린다 */
+  .prog-click{cursor:pointer;margin:-4px -6px;padding:4px 6px;border-radius:10px;transition:background .12s;}
+  .prog-click:hover{background:#eff6ff;}
+  .prog-click:focus-visible{outline:2px solid var(--blue);outline-offset:1px;}
+  .prog-click .prog-ico{flex:0 0 auto;width:14px;height:14px;color:#94a3b8;margin-left:-4px;}
+  .prog-click:hover .prog-ico{color:var(--blue);}
+  .prog-click:hover .prog-num{color:var(--blue);}
+
+  .pg-stats{display:flex;flex-wrap:wrap;gap:6px 18px;margin:0 0 10px;font-size:13px;color:var(--sub);}
+  .pg-stats b{color:var(--text);font-size:15px;font-weight:800;margin-left:4px;}
+  .pg-stats .pg-now b{font-size:20px;}
+  .pg-chart{position:relative;width:100%;touch-action:pan-y;}
+  .pg-chart svg{display:block;width:100%;overflow:visible;}
+  .pg-chart svg:focus{outline:none;}
+  .pg-chart svg:focus-visible{outline:2px solid var(--blue);outline-offset:2px;}
+  .pg-grid{stroke:var(--border);stroke-width:1;shape-rendering:crispEdges;}
+  .pg-axis-t{fill:var(--sub);font-size:11.5px;font-family:inherit;}
+  .pg-line{fill:none;stroke:var(--pg-line);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;}
+  .pg-area{fill:var(--pg-line);opacity:.10;}
+  .pg-dot{fill:var(--pg-line);stroke:var(--card);stroke-width:2;}
+  .pg-dot.guess{fill:var(--card);stroke:var(--pg-line);stroke-width:2;}
+  .pg-val{fill:var(--text);font-size:12px;font-weight:800;font-family:inherit;}
+  .pg-due{stroke:var(--red);stroke-width:1;opacity:.6;shape-rendering:crispEdges;}
+  .pg-due-t{fill:var(--red);font-size:11.5px;font-weight:700;font-family:inherit;}
+  .pg-cross{stroke:var(--sub);stroke-width:1;opacity:.55;shape-rendering:crispEdges;}
+  .pg-hi{fill:var(--pg-line);stroke:var(--card);stroke-width:2.5;}
+  .pg-tip{position:absolute;top:0;left:0;pointer-events:none;background:var(--card);border:1px solid var(--border);
+    box-shadow:var(--shadow-soft);padding:7px 10px;font-size:12.5px;line-height:1.45;color:var(--sub);white-space:nowrap;z-index:2;}
+  .pg-tip .pg-tip-v{display:block;font-size:17px;font-weight:800;color:var(--text);}
+  .pg-tip .pg-tip-c{display:block;color:var(--text);}
+  .pg-empty-note{font-size:12.5px;color:var(--sub);margin:4px 0 0;}
+  .pg-table td:nth-child(n+2),.pg-table th:nth-child(n+2){white-space:nowrap;}
+  .pg-table td.pg-up{color:#15803d;font-weight:700;}
+  .pg-table td.pg-down{color:#be123c;font-weight:700;}
+  .pg-table .pg-muted{color:var(--sub);}
+  .pg-foot{font-size:12px;color:var(--sub);margin:10px 0 0;line-height:1.5;}
 
   .badge{display:inline-block;padding:4px 11px;border-radius:999px;font-size:13px;font-weight:700;}
   .badge.done{background:#dcfce7;color:#15803d;}
@@ -825,6 +862,7 @@
     .table-scroll .progress-cell{gap:9px;}
     .table-scroll .bar-bg{height:8px;}
     .table-scroll .prog-num{font-size:13px;width:34px;}
+    .table-scroll .prog-click{margin:-3px -4px;padding:3px 4px;}
 
     /* 접힘 상태에서 감추는 것들 */
     .table-scroll tbody tr:not(.row-open) td[data-label="기타"],
@@ -929,6 +967,11 @@
   [data-theme="dark"] .table-scroll tr.row-overdue td{background:rgba(251,113,133,.10);}
   [data-theme="dark"] .table-scroll tbody tr:hover td{background:rgba(255,255,255,.03);}
   [data-theme="dark"] .bar-bg{background:rgba(255,255,255,.08);}
+  [data-theme="dark"]{--pg-line:#4f8ff7;}
+  [data-theme="dark"] .prog-click:hover{background:rgba(96,165,250,.12);}
+  [data-theme="dark"] .prog-click .prog-ico{color:#64748b;}
+  [data-theme="dark"] .pg-table td.pg-up{color:#86efac;}
+  [data-theme="dark"] .pg-table td.pg-down{color:#fda4af;}
   [data-theme="dark"] .badge.done{background:rgba(74,222,128,.16);color:#86efac;}
   [data-theme="dark"] .badge.ongoing{background:rgba(56,189,248,.16);color:#7dd3fc;}
   [data-theme="dark"] .badge.overdue{background:rgba(251,113,133,.18);color:#fda4af;}
@@ -2751,9 +2794,12 @@ function taskRow(t, opts){
       </td>
       <td data-label="${completed ? '완료일' : 'D-Day'}">${ddayCell}</td>
       <td data-label="진행율">
-        <div class="progress-cell">
+        <div class="progress-cell prog-click" role="button" tabindex="0" title="눌러서 일자별 진행율 추이 보기"
+             aria-label="진행율 ${t.progress}% — 일자별 추이 보기"
+             onclick="openProgressChart('${t.id}')" onkeydown="progKey(event,'${t.id}')">
           <div class="bar-bg"><div class="bar-fill" style="width:${t.progress}%;background:${color};"></div></div>
           <span class="prog-num">${t.progress}%</span>
+          <svg class="prog-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 13.5h12M3 10.5l3.2-3.4 2.6 2.1L13 4.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
       </td>
       <td data-label="상태"><span class="badge ${info.badgeClass}">${info.status}</span></td>
@@ -2773,7 +2819,7 @@ function tableCols(admin){
 // 버튼·체크박스를 누른 경우에는 펼침이 토글되지 않도록 걸러낸다.
 function toggleRowOpen(tr, ev){
   if(window.innerWidth > 640) return;
-  if(ev && ev.target && ev.target.closest('button, input, select, textarea, a, .hist-link')) return;
+  if(ev && ev.target && ev.target.closest('button, input, select, textarea, a, .hist-link, .prog-click')) return;
   if(tr.querySelector('td.empty')) return;
   tr.classList.toggle('row-open');
 }
@@ -4918,6 +4964,7 @@ function addTask(){
     owner2: o2 ? o2.name : "", owner2Id: o2 ? o2.id : "",
     due, progress, memo, dueHistory: [], includeInReport: true
   };
+  recordProgress(newTask, progress);   // 추이 그래프의 첫 점(등록)
   tasks.push(newTask);
   taskDirty.set(newTask.id, newTask);
   document.getElementById("inTitle").value = "";
@@ -4947,6 +4994,7 @@ function editProgress(id){
     return;
   }
   const wasDone = isTaskDone(t);
+  if(num !== Number(t.progress)) recordProgress(t, num);
   t.progress = num;
   // 100%가 되어도 자동으로 완료가 되지 않는다. 완료 처리는 관리자만.
   if(wasDone && num < 100) delete t.completedAt;
@@ -4962,6 +5010,7 @@ function markComplete(id){
   if(!isAdmin){ alert("관리자 모드에서만 처리할 수 있습니다."); return; }
   const t = tasks.find(x=>x.id===id);
   if(!t) return;
+  if(Number(t.progress) !== 100) recordProgress(t, 100);
   t.progress = 100;
   t.completedAt = new Date().toISOString();   // 완료의 기준은 이 값이다
   taskDirty.set(t.id, t);
@@ -5328,6 +5377,327 @@ function saveMemoEdit(id){
   render();
   if(changed) persist(`기타 내용 수정: ${t.title}`);
 }
+
+// ───────── 진행율 추이 그래프 (29차) ─────────
+// 진행율을 바꿀 때마다 업무(task)에 progressHistory = [{at, p, byUserId, byName}] 를 쌓는다.
+// dueHistory 와 같은 자리에 있으므로 병합(taskDirty)·저장 경로는 그대로다.
+//
+// 이 기능을 넣기 전(~2026-09-10 18:19)의 추이는 저장소의 data.json 커밋 707건을 거슬러
+// 업무별로 되살린 값이다. data.json 에 한꺼번에 써 넣으면 그 사이 다른 사람의 저장과
+// 부딪칠 수 있어서, 화면 코드 안에 읽기 전용으로 둔다.
+// 형식: { 업무ID: [["YYYY-MM-DD HH:mm"(한국시간), 진행율, 변경자?], ...] }
+// 변경자는 접속·변경 이력(logs, 9/6~)과 시각이 맞은 경우에만 들어 있다.
+const PROGRESS_SEED = {"tj9b13v3m":[["2026-07-30 11:29",0],["2026-07-30 11:30",5],["2026-07-31 11:26",30],["2026-08-13 00:23",60],["2026-08-13 09:05",80],["2026-08-18 09:18",90],["2026-08-18 09:23",95],["2026-08-25 19:04",100]],"tygqlm8ab":[["2026-07-30 11:31",90],["2026-07-31 11:21",100]],"tttwhlizv":[["2026-07-30 13:01",50],["2026-08-01 10:04",90],["2026-08-03 13:12",95],["2026-08-05 08:54",100]],"tyd3wmw9q":[["2026-07-30 13:03",80],["2026-07-31 11:21",100]],"tfquf9zy7":[["2026-07-30 13:09",50],["2026-08-04 13:47",70],["2026-08-10 11:10",95],["2026-08-12 08:38",100]],"tykjuwd4h":[["2026-07-30 13:12",20],["2026-08-04 13:59",50],["2026-08-14 11:20",100]],"tr06d1lsj":[["2026-07-30 13:13",10],["2026-08-14 16:30",30],["2026-08-19 13:49",70],["2026-08-26 09:44",100]],"t57zesfsy":[["2026-07-30 13:18",70],["2026-08-01 10:04",80],["2026-08-12 15:07",90],["2026-09-04 22:43",100]],"tgri3ul3w":[["2026-07-30 13:19",0],["2026-08-10 17:27",10],["2026-08-12 15:08",100]],"ti4zvl673":[["2026-07-30 13:22",10],["2026-07-31 11:25",20],["2026-08-05 10:49",40],["2026-08-18 09:16",100]],"tecwfcrbc":[["2026-07-30 13:23",0],["2026-08-10 17:27",5],["2026-08-13 09:10",10],["2026-08-19 10:53",20],["2026-09-04 14:30",50],["2026-09-09 09:00",70,"이재혁"]],"tog876clt":[["2026-07-30 13:24",50],["2026-07-31 11:08",80],["2026-07-31 11:29",90],["2026-08-05 10:51",100]],"tz4gc35a1":[["2026-07-30 13:25",10],["2026-08-03 13:12",25],["2026-08-05 18:39",35],["2026-08-31 15:58",100]],"tcida7iqr":[["2026-07-30 14:19",90],["2026-08-01 10:04",95],["2026-08-04 10:30",100]],"tl5hd782x":[["2026-07-31 07:59",10],["2026-08-10 17:07",30],["2026-08-11 06:43",35],["2026-08-14 11:21",45],["2026-08-19 13:50",50]],"t7gr0god3":[["2026-08-01 10:07",0],["2026-08-19 14:07",5],["2026-08-26 14:30",10],["2026-08-31 19:33",40],["2026-09-02 20:48",60],["2026-09-04 15:14",90],["2026-09-09 15:37",100,"주현수"]],"twugyxlww":[["2026-08-01 10:13",10],["2026-08-14 16:27",35],["2026-08-18 09:18",50],["2026-08-19 14:05",65],["2026-08-20 14:24",70],["2026-08-28 13:57",90],["2026-09-01 18:35",95],["2026-09-04 14:26",100]],"tuuqu3ge3":[["2026-08-03 07:48",20],["2026-08-10 17:07",100]],"tl3s8mf6a":[["2026-08-04 14:30",10],["2026-08-26 09:19",70],["2026-08-31 16:21",90],["2026-09-09 15:37",100,"주현수"]],"tiaz5il0m":[["2026-08-05 11:08",0],["2026-08-10 17:15",100]],"tasjfv4jm":[["2026-08-12 08:42",10],["2026-09-04 22:42",50]],"tnfyu59mj":[["2026-08-12 08:49",30],["2026-08-20 13:59",45],["2026-09-09 19:15",55,"천재우"]],"th0kdi8s2":[["2026-08-12 17:08",0],["2026-08-14 10:55",30],["2026-08-31 18:26",100]],"ta9kl7xyk":[["2026-08-12 18:01",0],["2026-08-14 09:24",100]],"tjzxpmr2t":[["2026-08-14 09:19",0],["2026-09-03 13:40",100]],"topooyqtu":[["2026-08-18 09:21",10],["2026-08-18 16:36",80],["2026-08-31 15:58",100]],"t71ot61qa":[["2026-08-18 10:16",0],["2026-08-18 10:18",10],["2026-08-28 13:55",100]],"tz804aumg":[["2026-08-18 19:34",0],["2026-08-20 14:24",50],["2026-08-28 13:56",80],["2026-09-07 14:34",100,"이재혁"]],"ttfcv2d18":[["2026-08-19 13:12",0],["2026-08-26 09:29",35]],"t2z2cibrv":[["2026-08-19 14:15",0],["2026-08-28 15:48",20],["2026-09-02 15:43",35],["2026-09-04 22:43",50],["2026-09-09 19:15",70,"천재우"]],"tjta8ydu6":[["2026-08-31 17:44",10],["2026-09-04 14:29",90],["2026-09-09 09:00",100,"이재혁"]],"t6nny2p65":[["2026-08-31 17:56",10],["2026-09-04 15:20",100]],"tbl18ixkm":[["2026-09-01 18:44",50],["2026-09-04 22:43",100]],"tje6ynih5":[["2026-09-02 20:05",35],["2026-09-10 11:18",100,"천재우"]],"t352dlrrw":[["2026-09-03 15:18",10],["2026-09-10 18:19",15,"천재우"]],"tx4bnqj4u":[["2026-09-04 13:49",0],["2026-09-04 22:44",50],["2026-09-09 19:15",70,"천재우"]],"t4p68omav":[["2026-09-04 14:02",0]],"ty1rqqfqo":[["2026-09-04 15:34",10],["2026-09-09 15:54",80,"오혜지"],["2026-09-10 10:22",90,"오혜지"],["2026-09-10 11:16",100,"오혜지"]],"tvu2b9zzb":[["2026-09-07 14:44",0,"천재우"]],"tdf8qxdvq":[["2026-09-07 14:49",0,"천재우"]],"tecp8a1gf":[["2026-09-07 15:45",0,"천재우"]],"tpupk1fiu":[["2026-09-08 10:19",0,"천재우"]],"trcdp5x5l":[["2026-09-09 22:57",0,"천재우"]]};
+const PROGRESS_HIST_MAX = 300;
+
+function recordProgress(t, p){
+  if(!t) return;
+  if(!Array.isArray(t.progressHistory)) t.progressHistory = [];
+  t.progressHistory.push({
+    at: new Date().toISOString(),
+    p: Math.max(0, Math.min(100, Number(p) || 0)),
+    byUserId: currentUser ? currentUser.id : "",
+    byName: currentUser ? currentUser.name : ""
+  });
+  if(t.progressHistory.length > PROGRESS_HIST_MAX){
+    t.progressHistory = t.progressHistory.slice(-PROGRESS_HIST_MAX);
+  }
+}
+
+function progKey(e, id){
+  if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openProgressChart(id); }
+}
+
+// 복원 기록 + 저장된 기록을 시간순으로 합친다. 값이 그대로인 연속 기록은 하나로.
+function progressEvents(t){
+  const ev = [];
+  (PROGRESS_SEED[t.id] || []).forEach(r => {
+    const d = new Date(String(r[0]).replace(" ", "T") + ":00+09:00");
+    const p = Number(r[1]);
+    if(!isNaN(d.getTime()) && !isNaN(p)) ev.push({ time: d.getTime(), p, by: r[2] || "", seed: true });
+  });
+  (Array.isArray(t.progressHistory) ? t.progressHistory : []).forEach(h => {
+    const d = new Date(h && h.at);
+    const p = Number(h && h.p);
+    if(!isNaN(d.getTime()) && !isNaN(p)) ev.push({ time: d.getTime(), p: Math.max(0, Math.min(100, p)), by: h.byName || "" });
+  });
+  ev.sort((a, b) => a.time - b.time);
+  const out = [];
+  ev.forEach(e => {
+    const last = out[out.length - 1];
+    if(!last || last.p !== e.p) out.push(e);
+    else if(!last.by && e.by) last.by = e.by;
+  });
+  // 기록 밖에서 바뀐 현재값(예: 새 판을 올리기 전 옛 화면에서 바꾼 값)은 오늘 점으로 붙인다.
+  const cur = Math.max(0, Math.min(100, Number(t.progress) || 0));
+  if(!out.length || out[out.length - 1].p !== cur){
+    let when = Date.now();
+    if(isTaskDone(t)){ const c = new Date(t.completedAt).getTime(); if(!isNaN(c)) when = c; }
+    if(out.length && when < out[out.length - 1].time) when = out[out.length - 1].time;
+    out.push({ time: when, p: cur, by: "", guess: true });
+  }
+  return out;
+}
+
+function pgYmd(ms){ return fmtLocalDate(new Date(ms)); }
+function pgAddDays(ymd, n){ const [y, m, d] = ymd.split("-").map(Number); return fmtLocalDate(new Date(y, m - 1, d + n)); }
+function pgDiff(a, b){ // b - a (일)
+  const [y1, m1, d1] = a.split("-").map(Number), [y2, m2, d2] = b.split("-").map(Number);
+  return Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / 86400000);
+}
+function pgShortYmd(ymd){ return ymd.slice(0, 4) === todayStr().slice(0, 4) ? ymd.slice(5) : ymd; }
+function pgShortDT(ms){ const d = new Date(ms); return `${pgShortYmd(fmtLocalDate(d))} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`; }
+function pgMD(ymd){ const [, m, d] = ymd.split("-").map(Number); return `${m}/${d}`; }
+function pgLongDate(ymd){
+  const [y, m, d] = ymd.split("-").map(Number);
+  const w = "일월화수목금토"[new Date(y, m - 1, d).getDay()];
+  return `${m}월 ${d}일 (${w})`;
+}
+
+// 일자별 값(그날 마지막 값)과 축 범위를 만든다.
+function progressDaily(t, ev){
+  const start = pgYmd(ev[0].time);
+  let dataEnd = isTaskDone(t) && !isNaN(new Date(t.completedAt).getTime()) ? pgYmd(new Date(t.completedAt).getTime()) : todayStr();
+  const lastEvDay = pgYmd(ev[ev.length - 1].time);
+  if(lastEvDay > dataEnd) dataEnd = lastEvDay;
+  if(dataEnd < start) dataEnd = start;
+  const n = pgDiff(start, dataEnd) + 1;
+  const days = [];
+  let k = 0, val = ev[0].p;
+  for(let i = 0; i < n; i++){
+    const ymd = pgAddDays(start, i);
+    const changes = [];
+    while(k < ev.length && pgYmd(ev[k].time) <= ymd){
+      const prev = k > 0 ? ev[k - 1].p : null;
+      changes.push({ ...ev[k], prev, first: k === 0 });
+      val = ev[k].p;
+      k++;
+    }
+    days.push({ ymd, p: val, changes });
+  }
+  // 마감이 60일 안쪽으로 남아 있으면 축을 마감까지 늘려 남은 기간이 보이게 한다.
+  let axisEnd = dataEnd;
+  const due = /^\d{4}-\d{2}-\d{2}$/.test(t.due || "") ? t.due : "";
+  if(due && due > dataEnd && pgDiff(dataEnd, due) <= 60) axisEnd = due;
+  if(pgDiff(start, axisEnd) < 6) axisEnd = pgAddDays(start, 6);
+  return { start, dataEnd, axisEnd, span: pgDiff(start, axisEnd), days, due };
+}
+
+let pgState = null;   // 열려 있는 그래프 {id, idx}
+
+function openProgressChart(id){
+  const t = tasks.find(x => x.id === id);
+  if(!t) return;
+  const ev = progressEvents(t);
+  const dd = progressDaily(t, ev);
+  const cur = Number(t.progress) || 0;
+  const firstP = ev[0].p;
+  const changeCount = ev.filter((e, i) => i > 0).length;
+  const elapsed = pgDiff(dd.start, dd.dataEnd);
+
+  let tail;
+  if(isTaskDone(t)) tail = `<span>완료<b>${pgMD(dd.dataEnd)}</b></span>`;
+  else if(dd.due){
+    const left = pgDiff(todayStr(), dd.due);
+    tail = `<span>마감<b>${pgMD(dd.due)}</b> ${left > 0 ? `(D-${left})` : left === 0 ? "(D-Day)" : `(${-left}일 지남)`}</span>`;
+  } else tail = "";
+
+  const rows = ev.slice().reverse().map((e, ri) => {
+    const i = ev.length - 1 - ri;
+    const prev = i > 0 ? ev[i - 1].p : null;
+    const when = e.guess ? `${pgShortYmd(pgYmd(e.time))} <span class="pg-muted">(시각 미기록)</span>` : pgShortDT(e.time);
+    const change = prev === null
+      ? `<td class="pg-muted">등록</td>`
+      : `<td class="${e.p > prev ? "pg-up" : "pg-down"}">${e.p > prev ? "+" : "−"}${Math.abs(e.p - prev)}%p</td>`;
+    const val = prev === null ? `${e.p}%` : `<span class="hist-old">${prev}%</span><span class="hist-arrow">→</span><span class="hist-new">${e.p}%</span>`;
+    return `<tr><td>${when}</td><td>${val}</td>${change}<td>${escapeHtml(e.by || "-")}</td></tr>`;
+  }).join("");
+
+  const hasSeed = ev.some(e => e.seed);
+  openModal(`
+    <h3>진행율 추이 — ${escapeHtml(t.title)}</h3>
+    <div class="pg-stats">
+      <span class="pg-now">현재<b>${cur}%</b></span>
+      <span>시작<b>${firstP}%</b> (${pgMD(dd.start)})</span>
+      <span>${isTaskDone(t) ? "걸린 기간" : "경과"}<b>${elapsed}일</b></span>
+      <span>변경<b>${changeCount}회</b></span>
+      ${tail}
+    </div>
+    <div class="pg-chart" id="pgChart"></div>
+    ${ev.length < 2 ? `<p class="pg-empty-note">아직 변경 기록이 없습니다. 진행율을 바꿀 때마다 여기에 점이 하나씩 쌓입니다.</p>` : ""}
+    <table class="hist-table pg-table" style="margin-top:14px;">
+      <thead><tr><th>일시</th><th>진행율</th><th>변화</th><th>변경자</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p class="pg-foot">하루에 여러 번 바뀐 날은 그날 마지막 값으로 그립니다.${hasSeed ? "<br>9월 10일 이전 기록은 저장소 변경 기록에서 되살린 값이라 변경자가 일부만 표시됩니다." : ""}</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">닫기</button>
+    </div>
+  `, true);
+  pgState = { id, idx: dd.days.length - 1 };
+  drawProgressChart();
+}
+
+function drawProgressChart(){
+  const box = document.getElementById("pgChart");
+  if(!box || !pgState) return;
+  const t = tasks.find(x => x.id === pgState.id);
+  if(!t){ box.innerHTML = ""; return; }
+  const ev = progressEvents(t);
+  const dd = progressDaily(t, ev);
+  const days = dd.days;
+  if(pgState.idx == null || pgState.idx >= days.length) pgState.idx = days.length - 1;
+
+  const W = Math.max(260, Math.round(box.clientWidth || 520));
+  const H = W < 420 ? 200 : 236;
+  // 위쪽에 두 줄: 맨 위는 마감 표시, 그 아래는 100% 부근 값 라벨 (서로 겹치지 않게)
+  const m = { l: 38, r: 14, t: 38, b: 28 };
+  const pw = W - m.l - m.r, ph = H - m.t - m.b;
+  const X = i => m.l + (dd.span ? i / dd.span : 0) * pw;
+  const Y = p => m.t + (1 - p / 100) * ph;
+  const f = v => Math.round(v * 10) / 10;
+
+  let g = "";
+  // 격자 + y 눈금
+  [0, 25, 50, 75, 100].forEach(p => {
+    g += `<line class="pg-grid" x1="${m.l}" x2="${W - m.r}" y1="${f(Y(p))}" y2="${f(Y(p))}"/>`;
+    g += `<text class="pg-axis-t" x="${m.l - 7}" y="${f(Y(p) + 4)}" text-anchor="end">${p}%</text>`;
+  });
+  // x 눈금: 시작·끝은 항상, 사이는 60px 이상 간격으로
+  const maxTicks = Math.max(2, Math.floor(pw / 62));
+  const step = Math.max(1, Math.ceil(dd.span / maxTicks));
+  const ticks = [0];
+  for(let i = step; i < dd.span; i += step) if(X(dd.span) - X(i) >= 40) ticks.push(i);
+  if(dd.span > 0) ticks.push(dd.span);
+  ticks.forEach((i, n) => {
+    const anchor = n === 0 ? "start" : (i === dd.span ? "end" : "middle");
+    g += `<text class="pg-axis-t" x="${f(X(i))}" y="${H - 8}" text-anchor="${anchor}">${pgMD(pgAddDays(dd.start, i))}</text>`;
+  });
+  // 마감선
+  if(dd.due){
+    const di = pgDiff(dd.start, dd.due);
+    if(di >= 0 && di <= dd.span){
+      const x = f(X(di));
+      g += `<line class="pg-due" x1="${x}" x2="${x}" y1="18" y2="${m.t + ph}"/>`;
+      const anchor = x > W - m.r - 30 ? "end" : (x < m.l + 30 ? "start" : "middle");
+      g += `<text class="pg-due-t" x="${x}" y="12" text-anchor="${anchor}">마감 ${pgMD(dd.due)}</text>`;
+    } else if(di > dd.span){
+      g += `<text class="pg-due-t" x="${W - m.r}" y="12" text-anchor="end">마감 ${pgMD(dd.due)} ▸</text>`;
+    }
+  }
+  // 계단선 + 옅은 면 (바뀐 날 그 자리에서 올라간다)
+  let d = `M${f(X(0))},${f(Y(days[0].p))}`;
+  for(let i = 1; i < days.length; i++){
+    if(days[i].p !== days[i - 1].p) d += ` H${f(X(i))} V${f(Y(days[i].p))}`;
+  }
+  const lastX = f(X(days.length - 1));
+  d += ` H${lastX}`;
+  g += `<path class="pg-area" d="${d} V${f(Y(0))} H${f(X(0))} Z"/>`;
+  g += `<path class="pg-line" d="${d}"/>`;
+  // 바뀐 날에만 점 + 값 (겹치면 건너뛰고, 마지막 변경 값은 항상). 선 끝(오늘)은 점 없이 끝난다.
+  const marks = [];
+  days.forEach((dy, i) => { if(dy.changes.length) marks.push(i); });
+  const labeled = new Set();
+  let lastLabX = -999;
+  marks.forEach((i, n) => {
+    const isLast = n === marks.length - 1;
+    const x = X(i);
+    if(isLast || x - lastLabX >= 30){
+      if(isLast && x - lastLabX < 30 && labeled.size){ labeled.delete([...labeled].pop()); }
+      labeled.add(i); lastLabX = x;
+    }
+  });
+  marks.forEach(i => {
+    const dy = days[i];
+    const guess = dy.changes.length && dy.changes.every(c => c.guess);
+    g += `<circle class="pg-dot${guess ? " guess" : ""}" cx="${f(X(i))}" cy="${f(Y(dy.p))}" r="4"/>`;
+    if(labeled.has(i)){
+      const x = f(X(i));
+      const anchor = x > W - m.r - 16 ? "end" : (x < m.l + 14 ? "start" : "middle");
+      g += `<text class="pg-val" x="${x}" y="${f(Y(dy.p) - 9)}" text-anchor="${anchor}">${dy.p}%</text>`;
+    }
+  });
+  // 커서(십자선) 층
+  g += `<g id="pgHover" style="display:none"><line class="pg-cross" id="pgCross" y1="${m.t}" y2="${m.t + ph}"/><circle class="pg-hi" id="pgHi" r="5"/></g>`;
+  g += `<rect id="pgHit" x="${m.l - 8}" y="0" width="${pw + 16}" height="${H}" fill="transparent"/>`;
+
+  box.innerHTML = `<svg id="pgSvg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" tabindex="0" role="img"
+      aria-label="${escapeHtml(t.title)} 진행율 추이: ${pgMD(dd.start)} ${days[0].p}%에서 ${pgMD(dd.dataEnd)} ${days[days.length - 1].p}%까지. 좌우 화살표로 날짜 이동">${g}</svg>
+    <div class="pg-tip" id="pgTip" style="display:none"></div>`;
+
+  const svg = document.getElementById("pgSvg");
+  const hit = document.getElementById("pgHit");
+  const show = (i) => {
+    i = Math.max(0, Math.min(days.length - 1, i));
+    pgState.idx = i;
+    const dy = days[i];
+    const x = X(i), y = Y(dy.p);
+    const hv = document.getElementById("pgHover");
+    hv.style.display = "";
+    const cross = document.getElementById("pgCross");
+    cross.setAttribute("x1", f(x)); cross.setAttribute("x2", f(x));
+    const hi = document.getElementById("pgHi");
+    hi.setAttribute("cx", f(x)); hi.setAttribute("cy", f(y));
+    const tip = document.getElementById("pgTip");
+    tip.textContent = "";
+    const dateEl = document.createElement("span");
+    dateEl.textContent = pgLongDate(dy.ymd) + (dy.ymd === todayStr() ? " · 오늘" : "");
+    const vEl = document.createElement("span");
+    vEl.className = "pg-tip-v";
+    vEl.textContent = dy.p + "%";
+    tip.appendChild(vEl); tip.appendChild(dateEl);
+    dy.changes.forEach(c => {
+      const cEl = document.createElement("span");
+      cEl.className = "pg-tip-c";
+      let txt;
+      if(c.first) txt = `등록 ${c.p}%`;
+      else if(c.guess) txt = `${c.prev}% → ${c.p}% (시각 미기록)`;
+      else txt = `${c.prev}% → ${c.p}% (${c.p > c.prev ? "+" : "−"}${Math.abs(c.p - c.prev)}%p)`;
+      if(c.by) txt += ` · ${c.by}`;
+      cEl.textContent = txt;
+      tip.appendChild(cEl);
+    });
+    tip.style.display = "";
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    let left = x + 12;
+    if(left + tw > W) left = x - 12 - tw;
+    if(left < 0) left = Math.max(0, Math.min(W - tw, x - tw / 2));
+    let top = y - th - 12;
+    if(top < 0) top = Math.min(H - th, y + 14);
+    tip.style.left = Math.round(left) + "px";
+    tip.style.top = Math.round(top) + "px";
+  };
+  const hide = () => {
+    const hv = document.getElementById("pgHover"); if(hv) hv.style.display = "none";
+    const tip = document.getElementById("pgTip"); if(tip) tip.style.display = "none";
+  };
+  const idxAt = (clientX) => {
+    const r = svg.getBoundingClientRect();
+    const px = (clientX - r.left) * (W / r.width);
+    return Math.round((px - m.l) / pw * dd.span);
+  };
+  hit.addEventListener("pointermove", e => show(idxAt(e.clientX)));
+  hit.addEventListener("pointerdown", e => show(idxAt(e.clientX)));
+  hit.addEventListener("pointerleave", e => { if(e.pointerType === "mouse") hide(); });
+  svg.addEventListener("focus", () => show(pgState.idx));
+  svg.addEventListener("blur", hide);
+  svg.addEventListener("keydown", e => {
+    if(e.key === "ArrowLeft" || e.key === "ArrowRight"){
+      e.preventDefault();
+      show(pgState.idx + (e.key === "ArrowLeft" ? -1 : 1));
+    } else if(e.key === "Home"){ e.preventDefault(); show(0); }
+    else if(e.key === "End"){ e.preventDefault(); show(days.length - 1); }
+  });
+}
+
+// 창 크기가 바뀌면 열린 그래프를 다시 그린다
+let pgResizeTimer = null;
+window.addEventListener("resize", () => {
+  clearTimeout(pgResizeTimer);
+  pgResizeTimer = setTimeout(() => {
+    if(document.getElementById("pgChart") && document.getElementById("modalOverlay").classList.contains("open")) drawProgressChart();
+  }, 150);
+});
 
 function openHistory(id){
   const t = tasks.find(x=>x.id===id);
