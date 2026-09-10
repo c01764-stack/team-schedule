@@ -1185,6 +1185,15 @@
       "start": "2026-09-17",
       "end": "2026-09-17",
       "memo": "티타워/안전관리 시스템 미팅"
+    },
+    {
+      "id": "tmfephhmj",
+      "team": "safety",
+      "person": "천재우",
+      "type": "inspect",
+      "start": "2026-09-15",
+      "end": "2026-09-15",
+      "memo": "정밀안전진단/보라매"
     }
   ],
   "reports": [
@@ -2400,6 +2409,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 수정: 천재우"
+    },
+    {
+      "id": "l_tir10dfshmtv7cna2",
+      "at": "2026-09-10T07:24:56.666Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 추가: 천재우"
     }
   ]
 }
