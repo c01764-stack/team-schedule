@@ -2328,6 +2328,14 @@
       "name": "천재우",
       "type": "change",
       "message": "정기업무 완료: 주간업무일지 작성 보고 (2026-09-10)"
+    },
+    {
+      "id": "l_tdvmh27tqmtv6igc5",
+      "at": "2026-09-10T07:01:27.989Z",
+      "userId": "c05474",
+      "name": "주현수",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
