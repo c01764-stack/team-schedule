@@ -6741,8 +6741,8 @@ updateInstallBtn();
   var panel = document.createElement("div");
   panel.className = "pup-panel";
   panel.innerHTML =
-    '<h4>내 스탬프판</h4>' +
-    '<div class="pup-meta"><span id="pupPan">1번째 판</span><span id="pupToday">오늘 0 / 3</span></div>' +
+    '<h4>소확행 스탬프판</h4>' +
+    '<div class="pup-meta"><span></span><span id="pupToday">오늘 0 / 3</span></div>' +
     '<div class="pup-grid" id="pupGrid"></div>' +
     '<div class="pup-team" id="pupTeam">불러오는 중</div>' +
     '<div class="pup-notice" id="pupNotice"></div>' +
@@ -6809,7 +6809,6 @@ updateInstallBtn();
     rpc("puppy_board", { p_user: u }).then(function (d) {
       boardSize = d.boardSize || 15;
       document.getElementById("pupCount").textContent = d.stampCount + " / " + boardSize;
-      document.getElementById("pupPan").textContent = d.boardNo + "번째 판";
       document.getElementById("pupToday").textContent =
         "오늘 " + d.todayCount + " / " + d.dailyLimit +
         (d.todaySpawns != null ? " (출현 " + d.todaySpawns + "/" + d.dailySpawnLimit + ")" : "");
