@@ -2518,6 +2518,14 @@
       "name": "주현수",
       "type": "change",
       "message": "전달사항 확인: 주현수"
+    },
+    {
+      "id": "l_tj3ztelv7mtw7025v",
+      "at": "2026-09-11T00:02:55.603Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
