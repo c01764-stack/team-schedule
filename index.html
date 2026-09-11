@@ -6737,7 +6737,7 @@ updateInstallBtn();
     '<div class="pup-team" id="pupTeam">불러오는 중</div>' +
     '<div class="pup-notice" id="pupNotice"></div>' +
     '<button class="pup-off" type="button" id="pupOff">창 닫기</button>' +
-    '<button class="pup-off" type="button" id="pupAdmOpen" style="float:right">설정</button>' +
+    '<button class="pup-off" type="button" id="pupAdmOpen" style="float:right;display:none">설정</button>' +
     '<div class="pup-adm" id="pupAdm">' +
       '<label>이벤트 시작일<input type="date" id="acStart"></label>' +
       '<label>이벤트 종료일<input type="date" id="acEnd"></label>' +
@@ -6937,6 +6937,29 @@ updateInstallBtn();
     openAdmin();
   });
   document.getElementById("acSave").addEventListener("click", saveAdmin);
+
+  function showAdminBtn() {
+    document.getElementById("pupAdmOpen").style.display = "inline";
+  }
+
+  (function initAdmin() {
+    if (adminKey()) { showAdminBtn(); return; }
+    var m = /[?&]pupadmin=([^&#]+)/.exec(location.search);
+    if (!m) return;
+    var key = decodeURIComponent(m[1]).trim();
+    rpc("puppy_admin_get", { p_key: key }).then(function (d) {
+      if (d && d.ok) {
+        try { localStorage.setItem("puppyAdminKey", key); } catch (e) {}
+        showAdminBtn();
+        window.alert("관리자 모드가 켜졌습니다. 스탬프판에서 설정을 열 수 있어요.");
+      } else {
+        window.alert("관리자 키가 맞지 않습니다.");
+      }
+      try {
+        history.replaceState(null, "", location.pathname + location.hash);
+      } catch (e) {}
+    }).catch(function () {});
+  })();
 
   /* ── 강아지 등장 ─────────────────────────── */
   var active = null, raf = null, timer = null, lastCheck = 0;
