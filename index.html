@@ -6008,6 +6008,17 @@ updateInstallBtn();
   border:1px dashed rgba(0,0,0,.16);background:#fafafa}
 .pup-meta{font-size:12px;color:#666;display:flex;justify-content:space-between;margin-bottom:8px}
 .pup-ach{font-size:12px;color:#444;border-top:1px solid rgba(0,0,0,.08);padding-top:8px;max-height:104px;overflow:auto}
+.pup-team{border-top:1px solid rgba(0,0,0,.08);padding-top:8px;max-height:132px;overflow:auto}
+.pup-team-h{font-size:11.5px;color:#888;margin-bottom:6px}
+.pup-row{display:flex;align-items:center;gap:6px;margin-bottom:5px;font-size:11.5px;color:#444}
+.pup-me{font-weight:600;color:#117a3a}
+.pup-nm{width:54px;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pup-bar{flex:1;height:6px;border-radius:99px;background:rgba(0,0,0,.08);overflow:hidden}
+.pup-bar i{display:block;height:100%;background:#117a3a;border-radius:99px}
+.pup-ct{width:62px;flex:none;text-align:right;color:#666}
+.pup-ct b{color:#117a3a}
+.pup-notice{margin-top:9px;border-top:1px solid rgba(0,0,0,.08);padding-top:8px;font-size:11.5px;color:#555;line-height:1.7}
+.pup-notice b{display:block;color:#117a3a;font-size:12.5px;margin-bottom:3px}
 .pup-off{margin-top:10px;font-size:12px;color:#888;background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}
 .pup-adm{margin-top:10px;border-top:1px solid rgba(0,0,0,.08);padding-top:10px;display:none}
 .pup-adm label{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#555;margin-bottom:7px}
@@ -6683,7 +6694,6 @@ updateInstallBtn();
 
   /* ── 등장 금지 조건 ──────────────────────── */
   function blocked() {
-    try { if (localStorage.getItem("puppyOff") === "1") return true; } catch (e) {}
     var el = document.activeElement;
     if (el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return true;
     if (el && el.isContentEditable) return true;
@@ -6719,8 +6729,14 @@ updateInstallBtn();
     '<h4>내 스탬프판</h4>' +
     '<div class="pup-meta"><span id="pupPan">1번째 판</span><span id="pupToday">오늘 0 / 3</span></div>' +
     '<div class="pup-grid" id="pupGrid"></div>' +
-    '<div class="pup-ach" id="pupAch">불러오는 중</div>' +
-    '<button class="pup-off" type="button" id="pupOff">이벤트 참여 끄기</button>' +
+    '<div class="pup-team" id="pupTeam">불러오는 중</div>' +
+    '<div class="pup-notice">' +
+      '<b>소확행 이벤트</b>' +
+      '<div>강아지 1스탬프, 고양이 1스탬프, 공룡 3스탬프</div>' +
+      '<div>하루에 랜덤으로 10마리 출현, 하루 최대 3스탬프</div>' +
+      '<div>스탬프 10개 완성시 커피쿠폰~~&#9825;&#9825;&#9825;</div>' +
+    '</div>' +
+    '<button class="pup-off" type="button" id="pupOff">창 닫기</button>' +
     '<button class="pup-off" type="button" id="pupAdmOpen" style="float:right">설정</button>' +
     '<div class="pup-adm" id="pupAdm">' +
       '<label>하루 출현 횟수<input type="number" id="acSpawns" min="1" max="40"></label>' +
@@ -6746,19 +6762,7 @@ updateInstallBtn();
     if (!open) { refreshBoard(); refreshSummary(); }
   });
 
-  function setOff(off) {
-    try { off ? localStorage.setItem("puppyOff", "1") : localStorage.removeItem("puppyOff"); } catch (e) {}
-    fab.classList.toggle("pup-dim", off);
-    document.getElementById("pupOff").textContent = off ? "이벤트 다시 켜기" : "이벤트 참여 끄기";
-    if (!off) { refreshBoard(); check(); }
-  }
-
   document.getElementById("pupOff").addEventListener("click", function () {
-    var off = false;
-    try { off = localStorage.getItem("puppyOff") === "1"; } catch (e) {}
-    if (off) { setOff(false); return; }
-    if (!window.confirm("동물이 더 이상 나타나지 않습니다.\n이 버튼을 다시 누르면 언제든 켤 수 있어요.\n끄시겠어요?")) return;
-    setOff(true);
     panel.style.display = "none";
   });
 
@@ -6794,16 +6798,25 @@ updateInstallBtn();
   }
 
   function refreshSummary() {
-    rpc("puppy_summary", {}).then(function (d) {
-      var el = document.getElementById("pupAch"), html;
-      html = '<div style="margin-bottom:5px">팀 전체 ' + d.teamTotal + '마리</div>';
-      if (!d.achievers.length) {
-        html += '<div style="color:#999">아직 완성한 사람이 없어요</div>';
-      } else {
-        d.achievers.forEach(function (a) {
-          html += '<div>' + a.userName + ' — ' + a.boardNo + '판 완성</div>';
-        });
+    rpc("puppy_team", {}).then(function (d) {
+      var el = document.getElementById("pupTeam");
+      var size = d.boardSize || 10;
+      var me = currentUser();
+      if (!d.members || !d.members.length) {
+        el.innerHTML = '<div class="pup-team-h">팀원 현황</div>' +
+                       '<div style="color:#999">아직 아무도 잡지 않았어요</div>';
+        return;
       }
+      var html = '<div class="pup-team-h">팀원 현황</div>';
+      d.members.forEach(function (m) {
+        var pct = Math.round(m.current / size * 100);
+        html += '<div class="pup-row' + (m.userName === me ? ' pup-me' : '') + '">' +
+                  '<span class="pup-nm">' + m.userName + '</span>' +
+                  '<span class="pup-bar"><i style="width:' + pct + '%"></i></span>' +
+                  '<span class="pup-ct">' + m.current + '/' + size +
+                    (m.boards > 0 ? ' <b>' + m.boards + '완성</b>' : '') + '</span>' +
+                '</div>';
+      });
       el.innerHTML = html;
     }).catch(function () {});
   }
@@ -7152,14 +7165,6 @@ updateInstallBtn();
   setTimeout(function () {
     if (SUPABASE_URL.indexOf("여기에") !== -1) {
       console.warn("[멍멍이] SUPABASE_URL / SUPABASE_KEY 를 먼저 채워주세요.");
-      return;
-    }
-    var isOff = false;
-    try { isOff = localStorage.getItem("puppyOff") === "1"; } catch (e) {}
-    if (isOff) {
-      fab.classList.add("pup-dim");
-      document.getElementById("pupOff").textContent = "이벤트 다시 켜기";
-      refreshBoard();
       return;
     }
     refreshBoard();
