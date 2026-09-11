@@ -1377,6 +1377,19 @@
       "readAt": "2026-09-07T00:00:52.331Z",
       "doneAt": "2026-09-07T00:09:21.115Z",
       "comments": []
+    },
+    {
+      "id": "m_togftrllc",
+      "toUserId": "c05474",
+      "toName": "주현수",
+      "text": "아카데미 사업계획서 작성 현황 및 예상 일정 보고(9월14일)",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-11T06:42:08.298Z",
+      "updatedAt": "2026-09-11T06:42:08.298Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -2595,6 +2608,14 @@
       "name": "오혜지",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tlgu5pn6xmtwl9g6o",
+      "at": "2026-09-11T06:42:08.304Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 주현수"
     }
   ]
 }
