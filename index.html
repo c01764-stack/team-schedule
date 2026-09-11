@@ -5994,9 +5994,19 @@ updateInstallBtn();
 .pup-breathe{animation:pupBreathe 2.2s ease-in-out infinite alternate}
 .pup-z{animation:pupZ 2.4s ease-out infinite}
 .pup-z2{animation:pupZ 2.4s ease-out 1.2s infinite}
-.pup-fab{display:inline-flex;align-items:center;gap:6px;vertical-align:middle;margin-right:8px;
-  background:#fff;border:1px solid rgba(0,0,0,.12);border-radius:999px;padding:7px 13px 7px 10px;
-  cursor:pointer;font:500 13px/1 inherit;color:#222;line-height:1}
+.pup-fab{display:inline-flex;align-items:center;gap:7px;vertical-align:middle;margin-right:8px;
+  background:linear-gradient(135deg,#fff6e3,#ffe9c4);border:1.5px solid #efbb6a;border-radius:999px;
+  padding:7px 15px 7px 10px;cursor:pointer;font:700 13.5px/1 inherit;color:#8a5200;line-height:1;
+  box-shadow:0 2px 6px rgba(200,140,40,.22);transition:transform .15s ease, box-shadow .15s ease}
+.pup-fab:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(200,140,40,.3)}
+.pup-fab:active{transform:translateY(0)}
+@keyframes pupFabPulse{0%{box-shadow:0 0 0 0 rgba(239,160,43,.5),0 2px 6px rgba(200,140,40,.22)}
+  70%{box-shadow:0 0 0 11px rgba(239,160,43,0),0 2px 6px rgba(200,140,40,.22)}
+  100%{box-shadow:0 0 0 0 rgba(239,160,43,0),0 2px 6px rgba(200,140,40,.22)}}
+@keyframes pupFabWig{0%,100%{transform:rotate(0)}30%{transform:rotate(-7deg)}60%{transform:rotate(7deg)}}
+.pup-fab.pup-live{animation:pupFabPulse 1.5s ease-out infinite;border-color:#e08a1f}
+.pup-fab.pup-live span:first-child{animation:pupFabWig .5s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){ .pup-fab.pup-live,.pup-fab.pup-live span:first-child{animation:none} }
 .pup-fab.pup-fixed{position:fixed;right:14px;bottom:76px;z-index:9997;box-shadow:0 2px 10px rgba(0,0,0,.12)}
 .pup-fab.pup-dim{opacity:.45}
 .pup-panel{position:fixed;right:14px;top:64px;z-index:9999;width:268px;background:#fff;max-height:calc(100vh - 96px);overflow-y:auto;overscroll-behavior:contain;
@@ -6980,6 +6990,7 @@ updateInstallBtn();
     inner.innerHTML = dogSVG(sp.breedCode, "run", SZ, true);
     host.appendChild(inner);
     layer.appendChild(host);
+    fab.classList.add("pup-live");
     active = { sp: sp, host: host, inner: inner, caught: false };
 
     var minX = SAFE.left;
@@ -7109,6 +7120,7 @@ updateInstallBtn();
   }
 
   function cleanup() {
+    fab.classList.remove("pup-live");
     if (raf) cancelAnimationFrame(raf);
     if (timer) clearInterval(timer);
     if (active && active.host && active.host.parentNode) active.host.parentNode.removeChild(active.host);
