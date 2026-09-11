@@ -6024,6 +6024,9 @@ updateInstallBtn();
 .pup-adm label{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#555;margin-bottom:7px}
 .pup-adm input[type=number]{width:62px;padding:4px 6px;font:inherit;font-size:12px;border:1px solid #d8d6d0;border-radius:6px;text-align:right}
 .pup-adm input[type=date]{width:124px;padding:3px 6px;font:inherit;font-size:11.5px;border:1px solid #d8d6d0;border-radius:6px}
+.pup-nfield{margin-bottom:7px}
+.pup-nfield span{display:block;font-size:11.5px;color:#555;margin-bottom:3px}
+.pup-nfield input,.pup-nfield textarea{width:100%;padding:5px 7px;font:inherit;font-size:11.5px;border:1px solid #d8d6d0;border-radius:6px;resize:vertical;line-height:1.5}
 .pup-adm select{padding:4px 6px;font:inherit;font-size:12px;border:1px solid #d8d6d0;border-radius:6px}
 .pup-adm .save{width:100%;margin-top:4px;padding:7px 0;border-radius:7px;border:1px solid #117a3a;background:#117a3a;color:#fff;font:inherit;font-size:12.5px;cursor:pointer}
 .pup-adm .msg{font-size:11.5px;color:#117a3a;text-align:center;margin-top:6px;min-height:14px}
@@ -6731,12 +6734,7 @@ updateInstallBtn();
     '<div class="pup-meta"><span id="pupPan">1번째 판</span><span id="pupToday">오늘 0 / 3</span></div>' +
     '<div class="pup-grid" id="pupGrid"></div>' +
     '<div class="pup-team" id="pupTeam">불러오는 중</div>' +
-    '<div class="pup-notice">' +
-      '<b>소확행 이벤트</b>' +
-      '<div>강아지 1스탬프, 고양이 1스탬프, 공룡 3스탬프</div>' +
-      '<div>하루에 랜덤으로 10마리 출현, 하루 최대 3스탬프</div>' +
-      '<div>스탬프 10개 완성시 커피쿠폰~~&#9825;&#9825;&#9825;</div>' +
-    '</div>' +
+    '<div class="pup-notice" id="pupNotice"></div>' +
     '<button class="pup-off" type="button" id="pupOff">창 닫기</button>' +
     '<button class="pup-off" type="button" id="pupAdmOpen" style="float:right">설정</button>' +
     '<div class="pup-adm" id="pupAdm">' +
@@ -6755,6 +6753,10 @@ updateInstallBtn();
         '<option value="all">전부 18종</option>' +
       '</select></label>' +
       '<label>이벤트 켜기<input type="checkbox" id="acOn" style="width:auto"></label>' +
+      '<div class="pup-nfield"><span>안내 제목</span>' +
+        '<input type="text" id="acNTitle" maxlength="40"></div>' +
+      '<div class="pup-nfield"><span>안내 내용 (줄바꿈으로 구분)</span>' +
+        '<textarea id="acNBody" rows="4" maxlength="400"></textarea></div>' +
       '<button class="save" type="button" id="acSave">저장</button>' +
       '<div class="msg" id="acMsg"></div>' +
     '</div>';
@@ -6799,6 +6801,18 @@ updateInstallBtn();
       document.getElementById("pupToday").textContent =
         "오늘 " + d.todayCount + " / " + d.dailyLimit +
         (d.todaySpawns != null ? " (출현 " + d.todaySpawns + "/" + d.dailySpawnLimit + ")" : "");
+      var nt = document.getElementById("pupNotice");
+      if (nt) {
+        var esc = function (v) {
+          return String(v == null ? "" : v)
+            .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        };
+        var body = esc(d.noticeBody).split("\\n").map(function (ln) {
+          return '<div>' + ln + '</div>';
+        }).join("");
+        nt.innerHTML = (d.noticeTitle ? '<b>' + esc(d.noticeTitle) + '</b>' : '') + body;
+      }
+
       var grid = document.getElementById("pupGrid"), i, cell, code;
       grid.innerHTML = "";
       for (i = 0; i < boardSize; i++) {
@@ -6860,6 +6874,8 @@ updateInstallBtn();
     document.getElementById("acCool").value  = d.cooldownMin;
     document.getElementById("acProb").value  = Math.round(d.probability * 100);
     document.getElementById("acOn").checked  = !!d.enabled;
+    document.getElementById("acNTitle").value = d.noticeTitle || "";
+    document.getElementById("acNBody").value  = d.noticeBody || "";
     var pool = d.pool || DOGS;
     var hasDog = pool.indexOf("shiba") !== -1, hasCat = pool.indexOf("koshort") !== -1;
     document.getElementById("acPool").value = (hasDog && hasCat) ? "all" : (hasCat ? "cat" : "dog");
@@ -6896,6 +6912,8 @@ updateInstallBtn();
       p_start: document.getElementById("acStart").value || null,
       p_end: document.getElementById("acEnd").value || null,
       p_cycle: parseInt(document.getElementById("acCycle").value, 10),
+      p_title: document.getElementById("acNTitle").value,
+      p_body: document.getElementById("acNBody").value,
       p_dino: parseInt(document.getElementById("acDino").value, 10),
       p_duration: parseInt(document.getElementById("acDur").value, 10),
       p_cooldown: parseInt(document.getElementById("acCool").value, 10),
