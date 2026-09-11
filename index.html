@@ -5971,7 +5971,7 @@ updateInstallBtn();
 @media (prefers-color-scheme: dark){ .pup-paw{filter:invert(1) opacity(.75)} }
 @keyframes pupLeg{from{transform:rotate(24deg)}to{transform:rotate(-24deg)}}
 @keyframes pupBob{from{transform:translateY(0)}to{transform:translateY(-2.5px)}}
-@keyframes pupHop{0%,100%{transform:translateY(0)}45%{transform:translateY(-30px)}}
+@keyframes pupHop{0%,100%{transform:translateY(0)}45%{transform:translateY(-22px)}}
 @keyframes pupTail{from{transform:rotate(-14deg)}to{transform:rotate(16deg)}}
 @keyframes pupTailF{from{transform:rotate(-26deg)}to{transform:rotate(28deg)}}
 @keyframes pupTailS{from{transform:rotate(-5deg)}to{transform:rotate(7deg)}}
@@ -6042,7 +6042,7 @@ updateInstallBtn();
   /* ═══════════════════════════════════════════ */
 
   var SAFE = { top: 68, bottom: 88, left: 12, right: 12 };
-  var SIZE = 180, SPEED = 78, JOY_MS = 1500;
+  var SIZE = 126, SPEED = 68, JOY_MS = 1500;
   var DRAW_H = Math.round(62 * 0.72);   // 실제 그려지는 높이
 
   var BREEDS = {
@@ -6949,7 +6949,7 @@ updateInstallBtn();
       var dropPaw = function (cx, cy, dx, dy) {
         var el = document.createElement("div");
         el.className = "pup-paw";
-        el.innerHTML = pawSVG(isCat, pawColor, meta.kind === "dino" ? 44 : 30);
+        el.innerHTML = pawSVG(isCat, pawColor, meta.kind === "dino" ? 32 : 22);
         var ang = Math.atan2(dy, dx) * 180 / Math.PI + 90;
         var ox = -dy * 5 * side, oy = dx * 5 * side;   // 진행 방향의 좌우로 번갈아
         el.style.left = n2(cx + ox - 8) + "px";
@@ -7007,7 +7007,7 @@ updateInstallBtn();
           host.style.top = n2(y) + "px";
 
           since += sp2 * dt;
-          if (since >= 48) {
+          if (since >= 36) {
             since = 0;
             dropPaw(x + SZ * 0.46, y + DH * 0.84, vx, vy);
           }
