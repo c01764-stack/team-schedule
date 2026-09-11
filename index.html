@@ -5960,5 +5960,1189 @@ if('serviceWorker' in navigator && location.protocol.startsWith('http')){
 
 updateInstallBtn();
 </script>
+<!-- ========== 멍멍이 잡기 시작 (여기부터 </body> 앞에 붙여넣기) ========== -->
+<style>
+#pupLayer{position:fixed;inset:0;pointer-events:none;z-index:9998}
+#pupLayer *{box-sizing:border-box}
+.pup-dog{position:absolute;pointer-events:auto;cursor:pointer;padding:6px;background:none;border:0}
+.pup-heart{position:absolute;color:#D4537E;opacity:0;pointer-events:none;font-size:16px}
+.pup-paw{position:absolute;pointer-events:none;opacity:0;will-change:opacity;animation:pupPaw 1.9s ease-out forwards}
+@keyframes pupPaw{0%{opacity:0}8%{opacity:.62}50%{opacity:.5}100%{opacity:0}}
+@media (prefers-color-scheme: dark){ .pup-paw{filter:invert(1) opacity(.75)} }
+@keyframes pupLeg{from{transform:rotate(24deg)}to{transform:rotate(-24deg)}}
+@keyframes pupBob{from{transform:translateY(0)}to{transform:translateY(-2.5px)}}
+@keyframes pupHop{0%,100%{transform:translateY(0)}45%{transform:translateY(-18px)}}
+@keyframes pupTail{from{transform:rotate(-14deg)}to{transform:rotate(16deg)}}
+@keyframes pupTailF{from{transform:rotate(-26deg)}to{transform:rotate(28deg)}}
+@keyframes pupTailS{from{transform:rotate(-5deg)}to{transform:rotate(7deg)}}
+@keyframes pupFlap{from{transform:rotate(-13deg) scaleY(.9)}to{transform:rotate(11deg) scaleY(1.05)}}
+@keyframes pupBreathe{from{transform:scale(1)}to{transform:scale(1.035)}}
+@keyframes pupZ{0%{opacity:0;transform:translate(0,2px) scale(.6)}25%{opacity:.85}100%{opacity:0;transform:translate(5px,-14px) scale(1.1)}}
+@keyframes pupFly{0%{opacity:0;transform:translateY(8px) scale(.4)}22%{opacity:1}100%{opacity:0;transform:translateY(-64px) scale(1.2)}}
+@keyframes pupFall{0%{opacity:0;transform:translateY(-20px) rotate(0)}12%{opacity:1}100%{opacity:0;transform:translateY(340px) rotate(540deg)}}
+@keyframes pupIn{to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes pupUp{0%{opacity:0;transform:translateY(46px)}60%{opacity:1;transform:translateY(-9px)}100%{opacity:1;transform:translateY(0)}}
+.pup-leg{animation:pupLeg .26s ease-in-out infinite alternate;transform-origin:50% 8%}
+.pup-leg2{animation:pupLeg .26s ease-in-out infinite alternate-reverse;transform-origin:50% 8%}
+.pup-bob{animation:pupBob .26s ease-in-out infinite alternate}
+.pup-jump{animation:pupHop .4s cubic-bezier(.3,1.7,.5,1) 3}
+.pup-tail{animation:pupTail .3s ease-in-out infinite alternate}
+.pup-tailf{animation:pupTailF .12s ease-in-out infinite alternate}
+.pup-tail-slow{animation:pupTailS 1.5s ease-in-out infinite alternate}
+.pup-flap{animation:pupFlap .42s ease-in-out infinite alternate}
+.pup-flap2{animation:pupFlap .42s ease-in-out infinite alternate-reverse}
+.pup-breathe{animation:pupBreathe 2.2s ease-in-out infinite alternate}
+.pup-z{animation:pupZ 2.4s ease-out infinite}
+.pup-z2{animation:pupZ 2.4s ease-out 1.2s infinite}
+.pup-fab{position:fixed;right:14px;bottom:76px;z-index:9997;display:flex;align-items:center;gap:6px;
+  background:#fff;border:1px solid rgba(0,0,0,.12);border-radius:999px;padding:7px 13px 7px 10px;
+  box-shadow:0 2px 10px rgba(0,0,0,.12);cursor:pointer;font:500 13px/1 inherit;color:#222}
+.pup-panel{position:fixed;right:14px;bottom:126px;z-index:9999;width:268px;background:#fff;
+  border:1px solid rgba(0,0,0,.12);border-radius:14px;padding:14px;box-shadow:0 6px 24px rgba(0,0,0,.16);
+  display:none;font:400 13px/1.6 inherit;color:#222}
+.pup-panel h4{margin:0 0 9px;font:500 14px/1.4 inherit}
+.pup-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:11px}
+.pup-slot{aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  border:1px dashed rgba(0,0,0,.16);background:#fafafa}
+.pup-meta{font-size:12px;color:#666;display:flex;justify-content:space-between;margin-bottom:8px}
+.pup-ach{font-size:12px;color:#444;border-top:1px solid rgba(0,0,0,.08);padding-top:8px;max-height:104px;overflow:auto}
+.pup-off{margin-top:10px;font-size:12px;color:#888;background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}
+.pup-adm{margin-top:10px;border-top:1px solid rgba(0,0,0,.08);padding-top:10px;display:none}
+.pup-adm label{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#555;margin-bottom:7px}
+.pup-adm input[type=number]{width:62px;padding:4px 6px;font:inherit;font-size:12px;border:1px solid #d8d6d0;border-radius:6px;text-align:right}
+.pup-adm select{padding:4px 6px;font:inherit;font-size:12px;border:1px solid #d8d6d0;border-radius:6px}
+.pup-adm .save{width:100%;margin-top:4px;padding:7px 0;border-radius:7px;border:1px solid #117a3a;background:#117a3a;color:#fff;font:inherit;font-size:12.5px;cursor:pointer}
+.pup-adm .msg{font-size:11.5px;color:#117a3a;text-align:center;margin-top:6px;min-height:14px}
+.pup-cel{position:fixed;inset:0;z-index:10000;pointer-events:none}
+.pup-cf{position:absolute;width:7px;height:12px;border-radius:1px;animation:pupFall linear forwards}
+.pup-card{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%) scale(.6);opacity:0;background:#fff;
+  border:1px solid rgba(0,0,0,.14);border-radius:16px;padding:18px 22px;text-align:center;
+  animation:pupIn .5s cubic-bezier(.3,1.6,.5,1) .45s forwards;box-shadow:0 8px 30px rgba(0,0,0,.18);
+  font:400 13px/1.6 inherit;color:#222;min-width:190px}
+.pup-pop{position:absolute;bottom:26%;opacity:0;animation:pupUp .5s cubic-bezier(.3,1.7,.5,1) forwards}
+@media (prefers-reduced-motion: reduce){
+  .pup-leg,.pup-leg2,.pup-bob,.pup-jump,.pup-tail,.pup-tailf,.pup-tail-slow,.pup-breathe{animation:none!important}
+}
+@media (prefers-color-scheme: dark){
+  .pup-fab,.pup-panel,.pup-card{background:#23262b;color:#e8e8e8;border-color:rgba(255,255,255,.14)}
+  .pup-slot{background:#1b1e22;border-color:rgba(255,255,255,.18)}
+  .pup-meta,.pup-ach{color:#a9adb4}
+}
+</style>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ══════════ 여기 두 줄만 바꾸세요 ══════════ */
+  var SUPABASE_URL = "https://fukgfyifwywqeyjlmhyi.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_K1Ulm-Au3rDELxHPMqRGnQ_qr5KkhHS";
+  /* ═══════════════════════════════════════════ */
+
+  var SAFE = { top: 68, bottom: 88, left: 12, right: 12 };
+  var SIZE = 62, SPEED = 46, JOY_MS = 1500;
+  var DRAW_H = Math.round(62 * 0.72);   // 실제 그려지는 높이
+
+  var BREEDS = {
+    shiba: { name:"시바", coat:"#EFA02B", shade:"#B9711A", belly:"#FBEFD9", ear:"prick", build:"std",
+             tail:"curl", brows:"#FBEFD9", innerEar:"#E3A69E", cheeks:true, snout:1.0, eyeShape:"almond" },
+
+    corgi: { name:"웰시코기", coat:"#DE8A21", shade:"#A55F10", belly:"#FFFFFF", ear:"bigPrick", build:"corgi",
+             tail:"stub", mark:"chest", innerEar:"#E3A69E", blaze:true, socks:"#FFFFFF", snout:0.95 },
+
+
+    retriever: { name:"리트리버", coat:"#F0C089", shade:"#C79350", belly:"#FBEFD9", ear:"folded", build:"big",
+                 tail:"feather", ruff:true, feather:true, snout:1.12 },
+
+    beagle: { name:"비글", coat:"#F7F4EC", shade:"#C8C2B2", belly:"#FFFFFF", ear:"longEar", build:"std",
+              mark:"saddle", accent:"#8A4A21", cap:"#8A4A21", tail:"straight", tailTip:"#FFFFFF",
+              brows:"#8A4A21", socks:"#FFFFFF", snout:1.05 },
+
+    poodle: { name:"푸들", coat:"#E9E4DA", shade:"#C3BCAE", belly:"#F6F3EC", ear:"longEar", build:"fluffy",
+              mark:"pompom", tail:"pompom", fur:"curly", snout:0.92, slimSnout:true },
+
+    dachshund: { name:"닥스훈트", coat:"#98481C", shade:"#6B3010", belly:"#D9A57A", ear:"longEar", build:"dachs",
+                 tail:"straight", brows:"#D9A57A", socks:"#D9A57A", snout:1.25 },
+
+
+    jindo: { name:"진돗개", coat:"#FBF0DC", shade:"#D8C29C", belly:"#FFFFFF", ear:"prick", build:"std",
+             tail:"curl", brows:"#E9D4AE", innerEar:"#E3A69E", snout:1.05, eyeShape:"almond" },
+
+    husky: { name:"허스키", coat:"#77879A", shade:"#4B5967", belly:"#FFFFFF", ear:"prick", build:"big",
+             mark:"mask", tail:"plume", eye:"#4E86C7", brows:"#FFFFFF", innerEar:"#C9B5B0",
+             socks:"#FFFFFF", fur:"thick", snout:1.05 }, 
+
+    /* ── 고양이 10종 ── */
+    koshort: { kind:"cat", name:"코숏", coat:"#8A93A0", shade:"#5D6672", belly:"#E9ECF0",
+               build:"cat", ear:"catEar", tail:"catUp", stripe:"#4A525C", forehead:true, innerEar:"#E3A69E" },
+
+    cheese: { kind:"cat", name:"치즈냥", coat:"#EDA24A", shade:"#C97C22", belly:"#FBEAD2",
+              build:"cat", ear:"catEar", tail:"catRing", stripe:"#B86A16", forehead:true, innerEar:"#E3A69E" },
+
+    tuxedo: { kind:"cat", name:"턱시도", coat:"#32363E", shade:"#1E2126", belly:"#FFFFFF",
+              build:"cat", ear:"catEar", tail:"catUp", bib:true, socks:"#FFFFFF",
+              innerEar:"#C79A94", eye:"#C9A227" },
+
+    calico: { kind:"cat", name:"삼색이", coat:"#F6F3ED", shade:"#D5D0C4", belly:"#FFFFFF",
+              build:"cat", ear:"catEar", tail:"catCurl", patchA:"#E89B3C", patchB:"#3B3730",
+              innerEar:"#E3A69E" },
+
+    russian: { kind:"cat", name:"러시안블루", coat:"#8FA3B3", shade:"#63798C", belly:"#C9D6E0",
+               build:"catSlim", ear:"catEar", tail:"catUp", eye:"#7BB661", innerEar:"#C9B5B0" },
+
+    persian: { kind:"cat", name:"페르시안", coat:"#F0E4CE", shade:"#CBB89A", belly:"#FBF4E6",
+               build:"catFluffy", ear:"catSmall", tail:"catFluff", flatFace:true, ruffCat:true,
+               innerEar:"#E3A69E", eye:"#C9761F" },
+
+    siamese: { kind:"cat", name:"샴", coat:"#EFE2CC", shade:"#C9B695", belly:"#FBF4E6",
+               build:"catSlim", ear:"catEar", tail:"catPoint", points:"#4A3B33", eye:"#4E86C7",
+               innerEar:"#8A6E62" },
+
+    scottish: { kind:"cat", name:"스코티시폴드", coat:"#BCB5A9", shade:"#8E877B", belly:"#EDE9E1",
+                build:"catFluffy", ear:"catFold", tail:"catCurl", roundFace:true, innerEar:"#D4B6B0",
+                eye:"#C9761F" },
+
+    bengal: { kind:"cat", name:"뱅갈", coat:"#DCA44E", shade:"#A9762C", belly:"#F3E3C4",
+              build:"catSlim", ear:"catEar", tail:"catRing", rosette:"#4A3820", innerEar:"#E3A69E",
+              eye:"#7BB661" },
+
+    munchkin: { kind:"cat", name:"먼치킨", coat:"#E8DCCB", shade:"#BCAD98", belly:"#FBF4E6",
+                build:"catShort", ear:"catEar", tail:"catUp", innerEar:"#E3A69E", eye:"#C9761F" }
+, 
+
+    /* ── 공룡 5종 (크게 나오고 스탬프 3칸) ── */
+    trex:    { kind:"dino", name:"티라노", coat:"#7A9A5B", shade:"#4E6B36", belly:"#D9E5C2",
+               sizeMul:1.85, weight:3, form:"trex" },
+    brachio: { kind:"dino", name:"브라키오", coat:"#6E8FA8", shade:"#47627A", belly:"#CCDDE9",
+               sizeMul:1.95, weight:3, form:"brachio" },
+    stego:   { kind:"dino", name:"스테고", coat:"#8D7BA8", shade:"#5D4E76", belly:"#DED3EA",
+               sizeMul:1.85, weight:3, form:"stego" }
+
+  };
+
+  var BUILDS = {
+    std:    { bx:38, by:28, rx:21, ry:13, hx:58, hy:17, hr:13,   ly:32, lh:18, lw:7.5 },
+    big:    { bx:37, by:27, rx:23, ry:14, hx:59, hy:16, hr:14,   ly:31, lh:19, lw:8   },
+    corgi:  { bx:36, by:30, rx:24, ry:11, hx:62, hy:20, hr:12.5, ly:39, lh:10, lw:7   },
+    dachs:  { bx:35, by:31, rx:26, ry:9.5,hx:64, hy:23, hr:11,   ly:40, lh:9,  lw:6.5 },
+    fluffy: { bx:38, by:28, rx:19, ry:15, hx:58, hy:16, hr:14,   ly:38, lh:12, lw:7   },
+    stocky: { bx:38, by:29, rx:22, ry:14, hx:59, hy:19, hr:15,   ly:38, lh:12, lw:9.5 }
+  };
+
+  function n(v) { return Math.round(v * 10) / 10; }
+
+  /* 졸 때 올라가는 z 표시 */
+  function ZZZ(g) {
+    var x = n(g.hx + 12), y = n(g.hy - 10);
+    return '<text class="pup-z" x="' + x + '" y="' + y + '" font-size="8" font-weight="600" fill="#8A93A0">z</text>' +
+           '<text class="pup-z2" x="' + n(x+5) + '" y="' + n(y-6) + '" font-size="10" font-weight="600" fill="#8A93A0">z</text>';
+  }
+
+  /* 다리 — 발가락, 흰 양말까지 한 덩어리로 회전 */
+  function leg(x, y, w, h, fill, toe, cls, sock) {
+    var cx = n(x + w / 2), bt = n(y + h);
+    var s = sock
+      ? '<path d="M ' + n(x) + ' ' + n(bt - 5.5) + ' h ' + n(w) + ' v ' + 3.5 +
+        ' a ' + n(w/2) + ' ' + n(w/2) + ' 0 0 1 -' + n(w) + ' 0 Z" fill="' + sock + '"/>' : '';
+    return '<g class="' + cls + '" style="transform-origin:' + cx + 'px ' + n(y + h * 0.08) + 'px">' +
+      '<rect x="' + n(x) + '" y="' + n(y) + '" width="' + n(w) + '" height="' + n(h) + '" rx="' + n(w/2) + '" fill="' + fill + '"/>' +
+      s +
+      '<rect x="' + n(x) + '" y="' + n(y) + '" width="' + n(w * 0.34) + '" height="' + n(h) + '" rx="' + n(w/2) + '" fill="#000" opacity=".07"/>' +
+      '<path d="M ' + n(x + w*0.34) + ' ' + n(bt - 3.2) + ' V ' + n(bt - 0.8) +
+           ' M ' + n(x + w*0.68) + ' ' + n(bt - 3.2) + ' V ' + n(bt - 0.8) + '"' +
+           ' stroke="' + toe + '" stroke-width="0.9" stroke-linecap="round" opacity=".5"/>' +
+      '</g>';
+  }
+
+  function tail(type, g, b, cls) {
+    var tx = n(g.bx - g.rx + 2), ty = n(g.by - 2);
+    var o = ' class="' + cls + '" style="transform-origin:' + tx + 'px ' + ty + 'px"';
+    if (type === "curl")
+      return '<path' + o + ' d="M ' + tx + ' ' + ty +
+        ' C ' + n(tx-15) + ' ' + n(ty-4) + ' ' + n(tx-19) + ' ' + n(ty-19) + ' ' + n(tx-4) + ' ' + n(ty-22) +
+        ' C ' + n(tx+7) + ' ' + n(ty-24) + ' ' + n(tx+11) + ' ' + n(ty-14) + ' ' + n(tx+4) + ' ' + n(ty-11) +
+        ' L ' + n(tx+1) + ' ' + n(ty-14) +
+        ' C ' + n(tx+5) + ' ' + n(ty-16) + ' ' + n(tx+2) + ' ' + n(ty-20) + ' ' + n(tx-3) + ' ' + n(ty-19) +
+        ' C ' + n(tx-14) + ' ' + n(ty-17) + ' ' + n(tx-11) + ' ' + n(ty-6) + ' ' + n(tx+2) + ' ' + n(ty-4) +
+        ' Z" fill="' + b.shade + '"/>';
+    if (type === "stub")
+      return '<g' + o + '><ellipse cx="' + n(tx-4) + '" cy="' + n(ty-5) + '" rx="6.5" ry="5.5" fill="' + b.shade + '"/>' +
+             '<ellipse cx="' + n(tx-5) + '" cy="' + n(ty-6.5) + '" rx="3.4" ry="2.8" fill="#fff" opacity=".14"/></g>';
+    if (type === "plume")
+      return '<g' + o + '><path d="M ' + tx + ' ' + ty +
+        ' C ' + n(tx-9) + ' ' + n(ty-1) + ' ' + n(tx-20) + ' ' + n(ty-7) + ' ' + n(tx-24) + ' ' + n(ty-18) +
+        ' C ' + n(tx-16) + ' ' + n(ty-16) + ' ' + n(tx-17) + ' ' + n(ty-21) + ' ' + n(tx-13) + ' ' + n(ty-26) +
+        ' C ' + n(tx-6) + ' ' + n(ty-19) + ' ' + n(tx-3) + ' ' + n(ty-11) + ' ' + n(tx+1) + ' ' + n(ty-5) +
+        ' Z" fill="' + b.shade + '"/>' +
+        '<path d="M ' + n(tx-6) + ' ' + n(ty-6) + ' C ' + n(tx-13) + ' ' + n(ty-10) + ' ' + n(tx-17) + ' ' + n(ty-15) + ' ' + n(tx-19) + ' ' + n(ty-19) +
+        '" stroke="#fff" stroke-width="1.4" fill="none" opacity=".22"/></g>';
+    if (type === "feather")
+      return '<g' + o + '><path d="M ' + tx + ' ' + ty +
+        ' C ' + n(tx-11) + ' ' + n(ty-5) + ' ' + n(tx-20) + ' ' + n(ty-13) + ' ' + n(tx-24) + ' ' + n(ty-23) +
+        ' C ' + n(tx-17) + ' ' + n(ty-22) + ' ' + n(tx-13) + ' ' + n(ty-18) + ' ' + n(tx-9) + ' ' + n(ty-13) +
+        ' C ' + n(tx-5) + ' ' + n(ty-9) + ' ' + n(tx-2) + ' ' + n(ty-5) + ' ' + n(tx+1) + ' ' + n(ty-3) +
+        ' Z" fill="' + b.shade + '"/>' +
+        '<path d="M ' + n(tx-4) + ' ' + n(ty-5) + ' q -6 -5 -10 -11 M ' + n(tx-9) + ' ' + n(ty-6) + ' q -4 -6 -7 -10' +
+        '" stroke="' + b.coat + '" stroke-width="1" fill="none" opacity=".45"/></g>';
+    if (type === "pompom")
+      return '<g' + o + '><path d="M ' + tx + ' ' + ty + ' Q ' + n(tx-10) + ' ' + n(ty-9) + ' ' + n(tx-15) + ' ' + n(ty-16) +
+        '" stroke="' + b.shade + '" stroke-width="3.2" stroke-linecap="round" fill="none"/>' +
+        '<circle cx="' + n(tx-17) + '" cy="' + n(ty-19) + '" r="5.8" fill="' + b.coat + '"/>' +
+        '<circle cx="' + n(tx-19) + '" cy="' + n(ty-21) + '" r="2.6" fill="#fff" opacity=".3"/></g>';
+    var tip = b.tailTip ? '<circle cx="' + n(tx-17) + '" cy="' + n(ty-18) + '" r="3.2" fill="' + b.tailTip + '"/>' : '';
+    return '<g' + o + '><path d="M ' + tx + ' ' + ty + ' Q ' + n(tx-10) + ' ' + n(ty-8) + ' ' + n(tx-16) + ' ' + n(ty-17) +
+      '" stroke="' + b.shade + '" stroke-width="4" stroke-linecap="round" fill="none"/>' + tip + '</g>';
+  }
+
+  function ears(t, g, b) {
+    var hx = g.hx, hy = g.hy, ic = b.accent || b.shade, s, p, inner = "";
+    if (t === "prick" || t === "bigPrick" || t === "smallPrick") {
+      s = t === "bigPrick" ? 1.4 : (t === "smallPrick" ? 0.72 : 1);
+      p = function (dx, dy) { return n(hx + dx * s) + "," + n(hy + dy * s); };
+      if (b.innerEar)
+        inner = '<path d="M ' + p(-7.5,-10) + ' L ' + p(-8.6,-15.6) + ' L ' + p(-3.4,-11.6) + ' Z" fill="' + b.innerEar + '"/>' +
+                '<path d="M ' + p(7,-11.6) + ' L ' + p(10.6,-15.6) + ' L ' + p(10.6,-10) + ' Z" fill="' + b.innerEar + '"/>';
+      return '<path d="M ' + p(-8,-9) + ' L ' + p(-10,-18) + ' L ' + p(-1,-12) + ' Z" fill="' + ic + '"/>' +
+             '<path d="M ' + p(6,-12) + ' L ' + p(12,-18) + ' L ' + p(12,-9) + ' Z" fill="' + ic + '"/>' + inner;
+    }
+    if (t === "folded")
+      return '<path d="M ' + n(hx-9) + ' ' + n(hy-8) + ' Q ' + n(hx-17) + ' ' + n(hy-3) + ' ' + n(hx-12) + ' ' + n(hy+8) +
+             ' Q ' + n(hx-5) + ' ' + n(hy+4) + ' ' + n(hx-5) + ' ' + n(hy-6) + ' Z" fill="' + ic + '"/>' +
+             '<path d="M ' + n(hx+8) + ' ' + n(hy-10) + ' Q ' + n(hx+17) + ' ' + n(hy-7) + ' ' + n(hx+15) + ' ' + n(hy+4) +
+             ' Q ' + n(hx+8) + ' ' + n(hy) + ' ' + n(hx+6) + ' ' + n(hy-8) + ' Z" fill="' + ic + '"/>' +
+             '<path d="M ' + n(hx-12) + ' ' + n(hy-4) + ' q -3 5 0 10" stroke="#000" stroke-width="1" opacity=".08" fill="none"/>';
+    if (t === "longEar")
+      return '<ellipse cx="' + n(hx-10) + '" cy="' + n(hy+4) + '" rx="5.6" ry="12" fill="' + ic + '"/>' +
+             '<ellipse cx="' + n(hx-10) + '" cy="' + n(hy+6) + '" rx="2.8" ry="7" fill="#000" opacity=".09"/>' +
+             '<ellipse cx="' + n(hx+11) + '" cy="' + n(hy+2) + '" rx="5.2" ry="11" fill="' + ic + '"/>';
+    return '<path d="M ' + n(hx-11) + ' ' + n(hy-7) + ' a 5.5 5.5 0 1 1 9 3 Z" fill="' + ic + '"/>' +
+           '<path d="M ' + n(hx+9) + ' ' + n(hy-9) + ' a 5.5 5.5 0 1 1 6.5 5 Z" fill="' + ic + '"/>';
+  }
+
+  function marks(m, g, b) {
+    if (m === "chest")
+      return '<ellipse cx="' + n(g.bx+g.rx-6) + '" cy="' + n(g.by+4) + '" rx="7.5" ry="8.5" fill="' + b.belly + '"/>';
+    if (m === "saddle")
+      return '<path d="M ' + n(g.bx-g.rx+4) + ' ' + n(g.by-2) + ' Q ' + g.bx + ' ' + n(g.by-g.ry-3) + ' ' + n(g.bx+g.rx-6) + ' ' + n(g.by-3) +
+             ' L ' + n(g.bx+g.rx-8) + ' ' + n(g.by+4) + ' Q ' + g.bx + ' ' + n(g.by-1) + ' ' + n(g.bx-g.rx+5) + ' ' + n(g.by+5) + ' Z" fill="' + b.accent + '"/>' +
+             '<ellipse cx="' + n(g.bx-g.rx+9) + '" cy="' + n(g.by+1) + '" rx="5" ry="4" fill="#3A2A1C" opacity=".55"/>';
+    if (m === "mask")
+      return '<ellipse cx="' + n(g.hx+4) + '" cy="' + n(g.hy+5) + '" rx="10.5" ry="8.5" fill="' + b.belly + '"/>' +
+             '<path d="M ' + n(g.hx-1) + ' ' + n(g.hy-12) + ' L ' + n(g.hx+3.5) + ' ' + n(g.hy-2) + ' L ' + n(g.hx-4.5) + ' ' + n(g.hy-2) + ' Z" fill="' + b.belly + '"/>';
+    if (m === "pompom")
+      return '<circle cx="' + n(g.hx-4) + '" cy="' + n(g.hy-12) + '" r="7" fill="' + b.coat + '"/>' +
+             '<circle cx="' + n(g.hx-6) + '" cy="' + n(g.hy-14) + '" r="3" fill="#fff" opacity=".32"/>';
+    return "";
+  }
+
+  /* 털 질감 — 윤곽에 덩어리를 붙인다 */
+  function fur(type, g, b) {
+    var out = "", i, a, r = 0;
+    if (type === "fluffy") {
+      var pts = [[-0.95,-0.4],[-0.6,-0.95],[0,-1.05],[0.6,-0.9],[-0.95,0.45],[-0.5,0.95],[0.2,1.0]];
+      for (i = 0; i < pts.length; i++)
+        out += '<circle cx="' + n(g.bx + pts[i][0]*g.rx) + '" cy="' + n(g.by + pts[i][1]*g.ry) + '" r="' + n(g.ry*0.42) + '" fill="' + b.coat + '"/>';
+      return out;
+    }
+    if (type === "curly") {
+      for (i = 0; i < 11; i++) {
+        a = Math.PI * (0.72 + i * 0.14);
+        out += '<circle cx="' + n(g.bx + Math.cos(a)*g.rx*0.97) + '" cy="' + n(g.by + Math.sin(a)*g.ry*0.97) + '" r="' + n(g.ry*0.33) + '" fill="' + b.coat + '"/>';
+      }
+      return out;
+    }
+    if (type === "thick") {
+      return '<path d="M ' + n(g.bx-g.rx+2) + ' ' + n(g.by-4) + ' q 6 -6 14 -6 q 9 0 15 5" stroke="' + b.shade + '" stroke-width="1.2" fill="none" opacity=".35"/>';
+    }
+    return "";
+  }
+
+
+  var CAT_BUILDS = {
+    cat:       { bx:38, by:29, rx:20,   ry:11.5, hx:57, hy:18, hr:11.5, ly:34, lh:17, lw:6.5 },
+    catSlim:   { bx:38, by:29, rx:20.5, ry:10.5, hx:58, hy:18, hr:11,   ly:33, lh:18, lw:6   },
+    catFluffy: { bx:38, by:28, rx:19,   ry:14,   hx:57, hy:17, hr:13,   ly:37, lh:13, lw:7   },
+    catShort:  { bx:37, by:31, rx:22,   ry:10.5, hx:60, hy:22, hr:11,   ly:41, lh:8,  lw:6.5 }
+  };
+
+  function catEars(t, g, b) {
+    var hx = g.hx, hy = g.hy, ic = b.points || b.shade, inner = "";
+    if (t === "catFold")
+      return '<path d="M ' + n(hx-10) + ' ' + n(hy-7) + ' q -2 -6 4 -6 q 5 0 4 5 q -4 3 -8 1 Z" fill="' + ic + '"/>' +
+             '<path d="M ' + n(hx+5) + ' ' + n(hy-9) + ' q 1 -6 6 -5 q 5 2 2 6 q -4 2 -8 -1 Z" fill="' + ic + '"/>';
+    var sc = t === "catSmall" ? 0.76 : 1;
+    var p = function (dx, dy) { return n(hx + dx*sc) + "," + n(hy + dy*sc); };
+    if (b.innerEar)
+      inner = '<path d="M ' + p(-8.5,-8.5) + ' L ' + p(-9.5,-15) + ' L ' + p(-3.6,-10.5) + ' Z" fill="' + b.innerEar + '"/>' +
+              '<path d="M ' + p(4.6,-10.5) + ' L ' + p(10.4,-15) + ' L ' + p(11,-8.5) + ' Z" fill="' + b.innerEar + '"/>';
+    return '<path d="M ' + p(-10,-6) + ' L ' + p(-11.5,-18) + ' L ' + p(-2,-11) + ' Z" fill="' + ic + '"/>' +
+           '<path d="M ' + p(3.5,-11) + ' L ' + p(11.5,-18) + ' L ' + p(12,-6) + ' Z" fill="' + ic + '"/>' + inner;
+  }
+
+  function catTail(t, g, b, cls) {
+    var tx = n(g.bx - g.rx + 2), ty = n(g.by - 1);
+    var o = ' class="' + cls + '" style="transform-origin:' + tx + 'px ' + ty + 'px"';
+    var col = b.points || b.shade;
+    if (t === "catFluff")
+      return '<path' + o + ' d="M ' + tx + ' ' + ty +
+        ' C ' + n(tx-14) + ' ' + n(ty+1) + ' ' + n(tx-24) + ' ' + n(ty-8) + ' ' + n(tx-24) + ' ' + n(ty-22) +
+        ' C ' + n(tx-16) + ' ' + n(ty-20) + ' ' + n(tx-16) + ' ' + n(ty-13) + ' ' + n(tx-9) + ' ' + n(ty-9) +
+        ' C ' + n(tx-4) + ' ' + n(ty-6) + ' ' + n(tx-1) + ' ' + n(ty-3) + ' ' + n(tx+1) + ' ' + n(ty-1) + ' Z" fill="' + col + '"/>';
+    var d = (t === "catCurl")
+      ? 'M ' + tx + ' ' + ty + ' C ' + n(tx-13) + ' ' + n(ty+2) + ' ' + n(tx-20) + ' ' + n(ty-8) + ' ' + n(tx-17) + ' ' + n(ty-19) +
+        ' C ' + n(tx-15) + ' ' + n(ty-26) + ' ' + n(tx-7) + ' ' + n(ty-25) + ' ' + n(tx-7) + ' ' + n(ty-20)
+      : 'M ' + tx + ' ' + ty + ' C ' + n(tx-13) + ' ' + n(ty+2) + ' ' + n(tx-20) + ' ' + n(ty-6) + ' ' + n(tx-19) + ' ' + n(ty-24);
+    var w = 4.6;
+    var rings = "";
+    if (t === "catRing")
+      rings = '<path d="M ' + n(tx-17) + ' ' + n(ty-9) + ' l 4 -1.5 M ' + n(tx-19) + ' ' + n(ty-15) + ' l 4.4 -1 M ' + n(tx-19.5) + ' ' + n(ty-21) + ' l 4.4 -0.6"' +
+              ' stroke="' + (b.stripe || b.shade) + '" stroke-width="2.6" stroke-linecap="round" opacity=".85"/>';
+    var tip = (t === "catPoint")
+      ? '<circle cx="' + n(tx-19) + '" cy="' + n(ty-24) + '" r="3.4" fill="' + (b.points || b.shade) + '"/>' : "";
+    return '<g' + o + '><path d="' + d + '" stroke="' + col + '" stroke-width="' + w + '" stroke-linecap="round" fill="none"/>' + rings + tip + '</g>';
+  }
+
+  function catMarks(b, g) {
+    var out = "", i;
+    if (b.stripe) {
+      for (i = 0; i < 4; i++) {
+        var x = g.bx - g.rx * 0.55 + i * g.rx * 0.4;
+        out += '<path d="M ' + n(x) + ' ' + n(g.by - g.ry * 0.86) + ' q 2 ' + n(g.ry*0.8) + ' 0 ' + n(g.ry*1.5) +
+               '" stroke="' + b.stripe + '" stroke-width="2.4" stroke-linecap="round" fill="none" opacity=".85"/>';
+      }
+    }
+    if (b.rosette) {
+      var sp = [[-0.55,-0.35],[-0.15,-0.55],[0.28,-0.3],[-0.4,0.28],[0.05,0.12],[0.45,0.25]];
+      for (i = 0; i < sp.length; i++)
+        out += '<ellipse cx="' + n(g.bx + sp[i][0]*g.rx) + '" cy="' + n(g.by + sp[i][1]*g.ry) + '" rx="3" ry="2.4" fill="' + b.rosette + '" opacity=".85"/>';
+    }
+    if (b.patchA) {
+      out += '<path d="M ' + n(g.bx-g.rx*0.7) + ' ' + n(g.by-g.ry*0.7) + ' q 8 -4 14 1 q -3 6 -9 6 q -6 -1 -5 -7 Z" fill="' + b.patchA + '"/>' +
+             '<ellipse cx="' + n(g.bx+g.rx*0.45) + '" cy="' + n(g.by-g.ry*0.2) + '" rx="6" ry="5" fill="' + b.patchB + '" opacity=".9"/>';
+    }
+    if (b.points)
+      out += '<ellipse cx="' + n(g.bx-g.rx*0.6) + '" cy="' + n(g.by+g.ry*0.1) + '" rx="6" ry="' + n(g.ry*0.8) + '" fill="' + b.points + '" opacity=".22"/>';
+    if (b.bib)
+      out += '<path d="M ' + n(g.bx+g.rx-11) + ' ' + n(g.by+1) + ' q 6 -3 10 2 q -1 8 -6 9 q -6 -2 -4 -11 Z" fill="' + b.belly + '"/>';
+    if (b.ruffCat)
+      out += '<circle cx="' + n(g.bx+g.rx-7) + '" cy="' + n(g.by+3) + '" r="6" fill="' + b.belly + '"/>' +
+             '<circle cx="' + n(g.bx+g.rx-12) + '" cy="' + n(g.by+6) + '" r="5" fill="' + b.belly + '"/>';
+    return out;
+  }
+
+  function catSVG(b, mood, size, anim) {
+    var g = CAT_BUILDS[b.build] || CAT_BUILDS.cat, joy = mood === "joy";
+    var sleep = mood === "sleep", sit = sleep || mood === "sit";
+    var moving = mood === "run";
+    var A = anim !== false;
+    var LY = sit ? n(g.ly + g.lh * 0.5) : g.ly;
+    var LH = sit ? n(g.lh * 0.5) : g.lh;
+    var DROP = sit ? 4 : 0;
+    var legA = A && moving ? "pup-leg" : "", legB = A && moving ? "pup-leg2" : "";
+    var bodyCls = A ? (joy ? "" : (moving ? "pup-bob" : (sleep ? "pup-breathe" : ""))) : "";
+    var tailCls = A ? (joy ? "pup-tailf" : (sleep ? "" : (sit ? "pup-tail-slow" : "pup-tail"))) : "";
+    var eye = b.eye || "#6FA84B";
+    var legCol = b.points || b.coat;
+
+    var mrx = n(g.hr * (b.flatFace ? 0.52 : 0.6));
+    var mry = n(g.hr * (b.flatFace ? 0.34 : 0.4));
+    var mcx = n(g.hx + 3.5), mcy = n(g.hy + 4.5);
+    var nx = n(mcx + 2.5), ny = n(mcy - 0.5);
+
+    var mask = b.points
+      ? '<ellipse cx="' + n(g.hx+4) + '" cy="' + n(g.hy+3) + '" rx="' + n(g.hr*0.8) + '" ry="' + n(g.hr*0.68) + '" fill="' + b.points + '" opacity=".85"/>' : "";
+    var forehead = b.forehead
+      ? '<path d="M ' + n(g.hx-4) + ' ' + n(g.hy-8) + ' l 1.5 4 M ' + n(g.hx+1) + ' ' + n(g.hy-9) + ' l 1 4 M ' + n(g.hx+6) + ' ' + n(g.hy-9.5) + ' l 1 4"' +
+        ' stroke="' + (b.stripe || b.shade) + '" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>' : "";
+    var cheekTuft =
+      '<path d="M ' + n(g.hx-g.hr+1) + ' ' + n(g.hy+3) + ' l -3.5 2 l 3.5 1.6 Z" fill="' + b.coat + '"/>' +
+      '<path d="M ' + n(g.hx+g.hr-1) + ' ' + n(g.hy+2) + ' l 3.5 2 l -3.5 1.6 Z" fill="' + b.coat + '"/>';
+
+    var bodyShade =
+      '<ellipse cx="' + n(g.bx+1) + '" cy="' + n(g.by+g.ry*0.55) + '" rx="' + n(g.rx*0.9) + '" ry="' + n(g.ry*0.58) + '" fill="#000" opacity=".08"/>' +
+      '<ellipse cx="' + n(g.bx-g.rx*0.25) + '" cy="' + n(g.by-g.ry*0.5) + '" rx="' + n(g.rx*0.48) + '" ry="' + n(g.ry*0.32) + '" fill="#fff" opacity=".2"/>';
+    var headShade =
+      '<ellipse cx="' + n(g.hx+2) + '" cy="' + n(g.hy+g.hr*0.5) + '" rx="' + n(g.hr*0.84) + '" ry="' + n(g.hr*0.54) + '" fill="#000" opacity=".07"/>' +
+      '<ellipse cx="' + n(g.hx-g.hr*0.3) + '" cy="' + n(g.hy-g.hr*0.45) + '" rx="' + n(g.hr*0.44) + '" ry="' + n(g.hr*0.3) + '" fill="#fff" opacity=".22"/>';
+
+    var whisk =
+      '<path d="M ' + n(mcx-1) + ' ' + n(mcy+1) + ' l -8 -2.4 M ' + n(mcx-1) + ' ' + n(mcy+2.4) + ' l -8 0.6 M ' + n(mcx-1) + ' ' + n(mcy+3.6) + ' l -7.5 3' +
+      ' M ' + n(mcx+6) + ' ' + n(mcy+1) + ' l 7.5 -2.4 M ' + n(mcx+6) + ' ' + n(mcy+2.4) + ' l 8 0.6 M ' + n(mcx+6) + ' ' + n(mcy+3.6) + ' l 7 3"' +
+      ' stroke="#6B5B4B" stroke-width="0.7" stroke-linecap="round" opacity=".45" fill="none"/>';
+
+    var face;
+    if (sleep) {
+      face =
+        '<path d="M ' + n(g.hx-6.5) + ' ' + n(g.hy-3) + ' q 3.5 3.5 7 0 M ' + n(g.hx+4) + ' ' + n(g.hy-4) + ' q 3.5 3.5 7 0"' +
+        ' stroke="#2E2419" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
+        '<path d="M ' + n(nx-3) + ' ' + n(ny+2.8) + ' q 3 2.4 6 0" stroke="#8A6A55" stroke-width="1.1" fill="none" stroke-linecap="round"/>';
+    } else if (joy) {
+      face =
+        '<path d="M ' + n(g.hx-6.5) + ' ' + n(g.hy-1.5) + ' q 3.5 -5 7 0" stroke="#2E2419" stroke-width="2.2" fill="none" stroke-linecap="round"/>' +
+        '<path d="M ' + n(g.hx+4) + ' ' + n(g.hy-2.5) + ' q 3.5 -5 7 0" stroke="#2E2419" stroke-width="2.2" fill="none" stroke-linecap="round"/>' +
+        '<circle cx="' + n(g.hx-6) + '" cy="' + n(g.hy+4) + '" r="3.2" fill="#F4B6C6" opacity=".9"/>' +
+        '<circle cx="' + n(g.hx+12) + '" cy="' + n(g.hy+3) + '" r="3.2" fill="#F4B6C6" opacity=".9"/>' +
+        '<path d="M ' + n(nx-3) + ' ' + n(ny+3) + ' q 3 5 6 0" stroke="#8A6A55" stroke-width="1.3" fill="none" stroke-linecap="round"/>' +
+        '<path d="M ' + n(nx-0.5) + ' ' + n(ny+4) + ' q 2 3.5 4.5 0.5" fill="#EC8FAE"/>';
+    } else {
+      var pupil = b.flatFace || b.roundFace
+        ? '<circle cx="0" cy="0" r="1.5" fill="#231A12"/>'
+        : '<ellipse cx="0" cy="0" rx="0.9" ry="2.6" fill="#231A12"/>';
+      var mkEye = function (ex, ey) {
+        return '<g transform="translate(' + n(ex) + ',' + n(ey) + ')">' +
+          '<ellipse cx="0" cy="0" rx="3.1" ry="2.9" fill="' + eye + '"/>' + pupil +
+          '<circle cx="-1" cy="-1.1" r="0.9" fill="#fff" opacity=".95"/></g>';
+      };
+      face = mkEye(g.hx-3.5, g.hy-3) + mkEye(g.hx+7, g.hy-4) +
+        '<path d="M ' + n(nx-3.2) + ' ' + n(ny+2.6) + ' q 3.2 3.4 6.4 0" stroke="#8A6A55" stroke-width="1.2" fill="none" stroke-linecap="round"/>';
+    }
+
+    var zzz = sleep ? ZZZ(g) : "";
+
+    return '<svg width="' + n(size) + '" height="' + n(size*0.72) + '" viewBox="-15 -11 106 76" role="img" aria-label="' + b.name + '">' +
+      '<ellipse cx="' + g.bx + '" cy="56" rx="' + n(g.rx+2) + '" ry="3.2" fill="#2C2C2A" opacity=".13"/>' + zzz +
+      '<g class="' + bodyCls + '" style="transform-origin:50% 80%" transform="translate(0,' + DROP + ')">' +
+        catTail(b.tail || "catUp", g, b, tailCls) +
+        leg(g.bx-14, LY, g.lw-0.5, LH, b.points || b.shade, "#000", legA, b.socks) +
+        leg(g.bx+9,  LY, g.lw-0.5, LH, b.points || b.shade, "#000", legB, b.socks) +
+        '<ellipse cx="' + g.bx + '" cy="' + g.by + '" rx="' + g.rx + '" ry="' + g.ry + '" fill="' + b.coat + '"/>' +
+        catMarks(b, g) + bodyShade +
+        '<ellipse cx="' + n(g.bx+2) + '" cy="' + n(g.by+g.ry*0.45) + '" rx="' + n(g.rx*0.6) + '" ry="' + n(g.ry*0.48) + '" fill="' + b.belly + '" opacity=".9"/>' +
+        leg(g.bx-8,  LY, g.lw, LH, legCol, b.shade, legB, b.socks) +
+        leg(g.bx+14, LY, g.lw, LH, legCol, b.shade, legA, b.socks) +
+        '<circle cx="' + g.hx + '" cy="' + g.hy + '" r="' + g.hr + '" fill="' + b.coat + '"/>' +
+        cheekTuft + catEars(b.ear, g, b) + headShade + mask + forehead +
+        '<ellipse cx="' + mcx + '" cy="' + mcy + '" rx="' + mrx + '" ry="' + mry + '" fill="' + b.belly + '" opacity=".75"/>' +
+        whisk + face +
+        '<path d="M ' + n(nx-2) + ' ' + n(ny-1) + ' L ' + n(nx+2) + ' ' + n(ny-1) + ' L ' + n(nx) + ' ' + n(ny+2) + ' Z" fill="#E08A96"/>' +
+      '</g></svg>';
+  }
+
+
+  /* ── 공룡 ───────────────────────────────── */
+  function dinoFace(hx, hy, joy, sleep, shade) {
+    if (joy)
+      return '<path d="M ' + n(hx-3) + ' ' + n(hy-1) + ' q 3 -4.5 6 0" stroke="#2B2318" stroke-width="2.2" fill="none" stroke-linecap="round"/>' +
+             '<circle cx="' + n(hx-5) + '" cy="' + n(hy+4) + '" r="3" fill="#F4B6C6" opacity=".85"/>';
+    if (sleep)
+      return '<path d="M ' + n(hx-3) + ' ' + n(hy-2) + ' q 3 3 6 0" stroke="#2B2318" stroke-width="1.8" fill="none" stroke-linecap="round"/>';
+    return '<ellipse cx="' + n(hx) + '" cy="' + n(hy-2) + '" rx="2.7" ry="2.5" fill="#2B2318"/>' +
+           '<circle cx="' + n(hx-0.9) + '" cy="' + n(hy-2.9) + '" r="0.9" fill="#fff" opacity=".95"/>';
+  }
+
+  function dinoSVG(b, mood, size, anim) {
+    var joy = mood === "joy", sleep = mood === "sleep";
+    var moving = mood === "run";
+    var A = anim !== false;
+    var legA = A && moving ? "pup-leg" : "", legB = A && moving ? "pup-leg2" : "";
+    var bodyCls = A ? (joy ? "" : (moving ? "pup-bob" : "")) : "";
+    var tailCls = A ? (joy ? "pup-tailf" : (moving ? "pup-tail" : "pup-tail-slow")) : "";
+    var c = b.coat, d = b.shade, be = b.belly, f = b.form;
+    var g = "";
+
+    if (f === "trex") {
+      g =
+        '<path class="' + tailCls + '" style="transform-origin:22px 30px" d="M 22 30 C 8 30 -6 24 -12 16 C -2 18 8 22 20 24 Z" fill="' + d + '"/>' +
+        leg(26, 36, 11, 17, d, "#000", legB) +
+        '<ellipse cx="34" cy="29" rx="19" ry="14" fill="' + c + '"/>' +
+        '<ellipse cx="36" cy="34" rx="12" ry="6.5" fill="' + be + '"/>' +
+        leg(40, 36, 11, 17, c, d, legA) +
+        '<path d="M 48 24 q 6 -3 5 4 q -1 4 -6 2 Z" fill="' + d + '"/>' +
+        '<path d="M 46 18 C 52 8 66 6 72 12 C 74 15 72 19 68 20 L 52 24 Z" fill="' + c + '"/>' +
+        '<path d="M 54 22 L 72 17 q 3 4 -1 6 L 56 26 Z" fill="' + be + '"/>' +
+        '<path d="M 58 24.5 l 1.6 2.6 M 62 23.4 l 1.6 2.6 M 66 22.3 l 1.6 2.6" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>' +
+        '<path d="M 44 16 l 3 -6 l 3 5 Z M 50 13 l 3 -5 l 3 5 Z" fill="' + d + '"/>' +
+        dinoFace(62, 14, joy, sleep, d);
+    } else if (f === "tricera") {
+      g =
+        '<path class="' + tailCls + '" style="transform-origin:20px 32px" d="M 20 32 C 8 33 -4 29 -10 23 C -1 24 9 27 19 27 Z" fill="' + d + '"/>' +
+        leg(22, 38, 10, 15, d, "#000", legB) + leg(40, 38, 10, 15, d, "#000", legA) +
+        '<ellipse cx="34" cy="31" rx="20" ry="13" fill="' + c + '"/>' +
+        '<ellipse cx="36" cy="36" rx="13" ry="6" fill="' + be + '"/>' +
+        leg(27, 38, 10, 15, c, d, legA) + leg(45, 38, 10, 15, c, d, legB) +
+        '<path d="M 52 22 C 62 8 80 12 78 24 C 77 33 62 38 54 32 Z" fill="' + d + '"/>' +
+        '<path d="M 55 23 C 63 13 74 16 73 24 C 72 30 62 33 56 29 Z" fill="' + c + '" opacity=".6"/>' +
+        '<ellipse cx="58" cy="26" rx="13" ry="10" fill="' + c + '"/>' +
+        '<path d="M 66 30 q 7 1 9 4 q -6 3 -10 1 Z" fill="' + be + '"/>' +
+        '<path d="M 60 17 l 3 -9 l 3 8 Z M 68 20 l 6 -7 l 1 8 Z M 70 30 l 5 -1 l -3 4 Z" fill="' + be + '"/>' +
+        dinoFace(64, 26, joy, sleep, d);
+    } else if (f === "brachio") {
+      g =
+        '<path class="' + tailCls + '" style="transform-origin:18px 32px" d="M 18 32 C 4 34 -10 30 -16 24 C -5 25 7 28 17 28 Z" fill="' + d + '"/>' +
+        leg(20, 38, 10, 15, d, "#000", legB) + leg(38, 38, 10, 15, d, "#000", legA) +
+        '<ellipse cx="32" cy="31" rx="21" ry="13" fill="' + c + '"/>' +
+        '<ellipse cx="34" cy="36" rx="14" ry="6" fill="' + be + '"/>' +
+        leg(25, 38, 10, 15, c, d, legA) + leg(43, 38, 10, 15, c, d, legB) +
+        '<path d="M 46 26 C 52 18 56 6 62 -2 C 68 -6 74 -1 70 4 C 64 12 58 22 54 30 Z" fill="' + c + '"/>' +
+        '<path d="M 50 27 C 55 19 59 9 64 2" stroke="' + be + '" stroke-width="2.6" fill="none" opacity=".6"/>' +
+        '<ellipse cx="68" cy="0" rx="8" ry="6" fill="' + c + '"/>' +
+        '<path d="M 72 2 q 5 0 6 2 q -4 2 -7 1 Z" fill="' + be + '"/>' +
+        dinoFace(70, -1, joy, sleep, d);
+    } else if (f === "stego") {
+      g =
+        '<path class="' + tailCls + '" style="transform-origin:18px 32px" d="M 18 32 C 6 33 -6 28 -12 22 C -2 24 8 27 17 27 Z" fill="' + d + '"/>' +
+        '<path d="M -10 22 l -5 -4 l 5 0 Z M -8 27 l -6 2 l 5 2 Z" fill="' + be + '"/>' +
+        leg(22, 38, 10, 15, d, "#000", legB) + leg(40, 38, 10, 15, d, "#000", legA) +
+        '<path d="M 16 26 L 22 12 L 28 25 Z M 28 24 L 35 8 L 42 23 Z M 42 23 L 49 11 L 54 25 Z" fill="' + be + '"/>' +
+        '<path d="M 16 26 L 22 12 L 28 25 Z M 28 24 L 35 8 L 42 23 Z M 42 23 L 49 11 L 54 25 Z" fill="' + d + '" opacity=".35"/>' +
+        '<ellipse cx="34" cy="31" rx="21" ry="13" fill="' + c + '"/>' +
+        '<ellipse cx="36" cy="36" rx="14" ry="6" fill="' + be + '"/>' +
+        leg(27, 38, 10, 15, c, d, legA) + leg(45, 38, 10, 15, c, d, legB) +
+        '<path d="M 52 27 C 58 22 68 22 72 26 C 74 29 70 33 64 33 L 54 32 Z" fill="' + c + '"/>' +
+        '<path d="M 62 31 q 8 -1 10 1 q -4 3 -10 2 Z" fill="' + be + '"/>' +
+        dinoFace(64, 27, joy, sleep, d);
+    } else {
+      g =
+        '<path class="pup-flap" style="transform-origin:40px 26px" d="M 40 26 C 24 12 4 10 -10 18 C 4 22 18 28 34 32 Z" fill="' + d + '"/>' +
+        '<ellipse cx="40" cy="28" rx="13" ry="9" fill="' + c + '"/>' +
+        '<ellipse cx="41" cy="31" rx="8" ry="4.5" fill="' + be + '"/>' +
+        leg(34, 34, 6, 12, d, "#000", legB) + leg(44, 34, 6, 12, d, "#000", legA) +
+        '<path class="pup-flap2" style="transform-origin:44px 24px" d="M 44 24 C 56 10 74 8 84 16 C 70 20 58 26 48 30 Z" fill="' + c + '"/>' +
+        '<path d="M 48 22 C 54 14 62 10 68 9" stroke="' + be + '" stroke-width="1.8" fill="none" opacity=".55"/>' +
+        '<ellipse cx="56" cy="18" rx="9" ry="7" fill="' + c + '"/>' +
+        '<path d="M 52 12 C 44 6 42 0 48 0 C 54 0 57 6 58 12 Z" fill="' + d + '"/>' +
+        '<path d="M 63 19 L 80 22 L 63 25 Z" fill="' + be + '"/>' +
+        dinoFace(58, 17, joy, sleep, d);
+    }
+
+    var zzz = sleep ? ZZZ({ hx: 60, hy: 10 }) : "";
+    return '<svg width="' + n(size) + '" height="' + n(size*0.72) + '" viewBox="-18 -11 108 76" role="img" aria-label="' + b.name + '">' +
+      '<ellipse cx="34" cy="55" rx="26" ry="3.4" fill="#2C2C2A" opacity=".14"/>' + zzz +
+      '<g class="' + bodyCls + '" style="transform-origin:50% 80%">' + g + '</g></svg>';
+  }
+
+  function dogSVG(code, mood, size, anim) {
+    var b = BREEDS[code] || BREEDS.shiba;
+    if (b.kind === "cat") return catSVG(b, mood, size, anim);
+    if (b.kind === "dino") return dinoSVG(b, mood, size, anim);
+    var g = BUILDS[b.build], joy = mood === "joy";
+    var sleep = mood === "sleep", sit = sleep || mood === "sit";
+    var moving = mood === "run";
+    var A = anim !== false;
+    var LY = sit ? n(g.ly + g.lh * 0.46) : g.ly;
+    var LH = sit ? n(g.lh * 0.54) : g.lh;
+    var DROP = sit ? 4 : 0;
+    var legA = A && moving ? "pup-leg" : "", legB = A && moving ? "pup-leg2" : "";
+    var bodyCls = A ? (joy ? "" : (moving ? "pup-bob" : (sleep ? "pup-breathe" : ""))) : "";
+    var tailCls = A ? (joy ? "pup-tailf" : (sleep ? "" : (sit ? "pup-tail-slow" : "pup-tail"))) : "";
+    var eye = b.eye || "#3A2616";
+    var sn = b.snout || 1;
+
+    var mrx = n(g.hr * 0.69 * sn * (b.slimSnout ? 0.82 : 1));
+    var mry = n(g.hr * 0.54 * (b.slimSnout ? 0.78 : 1));
+    var mcx = n(g.hx + 4 + mrx * 0.28);
+    var mcy = n(g.hy + 4);
+    var nx  = n(mcx + mrx * 0.72);
+    var ny  = n(mcy - 0.8);
+
+    /* 입체감 — 아랫면 그늘과 윗면 하이라이트 */
+    var bodyShade =
+      '<ellipse cx="' + n(g.bx+1) + '" cy="' + n(g.by+g.ry*0.55) + '" rx="' + n(g.rx*0.92) + '" ry="' + n(g.ry*0.6) + '" fill="#000" opacity=".08"/>' +
+      '<ellipse cx="' + n(g.bx-g.rx*0.22) + '" cy="' + n(g.by-g.ry*0.5) + '" rx="' + n(g.rx*0.5) + '" ry="' + n(g.ry*0.34) + '" fill="#fff" opacity=".2"/>';
+    var headShade =
+      '<ellipse cx="' + n(g.hx+2) + '" cy="' + n(g.hy+g.hr*0.5) + '" rx="' + n(g.hr*0.85) + '" ry="' + n(g.hr*0.55) + '" fill="#000" opacity=".07"/>' +
+      '<ellipse cx="' + n(g.hx-g.hr*0.3) + '" cy="' + n(g.hy-g.hr*0.45) + '" rx="' + n(g.hr*0.45) + '" ry="' + n(g.hr*0.3) + '" fill="#fff" opacity=".22"/>';
+
+    var cheeks = b.cheeks
+      ? '<ellipse cx="' + n(g.hx-6) + '" cy="' + n(g.hy+4) + '" rx="4.2" ry="3.4" fill="' + b.belly + '"/>' : "";
+    var cap = b.cap
+      ? '<path d="M ' + n(g.hx-g.hr) + ' ' + n(g.hy-3) + ' a ' + g.hr + ' ' + g.hr + ' 0 0 1 ' + n(g.hr*1.5) + ' -' + n(g.hr*0.72) +
+        ' L ' + n(g.hx+2) + ' ' + n(g.hy-2) + ' Z" fill="' + b.cap + '" opacity=".9"/>' : "";
+    var blaze = b.blaze
+      ? '<path d="M ' + n(g.hx+1) + ' ' + n(g.hy-12) + ' L ' + n(g.hx+4.5) + ' ' + n(g.hy-1) + ' L ' + n(g.hx-2) + ' ' + n(g.hy-1) + ' Z" fill="' + b.belly + '"/>' : "";
+    var brows = b.brows
+      ? '<ellipse cx="' + n(g.hx-4) + '" cy="' + n(g.hy-7.6) + '" rx="2.5" ry="1.8" fill="' + b.brows + '"/>' +
+        '<ellipse cx="' + n(g.hx+7) + '" cy="' + n(g.hy-8.6) + '" rx="2.5" ry="1.8" fill="' + b.brows + '"/>' : "";
+    var ruff = b.ruff
+      ? '<circle cx="' + n(g.bx+g.rx-7) + '" cy="' + n(g.by+3) + '" r="6.4" fill="' + b.belly + '"/>' +
+        '<circle cx="' + n(g.bx+g.rx-12) + '" cy="' + n(g.by+6) + '" r="5.2" fill="' + b.belly + '"/>' +
+        '<circle cx="' + n(g.bx+g.rx-3) + '" cy="' + n(g.by+7) + '" r="4.6" fill="' + b.belly + '"/>' : "";
+    var feather = b.feather
+      ? '<path d="M ' + n(g.bx-6) + ' ' + n(g.by+g.ry-1) + ' q 5 5 11 1 q 5 4 10 0" stroke="' + b.shade + '" stroke-width="1.2" fill="none" opacity=".4"/>' : "";
+    var wrinkles = b.wrinkles
+      ? '<path d="M ' + n(g.hx-5) + ' ' + n(g.hy-8) + ' q 5 -2.5 10 -0.5 M ' + n(g.hx-4) + ' ' + n(g.hy-4.5) + ' q 5 -2 9 -0.5"' +
+        ' stroke="' + b.shade + '" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".75"/>' : "";
+    var jowls = b.jowls
+      ? '<ellipse cx="' + n(mcx-2) + '" cy="' + n(mcy+3.5) + '" rx="' + n(mrx*0.7) + '" ry="' + n(mry*0.8) + '" fill="' + b.belly + '"/>' +
+        '<ellipse cx="' + n(mcx+4) + '" cy="' + n(mcy+3.5) + '" rx="' + n(mrx*0.7) + '" ry="' + n(mry*0.8) + '" fill="' + b.belly + '"/>' : "";
+
+    var er = b.eyeShape === "round" ? 2.8 : 2.5;
+    var ery = b.eyeShape === "almond" ? 2.0 : er;
+
+    var face;
+    if (sleep) {
+      face =
+        '<path d="M ' + n(g.hx-6) + ' ' + n(g.hy-3.5) + ' q 3 3.5 6 0 M ' + n(g.hx+4.5) + ' ' + n(g.hy-4.5) + ' q 3 3.5 6 0"' +
+        ' stroke="#3A2616" stroke-width="1.8" fill="none" stroke-linecap="round"/>' +
+        '<path d="M ' + n(nx-3) + ' ' + n(ny+3.2) + ' q 3 2.6 6 0" stroke="' + b.shade + '" stroke-width="1.4" fill="none" stroke-linecap="round"/>';
+    } else if (joy) {
+      face =
+        '<path d="M ' + n(g.hx-7) + ' ' + n(g.hy-2) + ' Q ' + n(g.hx-3) + ' ' + n(g.hy-7.5) + ' ' + n(g.hx+1) + ' ' + n(g.hy-2) +
+        '" stroke="#3A2616" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
+        '<path d="M ' + n(g.hx+4) + ' ' + n(g.hy-3) + ' Q ' + n(g.hx+8) + ' ' + n(g.hy-8.5) + ' ' + n(g.hx+12) + ' ' + n(g.hy-3) +
+        '" stroke="#3A2616" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
+        '<circle cx="' + n(g.hx-6) + '" cy="' + n(g.hy+4) + '" r="3.6" fill="#F4B6C6" opacity=".9"/>' +
+        '<circle cx="' + n(g.hx+13) + '" cy="' + n(g.hy+3) + '" r="3.6" fill="#F4B6C6" opacity=".9"/>' +
+        '<path d="M ' + n(mcx+2) + ' ' + n(mcy+2.5) + ' Q ' + n(mcx+5) + ' ' + n(mcy+10) + ' ' + n(mcx+9) + ' ' + n(mcy+3.5) + '" fill="#EC8FAE"/>' +
+        '<path d="M ' + n(mcx+3.6) + ' ' + n(mcy+4.5) + ' q 1.2 2.6 0.4 4.6" stroke="#D4537E" stroke-width="0.8" fill="none" opacity=".7"/>';
+    } else {
+      face =
+        '<ellipse cx="' + n(g.hx-3) + '" cy="' + n(g.hy-3) + '" rx="' + er + '" ry="' + ery + '" fill="' + eye + '"/>' +
+        '<circle cx="' + n(g.hx-3.9) + '" cy="' + n(g.hy-3.9) + '" r="0.9" fill="#fff" opacity=".95"/>' +
+        '<ellipse cx="' + n(g.hx+7) + '" cy="' + n(g.hy-4) + '" rx="' + er + '" ry="' + ery + '" fill="' + eye + '"/>' +
+        '<circle cx="' + n(g.hx+6.1) + '" cy="' + n(g.hy-4.9) + '" r="0.9" fill="#fff" opacity=".95"/>' +
+        (b.underbite
+          ? '<path d="M ' + n(mcx) + ' ' + n(mcy+3) + ' q 3.5 2.6 7 0" stroke="' + b.shade + '" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
+            '<rect x="' + n(mcx+1.4) + '" y="' + n(mcy+2.4) + '" width="1.8" height="2.4" rx="0.6" fill="#fff"/>' +
+            '<rect x="' + n(mcx+4) + '" y="' + n(mcy+2.4) + '" width="1.8" height="2.4" rx="0.6" fill="#fff"/>'
+          : '<path d="M ' + n(nx-3) + ' ' + n(ny+3.2) + ' Q ' + n(nx) + ' ' + n(ny+6.2) + ' ' + n(nx+3) + ' ' + n(ny+3.2) +
+            '" stroke="' + b.shade + '" stroke-width="1.6" fill="none" stroke-linecap="round"/>');
+    }
+
+    var zzz = sleep ? ZZZ(g) : "";
+
+    return '<svg width="' + n(size) + '" height="' + n(size*0.72) + '" viewBox="-15 -11 106 76" role="img" aria-label="' + b.name + '">' +
+      '<ellipse cx="' + g.bx + '" cy="56" rx="' + n(g.rx+2) + '" ry="3.2" fill="#2C2C2A" opacity=".13"/>' + zzz +
+      '<g class="' + bodyCls + '" style="transform-origin:50% 80%" transform="translate(0,' + DROP + ')">' +
+        tail(b.tail || "straight", g, b, tailCls) +
+        leg(g.bx-14, LY, g.lw-0.5, LH, b.shade, "#000", legA, b.socks) +
+        leg(g.bx+9,  LY, g.lw-0.5, LH, b.shade, "#000", legB, b.socks) +
+        '<ellipse cx="' + g.bx + '" cy="' + g.by + '" rx="' + g.rx + '" ry="' + g.ry + '" fill="' + b.coat + '"/>' +
+        fur(b.fur, g, b) +
+        bodyShade +
+        '<ellipse cx="' + n(g.bx+2) + '" cy="' + n(g.by+g.ry*0.42) + '" rx="' + n(g.rx*0.66) + '" ry="' + n(g.ry*0.52) + '" fill="' + b.belly + '"/>' +
+        marks(b.mark, g, b) + ruff + feather +
+        leg(g.bx-8,  LY, g.lw, LH, b.coat, b.shade, legB, b.socks) +
+        leg(g.bx+14, LY, g.lw, LH, b.coat, b.shade, legA, b.socks) +
+        '<circle cx="' + g.hx + '" cy="' + g.hy + '" r="' + g.hr + '" fill="' + b.coat + '"/>' +
+        ears(b.ear, g, b) +
+        headShade + cap +
+        (b.mark === "mask" ? marks("mask", g, b) : "") + blaze + cheeks +
+        '<ellipse cx="' + mcx + '" cy="' + mcy + '" rx="' + mrx + '" ry="' + mry + '" fill="' + b.belly + '"/>' +
+        jowls + brows + wrinkles + face +
+        '<ellipse cx="' + nx + '" cy="' + ny + '" rx="3.4" ry="2.8" fill="#2E1D10"/>' +
+        '<ellipse cx="' + n(nx-0.9) + '" cy="' + n(ny-0.9) + '" rx="1.1" ry="0.8" fill="#fff" opacity=".6"/>' +
+      '</g></svg>';
+  }
+
+  /* ── 발자국 ─────────────────────────────── */
+  /* 연한 털색이면 발자국이 안 보이므로 한 단계 어둡게 */
+  function darken(hex) {
+    var m = /^#?([0-9a-f]{6})$/i.exec(hex);
+    if (!m) return hex;
+    var v = parseInt(m[1], 16);
+    var r = (v >> 16) & 255, g = (v >> 8) & 255, b = v & 255;
+    var f = 0.62;
+    r = Math.round(r * f); g = Math.round(g * f); b = Math.round(b * f);
+    return "rgb(" + r + "," + g + "," + b + ")";
+  }
+
+  function pawSVG(isCat, color, px) {
+    px = px || 16;
+    if (isCat)
+      return '<svg width="' + (px - 1) + '" height="' + (px - 1) + '" viewBox="0 0 20 20">' +
+        '<ellipse cx="10" cy="13" rx="5" ry="4.2" fill="' + color + '"/>' +
+        '<ellipse cx="5.2" cy="7.6" rx="2" ry="2.4" fill="' + color + '"/>' +
+        '<ellipse cx="8.6" cy="5.6" rx="2" ry="2.5" fill="' + color + '"/>' +
+        '<ellipse cx="12" cy="5.8" rx="2" ry="2.5" fill="' + color + '"/>' +
+        '<ellipse cx="15" cy="8" rx="2" ry="2.3" fill="' + color + '"/></svg>';
+    return '<svg width="' + px + '" height="' + px + '" viewBox="0 0 20 20">' +
+      '<path d="M10 17.4 C6 17.4 4.2 15 4.2 12.8 C4.2 10.6 6.6 9.4 10 9.4 C13.4 9.4 15.8 10.6 15.8 12.8 C15.8 15 14 17.4 10 17.4 Z" fill="' + color + '"/>' +
+      '<ellipse cx="4.6" cy="7.2" rx="2.2" ry="2.9" fill="' + color + '"/>' +
+      '<ellipse cx="8.4" cy="4.6" rx="2.2" ry="3" fill="' + color + '"/>' +
+      '<ellipse cx="12.2" cy="4.8" rx="2.2" ry="3" fill="' + color + '"/>' +
+      '<ellipse cx="15.6" cy="7.6" rx="2.2" ry="2.8" fill="' + color + '"/></svg>';
+  }
+
+  /* ── 서버 통신 ───────────────────────────── */
+  function rpc(fn, body) {
+    return fetch(SUPABASE_URL + "/rest/v1/rpc/" + fn, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY
+      },
+      body: JSON.stringify(body || {})
+    }).then(function (r) {
+      if (!r.ok) throw new Error(fn + " " + r.status);
+      return r.json();
+    });
+  }
+
+  /* ── 사용자 식별 ─────────────────────────── */
+  function currentUser() {
+    try {
+      var v = localStorage.getItem("lastLoginId");
+      if (v) return String(v).replace(/^"|"$/g, "");
+    } catch (e) {}
+    return null;
+  }
+
+  /* ── 등장 금지 조건 ──────────────────────── */
+  function blocked() {
+    try { if (localStorage.getItem("puppyOff") === "1") return true; } catch (e) {}
+    var el = document.activeElement;
+    if (el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return true;
+    if (el && el.isContentEditable) return true;
+    var ids = ["modalOverlay", "authOverlay"], i, n;
+    for (i = 0; i < ids.length; i++) {
+      n = document.getElementById(ids[i]);
+      if (n && n.offsetParent !== null) return true;
+    }
+    return false;
+  }
+
+  /* ── 화면 요소 ───────────────────────────── */
+  var layer = document.createElement("div");
+  layer.id = "pupLayer";
+  document.body.appendChild(layer);
+
+  var fab = document.createElement("button");
+  fab.className = "pup-fab";
+  fab.type = "button";
+  fab.setAttribute("aria-label", "멍멍이 스탬프판 열기");
+  fab.innerHTML = '<span style="display:inline-flex">' + dogSVG("shiba", "run", 30, false) + '</span><span id="pupCount">0 / 15</span>';
+  document.body.appendChild(fab);
+
+  var panel = document.createElement("div");
+  panel.className = "pup-panel";
+  panel.innerHTML =
+    '<h4>내 스탬프판</h4>' +
+    '<div class="pup-meta"><span id="pupPan">1번째 판</span><span id="pupToday">오늘 0 / 3</span></div>' +
+    '<div class="pup-grid" id="pupGrid"></div>' +
+    '<div class="pup-ach" id="pupAch">불러오는 중</div>' +
+    '<button class="pup-off" type="button" id="pupOff">이벤트 참여 끄기</button>' +
+    '<button class="pup-off" type="button" id="pupAdmOpen" style="float:right">설정</button>' +
+    '<div class="pup-adm" id="pupAdm">' +
+      '<label>하루 출현 횟수<input type="number" id="acSpawns" min="1" max="40"></label>' +
+      '<label>하루 공룡 마릿수<input type="number" id="acDino" min="0" max="5"></label>' +
+      '<label>하루 잡기 제한<input type="number" id="acDaily" min="1" max="30"></label>' +
+      '<label>머무는 시간(초)<input type="number" id="acDur" min="5" max="300" step="5"></label>' +
+      '<label>재등장 대기(분)<input type="number" id="acCool" min="0" max="180"></label>' +
+      '<label>출현 확률(%)<input type="number" id="acProb" min="5" max="100" step="5"></label>' +
+      '<label>등장 동물<select id="acPool">' +
+        '<option value="dog">강아지 8종</option>' +
+        '<option value="cat">고양이 10종</option>' +
+        '<option value="all">전부 18종</option>' +
+      '</select></label>' +
+      '<label>이벤트 켜기<input type="checkbox" id="acOn" style="width:auto"></label>' +
+      '<button class="save" type="button" id="acSave">저장</button>' +
+      '<div class="msg" id="acMsg"></div>' +
+    '</div>';
+  document.body.appendChild(panel);
+
+  fab.addEventListener("click", function () {
+    var open = panel.style.display === "block";
+    panel.style.display = open ? "none" : "block";
+    if (!open) { refreshBoard(); refreshSummary(); }
+  });
+
+  document.getElementById("pupOff").addEventListener("click", function () {
+    try { localStorage.setItem("puppyOff", "1"); } catch (e) {}
+    panel.style.display = "none";
+    fab.style.display = "none";
+  });
+
+  /* ── 스탬프판 갱신 ───────────────────────── */
+  var boardSize = 15;
+
+  function refreshBoard() {
+    var u = currentUser();
+    if (!u) return;
+    rpc("puppy_board", { p_user: u }).then(function (d) {
+      boardSize = d.boardSize || 15;
+      document.getElementById("pupCount").textContent = d.stampCount + " / " + boardSize;
+      document.getElementById("pupPan").textContent = d.boardNo + "번째 판";
+      document.getElementById("pupToday").textContent =
+        "오늘 " + d.todayCount + " / " + d.dailyLimit +
+        (d.todaySpawns != null ? " (출현 " + d.todaySpawns + "/" + d.dailySpawnLimit + ")" : "");
+      var grid = document.getElementById("pupGrid"), i, cell, code;
+      grid.innerHTML = "";
+      for (i = 0; i < boardSize; i++) {
+        cell = document.createElement("div");
+        cell.className = "pup-slot";
+        code = d.slots[i];
+        if (code) {
+          cell.style.background = BREEDS[code] ? BREEDS[code].belly : "#eee";
+          cell.style.borderStyle = "solid";
+          cell.style.borderColor = BREEDS[code] ? BREEDS[code].shade : "#ccc";
+          cell.innerHTML = dogSVG(code, "run", 34, false);
+          cell.title = BREEDS[code] ? BREEDS[code].name : "";
+        }
+        grid.appendChild(cell);
+      }
+    }).catch(function () {});
+  }
+
+  function refreshSummary() {
+    rpc("puppy_summary", {}).then(function (d) {
+      var el = document.getElementById("pupAch"), html;
+      html = '<div style="margin-bottom:5px">팀 전체 ' + d.teamTotal + '마리</div>';
+      if (!d.achievers.length) {
+        html += '<div style="color:#999">아직 완성한 사람이 없어요</div>';
+      } else {
+        d.achievers.forEach(function (a) {
+          html += '<div>' + a.userName + ' — ' + a.boardNo + '판 완성</div>';
+        });
+      }
+      el.innerHTML = html;
+    }).catch(function () {});
+  }
+
+  /* ── 관리자 설정 ─────────────────────────── */
+  var DOGS = ["shiba","corgi","retriever","beagle","poodle","dachshund","jindo","husky"];
+  var CATS = ["koshort","cheese","tuxedo","calico","russian","persian","siamese","scottish","bengal","munchkin"];
+
+  function adminKey() {
+    try { return localStorage.getItem("puppyAdminKey") || ""; } catch (e) { return ""; }
+  }
+
+  function fillAdmin(d) {
+    document.getElementById("acSpawns").value = d.dailySpawnLimit;
+    document.getElementById("acDino").value = d.dinoDaily;
+    document.getElementById("acDaily").value = d.dailyLimit;
+    document.getElementById("acDur").value   = d.durationSec;
+    document.getElementById("acCool").value  = d.cooldownMin;
+    document.getElementById("acProb").value  = Math.round(d.probability * 100);
+    document.getElementById("acOn").checked  = !!d.enabled;
+    var pool = d.pool || DOGS;
+    var hasDog = pool.indexOf("shiba") !== -1, hasCat = pool.indexOf("koshort") !== -1;
+    document.getElementById("acPool").value = (hasDog && hasCat) ? "all" : (hasCat ? "cat" : "dog");
+    document.getElementById("pupAdm").style.display = "block";
+  }
+
+  function openAdmin() {
+    var k = adminKey();
+    if (!k) {
+      k = window.prompt("관리자 키를 입력하세요");
+      if (!k) return;
+      k = k.trim();
+    }
+    rpc("puppy_admin_get", { p_key: k }).then(function (d) {
+      if (!d || !d.ok) {
+        try { localStorage.removeItem("puppyAdminKey"); } catch (e) {}
+        window.alert("관리자 키가 맞지 않습니다.");
+        return;
+      }
+      try { localStorage.setItem("puppyAdminKey", k); } catch (e) {}
+      fillAdmin(d);
+    }).catch(function () { window.alert("설정을 불러오지 못했습니다."); });
+  }
+
+  function saveAdmin() {
+    var sel = document.getElementById("acPool").value;
+    var pool = sel === "cat" ? CATS : (sel === "all" ? DOGS.concat(CATS) : DOGS);
+    var msg = document.getElementById("acMsg");
+    msg.textContent = "저장 중";
+    rpc("puppy_admin_set", {
+      p_key: adminKey(),
+      p_daily: parseInt(document.getElementById("acDaily").value, 10),
+      p_spawns: parseInt(document.getElementById("acSpawns").value, 10),
+      p_dino: parseInt(document.getElementById("acDino").value, 10),
+      p_duration: parseInt(document.getElementById("acDur").value, 10),
+      p_cooldown: parseInt(document.getElementById("acCool").value, 10),
+      p_prob: parseInt(document.getElementById("acProb").value, 10) / 100,
+      p_enabled: document.getElementById("acOn").checked,
+      p_pool: pool
+    }).then(function (d) {
+      if (!d || !d.ok) { msg.textContent = "저장하지 못했습니다"; return; }
+      fillAdmin(d);
+      msg.textContent = "저장했습니다";
+      setTimeout(function () { msg.textContent = ""; }, 2000);
+      refreshBoard();
+    }).catch(function () { msg.textContent = "저장하지 못했습니다"; });
+  }
+
+  document.getElementById("pupAdmOpen").addEventListener("click", function () {
+    var a = document.getElementById("pupAdm");
+    if (a.style.display === "block") { a.style.display = "none"; return; }
+    openAdmin();
+  });
+  document.getElementById("acSave").addEventListener("click", saveAdmin);
+
+  /* ── 강아지 등장 ─────────────────────────── */
+  var active = null, raf = null, timer = null, lastCheck = 0;
+  function n2(v) { return Math.round(v * 10) / 10; }
+
+  function spawnDog(sp) {
+    var host = document.createElement("button");
+    host.className = "pup-dog";
+    host.type = "button";
+    var b = BREEDS[sp.breedCode] || BREEDS.shiba;
+    host.setAttribute("aria-label", b.name + " 잡기");
+
+    var meta = BREEDS[sp.breedCode] || {};
+    var SZ = Math.round(SIZE * (meta.sizeMul || 1));
+    var DH = Math.round(SZ * 0.72);
+
+    var inner = document.createElement("div");
+    inner.innerHTML = dogSVG(sp.breedCode, "run", SZ, true);
+    host.appendChild(inner);
+    layer.appendChild(host);
+    active = { sp: sp, host: host, inner: inner, caught: false };
+
+    var minX = SAFE.left;
+    var maxX = Math.max(minX, window.innerWidth - SAFE.right - SZ - 12);
+    var minY = SAFE.top;
+    var maxY = Math.max(minY, window.innerHeight - SAFE.bottom - DH - 12);
+
+    var x = minX + Math.random() * (maxX - minX);
+    var y = minY + Math.random() * (maxY - minY);
+
+    var ang = Math.random() * Math.PI * 2;
+    var vx = Math.cos(ang), vy = Math.sin(ang) * 0.62;
+    var nrm = Math.sqrt(vx * vx + vy * vy) || 1;
+    vx /= nrm; vy /= nrm;
+
+    var facing = vx >= 0 ? 1 : -1;
+    host.style.left = n2(x) + "px";
+    host.style.top = n2(y) + "px";
+    inner.style.transform = "scaleX(" + facing + ")";
+
+    /* 행동 상태 — 걷기 · 멈춤 · 앉기 · 졸기 */
+    var pose = "run";
+    var setPose = function (p) {
+      if (p === pose || !active || active.caught) return;
+      pose = p;
+      inner.innerHTML = dogSVG(sp.breedCode, p, SZ, true);
+    };
+
+    var rand = function (a, b) { return a + Math.random() * (b - a); };
+    var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var end = new Date(sp.expiresAt).getTime();
+
+    if (reduced) {
+      setPose("idle");
+    } else {
+      var last = performance.now();
+      var nextTurn = last + rand(900, 2300);
+      var until = last + rand(4000, 8000);   // 현재 상태가 끝나는 시각
+      var ramp = 0;                           // 0 → 1 로 서서히 붙는 속도
+
+      var look = function (d) {
+        if (d !== facing) { facing = d; inner.style.transform = "scaleX(" + d + ")"; }
+      };
+
+      /* 지나간 자리에 발자국을 남긴다 */
+      var isCat = (BREEDS[sp.breedCode] || {}).kind === "cat";
+      var pawColor = darken((BREEDS[sp.breedCode] || {}).shade || "#8A7B6B");
+      var since = 0, side = 1;
+      var dropPaw = function (cx, cy, dx, dy) {
+        var el = document.createElement("div");
+        el.className = "pup-paw";
+        el.innerHTML = pawSVG(isCat, pawColor, meta.kind === "dino" ? 26 : 16);
+        var ang = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+        var ox = -dy * 5 * side, oy = dx * 5 * side;   // 진행 방향의 좌우로 번갈아
+        el.style.left = n2(cx + ox - 8) + "px";
+        el.style.top = n2(cy + oy - 8) + "px";
+        el.style.transform = "rotate(" + n2(ang) + "deg)";
+        layer.appendChild(el);
+        side = -side;
+        setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 2000);
+      };
+
+      /* 다음에 뭘 할지 고른다 */
+      /* 멈추지 않고 계속 움직인다. 대신 속도에 완급을 준다 */
+      var pace = 1, nextPace = 0;
+      var pick = function (t) {
+        pace = 0.55 + Math.random() * 0.75;   // 느긋하게 걷거나 총총 뛰거나
+        until = t + rand(1600, 3400);
+      };
+
+      var step = function (t) {
+        if (!active || active.caught) return;
+
+        if (Date.now() >= end) { runAway(); return; }
+
+        var dt = Math.min((t - last) / 1000, 0.05);
+        last = t;
+
+        if (t > until) pick(t);
+
+        if (pose === "run") {
+          ramp = Math.min(1, ramp + dt * 2.2);
+
+          if (t > nextTurn) {
+            var turn = (Math.random() - 0.5) * 1.6;
+            var cs = Math.cos(turn), sn = Math.sin(turn);
+            var ax = vx * cs - vy * sn, ay = vx * sn + vy * cs;
+            vx = ax; vy = ay * 0.9;
+            var n3 = Math.sqrt(vx * vx + vy * vy) || 1;
+            vx /= n3; vy /= n3;
+            nextTurn = t + rand(900, 2300);
+          }
+
+          // 속도에 약간의 기복을 줘서 기계적으로 안 보이게
+          var sp2 = SPEED * ramp * pace * (0.86 + 0.14 * Math.sin(t / 380));
+
+          x += vx * sp2 * dt;
+          y += vy * sp2 * dt;
+
+          if (x <= minX) { x = minX; vx = Math.abs(vx); }
+          if (x >= maxX) { x = maxX; vx = -Math.abs(vx); }
+          if (y <= minY) { y = minY; vy = Math.abs(vy); }
+          if (y >= maxY) { y = maxY; vy = -Math.abs(vy); }
+
+          look(vx >= 0 ? 1 : -1);
+          host.style.left = n2(x) + "px";
+          host.style.top = n2(y) + "px";
+
+          since += sp2 * dt;
+          if (since >= 24) {
+            since = 0;
+            dropPaw(x + SZ * 0.46, y + DH * 0.84, vx, vy);
+          }
+        }
+
+        raf = requestAnimationFrame(step);
+      };
+      raf = requestAnimationFrame(step);
+    }
+
+    timer = setInterval(function () {
+      if (!active || active.caught) { clearInterval(timer); return; }
+      if (Date.now() >= end) { clearInterval(timer); runAway(); }
+    }, 500);
+
+    host.addEventListener("click", grab);
+  }
+
+  function cleanup() {
+    if (raf) cancelAnimationFrame(raf);
+    if (timer) clearInterval(timer);
+    if (active && active.host && active.host.parentNode) active.host.parentNode.removeChild(active.host);
+    active = null;
+  }
+
+  function runAway() {
+    if (!active || active.caught) return;
+    active.caught = true;
+    if (raf) cancelAnimationFrame(raf);
+    if (timer) clearInterval(timer);
+    var h = active.host;
+    h.style.transition = "left 1s ease-in, opacity 1s";
+    h.style.left = (window.innerWidth + 80) + "px";
+    h.style.opacity = "0";
+    setTimeout(cleanup, 1050);
+  }
+
+  function grab() {
+    if (!active || active.caught) return;
+    active.caught = true;
+    if (raf) cancelAnimationFrame(raf);
+    if (timer) clearInterval(timer);
+
+    var h = active.host, code = active.sp.breedCode, sid = active.sp.spawnId;
+    h.style.transition = "left .18s ease-out, top .18s ease-out";
+    h.style.left = (window.innerWidth / 2 - SZ2 / 2) + "px";
+    active.inner.style.transform = "scaleX(1)";
+    var m2 = BREEDS[code] || {};
+    var SZ2 = Math.round(SIZE * (m2.sizeMul || 1));
+    active.inner.innerHTML = dogSVG(code, "joy", SZ2, true);
+    h.classList.add("pup-jump");
+
+    var i;
+    for (i = 0; i < 7; i++) {
+      (function (k) {
+        setTimeout(function () {
+          if (!h.parentNode) return;
+          var s = document.createElement("span");
+          s.className = "pup-heart";
+          s.textContent = "\u2665";
+          s.style.left = (Math.random() * 44 - 8) + "px";
+          s.style.top = "-4px";
+          s.style.fontSize = (12 + Math.random() * 8) + "px";
+          s.style.animation = "pupFly 1.6s ease-out forwards";
+          h.appendChild(s);
+          setTimeout(function () { if (s.parentNode) s.parentNode.removeChild(s); }, 1700);
+        }, k * 130);
+      })(i);
+    }
+
+    setTimeout(function () {
+      cleanup();
+      var u = currentUser();
+      if (!u) return;
+      rpc("puppy_catch", { p_user: u, p_spawn: sid }).then(function (d) {
+        if (!d.ok) return;
+        document.getElementById("pupCount").textContent =
+          (d.completed ? 0 : d.stampCount) + " / " + d.boardSize;
+        refreshBoard();
+        if (d.completed) celebrate();
+      }).catch(function () {});
+    }, JOY_MS);
+  }
+
+  /* ── 완성 연출 ───────────────────────────── */
+  function celebrate() {
+    var cel = document.createElement("div");
+    cel.className = "pup-cel";
+    document.body.appendChild(cel);
+
+    var colors = ["#EF9F27", "#D4537E", "#5DCAA5", "#85B7EB", "#F0997B", "#97C459"], i;
+    for (i = 0; i < 36; i++) {
+      var c = document.createElement("div");
+      c.className = "pup-cf";
+      c.style.background = colors[i % colors.length];
+      c.style.left = (Math.random() * 96) + "%";
+      c.style.top = "-14px";
+      c.style.animationDuration = (1.6 + Math.random() * 1.2) + "s";
+      c.style.animationDelay = (Math.random() * 0.7) + "s";
+      cel.appendChild(c);
+    }
+
+    var codes = ["shiba", "corgi", "retriever", "beagle", "husky"], pos = [8, 27, 46, 64, 80];
+    codes.forEach(function (code, k) {
+      setTimeout(function () {
+        if (!cel.parentNode) return;
+        var p = document.createElement("div");
+        p.className = "pup-pop";
+        p.style.left = pos[k] + "%";
+        p.innerHTML = '<div class="pup-jump" style="animation-iteration-count:infinite">' + dogSVG(code, "joy", 58, true) + '</div>';
+        cel.appendChild(p);
+      }, 180 + k * 130);
+    });
+
+    var card = document.createElement("div");
+    card.className = "pup-card";
+    card.innerHTML = '<div style="font-size:15px;font-weight:500;margin-bottom:4px">스탬프판 완성</div>' +
+                     '<div style="font-size:12px;opacity:.7">새 판이 시작됐어요</div>';
+    cel.appendChild(card);
+
+    setTimeout(function () { if (cel.parentNode) cel.parentNode.removeChild(cel); }, 4200);
+  }
+
+  /* ── 진입 판정 ───────────────────────────── */
+  function check() {
+    if (active) return;
+    if (Date.now() - lastCheck < 30000) return;
+    if (blocked()) return;
+    var u = currentUser();
+    if (!u) return;
+    lastCheck = Date.now();
+    rpc("puppy_spawn_check", { p_user: u }).then(function (d) {
+      if (d && d.spawn && !active && !blocked()) spawnDog(d);
+    }).catch(function () {});
+  }
+
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) setTimeout(check, 1200);
+  });
+  window.addEventListener("focus", function () { setTimeout(check, 1200); });
+
+  setTimeout(function () {
+    if (SUPABASE_URL.indexOf("여기에") !== -1) {
+      console.warn("[멍멍이] SUPABASE_URL / SUPABASE_KEY 를 먼저 채워주세요.");
+      return;
+    }
+    try { if (localStorage.getItem("puppyOff") === "1") { fab.style.display = "none"; return; } } catch (e) {}
+    refreshBoard();
+    check();
+  }, 2500);
+})();
+</script>
+<!-- ========== 멍멍이 잡기 끝 ========== -->
+  
 </body>
 </html>
