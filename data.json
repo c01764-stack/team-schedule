@@ -1395,11 +1395,11 @@
       "id": "m_twfpujmzw",
       "toUserId": "c05474",
       "toName": "주현수",
-      "text": "9월2주(7일~11일) 주간업무일지 제출",
+      "text": "9월2주(7일~11일) 주간업무일지 천재우 팀장에 제출",
       "byUserId": "c01764",
       "byName": "천재우",
       "createdAt": "2026-09-11T06:42:54.845Z",
-      "updatedAt": "2026-09-11T06:42:54.845Z",
+      "updatedAt": "2026-09-11T06:45:17.520Z",
       "readAt": null,
       "doneAt": null,
       "comments": []
@@ -2641,6 +2641,14 @@
     {
       "id": "l_tci6wiu5cmtwlcul9",
       "at": "2026-09-11T06:44:46.941Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 수정: 주현수"
+    },
+    {
+      "id": "l_tdmfh4rbzmtwldi6v",
+      "at": "2026-09-11T06:45:17.527Z",
       "userId": "c01764",
       "name": "천재우",
       "type": "change",
