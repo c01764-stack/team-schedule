@@ -5999,7 +5999,7 @@ updateInstallBtn();
   cursor:pointer;font:500 13px/1 inherit;color:#222;line-height:1}
 .pup-fab.pup-fixed{position:fixed;right:14px;bottom:76px;z-index:9997;box-shadow:0 2px 10px rgba(0,0,0,.12)}
 .pup-fab.pup-dim{opacity:.45}
-.pup-panel{position:fixed;right:14px;top:64px;z-index:9999;width:268px;background:#fff;
+.pup-panel{position:fixed;right:14px;top:64px;z-index:9999;width:268px;background:#fff;max-height:calc(100vh - 96px);overflow-y:auto;overscroll-behavior:contain;
   border:1px solid rgba(0,0,0,.12);border-radius:14px;padding:14px;box-shadow:0 6px 24px rgba(0,0,0,.16);
   display:none;font:400 13px/1.6 inherit;color:#222}
 .pup-panel h4{margin:0 0 9px;font:500 14px/1.4 inherit}
@@ -6024,6 +6024,7 @@ updateInstallBtn();
 .pup-adm label{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#555;margin-bottom:7px}
 .pup-adm input[type=number]{width:62px;padding:4px 6px;font:inherit;font-size:12px;border:1px solid #d8d6d0;border-radius:6px;text-align:right}
 .pup-adm input[type=date]{width:124px;padding:3px 6px;font:inherit;font-size:11.5px;border:1px solid #d8d6d0;border-radius:6px}
+.pup-hint{font-size:11px;color:#888;line-height:1.5;margin:-2px 0 9px}
 .pup-nfield{margin-bottom:7px}
 .pup-nfield span{display:block;font-size:11.5px;color:#555;margin-bottom:3px}
 .pup-nfield input,.pup-nfield textarea{width:100%;padding:5px 7px;font:inherit;font-size:11.5px;border:1px solid #d8d6d0;border-radius:6px;resize:vertical;line-height:1.5}
@@ -6743,6 +6744,7 @@ updateInstallBtn();
       '<label>리셋 주기(주)<input type="number" id="acCycle" min="1" max="52"></label>' +
       '<label>하루 출현 마릿수<input type="number" id="acSpawns" min="1" max="40"></label>' +
       '<label>하루 공룡 마릿수<input type="number" id="acDino" min="0" max="5"></label>' +
+      '<div class="pup-hint">공룡(티라노·브라키오·스테고)은 위 목록과 별개로 이 숫자만큼 나옵니다. 0이면 안 나와요.</div>' +
       '<label>하루 잡기 제한<input type="number" id="acDaily" min="1" max="30"></label>' +
       '<label>머무는 시간(초)<input type="number" id="acDur" min="5" max="300" step="5"></label>' +
       '<label>재등장 대기(분)<input type="number" id="acCool" min="0" max="180"></label>' +
@@ -6750,7 +6752,7 @@ updateInstallBtn();
       '<label>등장 동물<select id="acPool">' +
         '<option value="dog">강아지 8종</option>' +
         '<option value="cat">고양이 10종</option>' +
-        '<option value="all">전부 18종</option>' +
+        '<option value="all">강아지+고양이 18종</option>' +
       '</select></label>' +
       '<label>이벤트 켜기<input type="checkbox" id="acOn" style="width:auto"></label>' +
       '<div class="pup-nfield"><span>안내 제목</span>' +
