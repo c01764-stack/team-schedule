@@ -1382,11 +1382,11 @@
       "id": "m_togftrllc",
       "toUserId": "c05474",
       "toName": "주현수",
-      "text": "아카데미 사업계획서 작성 현황 및 예상 일정 보고(9월14일)",
+      "text": "9월14일에 아카데미 사업계획서 작성 현황 및 예상 일정 천재우 팀장 보고",
       "byUserId": "c01764",
       "byName": "천재우",
       "createdAt": "2026-09-11T06:42:08.298Z",
-      "updatedAt": "2026-09-11T06:42:08.298Z",
+      "updatedAt": "2026-09-11T06:44:46.937Z",
       "readAt": null,
       "doneAt": null,
       "comments": []
@@ -2637,6 +2637,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 등록: 주현수"
+    },
+    {
+      "id": "l_tci6wiu5cmtwlcul9",
+      "at": "2026-09-11T06:44:46.941Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 수정: 주현수"
     }
   ]
 }
