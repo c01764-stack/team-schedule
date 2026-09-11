@@ -2695,6 +2695,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 등록: 오혜지"
+    },
+    {
+      "id": "l_t0sb9mu3lmtwzno4y",
+      "at": "2026-09-11T13:25:06.418Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
