@@ -628,10 +628,18 @@
       "title": "본사 안전관리 서류 목록화/정리",
       "owner": "이재혁",
       "due": "2026-09-11",
-      "progress": 0,
+      "progress": 100,
       "memo": "- 본사 안전관리 서류 목록화 및 정리\n- 1층 캐비넷 서류 바인더 정리\n- 1층 바인더 옥상 캐비넷으로 일부 이동 필요",
       "dueHistory": [],
-      "includeInReport": true
+      "includeInReport": true,
+      "progressHistory": [
+        {
+          "at": "2026-09-11T00:03:45.203Z",
+          "p": 100,
+          "byUserId": "c04897",
+          "byName": "이재혁"
+        }
+      ]
     },
     {
       "id": "ty1rqqfqo",
@@ -2571,6 +2579,14 @@
       "name": "이재혁",
       "type": "change",
       "message": "진행율 수정: 안전작업 SOP 작성 → 100%"
+    },
+    {
+      "id": "l_tlpeopzmkmtw714fz",
+      "at": "2026-09-11T00:03:45.215Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "change",
+      "message": "진행율 수정: 본사 안전관리 서류 목록화/정리 → 100%"
     }
   ]
 }
