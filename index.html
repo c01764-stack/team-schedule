@@ -90,21 +90,6 @@
   .setup-banner{background:linear-gradient(135deg,#fff3e0,#ffe4ec);border:2px solid #ffd39a;border-radius:0;padding:14px 16px;margin-bottom:22px;font-size:14.5px;color:#92400e;box-shadow:var(--shadow-soft);}
   .setup-banner button{margin-left:8px;background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;border:none;border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;font-weight:700;}
 
-  .summary{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px;}
-  .stat-card{background:var(--card);border:1px solid var(--border);border-left:5px solid var(--violet);border-radius:0;padding:14px 16px;box-shadow:var(--shadow-card);transition:transform .15s, box-shadow .15s;}
-  .stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift);}
-  .stat-card .num{font-size:27px;font-weight:800;}
-  .stat-card .label{font-size:13px;color:var(--sub);margin-top:2px;font-weight:600;}
-  /* 평균 진행율이 무엇의 평균인지 카드 안에서 바로 보이게 */
-  .stat-note{display:inline-block;margin-left:5px;font-size:11px;font-weight:700;color:var(--sub);
-    background:var(--bg);border:1px solid var(--border);border-radius:999px;padding:1px 6px;vertical-align:1px;white-space:nowrap;}
-  .stat-card.done{border-left-color:var(--green);background:linear-gradient(180deg,#f0fdf4,var(--card) 40%);}
-  .stat-card.done .num{color:var(--green);}
-  .stat-card.overdue{border-left-color:var(--red);background:linear-gradient(180deg,#fff1f2,var(--card) 40%);}
-  .stat-card.overdue .num{color:var(--red);}
-  .stat-card.progress{border-left-color:var(--blue);background:linear-gradient(180deg,#eff6ff,var(--card) 40%);}
-  .stat-card.progress .num{color:var(--blue);}
-
   .tabs{display:flex;gap:8px;margin-bottom:18px;border-bottom:none;flex-wrap:wrap;}
   .tab{padding:10px 20px;font-size:17px;cursor:pointer;color:var(--sub);border-bottom:none;border-radius:999px;background:#fff;border:2px solid var(--border);user-select:none;font-weight:600;transition:all .15s;box-shadow:0 4px 14px rgba(30,20,70,.1);}
   .tab:hover{border-color:var(--violet);color:var(--violet);}
@@ -742,7 +727,6 @@
     .add-form button{grid-column:1 / -1;padding:11px 0;}
   }
   @media (max-width: 900px){
-    .summary{grid-template-columns:repeat(3,1fr);}
     /* 칸이 좁아지는 구간에서는 일정 칩을 한 단계 줄여 이름이 잘리지 않게 한다 */
     .cal-chip{font-size:12.5px;padding:4px 7px;}
     .cal-cell{min-height:100px;padding:6px;}
@@ -762,11 +746,6 @@
     .today-badge{padding:5px 9px;font-size:12px;white-space:nowrap;}
     .icon-btn{width:30px;height:30px;font-size:14.5px;}
 
-    .summary{grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px;}
-    .stat-card{padding:9px 10px;border-left-width:4px;border-radius:0;box-shadow:var(--shadow-soft);}
-    .stat-card .num{font-size:19px;}
-    .stat-card .label{font-size:11.5px;margin-top:0;}
-    .stat-note{display:block;margin-left:0;font-size:10px;padding:0 4px;border:none;background:none;}
 
     .absence-banner{padding:11px 13px;margin-bottom:14px;gap:6px 10px;}
     .absence-banner h3{font-size:15.5px;}
@@ -910,11 +889,6 @@
   }
 
   @media (max-width: 400px){
-    .summary{gap:6px;}
-    .stat-card{padding:8px 8px;}
-    .stat-card .num{font-size:17.5px;}
-    .stat-card .label{font-size:11px;}
-    .stat-note{font-size:9.5px;}
     .cal-cell{min-height:66px;}
     .cal-chip{font-size:11px;padding:2px 4px;}
   }
@@ -956,12 +930,6 @@
   [data-theme="dark"] .setup-banner{background:linear-gradient(135deg,rgba(251,191,36,.14),rgba(244,63,94,.08));border:2px solid rgba(251,191,36,.4);border-radius:0;padding:14px 16px;margin-bottom:22px;font-size:14.5px;color:#fbbf24;}
   [data-theme="dark"] .setup-banner button{margin-left:8px;background:linear-gradient(135deg,#fbbf24,#fb923c);color:#1a1206;border:none;border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;font-weight:700;}
   [data-theme="dark"] .today-badge{box-shadow:0 3px 10px rgba(34,211,238,.18);}
-  [data-theme="dark"] .stat-card{box-shadow:var(--shadow-card);}
-  [data-theme="dark"] .stat-note{background:rgba(255,255,255,.05);}
-  [data-theme="dark"] .stat-card:hover{box-shadow:var(--shadow-lift);}
-  [data-theme="dark"] .stat-card.done{background:linear-gradient(180deg,rgba(74,222,128,.12),var(--card) 60%);}
-  [data-theme="dark"] .stat-card.overdue{background:linear-gradient(180deg,rgba(251,113,133,.12),var(--card) 60%);}
-  [data-theme="dark"] .stat-card.progress{background:linear-gradient(180deg,rgba(56,189,248,.12),var(--card) 60%);}
   [data-theme="dark"] .tab{background:var(--card);box-shadow:0 4px 14px rgba(34,211,238,.07);}
   [data-theme="dark"] .tab.active{color:#fff;background:linear-gradient(135deg,#0891b2,#4f46e5);box-shadow:0 0 16px rgba(34,211,238,.45);}
   [data-theme="dark"] .add-form{box-shadow:var(--shadow-card);}
@@ -1147,8 +1115,6 @@
     지금은 <b>보기 전용</b>입니다. 확인 체크·댓글·업무 입력을 저장하려면 GitHub 토큰이 필요합니다.
     <button onclick="openSettings()">토큰 입력하기</button>
   </div>
-
-  <div class="summary" id="summary"></div>
 
   <div class="absence-banner" id="absenceBanner"></div>
 
@@ -2722,29 +2688,6 @@ function barColor(progress, overdue){
   if(progress >= 80) return "var(--green)";
   if(progress >= 40) return "var(--blue)";
   return "var(--orange)";
-}
-
-function renderSummary(){
-  const total = tasks.length;
-  const done = tasks.filter(isTaskDone).length;
-  const overdue = tasks.filter(t => dueInfo(t.due, t.progress, isTaskDone(t)).status === "지연").length;
-  const ongoing = total - done - overdue;
-  // 평균 진행율은 "아직 남은 일이 얼마나 진행됐는가"를 보는 숫자다.
-  // 완료(100%) 건이 섞여 있으면 완료가 쌓일수록 저절로 올라가서, 실제로 밀린 일이
-  // 얼마나 진행됐는지가 가려진다. 그래서 완료 건은 빼고 계산한다.
-  const pending = tasks.filter(t => !isTaskDone(t));
-  const avg = pending.length
-    ? Math.round(pending.reduce((s,t)=>s+Number(t.progress),0)/pending.length)
-    : (total ? 100 : 0);   // 남은 일이 없으면 100% (업무 자체가 없으면 0%)
-
-  const el = document.getElementById("summary");
-  el.innerHTML = `
-    <div class="stat-card"><div class="num">${total}</div><div class="label">전체 업무</div></div>
-    <div class="stat-card done"><div class="num">${done}</div><div class="label">완료</div></div>
-    <div class="stat-card"><div class="num">${ongoing}</div><div class="label">진행중</div></div>
-    <div class="stat-card overdue"><div class="num">${overdue}</div><div class="label">지연</div></div>
-    <div class="stat-card progress" title="완료된 업무는 빼고, 아직 진행 중인 ${pending.length}건의 평균입니다"><div class="num">${avg}%</div><div class="label">평균 진행율<span class="stat-note">완료 제외</span></div></div>
-  `;
 }
 
 function taskRow(t, opts){
@@ -5028,7 +4971,6 @@ function render(){
   document.getElementById("pageTitle").textContent = `업무관리 대시보드: ${new Date().getMonth() + 1}월`;
   updateSetupBanner();
   fillOwnerSelects();
-  renderSummary();
   ensureEduYears();
   renderAbsenceBanner();
   renderNoticeBanner();
