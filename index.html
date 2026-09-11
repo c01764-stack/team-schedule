@@ -6450,8 +6450,12 @@ updateInstallBtn();
         dinoFace(70, -1, joy, sleep, d);
     } else if (f === "stego") {
       g =
-        '<path class="' + tailCls + '" style="transform-origin:18px 32px" d="M 18 32 C 6 33 -6 28 -12 22 C -2 24 8 27 17 27 Z" fill="' + d + '"/>' +
-        '<path d="M -10 22 l -5 -4 l 5 0 Z M -8 27 l -6 2 l 5 2 Z" fill="' + be + '"/>' +
+        /* 꼬리 끝 가시도 꼬리와 한 묶음으로 흔들려야 한다 (따로 두면 제자리에 떠 있음) */
+        '<g class="' + tailCls + '" style="transform-origin:18px 32px">' +
+          '<path d="M -10 23.4 L -14 16 L -6.5 24.2 Z M -5.5 24.4 L -7 17 L -2 25.2 Z M -9.5 23.6 L -13 31 L -6.5 25.2 Z M -5.1 26 L -6 34 L -2.3 27.4 Z" fill="' + be + '"/>' +
+          '<path d="M -10 23.4 L -14 16 L -6.5 24.2 Z M -5.5 24.4 L -7 17 L -2 25.2 Z M -9.5 23.6 L -13 31 L -6.5 25.2 Z M -5.1 26 L -6 34 L -2.3 27.4 Z" fill="' + d + '" opacity=".35"/>' +
+          '<path d="M 18 32 C 6 33 -6 28 -12 22 C -2 24 8 27 17 27 Z" fill="' + d + '"/>' +
+        '</g>' +
         leg(22, 38, 10, 15, d, "#000", legB) + leg(40, 38, 10, 15, d, "#000", legA) +
         '<path d="M 16 26 L 22 12 L 28 25 Z M 28 24 L 35 8 L 42 23 Z M 42 23 L 49 11 L 54 25 Z" fill="' + be + '"/>' +
         '<path d="M 16 26 L 22 12 L 28 25 Z M 28 24 L 35 8 L 42 23 Z M 42 23 L 49 11 L 54 25 Z" fill="' + d + '" opacity=".35"/>' +
