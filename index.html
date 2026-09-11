@@ -6819,7 +6819,7 @@ updateInstallBtn();
           return String(v == null ? "" : v)
             .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         };
-        var body = esc(d.noticeBody).split("\\n").map(function (ln) {
+        var body = esc(d.noticeBody).split(/\r?\n/).map(function (ln) {
           return '<div>' + ln + '</div>';
         }).join("");
         nt.innerHTML = (d.noticeTitle ? '<b>' + esc(d.noticeTitle) + '</b>' : '') + body;
