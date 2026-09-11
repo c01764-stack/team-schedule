@@ -1403,6 +1403,19 @@
       "readAt": null,
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_tg8strmb5",
+      "toUserId": "c05474",
+      "toName": "주현수",
+      "text": "CS교육 일정 확정 사업장 차수 등록(본인이 가는 사업장)",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-11T06:52:08.557Z",
+      "updatedAt": "2026-09-11T06:52:08.557Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -2653,6 +2666,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 수정: 주현수"
+    },
+    {
+      "id": "l_tev9g3pg4mtwlmbci",
+      "at": "2026-09-11T06:52:08.562Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 주현수"
     }
   ]
 }
