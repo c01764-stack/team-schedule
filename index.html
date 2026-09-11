@@ -6756,10 +6756,26 @@ updateInstallBtn();
     '</div>';
   document.body.appendChild(panel);
 
+  function placePanel() {
+    var r = fab.getBoundingClientRect();
+    var w = panel.offsetWidth || 268;
+    var left = Math.max(8, Math.min(r.left, window.innerWidth - w - 8));
+    panel.style.right = "auto";
+    panel.style.left = Math.round(left) + "px";
+    panel.style.top = Math.round(r.bottom + 8) + "px";
+  }
+
   fab.addEventListener("click", function () {
     var open = panel.style.display === "block";
-    panel.style.display = open ? "none" : "block";
-    if (!open) { refreshBoard(); refreshSummary(); }
+    if (open) { panel.style.display = "none"; return; }
+    panel.style.display = "block";
+    placePanel();
+    refreshBoard();
+    refreshSummary();
+  });
+
+  window.addEventListener("resize", function () {
+    if (panel.style.display === "block") placePanel();
   });
 
   document.getElementById("pupOff").addEventListener("click", function () {
