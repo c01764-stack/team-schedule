@@ -2587,6 +2587,14 @@
       "name": "이재혁",
       "type": "change",
       "message": "진행율 수정: 본사 안전관리 서류 목록화/정리 → 100%"
+    },
+    {
+      "id": "l_tvymmma52mtwa9q2l",
+      "at": "2026-09-11T01:34:25.341Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
