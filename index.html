@@ -5960,7 +5960,7 @@ if('serviceWorker' in navigator && location.protocol.startsWith('http')){
 
 updateInstallBtn();
 </script>
-<!-- ========== 멍멍이 잡기 시작 (여기부터 </body> 앞에 붙여넣기) ========== -->
+  <!-- ========== 멍멍이 잡기 시작 (여기부터 </body> 앞에 붙여넣기) ========== -->
 <style>
 #pupLayer{position:fixed;inset:0;pointer-events:none;z-index:9998}
 #pupLayer *{box-sizing:border-box}
@@ -5994,10 +5994,12 @@ updateInstallBtn();
 .pup-breathe{animation:pupBreathe 2.2s ease-in-out infinite alternate}
 .pup-z{animation:pupZ 2.4s ease-out infinite}
 .pup-z2{animation:pupZ 2.4s ease-out 1.2s infinite}
-.pup-fab{position:fixed;right:14px;bottom:76px;z-index:9997;display:flex;align-items:center;gap:6px;
+.pup-fab{display:inline-flex;align-items:center;gap:6px;vertical-align:middle;margin-right:8px;
   background:#fff;border:1px solid rgba(0,0,0,.12);border-radius:999px;padding:7px 13px 7px 10px;
-  box-shadow:0 2px 10px rgba(0,0,0,.12);cursor:pointer;font:500 13px/1 inherit;color:#222}
-.pup-panel{position:fixed;right:14px;bottom:126px;z-index:9999;width:268px;background:#fff;
+  cursor:pointer;font:500 13px/1 inherit;color:#222;line-height:1}
+.pup-fab.pup-fixed{position:fixed;right:14px;bottom:76px;z-index:9997;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.pup-fab.pup-dim{opacity:.45}
+.pup-panel{position:fixed;right:14px;top:64px;z-index:9999;width:268px;background:#fff;
   border:1px solid rgba(0,0,0,.12);border-radius:14px;padding:14px;box-shadow:0 6px 24px rgba(0,0,0,.16);
   display:none;font:400 13px/1.6 inherit;color:#222}
 .pup-panel h4{margin:0 0 9px;font:500 14px/1.4 inherit}
@@ -6040,7 +6042,7 @@ updateInstallBtn();
   /* ═══════════════════════════════════════════ */
 
   var SAFE = { top: 68, bottom: 88, left: 12, right: 12 };
-  var SIZE = 62, SPEED = 46, JOY_MS = 1500;
+  var SIZE = 124, SPEED = 64, JOY_MS = 1500;
   var DRAW_H = Math.round(62 * 0.72);   // 실제 그려지는 높이
 
   var BREEDS = {
@@ -6112,11 +6114,11 @@ updateInstallBtn();
 
     /* ── 공룡 5종 (크게 나오고 스탬프 3칸) ── */
     trex:    { kind:"dino", name:"티라노", coat:"#7A9A5B", shade:"#4E6B36", belly:"#D9E5C2",
-               sizeMul:1.85, weight:3, form:"trex" },
+               sizeMul:1.45, weight:3, form:"trex" },
     brachio: { kind:"dino", name:"브라키오", coat:"#6E8FA8", shade:"#47627A", belly:"#CCDDE9",
-               sizeMul:1.95, weight:3, form:"brachio" },
+               sizeMul:1.55, weight:3, form:"brachio" },
     stego:   { kind:"dino", name:"스테고", coat:"#8D7BA8", shade:"#5D4E76", belly:"#DED3EA",
-               sizeMul:1.85, weight:3, form:"stego" }
+               sizeMul:1.45, weight:3, form:"stego" }
 
   };
 
@@ -6703,7 +6705,13 @@ updateInstallBtn();
   fab.type = "button";
   fab.setAttribute("aria-label", "멍멍이 스탬프판 열기");
   fab.innerHTML = '<span style="display:inline-flex">' + dogSVG("shiba", "run", 30, false) + '</span><span id="pupCount">0 / 15</span>';
-  document.body.appendChild(fab);
+  var anchor = document.getElementById("todayBadge");
+  if (anchor && anchor.parentNode) {
+    anchor.parentNode.insertBefore(fab, anchor);
+  } else {
+    fab.classList.add("pup-fixed");
+    document.body.appendChild(fab);
+  }
 
   var panel = document.createElement("div");
   panel.className = "pup-panel";
@@ -6738,10 +6746,20 @@ updateInstallBtn();
     if (!open) { refreshBoard(); refreshSummary(); }
   });
 
+  function setOff(off) {
+    try { off ? localStorage.setItem("puppyOff", "1") : localStorage.removeItem("puppyOff"); } catch (e) {}
+    fab.classList.toggle("pup-dim", off);
+    document.getElementById("pupOff").textContent = off ? "이벤트 다시 켜기" : "이벤트 참여 끄기";
+    if (!off) { refreshBoard(); check(); }
+  }
+
   document.getElementById("pupOff").addEventListener("click", function () {
-    try { localStorage.setItem("puppyOff", "1"); } catch (e) {}
+    var off = false;
+    try { off = localStorage.getItem("puppyOff") === "1"; } catch (e) {}
+    if (off) { setOff(false); return; }
+    if (!window.confirm("동물이 더 이상 나타나지 않습니다.\n이 버튼을 다시 누르면 언제든 켤 수 있어요.\n끄시겠어요?")) return;
+    setOff(true);
     panel.style.display = "none";
-    fab.style.display = "none";
   });
 
   /* ── 스탬프판 갱신 ───────────────────────── */
@@ -6931,7 +6949,7 @@ updateInstallBtn();
       var dropPaw = function (cx, cy, dx, dy) {
         var el = document.createElement("div");
         el.className = "pup-paw";
-        el.innerHTML = pawSVG(isCat, pawColor, meta.kind === "dino" ? 26 : 16);
+        el.innerHTML = pawSVG(isCat, pawColor, meta.kind === "dino" ? 34 : 22);
         var ang = Math.atan2(dy, dx) * 180 / Math.PI + 90;
         var ox = -dy * 5 * side, oy = dx * 5 * side;   // 진행 방향의 좌우로 번갈아
         el.style.left = n2(cx + ox - 8) + "px";
@@ -6989,7 +7007,7 @@ updateInstallBtn();
           host.style.top = n2(y) + "px";
 
           since += sp2 * dt;
-          if (since >= 24) {
+          if (since >= 34) {
             since = 0;
             dropPaw(x + SZ * 0.46, y + DH * 0.84, vx, vy);
           }
@@ -7136,13 +7154,19 @@ updateInstallBtn();
       console.warn("[멍멍이] SUPABASE_URL / SUPABASE_KEY 를 먼저 채워주세요.");
       return;
     }
-    try { if (localStorage.getItem("puppyOff") === "1") { fab.style.display = "none"; return; } } catch (e) {}
+    var isOff = false;
+    try { isOff = localStorage.getItem("puppyOff") === "1"; } catch (e) {}
+    if (isOff) {
+      fab.classList.add("pup-dim");
+      document.getElementById("pupOff").textContent = "이벤트 다시 켜기";
+      refreshBoard();
+      return;
+    }
     refreshBoard();
     check();
   }, 2500);
 })();
 </script>
 <!-- ========== 멍멍이 잡기 끝 ========== -->
-  
 </body>
 </html>
