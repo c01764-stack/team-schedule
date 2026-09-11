@@ -6747,6 +6747,7 @@ updateInstallBtn();
     '<div class="pup-team" id="pupTeam">불러오는 중</div>' +
     '<div class="pup-notice" id="pupNotice"></div>' +
     '<button class="pup-off" type="button" id="pupOff">창 닫기</button>' +
+    '<button class="pup-off" type="button" id="pupDemo" style="margin-left:12px">동물 출현 샘플 보기</button>' +
     '<button class="pup-off" type="button" id="pupAdmOpen" style="float:right;display:none">설정</button>' +
     '<div class="pup-adm" id="pupAdm">' +
       '<label>이벤트 시작일<input type="date" id="acStart"></label>' +
@@ -6798,6 +6799,20 @@ updateInstallBtn();
 
   document.getElementById("pupOff").addEventListener("click", function () {
     panel.style.display = "none";
+  });
+
+  document.getElementById("pupDemo").addEventListener("click", function () {
+    panel.style.display = "none";
+    if (active) return;
+    var all = Object.keys(BREEDS);
+    var code = all[Math.floor(Math.random() * all.length)];
+    spawnDog({
+      spawnId: "demo",
+      breedCode: code,
+      durationMs: 20000,
+      expiresAt: new Date(Date.now() + 20000).toISOString(),
+      demo: true
+    });
   });
 
   /* ── 스탬프판 갱신 ───────────────────────── */
@@ -7145,11 +7160,12 @@ updateInstallBtn();
     if (timer) clearInterval(timer);
 
     var h = active.host, code = active.sp.breedCode, sid = active.sp.spawnId;
+    var isDemo = !!active.sp.demo;
+    var m2 = BREEDS[code] || {};
+    var SZ2 = Math.round(SIZE * (m2.sizeMul || 1));
     h.style.transition = "left .18s ease-out, top .18s ease-out";
     h.style.left = (window.innerWidth / 2 - SZ2 / 2) + "px";
     active.inner.style.transform = "scaleX(1)";
-    var m2 = BREEDS[code] || {};
-    var SZ2 = Math.round(SIZE * (m2.sizeMul || 1));
     active.inner.innerHTML = dogSVG(code, "joy", SZ2, true);
     h.classList.add("pup-jump");
 
@@ -7173,6 +7189,7 @@ updateInstallBtn();
 
     setTimeout(function () {
       cleanup();
+      if (isDemo) return;
       var u = currentUser();
       if (!u) return;
       rpc("puppy_catch", { p_user: u, p_spawn: sid }).then(function (d) {
