@@ -1392,6 +1392,19 @@
       "readAt": "2026-09-14T00:27:48.805Z",
       "doneAt": "2026-09-14T00:30:36.424Z",
       "comments": []
+    },
+    {
+      "id": "m_t31nhii8w",
+      "toUserId": "c04897",
+      "toName": "이재혁",
+      "text": "안전작업 SOP 현장(부산지역 사업장) 의견 청취 및 반영",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-14T05:44:51.430Z",
+      "updatedAt": "2026-09-14T05:44:51.430Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -2858,6 +2871,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "일정 삭제: 오혜지"
+    },
+    {
+      "id": "l_tj0334a0rmu0tjca5",
+      "at": "2026-09-14T05:44:51.437Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 이재혁"
     }
   ]
 }
