@@ -2808,6 +2808,14 @@
       "name": "천재우",
       "type": "change",
       "message": "전달사항 확인: 천재우"
+    },
+    {
+      "id": "l_t4vafmzulmu0i6dd9",
+      "at": "2026-09-14T00:26:50.541Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
