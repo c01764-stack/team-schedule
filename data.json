@@ -3043,6 +3043,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 수정: 이재혁"
+    },
+    {
+      "id": "l_tipg8gatamu0z5quv",
+      "at": "2026-09-14T08:22:14.839Z",
+      "userId": "c90005",
+      "name": "강문선",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
