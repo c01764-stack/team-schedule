@@ -1234,7 +1234,7 @@
       "id": "t7073sn5y",
       "team": "edu",
       "person": "주현수",
-      "type": "etc",
+      "type": "leave",
       "start": "2026-09-08",
       "end": "2026-09-08",
       "memo": "휴가"
@@ -3093,6 +3093,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 추가: 주현수"
+    },
+    {
+      "id": "l_tsyyl9lk7mu1rwjqn",
+      "at": "2026-09-14T21:46:54.575Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 수정: 주현수"
     }
   ]
 }
