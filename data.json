@@ -639,7 +639,8 @@
           "byUserId": "c04897",
           "byName": "이재혁"
         }
-      ]
+      ],
+      "completedAt": "2026-09-14T07:15:39.216Z"
     },
     {
       "id": "ty1rqqfqo",
@@ -2916,6 +2917,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 수정: 본사 안전관리 서류 목록화/정리"
+    },
+    {
+      "id": "l_tm5uhj73lmu0ws3tj",
+      "at": "2026-09-14T07:15:39.223Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 완료 처리: 본사 안전관리 서류 목록화/정리"
     }
   ]
 }
