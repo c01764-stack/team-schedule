@@ -6700,6 +6700,9 @@ updateInstallBtn();
       '<label>이벤트 시작일<input type="date" id="acStart"></label>' +
       '<label>이벤트 종료일<input type="date" id="acEnd"></label>' +
       '<label>리셋 주기(주)<input type="number" id="acCycle" min="1" max="52"></label>' +
+      '<label>출현 시작 시각<input type="time" id="acWStart"></label>' +
+      '<label>출현 종료 시각<input type="time" id="acWEnd"></label>' +
+      '<div class="pup-hint">이 시간대(평일) 안에서만 동물이 나옵니다. 예: 09:00 ~ 18:00</div>' +
       '<label>하루 출현 마릿수<input type="number" id="acSpawns" min="1" max="40"></label>' +
       '<label>하루 공룡 마릿수<input type="number" id="acDino" min="0" max="5"></label>' +
       '<div class="pup-hint">공룡(티라노·브라키오·스테고)은 위 목록과 별개로 이 숫자만큼 나옵니다. 0이면 안 나와요.</div>' +
@@ -6863,6 +6866,8 @@ updateInstallBtn();
     document.getElementById("acStart").value = d.eventStart || "";
     document.getElementById("acEnd").value = d.eventEnd || "";
     document.getElementById("acCycle").value = d.cycleWeeks;
+    document.getElementById("acWStart").value = d.workStart || "";
+    document.getElementById("acWEnd").value   = d.workEnd || "";
     document.getElementById("acSpawns").value = d.dailySpawnLimit;
     document.getElementById("acDino").value = d.dinoDaily;
     document.getElementById("acDaily").value = d.dailyLimit;
@@ -6924,8 +6929,12 @@ updateInstallBtn();
       p_pool: pool
     };
     var admFn = "puppy_admin_set";
-    if (isPupAdmin()) { admFn = "puppy_admin_save"; args.p_user = currentUser(); }
-    else { args.p_key = adminKey(); }
+    if (isPupAdmin()) {
+      admFn = "puppy_admin_save";
+      args.p_user = currentUser();
+      args.p_wstart = document.getElementById("acWStart").value || null;
+      args.p_wend = document.getElementById("acWEnd").value || null;
+    } else { args.p_key = adminKey(); }
     rpc(admFn, args).then(function (d) {
       if (!d || !d.ok) { msg.textContent = "저장하지 못했습니다"; return; }
       fillAdmin(d);
@@ -7247,6 +7256,11 @@ updateInstallBtn();
     }
     refreshBoard();
     check();
+    /* 화면을 켜둔 채로 두어도 하루 동안 계속 기회가 생기도록 주기적으로 물어본다.
+       실제 등장 간격은 서버의 재등장 대기(분)·출현 확률(%)이 정한다. */
+    setInterval(function () {
+      if (!document.hidden) check();
+    }, 60000);
   }, 2500);
 })();
 </script>
