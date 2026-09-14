@@ -3051,6 +3051,14 @@
       "name": "강문선",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tils3onbomu107hbh",
+      "at": "2026-09-14T08:51:35.405Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
