@@ -718,6 +718,8 @@
   .cal-chip.from-edu{box-shadow:inset 0 0 0 1.5px #c4b5fd;}
   .cal-chip.from-safe{box-shadow:inset 0 0 0 1.5px #fdba74;}
   .cal-chip-type{opacity:.75;margin-left:3px;font-weight:600;}
+  .cal-chip-who{font-weight:600;opacity:.9;}
+  .cal-chip-sep{margin:0 3px;opacity:.55;font-weight:600;}
 
   /* ---------- Responsive ---------- */
   /* 태블릿 폭에서는 입력 폼의 고정 컬럼 합계가 화면보다 넓어 가로 스크롤이 생겼다.
@@ -2905,6 +2907,18 @@ function linkSrc(a){
   return (a && a.fromEdu) ? LINK_SRC.edu : null;   // 예전 형태 호환
 }
 
+/**
+ * 연동 일정에서 "누가 가는지" 이름만 뽑는다.
+ * 점검(안전관리시스템) = 점검자 / 교육(교육관리시스템) = 강사.
+ * 직접 등록한 일정은 person 자체가 사람 이름이라 여기서는 빈 값을 준다.
+ */
+function absWho(a){
+  if(!a) return "";
+  if(a.safe) return String(a.safe.inspector || "").trim();
+  if(a.edu)  return String(a.edu.teacher   || "").trim();
+  return "";
+}
+
 async function loadEduYear(year){
   if(eduLoading.has(year)) return;
   const hit = eduCache.get(year);
@@ -3924,8 +3938,10 @@ function renderAbsenceCalendar(){
       const meta = TEAM_META[a.team];
       const type = TYPE_META[a.type] || TYPE_META.etc;
       const src = linkSrc(a);
-      const tip = `${a.person} · ${meta.label} · ${type.label}${a.memo ? ' · ' + a.memo : ''}${src ? ' (' + src.tag + ')' : ''}`;
-      return `<div class="cal-chip ${meta.cls}${src ? ' ' + src.cls : ''}" onclick="openAbsenceChip('${a.id}')" title="${escapeHtml(tip)}">${escapeHtml(a.person)}<span class="cal-chip-type">${type.label}</span></div>`;
+      const who = absWho(a);
+      const whoPart = who ? `<span class="cal-chip-who"><span class="cal-chip-sep">·</span>${escapeHtml(who)}</span>` : '';
+      const tip = `${a.person} · ${meta.label} · ${type.label}${who ? ' · ' + who : ''}${a.memo ? ' · ' + a.memo : ''}${src ? ' (' + src.tag + ')' : ''}`;
+      return `<div class="cal-chip ${meta.cls}${src ? ' ' + src.cls : ''}" onclick="openAbsenceChip('${a.id}')" title="${escapeHtml(tip)}">${escapeHtml(a.person)}<span class="cal-chip-type">${type.label}</span>${whoPart}</div>`;
     }).join("");
     const classes = ["cal-cell"];
     if(!c.currentMonth) classes.push("cal-other-month");
