@@ -1436,11 +1436,11 @@
       "id": "m_t31nhii8w",
       "toUserId": "c04897",
       "toName": "이재혁",
-      "text": "안전작업 SOP: 현장(부산지역 사업장) 의견 청취 및 반영",
+      "text": "안전작업 SOP: 현장(부산지역 사업장) 의견 검토 및 반영",
       "byUserId": "c01764",
       "byName": "천재우",
       "createdAt": "2026-09-14T05:44:51.430Z",
-      "updatedAt": "2026-09-14T05:45:13.069Z",
+      "updatedAt": "2026-09-14T07:44:17.773Z",
       "readAt": null,
       "doneAt": null,
       "comments": []
@@ -3035,6 +3035,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 수정: 안전작업 SOP 작성"
+    },
+    {
+      "id": "l_th5usvjz3mu0xsxva",
+      "at": "2026-09-14T07:44:17.782Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 수정: 이재혁"
     }
   ]
 }
