@@ -316,12 +316,19 @@
   .pg-val{fill:var(--text);font-size:12px;font-weight:800;font-family:inherit;}
   .pg-due{stroke:var(--red);stroke-width:1;opacity:.6;shape-rendering:crispEdges;}
   .pg-due-t{fill:var(--red);font-size:11.5px;font-weight:700;font-family:inherit;}
+  /* 지난 마감(최초·중간에 바뀐 마감)은 같은 빨강이되 점선으로 옅게 */
+  .pg-due.pg-old{stroke-dasharray:3 3;opacity:.42;}
+  .pg-due-t.pg-old{opacity:.7;font-weight:600;}
+  [data-theme="dark"] .pg-due.pg-old{opacity:.55;}
+  .pg-duemove{fill:var(--red);opacity:.55;}
   .pg-cross{stroke:var(--sub);stroke-width:1;opacity:.55;shape-rendering:crispEdges;}
   .pg-hi{fill:var(--pg-line);stroke:var(--card);stroke-width:2.5;}
   .pg-tip{position:absolute;top:0;left:0;pointer-events:none;background:var(--card);border:1px solid var(--border);
     box-shadow:var(--shadow-soft);padding:7px 10px;font-size:12.5px;line-height:1.45;color:var(--sub);white-space:nowrap;z-index:2;}
   .pg-tip .pg-tip-v{display:block;font-size:17px;font-weight:800;color:var(--text);}
   .pg-tip .pg-tip-c{display:block;color:var(--text);}
+  .pg-tip .pg-tip-due{display:block;color:var(--red);font-weight:700;}
+  .pg-stats .pg-due-stat b{color:var(--red);}
   .pg-empty-note{font-size:12.5px;color:var(--sub);margin:4px 0 0;}
   .pg-table td:nth-child(n+2),.pg-table th:nth-child(n+2){white-space:nowrap;}
   .pg-table td.pg-up{color:#15803d;font-weight:700;}
@@ -5525,6 +5532,42 @@ function pgLongDate(ymd){
   return `${m}월 ${d}일 (${w})`;
 }
 
+/**
+ * 마감일 변경 이력으로 그래프에 그릴 마감선 목록을 만든다.
+ * kind: 'first' 최초 마감 / 'old' 중간에 거쳐 간 마감 / 'cur' 지금 마감
+ * 같은 날짜가 겹치면 하나로 합치고, 지금 마감이면 그 종류를 우선한다.
+ */
+function pgDueLines(t){
+  const isYmd = s => /^\d{4}-\d{2}-\d{2}$/.test(s || "");
+  const hist = (Array.isArray(t.dueHistory) ? t.dueHistory : [])
+    .slice().sort((a, b) => new Date(a.changedAt) - new Date(b.changedAt));
+  const out = [];
+  const push = (ymd, kind) => {
+    if(!isYmd(ymd)) return;
+    const hit = out.find(o => o.ymd === ymd);
+    if(hit){ if(kind === 'cur') hit.kind = 'cur'; return; }
+    out.push({ ymd, kind });
+  };
+  hist.forEach((h, i) => push(h.from, i === 0 ? 'first' : 'old'));
+  hist.forEach(h => push(h.to, 'old'));            // 거쳐 간 마감(마지막 to 는 아래에서 'cur' 로 올라간다)
+  push(t.due, 'cur');
+  out.forEach(o => { if(o.ymd === t.due) o.kind = 'cur'; });
+  out.sort((a, b) => a.ymd < b.ymd ? -1 : 1);
+  return out;
+}
+
+/** 마감이 바뀐 날짜별 기록 — 그래프 툴팁에서 보여준다 */
+function pgDueChanges(t){
+  const map = {};
+  (Array.isArray(t.dueHistory) ? t.dueHistory : []).forEach(h => {
+    const d = new Date(h && h.changedAt);
+    if(isNaN(d.getTime())) return;
+    const k = fmtLocalDate(d);
+    (map[k] = map[k] || []).push(h);
+  });
+  return map;
+}
+
 // 일자별 값(그날 마지막 값)과 축 범위를 만든다.
 function progressDaily(t, ev){
   const start = pgYmd(ev[0].time);
@@ -5547,11 +5590,13 @@ function progressDaily(t, ev){
     days.push({ ymd, p: val, changes });
   }
   // 마감이 60일 안쪽으로 남아 있으면 축을 마감까지 늘려 남은 기간이 보이게 한다.
+  // 지난 마감(이력)이 더 뒤에 있으면 그것도 축 안에 들어오게 한다.
   let axisEnd = dataEnd;
   const due = /^\d{4}-\d{2}-\d{2}$/.test(t.due || "") ? t.due : "";
-  if(due && due > dataEnd && pgDiff(dataEnd, due) <= 60) axisEnd = due;
+  const dueLines = pgDueLines(t);
+  dueLines.forEach(o => { if(o.ymd > axisEnd && pgDiff(dataEnd, o.ymd) <= 60) axisEnd = o.ymd; });
   if(pgDiff(start, axisEnd) < 6) axisEnd = pgAddDays(start, 6);
-  return { start, dataEnd, axisEnd, span: pgDiff(start, axisEnd), days, due };
+  return { start, dataEnd, axisEnd, span: pgDiff(start, axisEnd), days, due, dueLines };
 }
 
 let pgState = null;   // 열려 있는 그래프 {id, idx}
@@ -5585,6 +5630,9 @@ function openProgressChart(id){
   }).join("");
 
   const hasSeed = ev.some(e => e.seed);
+  const dueMoved = (dd.dueLines || []).length > 1;
+  // 마감이 바뀐 업무만 '최초 마감'을 요약에 같이 보여준다
+  const dueFirst = dueMoved ? (dd.dueLines.find(o => o.kind === "first") || null) : null;
   openModal(`
     <h3>진행율 추이 — ${escapeHtml(t.title)}</h3>
     <div class="pg-stats">
@@ -5593,6 +5641,7 @@ function openProgressChart(id){
       <span>${isTaskDone(t) ? "걸린 기간" : "경과"}<b>${elapsed}일</b></span>
       <span>변경<b>${changeCount}회</b></span>
       ${tail}
+      ${dueFirst ? `<span class="pg-due-stat">최초 마감<b>${pgMD(dueFirst.ymd)}</b></span>` : ""}
     </div>
     <div class="pg-chart" id="pgChart"></div>
     ${ev.length < 2 ? `<p class="pg-empty-note">아직 변경 기록이 없습니다. 진행율을 바꿀 때마다 여기에 점이 하나씩 쌓입니다.</p>` : ""}
@@ -5600,7 +5649,7 @@ function openProgressChart(id){
       <thead><tr><th>일시</th><th>진행율</th><th>변화</th><th>변경자</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
-    <p class="pg-foot">하루에 여러 번 바뀐 날은 그날 마지막 값으로 그립니다.${hasSeed ? "<br>9월 10일 이전 기록은 저장소 변경 기록에서 되살린 값이라 변경자가 일부만 표시됩니다." : ""}</p>
+    <p class="pg-foot">하루에 여러 번 바뀐 날은 그날 마지막 값으로 그립니다.${dueMoved ? "<br>마감일은 빨간 선입니다 — 지금 마감은 실선, 지난 마감은 점선이고 마감을 바꾼 날은 가로축 위에 ▲ 로 찍힙니다." : ""}${hasSeed ? "<br>9월 10일 이전 기록은 저장소 변경 기록에서 되살린 값이라 변경자가 일부만 표시됩니다." : ""}</p>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeModal()">닫기</button>
     </div>
@@ -5644,18 +5693,53 @@ function drawProgressChart(){
     const anchor = n === 0 ? "start" : (i === dd.span ? "end" : "middle");
     g += `<text class="pg-axis-t" x="${f(X(i))}" y="${H - 8}" text-anchor="${anchor}">${pgMD(pgAddDays(dd.start, i))}</text>`;
   });
-  // 마감선
-  if(dd.due){
-    const di = pgDiff(dd.start, dd.due);
+  // 마감선 — 지금 마감은 실선, 지난 마감(최초·중간에 거쳐 간 마감)은 같은 빨강 점선
+  const dueLines = dd.dueLines || [];
+  dueLines.forEach(o => {
+    const di = pgDiff(dd.start, o.ymd);
+    if(di < 0 || di > dd.span) return;
+    const x = f(X(di));
+    g += `<line class="pg-due${o.kind === "cur" ? "" : " pg-old"}" x1="${x}" x2="${x}" y1="18" y2="${m.t + ph}"/>`;
+  });
+  // 라벨은 지금 마감부터 자리를 잡고, 겹치는 지난 마감 라벨은 생략한다(선은 그대로 남는다)
+  const dueLabel = o => (o.kind === "first" ? "최초 마감 " : "마감 ") + pgMD(o.ymd);
+  // 11.5px 볼드 기준 대략적인 글자 폭(한글은 글자크기만큼, 숫자·기호는 그 절반쯤)
+  const pgTextW = str => { let w = 0; for(const ch of str){ w += /[가-힣]/.test(ch) ? 11.5 : (ch === " " ? 3.5 : 6.4); } return w; };
+  const labelSpots = [];
+  const placeLabel = (x, w, anchor) => {
+    const l = anchor === "end" ? x - w : anchor === "start" ? x : x - w / 2;
+    const r = l + w;
+    if(labelSpots.some(s => l < s[1] + 5 && s[0] - 5 < r)) return false;   // 겹치면 라벨은 생략(선은 남는다)
+    labelSpots.push([l, r]);
+    return true;
+  };
+  dueLines.slice().sort((a, b) => (b.kind === "cur") - (a.kind === "cur")).forEach(o => {
+    const di = pgDiff(dd.start, o.ymd);
+    const cls = o.kind === "cur" ? "" : " pg-old";
+    const txt = dueLabel(o);
     if(di >= 0 && di <= dd.span){
       const x = f(X(di));
-      g += `<line class="pg-due" x1="${x}" x2="${x}" y1="18" y2="${m.t + ph}"/>`;
-      const anchor = x > W - m.r - 30 ? "end" : (x < m.l + 30 ? "start" : "middle");
-      g += `<text class="pg-due-t" x="${x}" y="12" text-anchor="${anchor}">마감 ${pgMD(dd.due)}</text>`;
+      const anchor = x > W - m.r - 34 ? "end" : (x < m.l + 34 ? "start" : "middle");
+      if(!placeLabel(x, pgTextW(txt), anchor)) return;
+      g += `<text class="pg-due-t${cls}" x="${x}" y="12" text-anchor="${anchor}">${txt}</text>`;
     } else if(di > dd.span){
-      g += `<text class="pg-due-t" x="${W - m.r}" y="12" text-anchor="end">마감 ${pgMD(dd.due)} ▸</text>`;
+      const x = W - m.r;
+      if(!placeLabel(x, pgTextW(txt + " ▸"), "end")) return;
+      g += `<text class="pg-due-t${cls}" x="${x}" y="12" text-anchor="end">${txt} ▸</text>`;
+    } else {
+      const x = m.l;
+      if(!placeLabel(x, pgTextW("◂ " + txt), "start")) return;
+      g += `<text class="pg-due-t${cls}" x="${x}" y="12" text-anchor="start">◂ ${txt}</text>`;
     }
-  }
+  });
+  // 마감을 바꾼 날에는 x축 위에 작은 빨간 표식(언제 옮겼는지)
+  const dueChg = pgDueChanges(t);
+  Object.keys(dueChg).forEach(k => {
+    const di = pgDiff(dd.start, k);
+    if(di < 0 || di > dd.span) return;
+    const x = f(X(di)), y = m.t + ph;
+    g += `<path class="pg-duemove" d="M${x - 4},${y + 5} L${x + 4},${y + 5} L${x},${y} Z"/>`;
+  });
   // 계단선 + 옅은 면 (바뀐 날 그 자리에서 올라간다)
   let d = `M${f(X(0))},${f(Y(days[0].p))}`;
   for(let i = 1; i < days.length; i++){
@@ -5727,6 +5811,13 @@ function drawProgressChart(){
       if(c.by) txt += ` · ${c.by}`;
       cEl.textContent = txt;
       tip.appendChild(cEl);
+    });
+    (dueChg[dy.ymd] || []).forEach(h => {
+      const dEl = document.createElement("span");
+      dEl.className = "pg-tip-due";
+      const why = (h.reason || "").trim();
+      dEl.textContent = `마감 ${pgMD(h.from)} → ${pgMD(h.to)}` + (why ? ` · ${why.length > 16 ? why.slice(0, 16) + "…" : why}` : "");
+      tip.appendChild(dEl);
     });
     tip.style.display = "";
     const tw = tip.offsetWidth, th = tip.offsetHeight;
