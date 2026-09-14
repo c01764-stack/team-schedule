@@ -6767,6 +6767,7 @@ updateInstallBtn();
 
   function refreshBoard() {
     var u = currentUser();
+    syncAdminBtn();
     if (!u) return;
     rpc("puppy_board", { p_user: u }).then(function (d) {
       boardSize = d.boardSize || 15;
@@ -6832,8 +6833,30 @@ updateInstallBtn();
   var DOGS = ["shiba","corgi","retriever","beagle","poodle","dachshund","jindo","husky"];
   var CATS = ["koshort","cheese","tuxedo","calico","russian","persian","siamese","scottish","bengal","munchkin"];
 
+  /* 설정 창은 아래 사번으로 로그인했을 때만 보인다 (예: 천재우) */
+  var PUP_ADMINS = ["c01764"];
+  var pupAdmForce = false;
+
   function adminKey() {
     try { return localStorage.getItem("puppyAdminKey") || ""; } catch (e) { return ""; }
+  }
+
+  function isPupAdmin() {
+    var u = currentUser();
+    if (!u) return false;
+    return PUP_ADMINS.indexOf(String(u).trim().toLowerCase()) !== -1;
+  }
+
+  /* 관리자 설정은 서버에서도 사번을 확인한다 (puppy_admin_open / puppy_admin_save) */
+  function syncAdminBtn() {
+    var b = document.getElementById("pupAdmOpen");
+    if (!b) return;
+    var on = isPupAdmin() || pupAdmForce;
+    b.style.display = on ? "inline" : "none";
+    if (!on) {
+      var a = document.getElementById("pupAdm");
+      if (a) a.style.display = "none";
+    }
   }
 
   function fillAdmin(d) {
@@ -6856,6 +6879,13 @@ updateInstallBtn();
   }
 
   function openAdmin() {
+    if (isPupAdmin()) {
+      rpc("puppy_admin_open", { p_user: currentUser() }).then(function (d) {
+        if (!d || !d.ok) { window.alert("설정을 열 권한이 없습니다."); return; }
+        fillAdmin(d);
+      }).catch(function () { window.alert("설정을 불러오지 못했습니다."); });
+      return;
+    }
     var k = adminKey();
     if (!k) {
       k = window.prompt("관리자 키를 입력하세요");
@@ -6878,8 +6908,7 @@ updateInstallBtn();
     var pool = sel === "cat" ? CATS : (sel === "all" ? DOGS.concat(CATS) : DOGS);
     var msg = document.getElementById("acMsg");
     msg.textContent = "저장 중";
-    rpc("puppy_admin_set", {
-      p_key: adminKey(),
+    var args = {
       p_daily: parseInt(document.getElementById("acDaily").value, 10),
       p_spawns: parseInt(document.getElementById("acSpawns").value, 10),
       p_start: document.getElementById("acStart").value || null,
@@ -6893,7 +6922,11 @@ updateInstallBtn();
       p_prob: parseInt(document.getElementById("acProb").value, 10) / 100,
       p_enabled: document.getElementById("acOn").checked,
       p_pool: pool
-    }).then(function (d) {
+    };
+    var admFn = "puppy_admin_set";
+    if (isPupAdmin()) { admFn = "puppy_admin_save"; args.p_user = currentUser(); }
+    else { args.p_key = adminKey(); }
+    rpc(admFn, args).then(function (d) {
       if (!d || !d.ok) { msg.textContent = "저장하지 못했습니다"; return; }
       fillAdmin(d);
       msg.textContent = "저장했습니다";
@@ -6910,11 +6943,12 @@ updateInstallBtn();
   document.getElementById("acSave").addEventListener("click", saveAdmin);
 
   function showAdminBtn() {
-    document.getElementById("pupAdmOpen").style.display = "inline";
+    pupAdmForce = true;
+    syncAdminBtn();
   }
 
   (function initAdmin() {
-    if (adminKey()) { showAdminBtn(); return; }
+    syncAdminBtn();
     var m = /[?&]pupadmin=([^&#]+)/.exec(location.search);
     if (!m) return;
     var key = decodeURIComponent(m[1]).trim();
