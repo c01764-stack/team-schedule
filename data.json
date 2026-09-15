@@ -1532,7 +1532,7 @@
       "byName": "천재우",
       "createdAt": "2026-09-15T08:05:50.308Z",
       "updatedAt": "2026-09-15T08:07:19.556Z",
-      "readAt": null,
+      "readAt": "2026-09-15T08:27:31.378Z",
       "doneAt": null,
       "comments": []
     }
@@ -3441,6 +3441,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 추가: 판교사업장 산업안전보건교육 온라인 검토 및 진행"
+    },
+    {
+      "id": "l_t2iswmwyimu2esdrz",
+      "at": "2026-09-15T08:27:31.391Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "change",
+      "message": "개인 전달사항 확인: 이재혁"
     }
   ]
 }
