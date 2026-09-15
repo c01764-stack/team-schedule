@@ -825,7 +825,7 @@
       "owner2Id": "",
       "due": "2026-09-18",
       "progress": 10,
-      "memo": "",
+      "memo": "9/14\n- 대표이사님 피드백 확인\n- 조재익 부장 미팅\n9/15\n- 5페이지 요약본 목차 확인(조재익 부장 작성)",
       "dueHistory": [],
       "includeInReport": true,
       "progressHistory": [
@@ -3553,6 +3553,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 추가: FMS 보고서 작업"
+    },
+    {
+      "id": "l_te7r7si6tmu2gthjv",
+      "at": "2026-09-15T09:24:22.171Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "기타 내용 수정: FMS 보고서 작업"
     }
   ]
 }
