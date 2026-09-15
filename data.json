@@ -1535,6 +1535,19 @@
       "readAt": "2026-09-15T08:27:31.378Z",
       "doneAt": "2026-09-15T08:27:43.297Z",
       "comments": []
+    },
+    {
+      "id": "m_twlzzert6",
+      "toUserId": "c04897",
+      "toName": "이재혁",
+      "text": "당일 점검 사업장 당일 결과 보고",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-15T09:05:33.766Z",
+      "updatedAt": "2026-09-15T09:05:33.766Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -3473,6 +3486,14 @@
       "name": "이재혁",
       "type": "change",
       "message": "개인 전달사항 완료: 이재혁"
+    },
+    {
+      "id": "l_ty33laiexmu2g5avg",
+      "at": "2026-09-15T09:05:33.772Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 이재혁"
     }
   ]
 }
