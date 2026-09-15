@@ -1548,6 +1548,19 @@
       "readAt": null,
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_tw7arytec",
+      "toUserId": "c05651",
+      "toName": "오혜지",
+      "text": "교육 종료 보고는 네이트온 아닌 문자 또는 전화로~",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-15T09:13:44.484Z",
+      "updatedAt": "2026-09-15T09:13:44.484Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -3494,6 +3507,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 등록: 이재혁"
+    },
+    {
+      "id": "l_t3ci89ucvmu2gftil",
+      "at": "2026-09-15T09:13:44.493Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 오혜지"
     }
   ]
 }
