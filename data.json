@@ -3561,6 +3561,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 수정: FMS 보고서 작업"
+    },
+    {
+      "id": "l_tf0fe1909mu2gtld2",
+      "at": "2026-09-15T09:24:27.110Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "진행율 수정: FMS 보고서 작업 → 10%"
     }
   ]
 }
