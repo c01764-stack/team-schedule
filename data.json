@@ -1540,6 +1540,19 @@
       "readAt": null,
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_t611lyzjf",
+      "toUserId": "c05474",
+      "toName": "주현수",
+      "text": "아카데미 사업계획서 작성 현황 및 예상일정 천재우 팀장 보고",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-15T09:20:02.168Z",
+      "updatedAt": "2026-09-15T09:20:02.168Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -3502,6 +3515,14 @@
       "name": "천재우",
       "type": "change",
       "message": "주요 전달사항 수정"
+    },
+    {
+      "id": "l_t0vsr8uemmu2gnwxq",
+      "at": "2026-09-15T09:20:02.174Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 주현수"
     }
   ]
 }
