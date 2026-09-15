@@ -1472,8 +1472,8 @@
       "byName": "천재우",
       "createdAt": "2026-09-14T07:06:03.991Z",
       "updatedAt": "2026-09-14T07:06:03.991Z",
-      "readAt": null,
-      "doneAt": null,
+      "readAt": "2026-09-15T04:52:01.363Z",
+      "doneAt": "2026-09-15T04:52:01.947Z",
       "comments": []
     }
   ],
@@ -3141,6 +3141,22 @@
       "name": "이재혁",
       "type": "change",
       "message": "개인 전달사항 확인: 이재혁"
+    },
+    {
+      "id": "l_tm5k7siqrmu2738wu",
+      "at": "2026-09-15T04:52:01.374Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "change",
+      "message": "개인 전달사항 확인: 이재혁"
+    },
+    {
+      "id": "l_tefxqh5ilmu2739d1",
+      "at": "2026-09-15T04:52:01.957Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "change",
+      "message": "개인 전달사항 완료: 이재혁"
     }
   ]
 }
