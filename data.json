@@ -1476,6 +1476,19 @@
       "readAt": "2026-09-15T05:21:16.668Z",
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_t92uyikav",
+      "toUserId": "c04897",
+      "toName": "이재혁",
+      "text": "판교 사업장 하반기 산업안전보건교육 온라인 검토/신청",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-15T08:05:50.308Z",
+      "updatedAt": "2026-09-15T08:05:50.308Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -3310,6 +3323,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 삭제: 천재우"
+    },
+    {
+      "id": "l_turx6bglwmu2e0huv",
+      "at": "2026-09-15T08:05:50.311Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 이재혁"
     }
   ]
 }
