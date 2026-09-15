@@ -1418,7 +1418,7 @@
       "createdAt": "2026-09-11T06:42:08.298Z",
       "updatedAt": "2026-09-11T06:44:46.937Z",
       "readAt": "2026-09-15T06:51:22.837Z",
-      "doneAt": null,
+      "doneAt": "2026-09-15T06:51:23.556Z",
       "comments": []
     },
     {
@@ -3287,6 +3287,14 @@
       "name": "주현수",
       "type": "change",
       "message": "개인 전달사항 확인: 주현수"
+    },
+    {
+      "id": "l_trb98jpwomu2bcrah",
+      "at": "2026-09-15T06:51:23.561Z",
+      "userId": "c05474",
+      "name": "주현수",
+      "type": "change",
+      "message": "개인 전달사항 완료: 주현수"
     }
   ]
 }
