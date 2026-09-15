@@ -3242,6 +3242,14 @@
       "name": "이재혁",
       "type": "change",
       "message": "개인 전달사항 확인: 이재혁"
+    },
+    {
+      "id": "l_t155hffqdmu2b3h8p",
+      "at": "2026-09-15T06:44:10.633Z",
+      "userId": "c05474",
+      "name": "주현수",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
