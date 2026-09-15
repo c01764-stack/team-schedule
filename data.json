@@ -814,6 +814,28 @@
           "byName": "천재우"
         }
       ]
+    },
+    {
+      "id": "tag3ourc2",
+      "team": "etc",
+      "title": "FMS 보고서 작업",
+      "owner": "천재우",
+      "ownerId": "c01764",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-09-18",
+      "progress": 10,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true,
+      "progressHistory": [
+        {
+          "at": "2026-09-15T09:23:33.788Z",
+          "p": 10,
+          "byUserId": "c01764",
+          "byName": "천재우"
+        }
+      ]
     }
   ],
   "absences": [
@@ -3523,6 +3545,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 등록: 주현수"
+    },
+    {
+      "id": "l_tyo23jmwdmu2gsg84",
+      "at": "2026-09-15T09:23:33.796Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: FMS 보고서 작업"
     }
   ]
 }
