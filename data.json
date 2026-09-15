@@ -3109,6 +3109,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 수정: 안전작업 SOP 작성"
+    },
+    {
+      "id": "l_tzhuezag2mu21r93z",
+      "at": "2026-09-15T02:22:43.679Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
