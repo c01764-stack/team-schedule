@@ -792,6 +792,28 @@
       "memo": "",
       "dueHistory": [],
       "includeInReport": true
+    },
+    {
+      "id": "trsi32fzb",
+      "team": "safety",
+      "title": "판교사업장 산업안전보건교육 온라인 검토 및 진행",
+      "owner": "이재혁",
+      "ownerId": "c04897",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-10-02",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true,
+      "progressHistory": [
+        {
+          "at": "2026-09-15T08:13:13.191Z",
+          "p": 0,
+          "byUserId": "c01764",
+          "byName": "천재우"
+        }
+      ]
     }
   ],
   "absences": [
@@ -3411,6 +3433,14 @@
       "name": "천재우",
       "type": "change",
       "message": "진행율 수정: 쉴더스 안전관리시스템 개발 관련 업무 → 65%"
+    },
+    {
+      "id": "l_tn2xkjaxqmu2e9zl9",
+      "at": "2026-09-15T08:13:13.197Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: 판교사업장 산업안전보건교육 온라인 검토 및 진행"
     }
   ]
 }
