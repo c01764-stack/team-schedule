@@ -1570,8 +1570,8 @@
       "byName": "천재우",
       "createdAt": "2026-09-15T09:13:44.484Z",
       "updatedAt": "2026-09-15T09:13:44.484Z",
-      "readAt": null,
-      "doneAt": null,
+      "readAt": "2026-09-16T05:23:10.905Z",
+      "doneAt": "2026-09-16T05:23:11.450Z",
       "comments": []
     },
     {
@@ -3652,6 +3652,22 @@
       "name": "오혜지",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tb400icvamu3nn64e",
+      "at": "2026-09-16T05:23:10.910Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "개인 전달사항 확인: 오혜지"
+    },
+    {
+      "id": "l_tw6zk5x6umu3nn6jo",
+      "at": "2026-09-16T05:23:11.460Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "개인 전달사항 완료: 오혜지"
     }
   ]
 }
