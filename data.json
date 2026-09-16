@@ -1186,15 +1186,6 @@
       "memo": ""
     },
     {
-      "id": "t46di9lsb",
-      "team": "edu",
-      "person": "주현수",
-      "type": "training",
-      "start": "2026-09-22",
-      "end": "2026-09-22",
-      "memo": "CHMS IDC양주 교육(변동 가능성 있음)"
-    },
-    {
       "id": "tnz4iwqmq",
       "team": "edu",
       "person": "주현수",
@@ -3756,6 +3747,14 @@
       "name": "이재혁",
       "type": "change",
       "message": "개인 전달사항 완료: 이재혁"
+    },
+    {
+      "id": "l_trkyjc2n5mu3v4jbs",
+      "at": "2026-09-16T08:52:38.488Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "일정 삭제: 주현수"
     }
   ]
 }
