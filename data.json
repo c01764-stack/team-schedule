@@ -3719,6 +3719,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 수정: SKT 안전보건실 온라인 W/S 일정"
+    },
+    {
+      "id": "l_t0jnklqekmu3scrl3",
+      "at": "2026-09-16T07:35:03.591Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
