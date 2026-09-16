@@ -3636,6 +3636,14 @@
       "name": "주현수",
       "type": "change",
       "message": "전달사항 확인: 주현수"
+    },
+    {
+      "id": "l_t3o4kojhmmu3je2qd",
+      "at": "2026-09-16T03:24:08.149Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
