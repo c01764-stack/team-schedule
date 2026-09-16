@@ -836,6 +836,28 @@
           "byName": "천재우"
         }
       ]
+    },
+    {
+      "id": "tde1frmvk",
+      "team": "safety",
+      "title": "SKT 안전보건실 온라인 W/S 일정",
+      "owner": "천재우",
+      "ownerId": "c01764",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-10-14",
+      "progress": 10,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true,
+      "progressHistory": [
+        {
+          "at": "2026-09-16T07:30:13.046Z",
+          "p": 10,
+          "byUserId": "c01764",
+          "byName": "천재우"
+        }
+      ]
     }
   ],
   "absences": [
@@ -3681,6 +3703,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "전달사항 확인: 오혜지"
+    },
+    {
+      "id": "l_tud4qqefomu3s6jel",
+      "at": "2026-09-16T07:30:13.053Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: SKT 안전보건실 온라인 W/S 일정"
     }
   ]
 }
