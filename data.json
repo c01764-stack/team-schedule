@@ -847,7 +847,7 @@
       "owner2Id": "",
       "due": "2026-10-14",
       "progress": 10,
-      "memo": "",
+      "memo": "9/16\n- 강문선 본부장님께 메일/자료 전달 받음\n- 참석 신청 및 당일(10/14) 화상으로 참석 필요",
       "dueHistory": [],
       "includeInReport": true,
       "progressHistory": [
@@ -3711,6 +3711,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 추가: SKT 안전보건실 온라인 W/S 일정"
+    },
+    {
+      "id": "l_t95c0t4ftmu3s7x4y",
+      "at": "2026-09-16T07:31:17.506Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "기타 내용 수정: SKT 안전보건실 온라인 W/S 일정"
     }
   ]
 }
