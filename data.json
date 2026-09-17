@@ -3763,6 +3763,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_ttubd7iygmu4rtjqk",
+      "at": "2026-09-17T00:07:53.132Z",
+      "userId": "c05474",
+      "name": "주현수",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
