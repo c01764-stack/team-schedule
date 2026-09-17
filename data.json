@@ -1671,6 +1671,19 @@
       "readAt": null,
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_t252el8e8",
+      "toUserId": "c01764",
+      "toName": "천재우",
+      "text": "주간 업무회의 필요",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-17T09:35:44.918Z",
+      "updatedAt": "2026-09-17T09:35:44.918Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -3981,6 +3994,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 수정: 천재우"
+    },
+    {
+      "id": "l_tlps6upwkmu5c3tpa",
+      "at": "2026-09-17T09:35:44.926Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 천재우"
     }
   ]
 }
