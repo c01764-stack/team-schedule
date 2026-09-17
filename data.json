@@ -1319,6 +1319,15 @@
       "start": "2026-09-14",
       "end": "2026-09-14",
       "memo": "휴가"
+    },
+    {
+      "id": "th6r4pob2",
+      "team": "edu",
+      "person": "주현수",
+      "type": "leave",
+      "start": "2026-09-18",
+      "end": "2026-09-18",
+      "memo": "."
     }
   ],
   "reports": [
@@ -3785,6 +3794,14 @@
       "name": "주현수",
       "type": "change",
       "message": "정기업무 확인: 주간업무일지 작성 보고 (2026-09-17)"
+    },
+    {
+      "id": "l_tyyzhkielmu4rusat",
+      "at": "2026-09-17T00:08:50.885Z",
+      "userId": "c05474",
+      "name": "주현수",
+      "type": "change",
+      "message": "일정 추가: 주현수"
     }
   ]
 }
