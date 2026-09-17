@@ -3849,6 +3849,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 수정: 주현수"
+    },
+    {
+      "id": "l_ttu3yhxifmu58ye5o",
+      "at": "2026-09-17T08:07:32.652Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
