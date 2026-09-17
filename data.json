@@ -1645,6 +1645,19 @@
       "readAt": "2026-09-17T08:25:28.032Z",
       "doneAt": "2026-09-17T08:25:30.080Z",
       "comments": []
+    },
+    {
+      "id": "m_tuxfneto2",
+      "toUserId": "c04897",
+      "toName": "이재혁",
+      "text": "SKT 사업장 유해가스 측정기 구입 품의 올리기",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-17T08:58:21.107Z",
+      "updatedAt": "2026-09-17T08:58:21.107Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -3923,6 +3936,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 추가: 천재우"
+    },
+    {
+      "id": "l_t4zs9qrf1mu5arqd4",
+      "at": "2026-09-17T08:58:21.112Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 이재혁"
     }
   ]
 }
