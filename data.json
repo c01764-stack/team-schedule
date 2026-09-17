@@ -1624,7 +1624,7 @@
       "byName": "천재우",
       "createdAt": "2026-09-15T09:20:02.168Z",
       "updatedAt": "2026-09-15T09:20:02.168Z",
-      "readAt": null,
+      "readAt": "2026-09-17T08:25:28.032Z",
       "doneAt": null,
       "comments": []
     }
@@ -3865,6 +3865,14 @@
       "name": "이재혁",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_t4amjpwz3mu59lfxk",
+      "at": "2026-09-17T08:25:28.040Z",
+      "userId": "c05474",
+      "name": "주현수",
+      "type": "change",
+      "message": "개인 전달사항 확인: 주현수"
     }
   ]
 }
