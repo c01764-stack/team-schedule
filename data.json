@@ -3881,6 +3881,14 @@
       "name": "주현수",
       "type": "change",
       "message": "개인 전달사항 완료: 주현수"
+    },
+    {
+      "id": "l_tyazxdkjkmu5a2mz5",
+      "at": "2026-09-17T08:38:50.321Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
