@@ -1663,11 +1663,11 @@
       "id": "m_t6p9ltagz",
       "toUserId": "c01764",
       "toName": "천재우",
-      "text": "서린 산업재해 관련 통화",
+      "text": "서린사업장 직원 복직 관련  통화",
       "byUserId": "c01764",
       "byName": "천재우",
       "createdAt": "2026-09-17T09:33:56.428Z",
-      "updatedAt": "2026-09-17T09:34:24.039Z",
+      "updatedAt": "2026-09-17T09:34:55.033Z",
       "readAt": null,
       "doneAt": null,
       "comments": []
@@ -3969,6 +3969,14 @@
     {
       "id": "l_tdt6p1jwgmu5c23am",
       "at": "2026-09-17T09:34:24.046Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 수정: 천재우"
+    },
+    {
+      "id": "l_tvzw3ngrqmu5c2r7j",
+      "at": "2026-09-17T09:34:55.039Z",
       "userId": "c01764",
       "name": "천재우",
       "type": "change",
