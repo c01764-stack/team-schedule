@@ -1690,7 +1690,7 @@
       "byName": "천재우",
       "createdAt": "2026-09-17T09:33:56.428Z",
       "updatedAt": "2026-09-17T09:34:55.033Z",
-      "readAt": null,
+      "readAt": "2026-09-18T05:15:47.648Z",
       "doneAt": null,
       "comments": []
     },
@@ -4080,6 +4080,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 추가: 4분기 안전보건소식지"
+    },
+    {
+      "id": "l_tp2bpvrlpmu6i9dfp",
+      "at": "2026-09-18T05:15:47.653Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 확인: 천재우"
     }
   ]
 }
