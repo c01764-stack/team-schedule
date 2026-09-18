@@ -790,7 +790,7 @@
       "owner2Id": "",
       "due": "2026-10-16",
       "progress": 0,
-      "memo": "",
+      "memo": "9/18\n- 전체 일정 이사님께 확인\n- 설문 내용 확인 후 오주임 미팅 필요\n- 설문 종료 후 보고서 작성 필요",
       "dueHistory": [],
       "includeInReport": true
     },
@@ -4176,6 +4176,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 완료 처리: 휴넷  사이트 오픈"
+    },
+    {
+      "id": "l_tps308h1nmu6l8xbk",
+      "at": "2026-09-18T06:39:25.616Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "기타 내용 수정: SKT 구성원 설문"
     }
   ]
 }
