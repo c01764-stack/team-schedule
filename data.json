@@ -858,6 +858,28 @@
           "byName": "천재우"
         }
       ]
+    },
+    {
+      "id": "tuta7vjpn",
+      "team": "safety",
+      "title": "4분기 안전보건소식지",
+      "owner": "이재혁",
+      "ownerId": "c04897",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-10-16",
+      "progress": 0,
+      "memo": "",
+      "dueHistory": [],
+      "includeInReport": true,
+      "progressHistory": [
+        {
+          "at": "2026-09-18T04:54:36.446Z",
+          "p": 0,
+          "byUserId": "c01764",
+          "byName": "천재우"
+        }
+      ]
     }
   ],
   "absences": [
@@ -4050,6 +4072,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 수정: 판교사업장 산업안전보건교육 온라인 검토 및 진행"
+    },
+    {
+      "id": "l_teb6f4f5tmu6hi4km",
+      "at": "2026-09-18T04:54:36.454Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: 4분기 안전보건소식지"
     }
   ]
 }
