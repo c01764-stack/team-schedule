@@ -803,7 +803,7 @@
       "owner2Id": "",
       "due": "2026-10-02",
       "progress": 0,
-      "memo": "",
+      "memo": "9/18\n- 10월부터 온라인 교육 시행 시작",
       "dueHistory": [],
       "includeInReport": true,
       "progressHistory": [
@@ -4042,6 +4042,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "일정 수정: 오혜지"
+    },
+    {
+      "id": "l_t5ptzsvdnmu6hdr2g",
+      "at": "2026-09-18T04:51:12.328Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "기타 내용 수정: 판교사업장 산업안전보건교육 온라인 검토 및 진행"
     }
   ]
 }
