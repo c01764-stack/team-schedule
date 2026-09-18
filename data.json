@@ -1269,7 +1269,7 @@
     {
       "id": "tajmaa6qz",
       "team": "etc",
-      "person": "주현수, 오혜지",
+      "person": "오혜지",
       "type": "etc",
       "start": "2026-10-08",
       "end": "2026-10-08",
@@ -4034,6 +4034,14 @@
       "name": "이재혁",
       "type": "change",
       "message": "개인 전달사항 완료: 이재혁"
+    },
+    {
+      "id": "l_t3o1eumvhmu69eoeu",
+      "at": "2026-09-18T01:07:58.614Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "일정 수정: 오혜지"
     }
   ]
 }
