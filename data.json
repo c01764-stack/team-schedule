@@ -1793,6 +1793,26 @@
           "byName": "주현수"
         }
       }
+    },
+    {
+      "id": "r_tshxthv0o",
+      "title": "휴넷 사이트 이수율 관리",
+      "team": "edu",
+      "ownerId": "c05651",
+      "ownerName": "오혜지",
+      "freq": "monthly",
+      "weekday": 1,
+      "day": 25,
+      "qMonth": 1,
+      "month": 1,
+      "leadDays": 0,
+      "memo": "",
+      "active": true,
+      "createdAt": "2026-09-18T06:36:13.847Z",
+      "updatedAt": "2026-09-18T06:36:13.847Z",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "done": {}
     }
   ],
   "logs": [
@@ -4139,6 +4159,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 등록: 천재우"
+    },
+    {
+      "id": "l_th6xvklhjmu6l4tct",
+      "at": "2026-09-18T06:36:13.853Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "정기업무 등록: 휴넷 사이트 이수율 관리"
     }
   ]
 }
