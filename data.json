@@ -1712,6 +1712,19 @@
       "readAt": "2026-09-18T05:15:55.121Z",
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_ta6qvq1t6",
+      "toUserId": "c01764",
+      "toName": "천재우",
+      "text": "안전보건조직도 수정/공유",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-18T06:20:07.406Z",
+      "updatedAt": "2026-09-18T06:20:07.406Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -4118,6 +4131,14 @@
       "name": "천재우",
       "type": "change",
       "message": "진행율 수정: FMS 보고서 작업 → 65%"
+    },
+    {
+      "id": "l_t660dolu8mu6kk3ne",
+      "at": "2026-09-18T06:20:07.418Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 천재우"
     }
   ]
 }
