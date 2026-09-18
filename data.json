@@ -4184,6 +4184,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 수정: SKT 구성원 설문"
+    },
+    {
+      "id": "l_tep8emmqwmu6pjh6n",
+      "at": "2026-09-18T08:39:36.383Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
