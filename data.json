@@ -1397,15 +1397,6 @@
       "start": "2026-09-22",
       "end": "2026-09-22",
       "memo": "출입관리시스템 테스트/T-타워/16:00"
-    },
-    {
-      "id": "t4om3npds",
-      "team": "edu",
-      "person": "주현수",
-      "type": "training",
-      "start": "2026-09-29",
-      "end": "2026-09-29",
-      "memo": "여주에너지"
     }
   ],
   "reports": [
@@ -4419,6 +4410,14 @@
       "name": "주현수",
       "type": "change",
       "message": "전달사항 확인: 주현수"
+    },
+    {
+      "id": "l_tz6m8aklkmuaujgxg",
+      "at": "2026-09-21T06:10:38.836Z",
+      "userId": "c05474",
+      "name": "주현수",
+      "type": "change",
+      "message": "일정 삭제: 주현수"
     }
   ]
 }
