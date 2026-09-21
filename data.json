@@ -4217,6 +4217,14 @@
       "name": "주현수",
       "type": "change",
       "message": "일정 추가: 주현수"
+    },
+    {
+      "id": "l_trkciyzn2muai4bks",
+      "at": "2026-09-21T00:22:56.668Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
