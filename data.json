@@ -1735,6 +1735,19 @@
       "readAt": null,
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_thaas0du5",
+      "toUserId": "c01764",
+      "toName": "천재우",
+      "text": "직원 복직 관련 문의",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-21T00:25:35.664Z",
+      "updatedAt": "2026-09-21T00:25:35.664Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -4233,6 +4246,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 완료: 천재우"
+    },
+    {
+      "id": "l_tvqg6rba2muai7q9k",
+      "at": "2026-09-21T00:25:35.672Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 천재우"
     }
   ]
 }
