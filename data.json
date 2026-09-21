@@ -1720,7 +1720,7 @@
       "createdAt": "2026-09-17T09:35:44.918Z",
       "updatedAt": "2026-09-17T09:35:44.918Z",
       "readAt": "2026-09-18T05:15:55.121Z",
-      "doneAt": null,
+      "doneAt": "2026-09-21T00:23:58.332Z",
       "comments": []
     },
     {
@@ -4225,6 +4225,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tlz7eiyy6muai5n5y",
+      "at": "2026-09-21T00:23:58.342Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 완료: 천재우"
     }
   ]
 }
