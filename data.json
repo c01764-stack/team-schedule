@@ -4270,6 +4270,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 삭제"
+    },
+    {
+      "id": "l_tkbmyh22jmuailbey",
+      "at": "2026-09-21T00:36:09.610Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
