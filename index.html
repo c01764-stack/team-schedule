@@ -538,7 +538,7 @@
   .memo-colb.clear{background:#dcfce7;color:#15803d;}
   .memo-col-total{margin-left:auto;font-size:11.5px;font-weight:700;color:var(--sub);white-space:nowrap;}
   /* 이 칸 안에서만 스크롤한다 — 여기가 그 사람의 이력 전체다 */
-  .memo-col-body{display:flex;flex-direction:column;gap:7px;padding:8px;max-height:460px;overflow-y:auto;overscroll-behavior:contain;}
+  .memo-col-body{display:flex;flex-direction:column;gap:7px;padding:8px;max-height:252px;overflow-y:auto;overscroll-behavior:contain;}
   .memo-col-body .memo-card{box-shadow:none;border-color:var(--border);}
   .memo-col-body .memo-card:hover{box-shadow:var(--shadow-soft);}
   /* 칸 제목이 곧 받는 사람이므로 카드에서 이름을 다시 쓰지 않는다 */
@@ -570,6 +570,13 @@
   .memo-divider::before,.memo-divider::after{content:"";flex:1;height:1px;background:var(--border);}
   .memo-divider span{font-size:12px;font-weight:800;color:var(--sub);white-space:nowrap;}
   .memo-list{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+  /* 5건을 넘어가면 목록 자체를 고정 높이로 두고 그 안에서만 스크롤한다.
+     (접힌 줄 5개 높이 + 다음 줄이 살짝 보이게 = 스크롤이 있다는 신호) */
+  .memo-list.scrolly{max-height:268px;overflow-y:auto;overscroll-behavior:contain;padding-right:6px;}
+  .memo-list.scrolly::-webkit-scrollbar{width:9px;}
+  .memo-list.scrolly::-webkit-scrollbar-thumb{background:rgba(100,116,139,.38);border-radius:999px;}
+  .memo-list.scrolly::-webkit-scrollbar-track{background:transparent;}
+  .memo-scrollhint{font-size:11.5px;font-weight:700;color:var(--sub);margin-top:4px;text-align:right;}
   .memo-card{background:var(--card);border:1px solid var(--border);border-radius:0;padding:12px 14px;
     box-shadow:var(--shadow-soft);transition:box-shadow .15s;}
   .memo-card:hover{box-shadow:var(--shadow-card);}
@@ -3301,6 +3308,11 @@ function memoLastActivity(m){
 // 접기 상태는 저장하지 않는다(페이지를 새로 열면 다시 자동 판단). 사용자가 직접
 // 접거나 펼친 것만 memoFoldOverride 에 남겨 자동 판단보다 우선한다.
 const MEMO_SCOPE_KEY = "memoScope_v1";
+
+// 목록이 이 건수를 넘어가면 세로로 계속 늘어나는 대신 고정 높이 + 안쪽 스크롤로 바꾼다.
+// (사람별 칸[전체 보기]은 CSS .memo-col-body 가 같은 높이로 처리한다)
+const MEMO_SCROLL_MIN = 5;
+function memoScrollCls(n){ return n > MEMO_SCROLL_MIN ? ' scrolly' : ''; }
 let memoFoldOverride = new Map();   // memoId -> true(펼침) | false(접힘)
 let memoInBoard = false;            // 사람별 칸을 그리는 중인지 (자동 펼침을 끈다)
 let memoScope = null;               // 'mine' | 'all' — null 이면 첫 렌더에서 자동 결정
@@ -3454,7 +3466,20 @@ function memoCard(m){
   `;
 }
 
+// 목록 안에서 스크롤하게 되면서, 확인·완료 버튼 때문에 다시 그릴 때마다
+// 맨 위로 튀어 올라가면 보던 자리를 잃는다. 그래서 스크롤 위치를 물려준다.
 function renderMemoBanner(){
+  const el = document.getElementById("memoBanner");
+  if(!el) return;
+  const tops = [...el.querySelectorAll('.memo-list.scrolly, .memo-col-body')].map(n => n.scrollTop);
+  renderMemoBannerInner();
+  if(tops.some(Boolean)){
+    const now = el.querySelectorAll('.memo-list.scrolly, .memo-col-body');
+    now.forEach((n, i) => { if(tops[i]) n.scrollTop = tops[i]; });
+  }
+}
+
+function renderMemoBannerInner(){
   const el = document.getElementById("memoBanner");
   if(!el) return;
   if(!memos.length && !isAdmin){ el.innerHTML = ''; return; }
@@ -3531,6 +3556,8 @@ function renderMemoBanner(){
                         : '등록된 개인 전달사항이 없습니다.')
     : '최근 전달사항이 없습니다. 아래 "지난 전달사항"에 기록이 남아 있습니다.';
 
+  const listCount = unread.length + doing.length + recentDone.length;
+
   const listHtml = groups.length === 0
     ? `<div class="absence-empty">${emptyMsg}</div>`
     : groups.map((g, gi) => {
@@ -3543,7 +3570,7 @@ function renderMemoBanner(){
   const oldHtml = oldDone.length
     ? `<details class="completed-details memo-old">
          <summary>지난 전달사항 (${MEMO_FOLD_DAYS}일 지난 완료 건 ${oldDone.length}건)</summary>
-         <div class="memo-list">${oldDone.map(memoCard).join("")}</div>
+         <div class="memo-list${memoScrollCls(oldDone.length)}">${oldDone.map(memoCard).join("")}</div>
        </details>`
     : '';
 
@@ -3557,7 +3584,8 @@ function renderMemoBanner(){
   el.innerHTML = `
     <div class="notice-head"><h3><span class="memo-h3-label">개인 전달사항</span> ${mine}${total}</h3>${addBtn}</div>
     <div class="memo-toolbar">${scopeBtns}${foldAll}</div>
-    <div class="memo-list">${listHtml}</div>
+    <div class="memo-list${memoScrollCls(listCount)}">${listHtml}</div>
+    ${listCount > MEMO_SCROLL_MIN ? `<div class="memo-scrollhint">${listCount}건 · 목록 안에서 스크롤해 나머지를 봅니다</div>` : ''}
     ${oldHtml}
   `;
 }
