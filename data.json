@@ -800,8 +800,8 @@
       "id": "trcdp5x5l",
       "team": "edu",
       "title": "SKT 구성원 설문",
-      "owner": "주현수",
-      "ownerId": "c05474",
+      "owner": "오혜지",
+      "ownerId": "c05651",
       "owner2": "",
       "owner2Id": "",
       "due": "2026-10-16",
@@ -4363,6 +4363,14 @@
       "name": "천재우",
       "type": "change",
       "message": "담당자 변경: 하반기 모니터링 진행 (주현수 → 오혜지)"
+    },
+    {
+      "id": "l_tyw3ypj4hmuaiwylj",
+      "at": "2026-09-21T00:45:12.871Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "담당자 변경: SKT 구성원 설문 (주현수 → 오혜지)"
     }
   ]
 }
