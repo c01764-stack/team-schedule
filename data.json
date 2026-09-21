@@ -1384,6 +1384,15 @@
       "start": "2026-09-22",
       "end": "2026-09-22",
       "memo": "출입관리시스템 테스트/T-타워/16:00"
+    },
+    {
+      "id": "to3oju1n2",
+      "team": "edu",
+      "person": "주현수",
+      "type": "training",
+      "start": "2026-09-22",
+      "end": "2026-09-22",
+      "memo": "IDC양주"
     }
   ],
   "reports": [
@@ -4200,6 +4209,14 @@
       "name": "이재혁",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tb92t8qihmuahmfts",
+      "at": "2026-09-21T00:09:02.368Z",
+      "userId": "c05474",
+      "name": "주현수",
+      "type": "change",
+      "message": "일정 추가: 주현수"
     }
   ]
 }
