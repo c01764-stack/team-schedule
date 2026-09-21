@@ -1246,15 +1246,6 @@
       "memo": "CHMS IDC가산 교육"
     },
     {
-      "id": "td6tih3p5",
-      "team": "edu",
-      "person": "주현수",
-      "type": "training",
-      "start": "2026-10-28",
-      "end": "2026-10-28",
-      "memo": "CHMS IDC식사 교육(일정 변동 가능성 있음)"
-    },
-    {
       "id": "tr7q7ae54",
       "team": "edu",
       "person": "오혜지",
@@ -4416,6 +4407,14 @@
       "at": "2026-09-21T06:10:38.836Z",
       "userId": "c05474",
       "name": "주현수",
+      "type": "change",
+      "message": "일정 삭제: 주현수"
+    },
+    {
+      "id": "l_t8nus0pa7mub02nr1",
+      "at": "2026-09-21T08:45:32.221Z",
+      "userId": "c05651",
+      "name": "오혜지",
       "type": "change",
       "message": "일정 삭제: 주현수"
     }
