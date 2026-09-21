@@ -4192,6 +4192,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_ttsjudgtbmuahc9ff",
+      "at": "2026-09-21T00:01:07.515Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
