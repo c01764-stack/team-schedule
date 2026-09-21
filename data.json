@@ -4378,6 +4378,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "일정 삭제: 주현수"
+    },
+    {
+      "id": "l_tfswbazlxmuak6ucv",
+      "at": "2026-09-21T01:20:53.551Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
