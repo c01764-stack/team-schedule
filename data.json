@@ -4433,6 +4433,14 @@
       "name": "오혜지",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_t3vgi1zgjmuc993ku",
+      "at": "2026-09-22T05:50:15.390Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
