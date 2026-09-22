@@ -4417,6 +4417,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "일정 삭제: 주현수"
+    },
+    {
+      "id": "l_tzi9ngb3imubx3uvf",
+      "at": "2026-09-22T00:10:15.435Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
