@@ -1741,7 +1741,7 @@
       "byName": "천재우",
       "createdAt": "2026-09-21T00:25:35.664Z",
       "updatedAt": "2026-09-21T00:25:35.664Z",
-      "readAt": null,
+      "readAt": "2026-09-23T14:43:35.684Z",
       "doneAt": null,
       "comments": []
     },
@@ -4599,6 +4599,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_t7s33gy63mue7qtu5",
+      "at": "2026-09-23T14:43:35.693Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 확인: 천재우"
     }
   ]
 }
