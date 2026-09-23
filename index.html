@@ -537,6 +537,8 @@
   /* ---------- 사람별 칸(보드) ---------- */
   /* [전체] 보기 전용. 칸마다 따로 스크롤하므로 건수가 늘어도 배너 높이가 그대로다. */
   .memo-board{display:grid;gap:10px;margin-top:10px;grid-template-columns:repeat(var(--memo-cols,3),minmax(0,1fr));}
+  .memo-board[data-cols="6"]{--memo-cols:6;}
+  .memo-board[data-cols="5"]{--memo-cols:5;}
   .memo-board[data-cols="4"]{--memo-cols:4;}
   .memo-board[data-cols="2"]{--memo-cols:2;}
   .memo-board[data-cols="1"]{--memo-cols:1;}
@@ -3385,7 +3387,8 @@ function resetMemoView(){
 
 function memoCard(m){
   const isTarget = currentUser && m.toUserId === currentUser.id;
-  const canManage = isAdmin || (currentUser && m.byUserId === currentUser.id);
+  // 수정·삭제는 작성자 본인만 (관리자라도 남이 쓴 건은 손대지 않는다)
+  const canManage = memoIsMine(m);
   const readOnly = !ghConfig || !ghConfig.token;
   // 두 단계로 진행된다. 1단계 확인(readAt) → 2단계 완료(doneAt).
   const read = !!m.readAt;
@@ -3501,9 +3504,10 @@ function renderMemoBanner(){
 function renderMemoBannerInner(){
   const el = document.getElementById("memoBanner");
   if(!el) return;
-  if(!memos.length && !isAdmin){ el.innerHTML = ''; return; }
+  if(!memos.length && !currentUser){ el.innerHTML = ''; return; }
 
-  const addBtn = isAdmin
+  // 로그인한 팀원이면 누구나 원하는 사람에게 작성할 수 있다
+  const addBtn = currentUser
     ? `<button class="notice-edit-btn" onclick="openNewMemoNote()">+ 작성</button>` : '';
 
   if(!memos.length){
@@ -3613,7 +3617,7 @@ function renderMemoBannerInner(){
 // [전체] 보기는 사람마다 칸을 하나씩 두고, 그 안에서만 스크롤한다.
 // 세로로 이어 붙지 않으므로 건수가 늘어도 배너 높이는 그대로고,
 // 지난 기록은 칸을 내려서 본다(그래서 보드에서는 "지난 전달사항" 접기를 쓰지 않는다).
-const MEMO_BOARD_IDS = ["c04897", "c05474", "c05651"];   // 이재혁 · 주현수 · 오혜지 순서
+const MEMO_BOARD_IDS = ["c01764", "c04897", "c05474", "c05651"];   // 천재우(맨 앞) · 이재혁 · 주현수 · 오혜지 순서
 let memoBoardPick = null;   // 좁은 화면에서 고른 사람 (칸 대신 칩으로 전환)
 
 function memoBoardColumns(){
@@ -3625,7 +3629,15 @@ function memoBoardColumns(){
     used.add(id);
     cols.push({ id, name: u.name, list: memos.filter(m => m.toUserId === id) });
   });
-  // 위 세 사람 말고 다른 사람에게 온 건(삭제된 계정 포함)은 '기타' 칸에 모은다
+  // 위 고정 순서에 없는 팀원도 받은 건이 있으면 자기 이름으로 칸을 만든다 (계정 목록 순서)
+  users.forEach(u => {
+    if(used.has(u.id)) return;
+    const list = memos.filter(m => m.toUserId === u.id);
+    if(!list.length) return;
+    used.add(u.id);
+    cols.push({ id: u.id, name: u.name, list });
+  });
+  // 계정이 삭제된 사람에게 온 건만 '기타' 칸에 모은다
   const rest = memos.filter(m => !used.has(m.toUserId));
   if(rest.length) cols.push({ id:'__etc', name:'기타', list: rest });
   return cols;
@@ -3706,18 +3718,23 @@ function foldAllMemos(collapse){
   renderMemoBanner();
 }
 
+// 내가 쓴 전달사항인가 — 수정·삭제 권한은 이것 하나로만 판단한다
+function memoIsMine(m){ return !!(currentUser && m && m.byUserId && m.byUserId === currentUser.id); }
+
 function openNewMemoNote(){ openMemoNoteForm(null); }
 function openEditMemoNote(id){
   const m = memos.find(x => x.id === id);
   if(!m) return;
-  if(!(isAdmin || (currentUser && m.byUserId === currentUser.id))){ alert("작성자 또는 관리자만 수정할 수 있습니다."); return; }
+  if(!memoIsMine(m)){ alert("본인이 작성한 전달사항만 수정할 수 있습니다."); return; }
   openMemoNoteForm(m);
 }
 
 function openMemoNoteForm(m){
-  if(!isAdmin && !m){ alert("관리자만 작성할 수 있습니다."); return; }
+  if(!currentUser){ alert("로그인 후 작성할 수 있습니다."); return; }
+  // 새로 쓸 때는 나 말고 첫 번째 사람을 기본으로 고른다
+  const defTo = m ? m.toUserId : ((users.find(u => u.id !== currentUser.id) || users[0] || {}).id);
   const opts = users.map(u =>
-    `<option value="${escapeHtml(u.id)}" ${m && m.toUserId === u.id ? 'selected' : ''}>${escapeHtml(u.name)} (${escapeHtml(u.id)})</option>`
+    `<option value="${escapeHtml(u.id)}" ${u.id === defTo ? 'selected' : ''}>${escapeHtml(u.name)} (${escapeHtml(u.id)})</option>`
   ).join("");
   openModal(`
     <h3>${m ? '개인 전달사항 수정' : '개인 전달사항 작성'}</h3>
@@ -3749,6 +3766,7 @@ function saveMemoNote(id){
   if(id){
     const m = memos.find(x => x.id === id);
     if(!m) return;
+    if(!memoIsMine(m)){ alert("본인이 작성한 전달사항만 수정할 수 있습니다."); return; }
     const targetChanged = m.toUserId !== target.id;
     m.toUserId = target.id;
     m.toName = target.name;
@@ -3779,7 +3797,7 @@ function saveMemoNote(id){
 function deleteMemoNote(id){
   const m = memos.find(x => x.id === id);
   if(!m) return;
-  if(!(isAdmin || (currentUser && m.byUserId === currentUser.id))){ alert("작성자 또는 관리자만 삭제할 수 있습니다."); return; }
+  if(!memoIsMine(m)){ alert("본인이 작성한 전달사항만 삭제할 수 있습니다."); return; }
   if(!confirm(`${m.toName}에게 보낸 전달사항을 삭제할까요? 달린 댓글도 함께 지워집니다.`)) return;
   memos = memos.filter(x => x.id !== id);
   memoDirty.set(id, 'DELETE');
