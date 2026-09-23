@@ -4591,6 +4591,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 삭제"
+    },
+    {
+      "id": "l_trhvp6fobmue77nm6",
+      "at": "2026-09-23T14:28:41.166Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
