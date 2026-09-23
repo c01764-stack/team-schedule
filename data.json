@@ -4498,6 +4498,14 @@
       "name": "천재우",
       "type": "change",
       "message": "마감일 수정: 아카데미 사업계획서 작성"
+    },
+    {
+      "id": "l_tj4cf4jusmudo8zcq",
+      "at": "2026-09-23T05:37:50.330Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
