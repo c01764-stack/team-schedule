@@ -1447,11 +1447,6 @@
         "userId": "c04897",
         "name": "이재혁",
         "at": "2026-09-16T07:40:42.644Z"
-      },
-      {
-        "userId": "c05474",
-        "name": "주현수",
-        "at": "2026-09-21T01:47:26.735Z"
       }
     ]
   },
@@ -1485,15 +1480,6 @@
       "hash": "c6705a2487fdfdddbace6a3cc0b1963dbd4944e1e757fe0a77bc344fc9223cb4",
       "iter": 150000,
       "createdAt": "2026-08-31T13:01:32.309Z"
-    },
-    {
-      "id": "c05474",
-      "name": "주현수",
-      "role": "member",
-      "salt": "3ce07f5542f4c69d316a3d4a1142f057",
-      "hash": "48bf6375a3db7b5c3f5aba60f9dde0a1821b02041adaf80bcef1e97a704d7298",
-      "iter": 150000,
-      "createdAt": "2026-08-31T13:01:50.367Z"
     },
     {
       "id": "c00000",
@@ -4581,6 +4567,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tgurx79bymue6ax86",
+      "at": "2026-09-23T14:03:13.974Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "계정 삭제: 주현수"
     }
   ]
 }
