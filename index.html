@@ -3637,9 +3637,7 @@ function memoBoardColumns(){
     used.add(u.id);
     cols.push({ id: u.id, name: u.name, list });
   });
-  // 계정이 삭제된 사람에게 온 건만 '기타' 칸에 모은다
-  const rest = memos.filter(m => !used.has(m.toUserId));
-  if(rest.length) cols.push({ id:'__etc', name:'기타', list: rest });
+  // 계정이 삭제된 사람에게 온 건은 보드에 칸을 만들지 않는다('기타' 칸 없음, 자료는 data.json 에 그대로)
   return cols;
 }
 
