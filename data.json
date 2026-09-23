@@ -1794,39 +1794,6 @@
       }
     },
     {
-      "id": "r_tsq2cwg4x",
-      "title": "주간업무일지 작성 보고",
-      "team": "edu",
-      "ownerId": "c05474",
-      "ownerName": "주현수",
-      "freq": "weekly",
-      "weekday": 4,
-      "day": 0,
-      "qMonth": 1,
-      "month": 1,
-      "leadDays": 0,
-      "memo": "목요일 퇴근 전 주간업무일지 작성 후 오시훈 이사, 천재우 팀장 보고",
-      "active": true,
-      "createdAt": "2026-09-04T04:34:40.662Z",
-      "updatedAt": "2026-09-04T04:34:40.662Z",
-      "byUserId": "c01764",
-      "byName": "천재우",
-      "done": {
-        "2026-09-10": {
-          "readAt": "2026-09-10T07:01:31.743Z",
-          "at": "2026-09-10T07:01:32.945Z",
-          "byUserId": "c05474",
-          "byName": "주현수"
-        },
-        "2026-09-17": {
-          "readAt": "2026-09-17T00:08:04.807Z",
-          "at": null,
-          "byUserId": "c05474",
-          "byName": "주현수"
-        }
-      }
-    },
-    {
       "id": "r_tshxthv0o",
       "title": "휴넷 사이트 이수율 관리",
       "team": "edu",
@@ -4615,6 +4582,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 확인: 천재우"
+    },
+    {
+      "id": "l_tq3py3wq9mue8ouxd",
+      "at": "2026-09-23T15:10:03.409Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "정기업무 삭제: 주간업무일지 작성 보고"
     }
   ]
 }
