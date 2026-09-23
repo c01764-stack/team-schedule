@@ -855,10 +855,17 @@
       "ownerId": "c01764",
       "owner2": "",
       "owner2Id": "",
-      "due": "2026-09-18",
+      "due": "2026-10-02",
       "progress": 100,
       "memo": "9/14\n- 대표이사님 피드백 확인\n- 조재익 부장 미팅\n9/15\n- 5페이지 요약본 목차 확인(조재익 부장 작성)\n9/21\n- 대표이사 피드백 수정 및 본부장님 보고",
-      "dueHistory": [],
+      "dueHistory": [
+        {
+          "from": "2026-09-18",
+          "to": "2026-10-02",
+          "changedAt": "2026-09-23T05:48:52.498Z",
+          "reason": ""
+        }
+      ],
       "includeInReport": true,
       "progressHistory": [
         {
@@ -4520,6 +4527,14 @@
       "name": "천재우",
       "type": "change",
       "message": "마감일 수정: 하반기 기업문화 활동"
+    },
+    {
+      "id": "l_tp8hs840pmudon6ai",
+      "at": "2026-09-23T05:48:52.506Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "마감일 수정: FMS 보고서 작업"
     }
   ]
 }
