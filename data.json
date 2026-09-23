@@ -1757,6 +1757,19 @@
       "readAt": "2026-09-22T08:34:34.470Z",
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_txxc2q8lb",
+      "toUserId": "c01764",
+      "toName": "천재우",
+      "text": "dsfasd",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-23T14:04:06.405Z",
+      "updatedAt": "2026-09-23T14:04:06.405Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -4575,6 +4588,14 @@
       "name": "천재우",
       "type": "change",
       "message": "계정 삭제: 주현수"
+    },
+    {
+      "id": "l_ts1po3h1tmue6c1ot",
+      "at": "2026-09-23T14:04:06.413Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 천재우"
     }
   ]
 }
