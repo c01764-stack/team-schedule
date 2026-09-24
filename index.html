@@ -298,7 +298,7 @@
   .table-scroll th{background:linear-gradient(135deg,#f5f3ff,#fdf2f8);color:#7c3aed;font-weight:700;font-size:13px;}
   col.c-report{width:56px;} col.c-owner{width:98px;} col.c-due{width:168px;}
   col.c-dday{width:92px;} col.c-prog{width:146px;} col.c-status{width:92px;}
-  col.c-memo{width:97px;} col.c-actions{width:352px;} col.c-actions-min{width:86px;}
+  col.c-memo{width:97px;} col.c-actions{width:352px;} col.c-actions-min{width:136px;}
   td[data-label="업무 내용"]{word-break:break-word;}
   .table-scroll tr:last-child td{border-bottom:none;}
   .table-scroll tr.row-overdue td{background:#fff1f2;}
@@ -410,6 +410,29 @@
   .memo-view-btn{border:1px solid var(--border);background:#f5f4fd;color:#6d28d9;font-weight:700;font-size:13px;padding:4px 12px;border-radius:999px;cursor:pointer;white-space:nowrap;}
   .memo-view-btn:hover{background:#e4d8fd;}
   .memo-empty{color:var(--sub);}
+  /* 업무 기타 내용 — 기록(notes) 목록. 팀원은 추가만, 수정·삭제는 관리자만 */
+  .memo-view-btn .tn-cnt{display:inline-block;margin-left:4px;background:#ede9fe;color:#6d28d9;border-radius:999px;padding:0 6px;font-size:11.5px;}
+  .memo-add-btn{border:1.5px dashed var(--border);background:transparent;color:var(--violet);font-weight:700;font-size:13px;padding:4px 10px;border-radius:999px;cursor:pointer;white-space:nowrap;}
+  .memo-add-btn:hover{border-color:var(--violet);background:var(--edu-tint);}
+  .tn-list{display:flex;flex-direction:column;gap:10px;max-height:52vh;overflow-y:auto;padding-right:2px;}
+  .tn-item{border:1px solid var(--border);border-left:3px solid #a78bfa;background:#faf9ff;padding:10px 12px;}
+  .tn-item.tn-legacy{border-left-color:#94a3b8;background:#f7f7fb;}
+  .tn-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--sub);font-weight:700;margin-bottom:5px;}
+  .tn-meta .tn-by{color:var(--text);}
+  .tn-meta .tn-edited{font-weight:600;}
+  .tn-meta .tn-acts{margin-left:auto;display:flex;gap:5px;}
+  .tn-meta .tn-acts button{border:1.5px solid var(--border);background:var(--card);border-radius:999px;padding:2px 9px;font-size:12px;font-weight:700;color:var(--violet);cursor:pointer;}
+  .tn-meta .tn-acts button.del{color:var(--red);}
+  .tn-text{white-space:pre-wrap;word-break:break-word;font-size:15px;line-height:1.6;color:var(--text);}
+  .tn-empty{color:var(--sub);font-size:14px;padding:6px 0;}
+  .tn-add{margin-top:14px;border-top:1px dashed var(--border);padding-top:12px;}
+  .tn-add label{display:block;font-size:13px;font-weight:800;color:var(--sub);margin-bottom:6px;}
+  .tn-add textarea{width:100%;box-sizing:border-box;padding:9px 10px;border:2px solid var(--border);border-radius:12px;font-size:14.5px;font-family:inherit;background:var(--card);color:var(--text);resize:vertical;}
+  .tn-add textarea:focus{outline:none;border-color:var(--violet);}
+  .tn-note{font-size:12.5px;color:var(--sub);margin-top:6px;}
+  [data-theme="dark"] .tn-item{background:rgba(167,139,250,.07);}
+  [data-theme="dark"] .tn-item.tn-legacy{background:rgba(148,163,184,.08);}
+  [data-theme="dark"] .memo-view-btn .tn-cnt{background:rgba(167,139,250,.25);color:#ddd6fe;}
   .memo-view{white-space:pre-wrap;word-break:break-word;font-size:15.5px;line-height:1.6;color:var(--text);background:#f7f7fb;border-radius:0;padding:14px 16px;max-height:50vh;overflow-y:auto;}
 
   .due-cell{display:flex;align-items:center;gap:6px;}
@@ -1308,6 +1331,7 @@ let notice = { text: "", updatedAt: null }; // 주요 전달사항 (공지)
 // 충돌(409) 발생 시 자동 병합·재저장을 위해, 이번 세션에서 아직 저장에 성공하지 못한
 // 변경분만 추적한다. 값이 'DELETE'면 삭제, 그 외에는 최신 객체(참조)를 의미한다.
 let taskDirty = new Map();
+let taskNoteDirty = new Map();   // 업무 기타 내용 기록 한 건 단위 ("업무ID|기록ID" → 변경)
 let absenceDirty = new Map();
 let reportDirty = new Map();
 // notice 는 단일 객체라 id 기반 dirty map 대신 플래그로 추적한다.
@@ -2023,7 +2047,7 @@ function applyFormState(formId, toggleId, active, label){
 
 function syncForms(){
   applyFormState("taskAddForm", "taskFormToggle",
-    isAdmin && activeTab !== "absence" && activeTab !== "report" && activeTab !== "routine", "+ 업무 추가");
+    !!currentUser && activeTab !== "absence" && activeTab !== "report" && activeTab !== "routine", "+ 업무 추가");
   applyFormState("absenceAddForm", "absenceFormToggle",
     activeTab === "absence", "+ 일정 추가");
 }
@@ -2107,6 +2131,7 @@ async function loadRemoteData(){
   logs = fresh.logs || [];
   fileSha = fresh.sha;
   taskDirty.clear();
+  taskNoteDirty.clear();
   absenceDirty.clear();
   reportDirty.clear();
   clearMemoDirty();
@@ -2298,6 +2323,7 @@ async function saveRemoteData(message){
   if(changeSeq === seqAtSend){
     // 보내는 사이에 새 편집이 없었다 -> 전부 반영 완료
     taskDirty.clear();
+    taskNoteDirty.clear();
     absenceDirty.clear();
     reportDirty.clear();
     clearMemoDirty();
@@ -2327,7 +2353,7 @@ function wait(ms){
 
 // 아직 서버에 반영되지 못한 내 변경이 남아 있는가?
 function hasUnsavedChanges(){
-  return taskDirty.size > 0 || absenceDirty.size > 0 || reportDirty.size > 0 ||
+  return taskDirty.size > 0 || taskNoteDirty.size > 0 || absenceDirty.size > 0 || reportDirty.size > 0 ||
          memoDirty.size > 0 || memoCommentDirty.size > 0 || memoCommentDeleted.size > 0 ||
          memoReadDirty.size > 0 || memoDoneDirty.size > 0 || userDirty.size > 0 ||
          routineDirty.size > 0 || routineDoneDirty.size > 0 || logDirty.length > 0 ||
@@ -2348,7 +2374,7 @@ async function refreshFromRemote(){
   const fresh = await fetchRemoteRaw();
   dataLoaded = true;
   loadError = null;
-  tasks    = mergeByKey(fresh.tasks,    taskDirty,    x => x.id);
+  tasks    = mergeTasks(fresh.tasks);
   absences = mergeByKey(fresh.absences, absenceDirty, x => x.id);
   reports  = mergeByKey(fresh.reports,  reportDirty,  x => x.weekStart);
   notice   = mergeNotice(fresh.notice);
@@ -2688,6 +2714,9 @@ function isTaskOwner(t){
 }
 // 진행율은 관리자와 정·부 담당자가 고칠 수 있다. 완료 처리는 관리자만.
 function canEditProgress(t){ return isAdmin || isTaskOwner(t); }
+// 기타 내용: 관리자와 정·부 담당자가 새 기록을 '추가'할 수 있다.
+// 이미 남긴 기록의 수정·삭제는 관리자만 (실수로 지우는 것 방지).
+function canAddTaskNote(t){ return !!currentUser && (isAdmin || isTaskOwner(t)); }
 // 완료의 기준은 진행율 100%가 아니라 관리자의 완료 처리(completedAt)다.
 // 담당자가 100%까지 올려도 관리자가 확인하기 전에는 "완료 대기"로 남는다.
 function isTaskDone(t){ return !!t.completedAt; }
@@ -2743,7 +2772,7 @@ function taskRow(t, opts){
     ? `
         <button onclick="openEditDue('${t.id}')" title="마감일 변경">마감일</button>
         <button onclick="openEditOwner('${t.id}')" title="담당자 변경">담당</button>
-        <button onclick="openEditMemo('${t.id}')" title="기타 내용 편집">기타</button>
+        <button onclick="openTaskNotes('${t.id}')" title="기타 내용 보기·편집">기타</button>
         <button onclick="reopenTask('${t.id}')" title="완료 취소">완료취소</button>
         <button class="del" onclick="deleteTask('${t.id}')" title="삭제">삭제</button>
       `
@@ -2751,19 +2780,24 @@ function taskRow(t, opts){
         <button onclick="openEditDue('${t.id}')" title="마감일 변경">마감일</button>
         <button onclick="openEditOwner('${t.id}')" title="담당자 변경">담당</button>
         <button onclick="editProgress('${t.id}')" title="진행율 변경">진행율</button>
-        <button onclick="openEditMemo('${t.id}')" title="기타 내용 편집">기타</button>
+        <button onclick="openTaskNotes('${t.id}')" title="기타 내용 보기·편집">기타</button>
         <button onclick="markComplete('${t.id}')" title="완료 처리">완료</button>
         <button class="del" onclick="deleteTask('${t.id}')" title="삭제">삭제</button>
       `;
+  // 팀원(정·부 담당)은 진행율 수정 + 기타 내용 추가만.
+  const memberBtns =
+    (canProg ? `<button onclick="editProgress('${t.id}')" title="진행율 변경">진행율</button>` : '') +
+    (canAddTaskNote(t) ? `<button onclick="openTaskNotes('${t.id}', true)" title="기타 내용 추가">기타</button>` : '');
   const actions = isAdmin
     ? adminBtns
-    : (canProg
-      ? `<button onclick="editProgress('${t.id}')" title="진행율 변경">진행율</button>`
-      : `<span class="row-noact">-</span>`);
+    : (memberBtns || `<span class="row-noact">-</span>`);
 
-  const memoBtn = t.memo
-    ? `<button class="memo-view-btn" onclick="viewMemo('${t.id}')">내용보기</button>`
-    : `<span class="memo-empty">-</span>`;
+  const noteCnt = taskNoteCount(t);
+  const memoBtn = noteCnt
+    ? `<button class="memo-view-btn" onclick="openTaskNotes('${t.id}')">내용보기${noteCnt > 1 ? `<span class="tn-cnt">${noteCnt}</span>` : ''}</button>`
+    : (canAddTaskNote(t)
+      ? `<button class="memo-add-btn" onclick="openTaskNotes('${t.id}', true)" title="기타 내용 작성">+ 작성</button>`
+      : `<span class="memo-empty">-</span>`);
 
   return `
     <tr class="${info.overdue && !completed ? 'row-overdue' : ''} ${completed ? 'row-completed' : ''}" onclick="toggleRowOpen(this, event)">
@@ -4062,6 +4096,7 @@ function buildWeeklyReportText(monday){
       teamTasks.forEach((t, idx) => {
         lines.push(`${idx + 1}. ${t.title} (${t.progress}%)`);
         if(t.memo) lines.push(t.memo);
+        taskNotes(t).forEach(n => lines.push(n.text));
       });
     }
     lines.push("");
@@ -5083,7 +5118,8 @@ function updateAckTitle(){
 }
 
 function addTask(){
-  if(!isAdmin){ alert("관리자 모드에서만 업무를 추가할 수 있습니다."); return; }
+  // 업무 추가는 로그인한 팀원 누구나 (수정·삭제·완료 처리는 관리자만)
+  if(!currentUser){ alert("로그인 후 업무를 추가할 수 있습니다."); return; }
   if(!ghConfig.token){ openSettings(); return; }
   const team = document.getElementById("inTeam").value;
   const title = document.getElementById("inTitle").value.trim();
@@ -5103,8 +5139,11 @@ function addTask(){
     id: cid(), team, title,
     owner: o1.name, ownerId: o1.id,
     owner2: o2 ? o2.name : "", owner2Id: o2 ? o2.id : "",
-    due, progress, memo, dueHistory: [], includeInReport: true
+    due, progress, memo: "", notes: [], dueHistory: [], includeInReport: true,
+    createdAt: new Date().toISOString(), createdById: currentUser.id, createdByName: currentUser.name
   };
+  // 등록 때 적은 기타 내용도 '기록' 한 건으로 남긴다 → 이후엔 관리자만 고칠 수 있다
+  if(memo) newTask.notes.push(makeTaskNote(memo));
   recordProgress(newTask, progress);   // 추이 그래프의 첫 점(등록)
   tasks.push(newTask);
   taskDirty.set(newTask.id, newTask);
@@ -5476,31 +5515,190 @@ function renderLogs(){
   `, true);
 }
 
-function viewMemo(id){
+// ───────── 업무 기타 내용 = 기록(notes) ─────────
+// t.memo  : 예전 방식의 한 덩어리 글(기존 내용). 관리자만 수정·삭제.
+// t.notes : [{id, at, byUserId, byName, text, editedAt?, editedByName?}]
+//           관리자·정·부 담당자가 '추가'만 한다. 수정·삭제는 관리자만.
+// 기록 추가·수정·삭제는 taskDirty(업무 통째)가 아니라 taskNoteDirty(기록 한 건)로
+// 따로 추적한다 — 같은 때 관리자가 마감일을 바꾸고 팀원이 기록을 남겨도 서로 덮지 않게.
+function taskNotes(t){ return Array.isArray(t && t.notes) ? t.notes : []; }
+function taskNoteCount(t){ return (t && t.memo ? 1 : 0) + taskNotes(t).length; }
+function makeTaskNote(text){
+  return { id: cid(), at: new Date().toISOString(),
+           byUserId: currentUser ? currentUser.id : "", byName: currentUser ? currentUser.name : "",
+           text: text };
+}
+function fmtNoteAt(iso){
+  const d = new Date(iso);
+  if(isNaN(d)) return "";
+  const p = n => String(n).padStart(2, "0");
+  const y = d.getFullYear() === new Date().getFullYear() ? "" : d.getFullYear() + "-";
+  return `${y}${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function noteSnippet(text){
+  const one = String(text || "").replace(/\s+/g, " ").trim();
+  return one.length > 30 ? one.slice(0, 30) + "…" : one;
+}
+function markTaskNote(taskId, note, del){
+  taskNoteDirty.set(taskId + "|" + (del ? note : note.id), del ? { taskId, noteId: note, del: true } : { taskId, note });
+}
+// 원격 최신본 위에 아직 저장 못 한 기록 변경을 다시 얹는다
+function applyTaskNoteDirty(list){
+  if(!taskNoteDirty.size) return list;
+  const byId = new Map(list.map(t => [t.id, t]));
+  taskNoteDirty.forEach(ch => {
+    const t = byId.get(ch.taskId);
+    if(!t) return;
+    const arr = taskNotes(t).slice();
+    const id = ch.del ? ch.noteId : ch.note.id;
+    const i = arr.findIndex(n => n.id === id);
+    if(ch.del){ if(i >= 0) arr.splice(i, 1); }
+    else if(i >= 0) arr[i] = ch.note;
+    else arr.push(ch.note);
+    arr.sort((a, b) => String(a.at).localeCompare(String(b.at)));
+    t.notes = arr;
+  });
+  return list;
+}
+// 업무를 통째로 다시 얹을 때(taskDirty), 그 사이 다른 사람이 남긴 기록은 잃지 않게 합친다
+function mergeTasks(freshArr){
+  const freshById = new Map(freshArr.map(t => [t.id, t]));
+  const merged = mergeByKey(freshArr, taskDirty, x => x.id);
+  taskDirty.forEach((mine, id) => {
+    if(mine === 'DELETE') return;
+    const fr = freshById.get(id);
+    if(!fr || !taskNotes(fr).length) return;
+    const have = new Set(taskNotes(mine).map(n => n.id));
+    const extra = taskNotes(fr).filter(n => !have.has(n.id) && !taskNoteDirty.has(id + "|" + n.id));
+    if(extra.length){
+      mine.notes = taskNotes(mine).concat(extra).sort((a, b) => String(a.at).localeCompare(String(b.at)));
+    }
+  });
+  return applyTaskNoteDirty(merged);
+}
+
+// 기록 목록 창. focusAdd=true 면 새 기록 입력칸에 바로 커서
+function openTaskNotes(id, focusAdd){
   const t = tasks.find(x=>x.id===id);
   if(!t) return;
-  const content = t.memo ? escapeHtml(t.memo).replace(/\n/g,'<br>') : '등록된 내용이 없습니다.';
+  const canAdd = canAddTaskNote(t);
+  const items = [];
+  if(t.memo){
+    items.push(`
+      <div class="tn-item tn-legacy">
+        <div class="tn-meta"><span>기존 내용</span>
+          ${isAdmin ? `<span class="tn-acts"><button onclick="openEditMemo('${t.id}')">수정</button><button class="del" onclick="deleteLegacyMemo('${t.id}')">삭제</button></span>` : ''}
+        </div>
+        <div class="tn-text">${escapeHtml(t.memo)}</div>
+      </div>`);
+  }
+  taskNotes(t).forEach(n => {
+    items.push(`
+      <div class="tn-item" data-note="${escapeHtml(n.id)}">
+        <div class="tn-meta"><span class="tn-by">${escapeHtml(n.byName || '-')}</span><span>${fmtNoteAt(n.at)}</span>
+          ${n.editedAt ? `<span class="tn-edited">· 수정됨${n.editedByName ? '(' + escapeHtml(n.editedByName) + ')' : ''}</span>` : ''}
+          ${isAdmin ? `<span class="tn-acts"><button onclick="openEditTaskNote('${t.id}','${escapeHtml(n.id)}')">수정</button><button class="del" onclick="deleteTaskNote('${t.id}','${escapeHtml(n.id)}')">삭제</button></span>` : ''}
+        </div>
+        <div class="tn-text">${escapeHtml(n.text)}</div>
+      </div>`);
+  });
   openModal(`
     <h3>기타 내용 — ${escapeHtml(t.title)}</h3>
-    <div class="memo-view">${content}</div>
+    <div class="tn-list" id="tnList">${items.join('') || '<div class="tn-empty">등록된 내용이 없습니다.</div>'}</div>
+    ${canAdd ? `
+    <div class="tn-add">
+      <label for="tnNew">새 기록 추가</label>
+      <textarea id="tnNew" rows="3" placeholder="진행 상황·특이사항을 적어주세요"></textarea>
+      ${isAdmin ? '' : '<div class="tn-note">※ 저장한 기록은 실수로 지워지지 않도록 수정·삭제할 수 없습니다. (관리자만 가능)</div>'}
+    </div>` : ''}
     <div class="modal-actions">
-      ${isAdmin ? `<button class="btn-ghost" onclick="openEditMemo('${t.id}')">수정</button>` : ''}
-      <button class="btn-primary" onclick="closeModal()">닫기</button>
+      <button class="btn-ghost" onclick="closeModal()">닫기</button>
+      ${canAdd ? `<button class="btn-primary" onclick="addTaskNote('${t.id}')">기록 추가</button>` : ''}
+    </div>
+  `);
+  const list = document.getElementById("tnList");
+  if(list) list.scrollTop = list.scrollHeight;   // 최신 기록이 아래
+  if(focusAdd){ const ta = document.getElementById("tnNew"); if(ta) ta.focus(); }
+}
+// 예전 이름 호환
+function viewMemo(id){ openTaskNotes(id); }
+
+function addTaskNote(id){
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  if(!canAddTaskNote(t)){ alert("관리자 또는 이 업무의 담당자(정·부)만 기록을 남길 수 있습니다."); return; }
+  if(!ghConfig.token){ openSettings(); return; }
+  const ta = document.getElementById("tnNew");
+  const text = ta ? ta.value.trim() : "";
+  if(!text){ alert("내용을 입력해주세요."); if(ta) ta.focus(); return; }
+  if(!isAdmin && !confirm("저장한 기록은 수정·삭제할 수 없습니다. 이대로 남길까요?")) return;
+  const note = makeTaskNote(text);
+  t.notes = taskNotes(t).concat([note]);
+  markTaskNote(t.id, note);
+  render();
+  persist(`기타 내용 추가: ${t.title} — "${noteSnippet(text)}"`);
+  openTaskNotes(t.id);
+}
+
+function openEditTaskNote(taskId, noteId){
+  if(!isAdmin){ alert("관리자만 기록을 수정할 수 있습니다."); return; }
+  const t = tasks.find(x=>x.id===taskId);
+  const n = t && taskNotes(t).find(x=>x.id===noteId);
+  if(!n) return;
+  openModal(`
+    <h3>기록 수정</h3>
+    <div class="field">
+      <label>업무: ${escapeHtml(t.title)} · ${escapeHtml(n.byName || '-')} ${fmtNoteAt(n.at)}</label>
+      <textarea id="tnEdit" rows="5">${escapeHtml(n.text)}</textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="openTaskNotes('${t.id}')">취소</button>
+      <button class="btn-primary" onclick="saveTaskNoteEdit('${t.id}','${escapeHtml(n.id)}')">저장</button>
     </div>
   `);
 }
+function saveTaskNoteEdit(taskId, noteId){
+  if(!isAdmin){ alert("관리자만 기록을 수정할 수 있습니다."); return; }
+  const t = tasks.find(x=>x.id===taskId);
+  const i = t ? taskNotes(t).findIndex(x=>x.id===noteId) : -1;
+  if(i < 0) return;
+  const text = document.getElementById("tnEdit").value.trim();
+  if(!text){ alert("내용이 비어 있습니다. 지우려면 [삭제]를 눌러주세요."); return; }
+  const old = t.notes[i];
+  if(text === old.text){ openTaskNotes(t.id); return; }
+  const upd = Object.assign({}, old, { text, editedAt: new Date().toISOString(), editedByName: currentUser ? currentUser.name : "" });
+  t.notes = t.notes.slice(); t.notes[i] = upd;
+  markTaskNote(t.id, upd);
+  render();
+  persist(`기타 내용 수정: ${t.title} — "${noteSnippet(old.text)}" → "${noteSnippet(text)}"`);
+  openTaskNotes(t.id);
+}
+function deleteTaskNote(taskId, noteId){
+  if(!isAdmin){ alert("관리자만 기록을 삭제할 수 있습니다."); return; }
+  const t = tasks.find(x=>x.id===taskId);
+  const n = t && taskNotes(t).find(x=>x.id===noteId);
+  if(!n) return;
+  if(!confirm(`이 기록을 삭제할까요?\n\n${n.byName || ''} ${fmtNoteAt(n.at)}\n${noteSnippet(n.text)}`)) return;
+  t.notes = taskNotes(t).filter(x=>x.id!==noteId);
+  markTaskNote(t.id, noteId, true);
+  render();
+  persist(`기타 내용 삭제: ${t.title} — ${n.byName || ''} "${noteSnippet(n.text)}"`);
+  openTaskNotes(t.id);
+}
 
+// 기존 내용(t.memo) — 관리자만
 function openEditMemo(id){
+  if(!isAdmin){ openTaskNotes(id); return; }
   const t = tasks.find(x=>x.id===id);
   if(!t) return;
   openModal(`
-    <h3>기타 내용 수정</h3>
+    <h3>기존 내용 수정</h3>
     <div class="field">
       <label>업무: ${escapeHtml(t.title)}</label>
       <textarea id="modalMemo" rows="5" placeholder="세부 내용/특이사항을 입력하세요">${escapeHtml(t.memo || '')}</textarea>
     </div>
     <div class="modal-actions">
-      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-ghost" onclick="openTaskNotes('${t.id}')">취소</button>
       <button class="btn-primary" onclick="saveMemoEdit('${t.id}')">저장</button>
     </div>
   `);
@@ -5514,9 +5712,21 @@ function saveMemoEdit(id){
   const changed = newMemo !== (t.memo || '');
   t.memo = newMemo;
   if(changed) taskDirty.set(t.id, t);
-  closeModal();
   render();
-  if(changed) persist(`기타 내용 수정: ${t.title}`);
+  if(changed) persist(`기타 내용(기존) 수정: ${t.title}`);
+  openTaskNotes(t.id);
+}
+function deleteLegacyMemo(id){
+  if(!isAdmin){ alert("관리자만 삭제할 수 있습니다."); return; }
+  const t = tasks.find(x=>x.id===id);
+  if(!t || !t.memo) return;
+  if(!confirm(`기존 내용을 삭제할까요?\n\n${noteSnippet(t.memo)}`)) return;
+  const old = t.memo;
+  t.memo = "";
+  taskDirty.set(t.id, t);
+  render();
+  persist(`기타 내용(기존) 삭제: ${t.title} — "${noteSnippet(old)}"`);
+  openTaskNotes(t.id);
 }
 
 // ───────── 진행율 추이 그래프 (29차) ─────────
