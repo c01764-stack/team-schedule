@@ -4612,6 +4612,14 @@
       "name": "천재우",
       "type": "change",
       "message": "정기업무 완료: 주간업무일지 작성 보고 (2026-09-24)"
+    },
+    {
+      "id": "l_tfet39tx4mug8kbau",
+      "at": "2026-09-25T00:42:03.702Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
