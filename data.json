@@ -1817,7 +1817,14 @@
       "updatedAt": "2026-09-18T06:36:13.847Z",
       "byUserId": "c01764",
       "byName": "천재우",
-      "done": {}
+      "done": {
+        "2026-09-25": {
+          "readAt": "2026-09-27T23:54:08.765Z",
+          "at": null,
+          "byUserId": "c05651",
+          "byName": "오혜지"
+        }
+      }
     }
   ],
   "logs": [
@@ -4644,6 +4651,14 @@
       "name": "오혜지",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_ttqaum0blmukh68zi",
+      "at": "2026-09-27T23:54:08.766Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "정기업무 확인: 휴넷 사이트 이수율 관리 (2026-09-25)"
     }
   ]
 }
