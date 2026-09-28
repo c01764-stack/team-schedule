@@ -1898,7 +1898,7 @@
       "byName": "이재혁",
       "createdAt": "2026-09-28T07:59:48.325Z",
       "updatedAt": "2026-09-28T07:59:48.325Z",
-      "readAt": null,
+      "readAt": "2026-09-28T07:59:57.068Z",
       "doneAt": null,
       "comments": []
     }
@@ -4995,6 +4995,14 @@
       "name": "이재혁",
       "type": "change",
       "message": "개인 전달사항 등록: 천재우"
+    },
+    {
+      "id": "l_tyuzbeu91mukyizyt",
+      "at": "2026-09-28T07:59:57.077Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 확인: 천재우"
     }
   ]
 }
