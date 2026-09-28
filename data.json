@@ -294,7 +294,16 @@
       "includeInReport": true,
       "ownerId": "c01764",
       "owner2": "",
-      "owner2Id": ""
+      "owner2Id": "",
+      "notes": [
+        {
+          "id": "tu2shrghs",
+          "at": "2026-09-28T09:13:55.779Z",
+          "byUserId": "c01764",
+          "byName": "천재우",
+          "text": "9/28\n- 주현수 대리 퇴사 및 기타 업무 관계로 당분간 보류"
+        }
+      ]
     },
     {
       "id": "t7gr0god3",
@@ -5150,6 +5159,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 완료: 천재우"
+    },
+    {
+      "id": "l_t4vstemkxmul164wd",
+      "at": "2026-09-28T09:13:55.789Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "기타 내용 추가: 아카데미 사업계획서 작성 — \"9/28 - 주현수 대리 퇴사 및 기타 업무 관계로 당…\""
     }
   ]
 }
