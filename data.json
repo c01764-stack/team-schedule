@@ -1955,6 +1955,19 @@
       "readAt": "2026-09-28T07:59:57.068Z",
       "doneAt": "2026-09-28T07:59:57.957Z",
       "comments": []
+    },
+    {
+      "id": "m_tutf0fkot",
+      "toUserId": "c05651",
+      "toName": "오혜지",
+      "text": "경영계획 파일(교육) 및 내용 확인",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-09-28T08:29:07.550Z",
+      "updatedAt": "2026-09-28T08:29:07.550Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -5113,6 +5126,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 추가: 법정교육 이수율 확인 — \"9/28 - 미래솔에 확인 필요\""
+    },
+    {
+      "id": "l_tjqrzn2hkmukzkinb",
+      "at": "2026-09-28T08:29:07.559Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 오혜지"
     }
   ]
 }
