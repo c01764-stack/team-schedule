@@ -1899,7 +1899,7 @@
       "createdAt": "2026-09-28T07:59:48.325Z",
       "updatedAt": "2026-09-28T07:59:48.325Z",
       "readAt": "2026-09-28T07:59:57.068Z",
-      "doneAt": null,
+      "doneAt": "2026-09-28T07:59:57.957Z",
       "comments": []
     }
   ],
@@ -5003,6 +5003,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 확인: 천재우"
+    },
+    {
+      "id": "l_tv5xge8gbmukyj0no",
+      "at": "2026-09-28T07:59:57.972Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 완료: 천재우"
     }
   ]
 }
