@@ -889,7 +889,16 @@
       "progress": 0,
       "memo": "9/18\n- 전체 일정 이사님께 확인\n- 설문 내용 확인 후 오주임 미팅 필요\n- 설문 종료 후 보고서 작성 필요",
       "dueHistory": [],
-      "includeInReport": true
+      "includeInReport": true,
+      "notes": [
+        {
+          "id": "tn6d9c54z",
+          "at": "2026-09-28T08:22:03.197Z",
+          "byUserId": "c01764",
+          "byName": "천재우",
+          "text": "9/28\n- 10월8일까지 구성원 설문 진행\n- 설문 일정에 따른 보고서 작성 필요"
+        }
+      ]
     },
     {
       "id": "trsi32fzb",
@@ -5011,6 +5020,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 완료: 천재우"
+    },
+    {
+      "id": "l_tybpg1zxrmukzbf7q",
+      "at": "2026-09-28T08:22:03.206Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "기타 내용 추가: SKT 구성원 설문 — \"9/28 - 10월8일까지 구성원 설문 진행 - 설문 …\""
     }
   ]
 }
