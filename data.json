@@ -765,10 +765,18 @@
       "owner2": "",
       "owner2Id": "",
       "due": "2026-11-13",
-      "progress": 0,
+      "progress": 10,
       "memo": "",
       "dueHistory": [],
-      "includeInReport": true
+      "includeInReport": true,
+      "progressHistory": [
+        {
+          "at": "2026-09-28T00:14:30.989Z",
+          "p": 10,
+          "byUserId": "c05651",
+          "byName": "오혜지"
+        }
+      ]
     },
     {
       "id": "tpupk1fiu",
@@ -4683,6 +4691,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tami6nrz9mukhwg2c",
+      "at": "2026-09-28T00:14:30.996Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "진행율 수정: 하반기 CS교육 시행 → 10%"
     }
   ]
 }
