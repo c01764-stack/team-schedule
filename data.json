@@ -1888,6 +1888,19 @@
       "readAt": "2026-09-22T08:34:34.470Z",
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_tmg4he8d6",
+      "toUserId": "c01764",
+      "toName": "천재우",
+      "text": "222",
+      "byUserId": "c04897",
+      "byName": "이재혁",
+      "createdAt": "2026-09-28T07:59:48.325Z",
+      "updatedAt": "2026-09-28T07:59:48.325Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -4974,6 +4987,14 @@
       "name": "천재우",
       "type": "change",
       "message": "진행율 수정: '26년 하반기 산업안전보건교육 시행 → 0%"
+    },
+    {
+      "id": "l_twwj9fydvmukyit7x",
+      "at": "2026-09-28T07:59:48.333Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "change",
+      "message": "개인 전달사항 등록: 천재우"
     }
   ]
 }
