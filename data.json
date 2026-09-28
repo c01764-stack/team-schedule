@@ -4667,6 +4667,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "정기업무 완료: 휴넷 사이트 이수율 관리 (2026-09-25)"
+    },
+    {
+      "id": "l_tgac6ln0tmukhfn6k",
+      "at": "2026-09-28T00:01:27.068Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
