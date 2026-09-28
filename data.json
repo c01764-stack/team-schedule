@@ -1082,7 +1082,15 @@
       "due": "2026-10-05",
       "progress": 0,
       "memo": "",
-      "notes": [],
+      "notes": [
+        {
+          "id": "tn5o40uj9",
+          "at": "2026-09-28T08:28:11.215Z",
+          "byUserId": "c01764",
+          "byName": "천재우",
+          "text": "9/28\n- 미래솔에 확인 필요"
+        }
+      ],
       "dueHistory": [],
       "includeInReport": true,
       "createdAt": "2026-09-28T08:27:34.870Z",
@@ -5097,6 +5105,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 추가: 법정교육 이수율 확인"
+    },
+    {
+      "id": "l_tvfycanw0mukzjb6g",
+      "at": "2026-09-28T08:28:11.224Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "기타 내용 추가: 법정교육 이수율 확인 — \"9/28 - 미래솔에 확인 필요\""
     }
   ]
 }
