@@ -4675,6 +4675,14 @@
       "name": "이재혁",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tcfwsjfb8mukhoz25",
+      "at": "2026-09-28T00:08:42.365Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
