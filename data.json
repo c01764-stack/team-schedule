@@ -1070,6 +1070,32 @@
           "byName": "천재우"
         }
       ]
+    },
+    {
+      "id": "tx1i204gk",
+      "team": "edu",
+      "title": "법정교육 이수율 확인",
+      "owner": "오혜지",
+      "ownerId": "c05651",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-10-05",
+      "progress": 0,
+      "memo": "",
+      "notes": [],
+      "dueHistory": [],
+      "includeInReport": true,
+      "createdAt": "2026-09-28T08:27:34.870Z",
+      "createdById": "c01764",
+      "createdByName": "천재우",
+      "progressHistory": [
+        {
+          "at": "2026-09-28T08:27:34.870Z",
+          "p": 0,
+          "byUserId": "c01764",
+          "byName": "천재우"
+        }
+      ]
     }
   ],
   "absences": [
@@ -5063,6 +5089,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 수정: 하반기 모니터링 진행 — \"9/28 - 로데이터 확인 후 보정 여부 결정\" → \"9/28 - 로데이터 확인 후 보정 여부 결정 - 10…\""
+    },
+    {
+      "id": "l_txq1aueuhmukzij4v",
+      "at": "2026-09-28T08:27:34.879Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: 법정교육 이수율 확인"
     }
   ]
 }
