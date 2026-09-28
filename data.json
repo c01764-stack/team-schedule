@@ -1960,11 +1960,11 @@
       "id": "m_tutf0fkot",
       "toUserId": "c05651",
       "toName": "오혜지",
-      "text": "경영계획 파일(교육) 및 내용 확인",
+      "text": "경영실적 파일(교육) 및 내용 확인",
       "byUserId": "c01764",
       "byName": "천재우",
       "createdAt": "2026-09-28T08:29:07.550Z",
-      "updatedAt": "2026-09-28T08:29:07.550Z",
+      "updatedAt": "2026-09-28T08:35:18.180Z",
       "readAt": null,
       "doneAt": null,
       "comments": []
@@ -5134,6 +5134,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 등록: 오혜지"
+    },
+    {
+      "id": "l_teh1lj3icmukzsgmj",
+      "at": "2026-09-28T08:35:18.187Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 수정: 오혜지"
     }
   ]
 }
