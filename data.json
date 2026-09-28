@@ -583,7 +583,16 @@
       "includeInReport": true,
       "ownerId": "c05651",
       "owner2": "",
-      "owner2Id": ""
+      "owner2Id": "",
+      "notes": [
+        {
+          "id": "trfjcfla1",
+          "at": "2026-09-28T08:24:05.506Z",
+          "byUserId": "c01764",
+          "byName": "천재우",
+          "text": "9/28\n- 로데이터 확인 후 보정 여부 결정"
+        }
+      ]
     },
     {
       "id": "t2z2cibrv",
@@ -5036,6 +5045,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용(기존) 수정: 하반기 모니터링 진행"
+    },
+    {
+      "id": "l_tb7jriqa7mukze1l5",
+      "at": "2026-09-28T08:24:05.513Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "기타 내용 추가: 하반기 모니터링 진행 — \"9/28 - 로데이터 확인 후 보정 여부 결정\""
     }
   ]
 }
