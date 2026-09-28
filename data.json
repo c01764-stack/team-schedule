@@ -751,7 +751,16 @@
       "progress": 0,
       "memo": "9/7\n- 증상조사표에 나온 내용을 어떻게 개선계획서에 반영 할지",
       "dueHistory": [],
-      "includeInReport": true
+      "includeInReport": true,
+      "notes": [
+        {
+          "id": "tvskxg7xz",
+          "at": "2026-09-28T07:53:09.402Z",
+          "byUserId": "c01764",
+          "byName": "천재우",
+          "text": "9/28\n- 증상조사표 내용을 개선계획서 반영 내용 업무매뉴얼에 표기\n- 매뉴얼 확인 후 공지"
+        }
+      ]
     },
     {
       "id": "tdf8qxdvq",
@@ -4832,6 +4841,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 완료 처리: 서린 사업장 업무상 질병 관련"
+    },
+    {
+      "id": "l_tcekgxc1emukya9et",
+      "at": "2026-09-28T07:53:09.413Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "기타 내용 추가: 근골격계 유해요인조사 시행 — \"9/28 - 증상조사표 내용을 개선계획서 반영 내용 업…\""
     }
   ]
 }
