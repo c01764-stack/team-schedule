@@ -5250,6 +5250,14 @@
       "name": "이재혁",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_t0nvmy85imulxk4by",
+      "at": "2026-09-29T00:20:35.950Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
