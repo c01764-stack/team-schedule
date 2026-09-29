@@ -2010,7 +2010,7 @@
       "createdAt": "2026-09-28T08:29:07.550Z",
       "updatedAt": "2026-09-28T08:35:18.180Z",
       "readAt": "2026-09-29T05:25:56.037Z",
-      "doneAt": null,
+      "doneAt": "2026-09-29T07:00:59.731Z",
       "comments": []
     }
   ],
@@ -5298,6 +5298,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "전달사항 댓글 삭제"
+    },
+    {
+      "id": "l_t89vz7svsmumbv17c",
+      "at": "2026-09-29T07:00:59.736Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "개인 전달사항 완료: 오혜지"
     }
   ]
 }
