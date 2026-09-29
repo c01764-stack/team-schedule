@@ -5242,6 +5242,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 추가: 천재우"
+    },
+    {
+      "id": "l_tq4vgrgyemulwwipj",
+      "at": "2026-09-29T00:02:14.839Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
