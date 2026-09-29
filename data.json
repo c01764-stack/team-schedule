@@ -5306,6 +5306,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "개인 전달사항 완료: 오혜지"
+    },
+    {
+      "id": "l_tt69h75i5mun6gawv",
+      "at": "2026-09-29T21:17:20.575Z",
+      "userId": "c90005",
+      "name": "강문선",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
