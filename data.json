@@ -5322,6 +5322,14 @@
       "name": "오혜지",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tnh1x7hhbmunuv1vo",
+      "at": "2026-09-30T08:40:39.492Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
