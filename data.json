@@ -1645,6 +1645,15 @@
       "start": "2026-09-29",
       "end": "2026-09-29",
       "memo": "FM학회 세미나/삼탄빌딩/14:00"
+    },
+    {
+      "id": "tbn3t6nu5",
+      "team": "etc",
+      "person": "천재우",
+      "type": "etc",
+      "start": "2026-10-06",
+      "end": "2026-10-06",
+      "memo": "강본부장님 미팅"
     }
   ],
   "reports": [
@@ -5330,6 +5339,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_trch175ekmunxcsez",
+      "at": "2026-09-30T09:50:26.267Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 추가: 천재우"
     }
   ]
 }
