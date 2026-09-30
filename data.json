@@ -5347,6 +5347,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 추가: 천재우"
+    },
+    {
+      "id": "l_twzx0dh4umuo8ji1x",
+      "at": "2026-09-30T15:03:35.205Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
