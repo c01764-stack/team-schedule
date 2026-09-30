@@ -5314,6 +5314,14 @@
       "name": "강문선",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tevcgmiigmunrrx6h",
+      "at": "2026-09-30T07:14:14.585Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
