@@ -5360,6 +5360,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "일정 삭제: 오혜지"
+    },
+    {
+      "id": "l_tyr52bxp2mup7tcby",
+      "at": "2026-10-01T07:31:00.910Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
