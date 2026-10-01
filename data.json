@@ -1485,15 +1485,6 @@
       "memo": "CHMS 대구중구 교육"
     },
     {
-      "id": "t1vbp2gh3",
-      "team": "edu",
-      "person": "오혜지",
-      "type": "training",
-      "start": "2026-10-14",
-      "end": "2026-10-14",
-      "memo": "CHMS 광주동구 교육(변동 가능성 있음)"
-    },
-    {
       "id": "t2cjuh7ap",
       "team": "safety",
       "person": "이재혁",
@@ -5363,6 +5354,14 @@
       "name": "이재혁",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tkij0jgfamup3uman",
+      "at": "2026-10-01T05:40:02.015Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "일정 삭제: 오혜지"
     }
   ]
 }
