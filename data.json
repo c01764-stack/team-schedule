@@ -5368,6 +5368,14 @@
       "name": "오혜지",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tbrfa8w3imupodln0",
+      "at": "2026-10-01T15:14:39.948Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
