@@ -5355,6 +5355,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tr5m0aognmuovf03z",
+      "at": "2026-10-01T01:43:56.495Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
