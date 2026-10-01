@@ -1664,9 +1664,9 @@
     }
   ],
   "notice": {
-    "text": "==1. 업무 진행 현황 수시 업로드(진행률, 기타 내용 작성)==",
-    "updatedAt": "2026-10-01T23:34:29.524Z",
-    "noticeId": "n_ta1vex9jo",
+    "text": "==1. 업무 진행 현황 수시 업로드 필요(진행률, 기타 내용 작성)==",
+    "updatedAt": "2026-10-01T23:34:43.667Z",
+    "noticeId": "n_t8ij5zhlh",
     "reads": []
   },
   "users": [
@@ -5428,6 +5428,14 @@
     {
       "id": "l_todxtp7m6muq68dr6",
       "at": "2026-10-01T23:34:29.538Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "주요 전달사항 수정"
+    },
+    {
+      "id": "l_tmzod20m7muq68oo1",
+      "at": "2026-10-01T23:34:43.681Z",
       "userId": "c01764",
       "name": "천재우",
       "type": "change",
