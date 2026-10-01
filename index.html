@@ -1141,6 +1141,94 @@
     [data-theme="dark"] .table-scroll tr.row-overdue{background:rgba(251,113,133,.08);border-color:rgba(251,113,133,.35);}
     [data-theme="dark"] .table-scroll tr.row-open{border-color:var(--violet);box-shadow:0 6px 18px rgba(34,211,238,.2);}
   }
+
+  /* ---------- 주간 업무 현황 (개인별 카드, 2026-10-01) ---------- */
+  .wk-banner:empty{display:none;}
+  .wk-banner{background:var(--card);border:1px solid var(--border);border-radius:0;padding:12px 16px 14px;margin-bottom:18px;
+    box-shadow:var(--shadow-card, 0 6px 20px rgba(30,20,70,.08));
+    --wk-up:#16a34a;--wk-down:#e11d48;--wk-bar:#eceaf6;--wk-from:#b9c3dd;--wk-meet:#0ea5e9;--wk-tr:#a21caf;--wk-ins:#4338ca;--wk-etc:#0f766e;}
+  .wk-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .wk-head h3{margin:0;font-size:17px;font-weight:800;color:#15803d;display:flex;align-items:center;gap:8px;white-space:nowrap;}
+  .wk-nav{display:flex;align-items:center;gap:6px;margin-left:auto;}
+  .wk-nav .cal-nav{width:30px;height:30px;}
+  .wk-range{min-width:168px;text-align:center;font-weight:800;font-size:14.5px;line-height:1.25;}
+  .wk-range small{display:block;color:var(--sub);font-weight:600;font-size:12px;}
+  .wk-fold-btn{border:1.5px solid var(--border);background:transparent;border-radius:999px;padding:4px 11px;font-size:12.5px;
+    font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit;}
+  .wk-picks{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+  .wk-pick{border:1.5px solid var(--border);background:transparent;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700;
+    color:var(--sub);cursor:pointer;font-family:inherit;}
+  .wk-pick.on{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .wk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin-top:12px;}
+  .wk-card{background:var(--card);border:1px solid var(--border);border-top:3px solid var(--wk-c,var(--blue));border-radius:0;
+    display:flex;flex-direction:column;min-width:0;}
+  .wk-card.quiet{opacity:.72;}
+  .wk-card.me{box-shadow:0 0 0 2px rgba(139,92,246,.35);}
+  .wk-ch{display:flex;align-items:center;gap:10px;padding:12px 14px 8px;}
+  .wk-av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;background:var(--wk-c,var(--blue));flex:none;}
+  .wk-nm{font-weight:800;font-size:15.5px;}
+  .wk-nm .me-tag{font-size:11px;color:var(--violet);border:1px solid var(--violet);border-radius:999px;padding:0 6px;margin-left:5px;vertical-align:2px;font-weight:700;}
+  .wk-sum{font-size:12.5px;color:var(--sub);font-weight:600;}
+  .wk-sum .up{color:var(--wk-up);} .wk-sum .down{color:var(--wk-down);}
+  .wk-cnt{display:flex;gap:5px;flex-wrap:wrap;padding:0 14px 10px;}
+  .wk-cnt span{font-size:12px;padding:2px 9px;border-radius:999px;background:var(--wk-bar);color:var(--sub);font-weight:700;}
+  .wk-cnt span b{color:var(--text);margin-left:3px;}
+  .wk-cnt span.z{opacity:.5;}
+  .wk-body{max-height:520px;overflow-y:auto;}
+  .wk-sec{border-top:1px solid var(--border);padding:8px 14px 10px;}
+  .wk-sh{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:var(--sub);margin-bottom:4px;}
+  .wk-sh i{width:8px;height:8px;border-radius:2px;background:var(--d);display:inline-block;}
+  .wk-sh .n{font-weight:600;}
+  .wk-task{padding:6px 4px;margin:0 -4px;cursor:pointer;border-radius:8px;}
+  .wk-task:hover{background:#eff6ff;}
+  .wk-task+.wk-task{border-top:1px dashed var(--border);}
+  .wk-tr{display:flex;align-items:flex-start;gap:7px;}
+  .wk-tr .wk-team,.wk-tr .wk-dl{margin-top:2px;}
+  .wk-team{font-size:11px;padding:0 6px;border-radius:4px;flex:none;font-weight:700;}
+  .wk-team.safety{background:var(--safety-tint);color:#c2410c;} .wk-team.edu{background:var(--edu-tint);color:#6d28d9;} .wk-team.etc{background:var(--etc-tint);color:#0f766e;}
+  .wk-tt{flex:1;min-width:0;overflow:hidden;font-weight:600;font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:keep-all;}
+  .wk-ft{flex:none;font-variant-numeric:tabular-nums;font-size:13.5px;white-space:nowrap;}
+  .wk-ft .f{color:var(--sub);} .wk-ft .ar{color:var(--sub);margin:0 2px;} .wk-ft .t{font-weight:800;}
+  .wk-dl{flex:none;font-size:11.5px;font-weight:800;padding:1px 7px;border-radius:999px;font-variant-numeric:tabular-nums;min-width:50px;text-align:center;}
+  .wk-dl.up{color:var(--wk-up);background:rgba(22,163,74,.12);}
+  .wk-dl.down{color:var(--wk-down);background:rgba(225,29,72,.12);}
+  .wk-dl.zero{color:var(--sub);background:var(--wk-bar);}
+  .wk-dl.done{color:#fff;background:var(--wk-up);}
+  .wk-pb{position:relative;height:6px;background:var(--wk-bar);border-radius:3px;margin-top:5px;overflow:hidden;}
+  .wk-pb i{position:absolute;top:0;bottom:0;border-radius:3px;}
+  .wk-pb .a{background:var(--wk-from);} .wk-pb .g{background:var(--wk-up);}
+  .wk-pb .l{background:repeating-linear-gradient(45deg,var(--wk-down) 0 3px,transparent 3px 6px);opacity:.8;}
+  .wk-meta{font-size:11.5px;color:var(--sub);margin-top:3px;font-weight:600;}
+  .wk-meta .late{color:var(--red);}
+  .wk-ev{display:flex;gap:8px;padding:4px 4px;margin:0 -4px;align-items:baseline;cursor:pointer;border-radius:6px;font-size:14px;}
+  .wk-ev:hover{background:#eff6ff;}
+  .wk-ev .d{flex:none;width:62px;font-size:12px;color:var(--sub);font-variant-numeric:tabular-nums;font-weight:600;}
+  .wk-ev .m{flex:1;min-width:0;}
+  .wk-ev .src-tag{margin-left:5px;}
+  .wk-empty{color:var(--sub);font-size:13px;opacity:.8;}
+  .wk-still{font-size:12.5px;color:var(--sub);cursor:pointer;margin-top:4px;background:none;border:0;padding:0;font-family:inherit;font-weight:700;}
+  .wk-still:hover{color:var(--text);}
+  .wk-foot{border-top:1px solid var(--border);padding:7px 14px;font-size:12.5px;color:var(--sub);font-weight:600;}
+  .wk-foot b{color:#b45309;}
+  .type-badge.meeting{background:#e0f2fe;color:#0369a1;}
+  @media (max-width:640px){
+    .wk-banner{padding:11px 13px;margin-bottom:14px;}
+    .wk-head h3{font-size:15.5px;}
+    .wk-nav{margin-left:0;width:100%;justify-content:space-between;}
+    .wk-range{min-width:0;flex:1;}
+    .wk-grid{grid-template-columns:minmax(0,1fr);}
+    .wk-body{max-height:none;}
+    .wk-tt{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+    .wk-tr{align-items:flex-start;}
+  }
+  [data-theme="dark"] .wk-banner{--wk-up:#4ade80;--wk-down:#fb7185;--wk-bar:#1f2a40;--wk-from:#4a5877;}
+  [data-theme="dark"] .wk-head h3{color:#4ade80;}
+  [data-theme="dark"] .wk-team.safety{background:rgba(251,146,60,.16);color:#fdba74;}
+  [data-theme="dark"] .wk-team.edu{background:rgba(167,139,250,.16);color:#c4b5fd;}
+  [data-theme="dark"] .wk-team.etc{background:rgba(45,212,191,.16);color:#5eead4;}
+  [data-theme="dark"] .wk-task:hover,[data-theme="dark"] .wk-ev:hover{background:rgba(96,165,250,.10);}
+  [data-theme="dark"] .wk-foot b{color:#fcd34d;}
+  [data-theme="dark"] .type-badge.meeting{background:rgba(56,189,248,.16);color:#7dd3fc;}
 </style>
 </head>
 <body>
@@ -1181,6 +1269,8 @@
   <div class="notice-banner" id="noticeBanner"></div>
 
   <div class="memo-banner" id="memoBanner"></div>
+
+  <div class="wk-banner" id="weeklyBanner"></div>
 
   <button class="form-toggle" id="taskFormToggle" style="display:none;" onclick="toggleAddForm('taskAddForm')">+ 업무 추가</button>
 
@@ -1240,6 +1330,7 @@
       <select id="absType">
         <option value="inspect">점검</option>
         <option value="training">교육</option>
+        <option value="meeting">미팅</option>
         <option value="leave">휴가</option>
         <option value="etc">기타</option>
       </select>
@@ -1299,6 +1390,7 @@ const TEAM_META = {
 const TYPE_META = {
   inspect: {label:"점검", cls:"inspect"},
   training: {label:"교육", cls:"training"},
+  meeting: {label:"미팅", cls:"meeting"},
   leave: {label:"휴가", cls:"leave"},
   etc: {label:"기타", cls:"etc"}
 };
@@ -3014,7 +3106,9 @@ function ensureLinkedYears(){
   const years = new Set([
     new Date().getFullYear(),
     calState.year,
-    bannerDate.getFullYear()
+    bannerDate.getFullYear(),
+    Number(wkStartStr().slice(0, 4)),
+    Number(pgAddDays(wkStartStr(), 6).slice(0, 4))
   ]);
   years.forEach(y => { loadEduYear(y); loadSafeYear(y); });
 }
@@ -3179,6 +3273,7 @@ function renderAbsenceBanner(){
   `;
   if(!dayList.length){
     el.innerHTML = `<h3>주요 일정</h3>${nav}<div class="absence-empty">해당 날짜에 일정이 없습니다.</div>`;
+    renderWeeklyBanner();
     return;
   }
   const chips = dayList.map(a => {
@@ -3191,6 +3286,7 @@ function renderAbsenceBanner(){
     return `<div class="absence-chip ${meta.cls}${src ? ' ' + src.cls : ''}" onclick="openAbsenceChip('${a.id}')" title="${tipTxt}"><span class="dot"></span>${escapeHtml(a.person)}${memoPart} <span class="type-badge ${type.cls}">${type.label}</span>${srcTag}</div>`;
   }).join("");
   el.innerHTML = `<h3>주요 일정 (${dayList.length}명)</h3>${nav}<div class="absence-chips">${chips}</div>`;
+  renderWeeklyBanner();
 }
 
 function noticeReads(){
@@ -5077,10 +5173,230 @@ function renderContent(){
   } else {
     el.innerHTML = teamTable(activeTab);
   }
+  renderWeeklyBanner();
 }
 
 function escapeHtml(str){
   return String(str).replace(/[&<>"']/g, s => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[s]));
+}
+
+/* ============================================================
+ *  주간 업무 현황 (2026-10-01)
+ *    개인 전달사항 바로 아래. 사람마다 카드 한 장으로 그 주(월~일)에
+ *    한 업무(진행율 00% → 00%) · 미팅 · 교육 · 점검을 모아 보여준다.
+ *
+ *    · 새로 저장하는 값은 없다. 이미 있는 기록(진행율 이력·완료일·
+ *      주요 일정·교육관리/안전보건점검 연동 일정)을 읽어서 그리기만 한다.
+ *    · 진행율 시작값 = 그 주 월요일 전 마지막 기록, 끝값 = 그 주 마지막 기록.
+ *      (진행율 추이 그래프와 같은 progressEvents 를 쓴다. 시각을 모르는 추정 점은 뺀다)
+ *    · 팀원 누구나 모든 사람 카드를 볼 수 있다.
+ * ============================================================ */
+const WK_FOLD_KEY = "weeklyFold_v1";
+const WK_COLORS = ["#6366f1", "#f97316", "#0ea5e9", "#ec4899", "#14b8a6", "#a855f7", "#84cc16", "#f43f5e"];
+let wkStart = null;          // 보고 있는 주의 월요일 "YYYY-MM-DD"
+let wkWho = null;            // 'all' 또는 계정 id
+let wkStillOpen = new Set(); // 변동 없는 업무를 펼친 사람 id (저장 안 함)
+
+function wkMonday(ymd){
+  const [y, m, d] = ymd.split("-").map(Number);
+  const dt = new Date(y, m - 1, d);
+  dt.setDate(dt.getDate() - ((dt.getDay() + 6) % 7));
+  return fmtLocalDate(dt);
+}
+function wkStartStr(){ if(!wkStart) wkStart = wkMonday(todayStr()); return wkStart; }
+function wkMD(ymd){
+  const [y, m, d] = ymd.split("-").map(Number);
+  return `${m}/${d}(${"일월화수목금토"[new Date(y, m - 1, d).getDay()]})`;
+}
+function wkFolded(){
+  try{ const s = JSON.parse(localStorage.getItem(WK_FOLD_KEY) || "{}"); return !!(currentUser && s[currentUser.id]); }catch(e){ return false; }
+}
+function toggleWeeklyFold(){
+  try{
+    const s = JSON.parse(localStorage.getItem(WK_FOLD_KEY) || "{}");
+    if(currentUser) s[currentUser.id] = !wkFolded();
+    localStorage.setItem(WK_FOLD_KEY, JSON.stringify(s));
+  }catch(e){}
+  renderWeeklyBanner();
+}
+function shiftWeek(n){ wkStart = pgAddDays(wkStartStr(), n * 7); wkStillOpen.clear(); ensureLinkedYears(); renderWeeklyBanner(); }
+function goThisWeek(){ wkStart = wkMonday(todayStr()); wkStillOpen.clear(); renderWeeklyBanner(); }
+function setWeeklyWho(v){ wkWho = v; renderWeeklyBanner(); }
+function openWeeklyStill(id){ wkStillOpen.add(id); renderWeeklyBanner(); }
+
+/** 이 일정이 그 사람 것인가 — 직접 등록은 이름 칸, 연동 일정은 점검자·강사 */
+function wkAbsFor(a, name){
+  const split = s => String(s || "").split(/[,\/·\s]+/).map(x => x.trim()).filter(Boolean);
+  if(linkSrc(a)) return split(absWho(a)).indexOf(name) >= 0 || absWho(a) === name;
+  return a.person === name || split(a.person).indexOf(name) >= 0;
+}
+
+/** 그 사람이 정·부 담당인지 */
+function wkTaskRole(t, u){
+  if((t.ownerId && t.ownerId === u.id) || (!t.ownerId && t.owner === u.name)) return "main";
+  if((t.owner2Id && t.owner2Id === u.id) || (!t.owner2Id && t.owner2 && t.owner2 === u.name)) return "sub";
+  return null;
+}
+
+/** 업무 한 건의 그 주 진행율 변화 */
+function wkTaskWeek(t, s, e){
+  const ev = progressEvents(t).filter(x => !x.guess);
+  const day = x => fmtLocalDate(new Date(x.time));
+  const before = ev.filter(x => day(x) < s);
+  const inWk = ev.filter(x => day(x) >= s && day(x) <= e);
+  const from = before.length ? before[before.length - 1].p : null;
+  const to = inWk.length ? inWk[inWk.length - 1].p : (from === null ? Math.max(0, Math.min(100, Number(t.progress) || 0)) : from);
+  const doneDay = isTaskDone(t) ? fmtLocalDate(new Date(t.completedAt)) : null;
+  return {
+    from, to,
+    changed: inWk.length > 0,
+    n: inWk.length,
+    last: inWk.length ? day(inWk[inWk.length - 1]) : null,
+    doneInWk: !!(doneDay && doneDay >= s && doneDay <= e),
+    doneBefore: !!(doneDay && doneDay < s),
+    created: before.length === 0 && inWk.length > 0
+  };
+}
+
+/** 카드를 그릴 사람들 — 전달사항 칸 순서 그대로, 그 밖의 계정은 그 주 기록이 있을 때만 */
+function wkPeople(s, e){
+  const out = [];
+  MEMO_BOARD_IDS.forEach(id => { const u = findUser(id); if(u) out.push(u); });
+  users.forEach(u => {
+    if(out.indexOf(u) >= 0 || /테스트/.test(u.name || "")) return;
+    const hasTask = tasks.some(t => wkTaskRole(t, u) && wkTaskWeek(t, s, e).changed);
+    const hasAbs = allAbsences().some(a => a.start <= e && a.end >= s && wkAbsFor(a, u.name));
+    if(hasTask || hasAbs) out.push(u);
+  });
+  return out;
+}
+
+function renderWeeklyBanner(){
+  const el = document.getElementById("weeklyBanner");
+  if(!el) return;
+  if(!currentUser || !dataLoaded){ el.innerHTML = ""; return; }
+  const s = wkStartStr(), e = pgAddDays(s, 6);
+  const thisMon = wkMonday(todayStr());
+  const diff = Math.round(pgDiff(s, thisMon) / 7);
+  const rel = diff === 0 ? "이번 주" : diff > 0 ? `${diff}주 전` : `${-diff}주 후`;
+  const folded = wkFolded();
+  const people = wkPeople(s, e);
+  if(wkWho === null) wkWho = (window.innerWidth <= 640 && people.some(u => u.id === currentUser.id)) ? currentUser.id : "all";
+  if(wkWho !== "all" && !people.some(u => u.id === wkWho)) wkWho = "all";
+
+  const head = `<div class="wk-head">
+      <h3>주간 업무 현황</h3>
+      <button class="wk-fold-btn" onclick="toggleWeeklyFold()">${folded ? "펼치기 ▾" : "접기 ▴"}</button>
+      ${folded ? "" : `<div class="wk-nav">
+        <button class="cal-nav" onclick="shiftWeek(-1)" title="지난 주">‹</button>
+        <div class="wk-range">${wkMD(s)} ~ ${wkMD(e)}<small>${rel}</small></div>
+        <button class="cal-nav" onclick="shiftWeek(1)" title="다음 주">›</button>
+        ${diff === 0 ? "" : `<button class="cal-today-btn" onclick="goThisWeek()">이번 주</button>`}
+      </div>`}
+    </div>`;
+  if(folded){ el.innerHTML = head; return; }
+
+  const picks = `<div class="wk-picks">${[{ id: "all", name: "전체" }].concat(people).map(u =>
+    `<button class="wk-pick${wkWho === u.id ? " on" : ""}" onclick="setWeeklyWho('${u.id}')">${escapeHtml(u.name)}</button>`).join("")}</div>`;
+
+  const weekAbs = allAbsences().filter(a => a.start <= e && a.end >= s).sort((a, b) => a.start < b.start ? -1 : a.start > b.start ? 1 : 0);
+  const cards = people.map((u, idx) => ({ u, idx })).filter(x => wkWho === "all" || wkWho === x.u.id)
+    .map(({ u, idx }) => wkCard(u, WK_COLORS[idx % WK_COLORS.length], s, e, weekAbs)).join("");
+
+  el.innerHTML = head + picks + `<div class="wk-grid">${cards || '<div class="wk-empty">표시할 사람이 없습니다.</div>'}</div>`;
+}
+
+function wkCard(u, color, s, e, weekAbs){
+  const rows = tasks.map(t => ({ t, role: wkTaskRole(t, u) })).filter(x => x.role)
+    .map(x => Object.assign(x, { w: wkTaskWeek(x.t, s, e) }));
+  const changed = rows.filter(x => x.w.changed || x.w.doneInWk)
+    .sort((a, b) => (Number(b.w.doneInWk) - Number(a.w.doneInWk)) || ((b.w.to - (b.w.from ?? 0)) - (a.w.to - (a.w.from ?? 0))));
+  // 그 주에 손대지 않은 진행 중 업무 (그 주 전에 이미 있었고, 끝나지 않은 것)
+  const still = rows.filter(x => !x.w.changed && !x.w.doneInWk && !x.w.doneBefore && x.w.from !== null);
+
+  const mine = weekAbs.filter(a => wkAbsFor(a, u.name));
+  const by = k => mine.filter(a => a.type === k);
+  const meet = by("meeting"), tr = by("training"), ins = by("inspect"), etc = by("etc"), lv = by("leave");
+
+  const nDone = changed.filter(x => x.w.doneInWk).length;
+  const nUp = changed.filter(x => !x.w.doneInWk && x.w.from !== null && x.w.to > x.w.from).length;
+  const nDown = changed.filter(x => x.w.from !== null && x.w.to < x.w.from).length;
+  const nNew = changed.filter(x => x.w.created && !x.w.doneInWk).length;
+  const total = changed.length + meet.length + tr.length + ins.length + etc.length;
+
+  const sum = total ? [
+    nDone ? `<span class="up">완료 ${nDone}</span>` : "",
+    nUp ? `진척 ${nUp}` : "",
+    nDown ? `<span class="down">하락 ${nDown}</span>` : "",
+    nNew ? `신규 ${nNew}` : "",
+    `기록 ${total}건`
+  ].filter(Boolean).join(" · ") : "이 주 기록 없음";
+
+  const cnt = [["업무", changed.length], ["미팅", meet.length], ["교육", tr.length], ["점검", ins.length]]
+    .map(([k, v]) => `<span class="${v ? "" : "z"}">${k}<b>${v}</b></span>`).join("");
+
+  const today = todayStr();
+  const taskHtml = x => {
+    const { t, w, role } = x;
+    const f = w.from, to = w.to, d = to - (f ?? 0);
+    const badge = w.doneInWk ? '<span class="wk-dl done">완료</span>'
+      : !w.changed ? '<span class="wk-dl zero">변동 없음</span>'
+      : w.created ? '<span class="wk-dl zero">신규</span>'
+      : d > 0 ? `<span class="wk-dl up">+${d}%p</span>`
+      : d < 0 ? `<span class="wk-dl down">${d}%p</span>`
+      : '<span class="wk-dl zero">±0</span>';
+    const lo = Math.min(f ?? 0, to), hi = Math.max(f ?? 0, to);
+    const seg = (d > 0 || (w.created && to > 0)) ? `<i class="g" style="left:${lo}%;width:${hi - lo}%"></i>`
+      : d < 0 ? `<i class="l" style="left:${lo}%;width:${hi - lo}%"></i>` : "";
+    const team = TEAM_META[t.team] || TEAM_META.etc;
+    const late = t.due && !isTaskDone(t) && t.due < today;
+    const meta = [
+      role === "sub" ? "부 담당" : "",
+      w.n > 1 ? `이 주 ${w.n}회 수정` : "",
+      w.last ? `마지막 ${wkMD(w.last)}` : "",
+      t.due && !isTaskDone(t) ? `<span class="${late ? "late" : ""}">마감 ${wkMD(t.due)}${late ? " · 지연" : ""}</span>` : ""
+    ].filter(Boolean).join(" · ");
+    return `<div class="wk-task" role="button" tabindex="0" title="눌러서 진행율 추이 보기"
+        onclick="openProgressChart('${t.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProgressChart('${t.id}')}">
+      <div class="wk-tr"><span class="wk-team ${team.cls}">${team.label}</span><span class="wk-tt" title="${escapeHtml(t.title)}">${escapeHtml(t.title)}</span>
+        <span class="wk-ft"><span class="f">${f === null ? "—" : f + "%"}</span><span class="ar">→</span><span class="t">${to}%</span></span>${badge}</div>
+      <div class="wk-pb"><i class="a" style="left:0;width:${lo}%"></i>${seg}</div>
+      ${meta ? `<div class="wk-meta">${meta}</div>` : ""}
+    </div>`;
+  };
+  const evHtml = a => {
+    const src = linkSrc(a);
+    const range = a.start === a.end ? wkMD(a.start) : `${wkMD(a.start < s ? s : a.start)}~`;
+    // 연동 일정은 메모에 점검자·강사 이름이 들어 있어 카드 주인과 겹친다 → 사업장 + 과정·시간만
+    const text = a.edu ? [a.person, a.edu.title, (a.edu.start && a.edu.end) ? `${a.edu.start}~${a.edu.end}` : a.edu.start].filter(Boolean).join(" · ")
+      : src ? a.person
+      : (a.memo || "(메모 없음)");
+    return `<div class="wk-ev" onclick="openAbsenceChip('${a.id}')" title="눌러서 자세히 보기"><span class="d">${range}</span>
+      <span class="m">${escapeHtml(text)}${src ? `<span class="src-tag${src.tagCls}">${src.tag}</span>` : ""}</span></div>`;
+  };
+  const sec = (title, col, list) => !list.length ? "" :
+    `<div class="wk-sec"><div class="wk-sh" style="--d:${col}"><i></i>${title}<span class="n">${list.length}</span></div>${list.map(evHtml).join("")}</div>`;
+
+  const stillHtml = !still.length ? "" : wkStillOpen.has(u.id)
+    ? still.map(taskHtml).join("")
+    : `<button class="wk-still" onclick="openWeeklyStill('${u.id}')">＋ 변동 없는 진행 업무 ${still.length}건</button>`;
+
+  const isMe = currentUser && currentUser.id === u.id;
+  return `<div class="wk-card${total ? "" : " quiet"}${isMe ? " me" : ""}" style="--wk-c:${color}">
+    <div class="wk-ch"><div class="wk-av">${escapeHtml((u.name || "?").slice(0, 1))}</div>
+      <div><div class="wk-nm">${escapeHtml(u.name)}${isMe ? '<span class="me-tag">나</span>' : ""}</div><div class="wk-sum">${sum}</div></div></div>
+    <div class="wk-cnt">${cnt}</div>
+    <div class="wk-body">
+      <div class="wk-sec"><div class="wk-sh" style="--d:var(--blue)"><i></i>업무 진행<span class="n">${changed.length}</span></div>
+        ${changed.length ? changed.map(taskHtml).join("") : '<div class="wk-empty">이 주 진행율 변동 없음</div>'}${stillHtml}</div>
+      ${sec("미팅", "var(--wk-meet)", meet)}
+      ${sec("교육", "var(--wk-tr)", tr)}
+      ${sec("점검", "var(--wk-ins)", ins)}
+      ${sec("기타 일정", "var(--wk-etc)", etc)}
+      ${(meet.length + tr.length + ins.length + etc.length) ? "" : '<div class="wk-sec"><div class="wk-empty">미팅 · 교육 · 점검 기록 없음</div></div>'}
+    </div>
+    ${lv.length ? `<div class="wk-foot"><b>휴가</b> ${lv.map(a => a.start === a.end ? wkMD(a.start) : `${wkMD(a.start)}~${wkMD(a.end)}`).join(", ")}</div>` : ""}
+  </div>`;
 }
 
 function render(){
@@ -5278,6 +5594,7 @@ function openEditAbsence(id){
       <select id="modalAbsType">
         <option value="inspect" ${a.type==='inspect'?'selected':''}>점검</option>
         <option value="training" ${a.type==='training'?'selected':''}>교육</option>
+        <option value="meeting" ${a.type==='meeting'?'selected':''}>미팅</option>
         <option value="leave" ${a.type==='leave'?'selected':''}>휴가</option>
         <option value="etc" ${a.type==='etc'?'selected':''}>기타</option>
       </select>
