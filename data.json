@@ -2114,6 +2114,19 @@
       "readAt": "2026-09-29T05:25:56.037Z",
       "doneAt": "2026-09-29T07:00:59.731Z",
       "comments": []
+    },
+    {
+      "id": "m_teqx1vibn",
+      "toUserId": "c05651",
+      "toName": "오혜지",
+      "text": "대표이사님 법정교육 이수 여부 확인 필요",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-10-02T06:59:17.117Z",
+      "updatedAt": "2026-10-02T06:59:17.117Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -5672,6 +5685,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 추가: SKT 구성원 설문 — \"10/2 - 설문 일정: 10/6 ~ 10/15일\""
+    },
+    {
+      "id": "l_tks6voy0lmuqm4e17",
+      "at": "2026-10-02T06:59:17.131Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 오혜지"
     }
   ]
 }
