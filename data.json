@@ -1677,6 +1677,15 @@
       "start": "2026-10-06",
       "end": "2026-10-06",
       "memo": "강본부장님 미팅"
+    },
+    {
+      "id": "to4ulm7li",
+      "team": "edu",
+      "person": "오혜지",
+      "type": "leave",
+      "start": "2026-10-06",
+      "end": "2026-10-06",
+      "memo": "휴가"
     }
   ],
   "reports": [
@@ -5525,6 +5534,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "진행율 수정: 하반기 CS교육 시행 → 30%"
+    },
+    {
+      "id": "l_tb29y9dp3muq8tg9z",
+      "at": "2026-10-02T00:46:51.815Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "일정 추가: 오혜지"
     }
   ]
 }
