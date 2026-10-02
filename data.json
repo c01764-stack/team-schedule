@@ -1217,6 +1217,32 @@
           "byName": "오혜지"
         }
       ]
+    },
+    {
+      "id": "t2xvnvxnb",
+      "team": "safety",
+      "title": "연합뉴스 제안서 작업",
+      "owner": "이재혁",
+      "ownerId": "c04897",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-10-08",
+      "progress": 50,
+      "memo": "",
+      "notes": [],
+      "dueHistory": [],
+      "includeInReport": true,
+      "createdAt": "2026-10-02T06:25:29.845Z",
+      "createdById": "c01764",
+      "createdByName": "천재우",
+      "progressHistory": [
+        {
+          "at": "2026-10-02T06:25:29.845Z",
+          "p": 50,
+          "byUserId": "c01764",
+          "byName": "천재우"
+        }
+      ]
     }
   ],
   "absences": [
@@ -5623,6 +5649,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 추가: 판교사업장 산업안전보건교육 온라인 검토 및 진행 — \"10/2 - 판교사업장 신청 완료, 12일 시작\""
+    },
+    {
+      "id": "l_td6py8lm9muqkwxs4",
+      "at": "2026-10-02T06:25:29.860Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: 연합뉴스 제안서 작업"
     }
   ]
 }
