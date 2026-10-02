@@ -5542,6 +5542,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "일정 추가: 오혜지"
+    },
+    {
+      "id": "l_tf4pf9dndmuqckwly",
+      "at": "2026-10-02T02:32:11.542Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
