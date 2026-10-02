@@ -856,7 +856,7 @@
       "owner2": "",
       "owner2Id": "",
       "due": "2026-11-13",
-      "progress": 10,
+      "progress": 30,
       "memo": "",
       "dueHistory": [],
       "includeInReport": true,
@@ -864,6 +864,12 @@
         {
           "at": "2026-09-28T00:14:30.989Z",
           "p": 10,
+          "byUserId": "c05651",
+          "byName": "오혜지"
+        },
+        {
+          "at": "2026-10-02T00:14:40.747Z",
+          "p": 30,
           "byUserId": "c05651",
           "byName": "오혜지"
         }
@@ -5511,6 +5517,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "진행율 수정: SKT 구성원 설문 → 10%"
+    },
+    {
+      "id": "l_t3j0y83oomuq7o29f",
+      "at": "2026-10-02T00:14:40.755Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "진행율 수정: 하반기 CS교육 시행 → 30%"
     }
   ]
 }
