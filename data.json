@@ -1145,7 +1145,7 @@
       "owner2": "",
       "owner2Id": "",
       "due": "2026-10-05",
-      "progress": 0,
+      "progress": 100,
       "memo": "",
       "notes": [
         {
@@ -1167,6 +1167,12 @@
           "p": 0,
           "byUserId": "c01764",
           "byName": "천재우"
+        },
+        {
+          "at": "2026-10-02T00:14:23.636Z",
+          "p": 100,
+          "byUserId": "c05651",
+          "byName": "오혜지"
         }
       ]
     }
@@ -5481,6 +5487,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "전달사항 확인: 오혜지"
+    },
+    {
+      "id": "l_tzg6uafzjmuq7np25",
+      "at": "2026-10-02T00:14:23.645Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "진행율 수정: 법정교육 이수율 확인 → 100%"
     }
   ]
 }
