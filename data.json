@@ -935,7 +935,7 @@
       "owner2": "",
       "owner2Id": "",
       "due": "2026-10-16",
-      "progress": 0,
+      "progress": 10,
       "memo": "9/18\n- 전체 일정 이사님께 확인\n- 설문 내용 확인 후 오주임 미팅 필요\n- 설문 종료 후 보고서 작성 필요",
       "dueHistory": [],
       "includeInReport": true,
@@ -946,6 +946,14 @@
           "byUserId": "c01764",
           "byName": "천재우",
           "text": "9/28\n- 10월8일까지 구성원 설문 진행\n- 설문 일정에 따른 보고서 작성 필요"
+        }
+      ],
+      "progressHistory": [
+        {
+          "at": "2026-10-02T00:14:34.011Z",
+          "p": 10,
+          "byUserId": "c05651",
+          "byName": "오혜지"
         }
       ]
     },
@@ -5495,6 +5503,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "진행율 수정: 법정교육 이수율 확인 → 100%"
+    },
+    {
+      "id": "l_tcjbsbsl4muq7nx2e",
+      "at": "2026-10-02T00:14:34.022Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "진행율 수정: SKT 구성원 설문 → 10%"
     }
   ]
 }
