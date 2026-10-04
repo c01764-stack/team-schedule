@@ -5693,6 +5693,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 등록: 오혜지"
+    },
+    {
+      "id": "l_tnt1bsjm9mut4omxp",
+      "at": "2026-10-04T01:14:27.229Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
