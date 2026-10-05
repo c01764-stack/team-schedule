@@ -1000,7 +1000,7 @@
       "owner2": "",
       "owner2Id": "",
       "due": "2026-10-02",
-      "progress": 0,
+      "progress": 100,
       "memo": "9/18\n- 10월부터 온라인 교육 시행 시작",
       "dueHistory": [],
       "includeInReport": true,
@@ -1010,6 +1010,12 @@
           "p": 0,
           "byUserId": "c01764",
           "byName": "천재우"
+        },
+        {
+          "at": "2026-10-05T23:35:47.379Z",
+          "p": 100,
+          "byUserId": "c04897",
+          "byName": "이재혁"
         }
       ],
       "notes": [
@@ -5739,6 +5745,14 @@
       "name": "이재혁",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tl156fgw6muvw1gi9",
+      "at": "2026-10-05T23:35:47.409Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "change",
+      "message": "진행율 수정: 판교사업장 산업안전보건교육 온라인 검토 및 진행 → 100%"
     }
   ]
 }
