@@ -2173,6 +2173,19 @@
       "readAt": null,
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_tpitj3fgx",
+      "toUserId": "c01764",
+      "toName": "천재우",
+      "text": "사옥점검 안전화 관련 확인(탁대리)",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-10-06T10:36:28.468Z",
+      "updatedAt": "2026-10-06T10:36:28.468Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -5829,6 +5842,14 @@
     {
       "id": "l_tg7ntvw3ymuwjme7m",
       "at": "2026-10-06T10:35:55.378Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 천재우"
+    },
+    {
+      "id": "l_tyqau0g7emuwjn3r8",
+      "at": "2026-10-06T10:36:28.484Z",
       "userId": "c01764",
       "name": "천재우",
       "type": "change",
