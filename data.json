@@ -2160,6 +2160,19 @@
       "readAt": null,
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_trh11oyjy",
+      "toUserId": "c01764",
+      "toName": "천재우",
+      "text": "채용관련 서류 확인(오과장)",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-10-06T10:35:55.356Z",
+      "updatedAt": "2026-10-06T10:35:55.356Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -5812,6 +5825,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 추가: FMS 보고서 작업 — \"10/6 - 대표이사님 피드백 수정 및 보고 완료\""
+    },
+    {
+      "id": "l_tg7ntvw3ymuwjme7m",
+      "at": "2026-10-06T10:35:55.378Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 천재우"
     }
   ]
 }
