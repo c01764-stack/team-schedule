@@ -2204,11 +2204,11 @@
       "id": "m_t0fsorw89",
       "toUserId": "c01764",
       "toName": "천재우",
-      "text": "네이버 윤준리더 통화",
+      "text": "벤치마킹 관련 통화(네이버)",
       "byUserId": "c01764",
       "byName": "천재우",
       "createdAt": "2026-10-06T13:13:30.918Z",
-      "updatedAt": "2026-10-06T13:13:30.918Z",
+      "updatedAt": "2026-10-06T13:13:57.206Z",
       "readAt": null,
       "doneAt": null,
       "comments": []
@@ -5896,6 +5896,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 등록: 천재우"
+    },
+    {
+      "id": "l_tu4cxda3lmuwp9mg7",
+      "at": "2026-10-06T13:13:57.223Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 수정: 천재우"
     }
   ]
 }
