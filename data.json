@@ -2186,6 +2186,19 @@
       "readAt": null,
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_tx4v2xgnj",
+      "toUserId": "c01764",
+      "toName": "천재우",
+      "text": "채용 면접 일정 확인(이사님)",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-10-06T10:44:07.186Z",
+      "updatedAt": "2026-10-06T10:44:07.186Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -5850,6 +5863,14 @@
     {
       "id": "l_tyqau0g7emuwjn3r8",
       "at": "2026-10-06T10:36:28.484Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 천재우"
+    },
+    {
+      "id": "l_t0khv7sfrmuwjwxpg",
+      "at": "2026-10-06T10:44:07.204Z",
       "userId": "c01764",
       "name": "천재우",
       "type": "change",
