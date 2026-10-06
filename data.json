@@ -5912,6 +5912,14 @@
       "name": "강문선",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_t9vv1foy4muxca0wq",
+      "at": "2026-10-06T23:58:07.130Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
