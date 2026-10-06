@@ -5904,6 +5904,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 수정: 천재우"
+    },
+    {
+      "id": "l_tvqbq40bbmux6ak2p",
+      "at": "2026-10-06T21:10:34.273Z",
+      "userId": "c90005",
+      "name": "강문선",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
