@@ -1182,7 +1182,7 @@
       "owner2": "",
       "owner2Id": "",
       "due": "2026-10-16",
-      "progress": 0,
+      "progress": 30,
       "memo": "",
       "dueHistory": [],
       "includeInReport": true,
@@ -1192,6 +1192,12 @@
           "p": 0,
           "byUserId": "c01764",
           "byName": "천재우"
+        },
+        {
+          "at": "2026-10-07T08:10:14.219Z",
+          "p": 30,
+          "byUserId": "c04897",
+          "byName": "이재혁"
         }
       ]
     },
@@ -6074,6 +6080,14 @@
       "name": "이재혁",
       "type": "change",
       "message": "기타 내용 추가: 안전작업 SOP 작성 — \"10/7 SOP 공지글 작성 완료\""
+    },
+    {
+      "id": "l_tgzewilc0muxtuw61",
+      "at": "2026-10-07T08:10:14.233Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "change",
+      "message": "진행율 수정: 4분기 안전보건소식지 → 30%"
     }
   ]
 }
