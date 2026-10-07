@@ -2312,6 +2312,19 @@
       "readAt": null,
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_tnac3v665",
+      "toUserId": "c05651",
+      "toName": "오혜지",
+      "text": "대표이사님 법정교육 미수강 강의 수강 필요~",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-10-07T22:16:12.609Z",
+      "updatedAt": "2026-10-07T22:16:12.609Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -6188,6 +6201,14 @@
       "name": "이재혁",
       "type": "change",
       "message": "기타 내용 추가: 근골격계 유해요인조사 시행 — \"10/7 증상조사표의 대한 개선계획 기준 내용 작성 진…\""
+    },
+    {
+      "id": "l_tkxays9fmmuyo2tld",
+      "at": "2026-10-07T22:16:12.625Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 오혜지"
     }
   ]
 }
