@@ -2199,7 +2199,7 @@
       "byName": "천재우",
       "createdAt": "2026-10-06T10:36:28.468Z",
       "updatedAt": "2026-10-06T10:36:28.468Z",
-      "readAt": null,
+      "readAt": "2026-10-07T06:04:08.060Z",
       "doneAt": null,
       "comments": []
     },
@@ -5988,6 +5988,14 @@
     {
       "id": "l_t1l3mrssumuxotgmt",
       "at": "2026-10-07T05:49:09.365Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 확인: 천재우"
+    },
+    {
+      "id": "l_t3j1ojrenmuxpcq2w",
+      "at": "2026-10-07T06:04:08.072Z",
       "userId": "c01764",
       "name": "천재우",
       "type": "change",
