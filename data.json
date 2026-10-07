@@ -5952,6 +5952,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "전달사항 댓글: 오혜지"
+    },
+    {
+      "id": "l_tmv86us4smuxg6ih6",
+      "at": "2026-10-07T01:47:21.738Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
