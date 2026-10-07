@@ -2228,6 +2228,19 @@
       "readAt": null,
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_tl2dx8sha",
+      "toUserId": "c01764",
+      "toName": "천재우",
+      "text": "성수 사옥 출입 간소화 관련 안내",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-10-07T06:05:54.857Z",
+      "updatedAt": "2026-10-07T06:05:54.857Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -6000,6 +6013,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 확인: 천재우"
+    },
+    {
+      "id": "l_t6zmyl9h7muxpf0hm",
+      "at": "2026-10-07T06:05:54.874Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 천재우"
     }
   ]
 }
