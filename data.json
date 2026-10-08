@@ -6289,6 +6289,14 @@
       "name": "이재혁",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tpu7llwwcmuz7rsbr",
+      "at": "2026-10-08T07:27:30.087Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
