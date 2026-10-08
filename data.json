@@ -6281,6 +6281,14 @@
       "name": "오혜지",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tus00lkjkmuyvn2vh",
+      "at": "2026-10-08T01:47:55.085Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
