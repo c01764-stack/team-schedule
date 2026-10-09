@@ -2341,7 +2341,7 @@
       "byName": "천재우",
       "createdAt": "2026-10-07T06:05:54.857Z",
       "updatedAt": "2026-10-07T06:05:54.857Z",
-      "readAt": null,
+      "readAt": "2026-10-09T04:51:46.199Z",
       "doneAt": null,
       "comments": []
     },
@@ -6327,6 +6327,14 @@
       "name": "천재우",
       "type": "change",
       "message": "정기업무 완료: 주간업무일지 작성 보고 (2026-10-08)"
+    },
+    {
+      "id": "l_tgju83qbwmv0hnd7z",
+      "at": "2026-10-09T04:51:46.223Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 확인: 천재우"
     }
   ]
 }
