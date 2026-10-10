@@ -6383,6 +6383,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 완료: 천재우"
+    },
+    {
+      "id": "l_t5n20ti83mv2df9f6",
+      "at": "2026-10-10T12:29:01.938Z",
+      "userId": "c90005",
+      "name": "강문선",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
