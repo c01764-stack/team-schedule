@@ -6391,6 +6391,14 @@
       "name": "강문선",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_t9uqe02cxmv3xpgrs",
+      "at": "2026-10-11T14:44:36.520Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
