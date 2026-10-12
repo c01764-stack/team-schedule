@@ -1518,6 +1518,32 @@
           "byName": "천재우"
         }
       ]
+    },
+    {
+      "id": "tg8159bdf",
+      "team": "safety",
+      "title": "본사 게시판 이달의 활동 현행화",
+      "owner": "이재혁",
+      "ownerId": "c04897",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-10-14",
+      "progress": 0,
+      "memo": "",
+      "notes": [],
+      "dueHistory": [],
+      "includeInReport": true,
+      "createdAt": "2026-10-12T13:17:23.387Z",
+      "createdById": "c01764",
+      "createdByName": "천재우",
+      "progressHistory": [
+        {
+          "at": "2026-10-12T13:17:23.387Z",
+          "p": 0,
+          "byUserId": "c01764",
+          "byName": "천재우"
+        }
+      ]
     }
   ],
   "absences": [
@@ -6812,6 +6838,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 추가: 경영실적 자료 작성 — \"10/12 - 안전, 교육 경영실적 정리 필요\""
+    },
+    {
+      "id": "l_tof1209f3mv5a15jb",
+      "at": "2026-10-12T13:17:23.399Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: 본사 게시판 이달의 활동 현행화"
     }
   ]
 }
