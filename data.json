@@ -1891,6 +1891,15 @@
       "start": "2026-10-06",
       "end": "2026-10-06",
       "memo": "휴가"
+    },
+    {
+      "id": "t7vn9uy75",
+      "team": "safety",
+      "person": "천재우",
+      "type": "etc",
+      "start": "2026-10-14",
+      "end": "2026-10-14",
+      "memo": "SKT 안전보건팀 온라인 워크숍/10:00 ~ 11:30"
     }
   ],
   "reports": [
@@ -6431,6 +6440,14 @@
       "name": "강문선",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tkhbm5mdrmv4w1kum",
+      "at": "2026-10-12T06:45:48.622Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 추가: 천재우"
     }
   ]
 }
