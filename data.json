@@ -1900,6 +1900,15 @@
       "start": "2026-10-14",
       "end": "2026-10-14",
       "memo": "SKT 안전보건팀 온라인 워크숍/10:00 ~ 11:30"
+    },
+    {
+      "id": "tzgtzkggs",
+      "team": "edu",
+      "person": "천재우",
+      "type": "etc",
+      "start": "2026-10-16",
+      "end": "2026-10-16",
+      "memo": "채용면접/14:00"
     }
   ],
   "reports": [
@@ -6444,6 +6453,14 @@
     {
       "id": "l_tkhbm5mdrmv4w1kum",
       "at": "2026-10-12T06:45:48.622Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 추가: 천재우"
+    },
+    {
+      "id": "l_thujpsnaxmv4w3imw",
+      "at": "2026-10-12T06:47:19.064Z",
       "userId": "c01764",
       "name": "천재우",
       "type": "change",
