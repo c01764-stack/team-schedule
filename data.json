@@ -6415,6 +6415,14 @@
       "name": "오혜지",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tjsfhawthmv4lg1xq",
+      "at": "2026-10-12T01:49:08.174Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
