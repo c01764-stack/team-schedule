@@ -6880,6 +6880,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 추가: 본사 게시판 이달의 활동 현행화"
+    },
+    {
+      "id": "l_tno5cbclnmv5sxcq6",
+      "at": "2026-10-12T22:06:18.798Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
