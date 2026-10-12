@@ -2388,6 +2388,19 @@
       "readAt": null,
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_t944cybec",
+      "toUserId": "c05651",
+      "toName": "오혜지",
+      "text": "본사 게시판 이달의 활동 현행화(10월)",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-10-12T09:12:25.362Z",
+      "updatedAt": "2026-10-12T09:12:25.362Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -6510,6 +6523,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 등록: 이재혁"
+    },
+    {
+      "id": "l_tlv2zsgo3mv51a4gt",
+      "at": "2026-10-12T09:12:25.373Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 오혜지"
     }
   ]
 }
