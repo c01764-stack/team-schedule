@@ -1496,7 +1496,15 @@
       "due": "2026-10-16",
       "progress": 0,
       "memo": "",
-      "notes": [],
+      "notes": [
+        {
+          "id": "tpltv1umi",
+          "at": "2026-10-12T13:15:24.187Z",
+          "byUserId": "c01764",
+          "byName": "천재우",
+          "text": "10/12\n- 안전, 교육 경영실적 정리 필요"
+        }
+      ],
       "dueHistory": [],
       "includeInReport": true,
       "createdAt": "2026-10-12T13:14:14.435Z",
@@ -6796,6 +6804,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 추가: 경영실적 자료 작성"
+    },
+    {
+      "id": "l_tpr4az7f9mv59ylk4",
+      "at": "2026-10-12T13:15:24.196Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "기타 내용 추가: 경영실적 자료 작성 — \"10/12 - 안전, 교육 경영실적 정리 필요\""
     }
   ]
 }
