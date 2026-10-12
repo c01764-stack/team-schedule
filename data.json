@@ -6399,6 +6399,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tcejc8j0vmv4hq3td",
+      "at": "2026-10-12T00:04:58.705Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
