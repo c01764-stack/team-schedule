@@ -1484,6 +1484,32 @@
         }
       ],
       "completedAt": "2026-10-12T13:04:53.405Z"
+    },
+    {
+      "id": "tutu1lx2y",
+      "team": "etc",
+      "title": "경영실적 자료 작성",
+      "owner": "천재우",
+      "ownerId": "c01764",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-10-16",
+      "progress": 0,
+      "memo": "",
+      "notes": [],
+      "dueHistory": [],
+      "includeInReport": true,
+      "createdAt": "2026-10-12T13:14:14.435Z",
+      "createdById": "c01764",
+      "createdByName": "천재우",
+      "progressHistory": [
+        {
+          "at": "2026-10-12T13:14:14.435Z",
+          "p": 0,
+          "byUserId": "c01764",
+          "byName": "천재우"
+        }
+      ]
     }
   ],
   "absences": [
@@ -6762,6 +6788,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 확인: 천재우"
+    },
+    {
+      "id": "l_twxff94c8mv59x3qm",
+      "at": "2026-10-12T13:14:14.446Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: 경영실적 자료 작성"
     }
   ]
 }
