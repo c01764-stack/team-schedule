@@ -2582,11 +2582,11 @@
       "id": "m_ttltdi68g",
       "toUserId": "c01764",
       "toName": "천재우",
-      "text": "FM학회 심포지엄 협찬 관련 의사결정",
+      "text": "FM학회 심포지엄 관련 의사결정",
       "byUserId": "c01764",
       "byName": "천재우",
       "createdAt": "2026-10-12T13:13:02.692Z",
-      "updatedAt": "2026-10-12T13:13:02.692Z",
+      "updatedAt": "2026-10-12T22:09:26.183Z",
       "readAt": null,
       "doneAt": null,
       "comments": []
@@ -6888,6 +6888,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_ti8zuq9ivmv5t1dbs",
+      "at": "2026-10-12T22:09:26.200Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 수정: 천재우"
     }
   ]
 }
