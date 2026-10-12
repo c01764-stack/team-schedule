@@ -1544,6 +1544,32 @@
           "byName": "천재우"
         }
       ]
+    },
+    {
+      "id": "tjh1enbvb",
+      "team": "edu",
+      "title": "본사 게시판 이달의 활동 현행화",
+      "owner": "오혜지",
+      "ownerId": "c05651",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-10-14",
+      "progress": 0,
+      "memo": "",
+      "notes": [],
+      "dueHistory": [],
+      "includeInReport": true,
+      "createdAt": "2026-10-12T13:17:38.866Z",
+      "createdById": "c01764",
+      "createdByName": "천재우",
+      "progressHistory": [
+        {
+          "at": "2026-10-12T13:17:38.866Z",
+          "p": 0,
+          "byUserId": "c01764",
+          "byName": "천재우"
+        }
+      ]
     }
   ],
   "absences": [
@@ -6842,6 +6868,14 @@
     {
       "id": "l_tof1209f3mv5a15jb",
       "at": "2026-10-12T13:17:23.399Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: 본사 게시판 이달의 활동 현행화"
+    },
+    {
+      "id": "l_tbzgzni74mv5a1hha",
+      "at": "2026-10-12T13:17:38.878Z",
       "userId": "c01764",
       "name": "천재우",
       "type": "change",
