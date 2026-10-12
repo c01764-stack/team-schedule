@@ -2574,7 +2574,7 @@
       "byName": "천재우",
       "createdAt": "2026-10-12T09:12:25.362Z",
       "updatedAt": "2026-10-12T09:12:25.362Z",
-      "readAt": null,
+      "readAt": "2026-10-12T23:56:46.201Z",
       "doneAt": null,
       "comments": []
     },
@@ -6896,6 +6896,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 수정: 천재우"
+    },
+    {
+      "id": "l_tgayz3a7amv5wvegv",
+      "at": "2026-10-12T23:56:46.207Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "개인 전달사항 확인: 오혜지"
     }
   ]
 }
