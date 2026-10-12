@@ -2333,7 +2333,7 @@
       "byName": "천재우",
       "createdAt": "2026-10-06T10:44:07.186Z",
       "updatedAt": "2026-10-06T10:44:07.186Z",
-      "readAt": null,
+      "readAt": "2026-10-12T09:10:27.947Z",
       "doneAt": null,
       "comments": []
     },
@@ -6465,6 +6465,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 추가: 천재우"
+    },
+    {
+      "id": "l_tbs6upk4mmv517lvd",
+      "at": "2026-10-12T09:10:27.961Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 확인: 천재우"
     }
   ]
 }
