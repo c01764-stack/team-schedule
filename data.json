@@ -941,7 +941,16 @@
       "progress": 0,
       "memo": "",
       "dueHistory": [],
-      "includeInReport": true
+      "includeInReport": true,
+      "notes": [
+        {
+          "id": "tyb54g65h",
+          "at": "2026-10-12T13:05:20.070Z",
+          "byUserId": "c01764",
+          "byName": "천재우",
+          "text": "10/12\n- 기타 업무 일정 관례로 보류"
+        }
+      ]
     },
     {
       "id": "tecp8a1gf",
@@ -6557,6 +6566,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 완료 처리: 연합뉴스 제안서 작업"
+    },
+    {
+      "id": "l_th137f3nxmv59lnf8",
+      "at": "2026-10-12T13:05:20.084Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "기타 내용 추가: 위험기계기구 점검 및 기록관리 시행 — \"10/12 - 기타 업무 일정 관례로 보류\""
     }
   ]
 }
