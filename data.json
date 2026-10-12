@@ -6423,6 +6423,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tbhhcpyhjmv4puv45",
+      "at": "2026-10-12T03:52:37.637Z",
+      "userId": "c90005",
+      "name": "강문선",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
