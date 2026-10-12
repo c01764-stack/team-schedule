@@ -2436,7 +2436,7 @@
       "byName": "천재우",
       "createdAt": "2026-10-06T13:13:30.918Z",
       "updatedAt": "2026-10-06T13:13:57.206Z",
-      "readAt": null,
+      "readAt": "2026-10-12T13:13:09.147Z",
       "doneAt": null,
       "comments": []
     },
@@ -6754,6 +6754,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 등록: 천재우"
+    },
+    {
+      "id": "l_thvc4hwzmmv59vpd2",
+      "at": "2026-10-12T13:13:09.158Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 확인: 천재우"
     }
   ]
 }
