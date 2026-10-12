@@ -938,7 +938,7 @@
       "owner2": "",
       "owner2Id": "",
       "due": "2026-09-28",
-      "progress": 0,
+      "progress": 100,
       "memo": "",
       "dueHistory": [],
       "includeInReport": true,
@@ -950,7 +950,16 @@
           "byName": "천재우",
           "text": "10/12\n- 기타 업무 일정 관례로 보류"
         }
-      ]
+      ],
+      "progressHistory": [
+        {
+          "at": "2026-10-12T13:05:28.534Z",
+          "p": 100,
+          "byUserId": "c01764",
+          "byName": "천재우"
+        }
+      ],
+      "completedAt": "2026-10-12T13:05:28.534Z"
     },
     {
       "id": "tecp8a1gf",
@@ -6574,6 +6583,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 추가: 위험기계기구 점검 및 기록관리 시행 — \"10/12 - 기타 업무 일정 관례로 보류\""
+    },
+    {
+      "id": "l_tjqxv8cg5mv59ltye",
+      "at": "2026-10-12T13:05:28.550Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 완료 처리: 위험기계기구 점검 및 기록관리 시행"
     }
   ]
 }
