@@ -1554,7 +1554,7 @@
       "owner2": "",
       "owner2Id": "",
       "due": "2026-10-14",
-      "progress": 0,
+      "progress": 100,
       "memo": "",
       "notes": [],
       "dueHistory": [],
@@ -1568,6 +1568,12 @@
           "p": 0,
           "byUserId": "c01764",
           "byName": "천재우"
+        },
+        {
+          "at": "2026-10-12T23:57:33.852Z",
+          "p": 100,
+          "byUserId": "c05651",
+          "byName": "오혜지"
         }
       ]
     }
@@ -6920,6 +6926,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "개인 전달사항 확인: 오혜지"
+    },
+    {
+      "id": "l_t250lyxesmv5wwf8l",
+      "at": "2026-10-12T23:57:33.861Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "진행율 수정: 본사 게시판 이달의 활동 현행화 → 100%"
     }
   ]
 }
