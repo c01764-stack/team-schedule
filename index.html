@@ -835,6 +835,8 @@
   .cal-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:3100;background:#1f2937;color:#fff;padding:10px 14px 10px 16px;border-radius:10px;font-size:14.5px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:calc(100vw - 32px);}
   .cal-toast button{background:transparent;border:1px solid rgba(255,255,255,.5);color:#fff;border-radius:7px;padding:4px 10px;font-size:13px;cursor:pointer;white-space:nowrap;}
   .absence-chip .abs-emo{margin-left:2px;font-size:1.05em;line-height:1;}
+  .emo-meet{color:#2563eb;vertical-align:-0.14em;display:inline-block;}
+  [data-theme="dark"] .emo-meet{color:#60a5fa;}
 
   /* ---------- Responsive ---------- */
   /* 태블릿 폭에서는 입력 폼의 고정 컬럼 합계가 화면보다 넓어 가로 스크롤이 생겼다.
@@ -3519,16 +3521,18 @@ function absWho(a){
  *  유형(점검·교육·미팅·휴가)이 정해져 있으면 유형대로,
  *  '기타'는 메모 글자로 짐작한다 (기타의 대부분이 실제로는 미팅이라).
  * ============================================================ */
+// 미팅·회의 아이콘 — 👥 이모지는 윈도우에서 검정 실루엣이라 파란색 SVG 로 그린다
+const MEET_ICON = '<svg class="emo-meet" viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><circle cx="8.5" cy="7.5" r="3.6"/><path d="M1.5 20.2c0-4 3.1-7 7-7s7 3 7 7v.8h-14z"/><circle cx="16.6" cy="8.3" r="3" opacity=".8"/><path d="M16.4 13.6c3.5 0 6.1 2.6 6.1 6.1v1.3h-5.3v-.8c0-2.6-1-4.9-2.7-6.4.6-.1 1.2-.2 1.9-.2z" opacity=".8"/></svg>';
 const ABS_EMOJI = {
   inspect:  { e:"🔍", label:"점검" },
   training: { e:"❤️", label:"교육" },
-  meeting:  { e:"👥", label:"미팅·회의" },
+  meeting:  { e:MEET_ICON, label:"미팅·회의" },
   leave:    { e:"🌴", label:"휴가" },
   etc:      { e:"🎸", label:"기타" }
 };
-// '기타' 유형은 전부 🎸 — 단, 메모에 미팅·회의가 들어 있으면 👥
+// '기타' 유형은 전부 🎸 — 단, 메모에 미팅·회의가 들어 있으면 미팅 아이콘(파란색)
 const ABS_EMOJI_WORDS = [
-  [/미팅|회의|간담회|협의|면담|모임|인수인계/, "👥"],
+  [/미팅|회의|간담회|협의|면담|모임|인수인계/, MEET_ICON],
   [/반차|연차|휴가/, "🌴"]
 ];
 function absEmoji(a){
