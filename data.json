@@ -2094,6 +2094,18 @@
       "start": "2026-10-16",
       "end": "2026-10-16",
       "memo": "채용면접/14:00"
+    },
+    {
+      "id": "tlmwqegv6",
+      "team": "edu",
+      "person": "천재우",
+      "type": "etc",
+      "start": "2026-10-21",
+      "end": "2026-10-21",
+      "memo": "채용면접/14:00",
+      "createdAt": "2026-10-13T07:31:16.100Z",
+      "createdById": "c01764",
+      "createdByName": "천재우"
     }
   ],
   "reports": [
@@ -7041,6 +7053,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 수정: 천재우"
+    },
+    {
+      "id": "l_tbgyo4a4fmv6d3w2d",
+      "at": "2026-10-13T07:31:16.117Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 추가: 천재우"
     }
   ]
 }
