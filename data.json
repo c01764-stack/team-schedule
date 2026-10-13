@@ -1648,6 +1648,32 @@
           "byName": "천재우"
         }
       ]
+    },
+    {
+      "id": "t1qvi6rbo",
+      "team": "edu",
+      "title": "SKT 워크숍 외부 강사 섭외",
+      "owner": "오혜지",
+      "ownerId": "c05651",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-10-23",
+      "progress": 0,
+      "memo": "",
+      "notes": [],
+      "dueHistory": [],
+      "includeInReport": true,
+      "createdAt": "2026-10-13T08:00:22.861Z",
+      "createdById": "c01764",
+      "createdByName": "천재우",
+      "progressHistory": [
+        {
+          "at": "2026-10-13T08:00:22.861Z",
+          "p": 0,
+          "byUserId": "c01764",
+          "byName": "천재우"
+        }
+      ]
     }
   ],
   "absences": [
@@ -7203,6 +7229,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 삭제: SKT 워크숍 외부 강사 섭외"
+    },
+    {
+      "id": "l_tr0a2az71mv6e5bve",
+      "at": "2026-10-13T08:00:22.874Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: SKT 워크숍 외부 강사 섭외"
     }
   ]
 }
