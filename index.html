@@ -455,6 +455,22 @@
   .rt-popup-list{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
   .rt-popup-list .routine-card{border-left-width:4px;}
   .rt-popup-foot{font-size:12.5px;color:var(--sub);margin:12px 0 0;line-height:1.6;}
+  /* 주요 일정 D-3·D-1 알림 */
+  .sp-card{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-left:4px solid var(--orange);padding:11px 14px;}
+  .sp-card.d1{border-left-color:var(--red);}
+  .sp-emo{font-size:22px;line-height:1.2;flex:none;}
+  .sp-main{min-width:0;flex:1;}
+  .sp-head{display:flex;align-items:center;flex-wrap:wrap;gap:5px 8px;}
+  .sp-dday{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12.5px;font-weight:800;background:#fef3c7;color:#b45309;white-space:nowrap;}
+  .sp-card.d1 .sp-dday{background:#ffe4e6;color:#be123c;}
+  .sp-title{font-weight:800;font-size:15.5px;color:var(--text);word-break:keep-all;}
+  .sp-when{font-size:13px;color:var(--sub);white-space:nowrap;}
+  .sp-memo{font-size:13.5px;color:var(--text);margin-top:4px;line-height:1.55;word-break:break-all;}
+  .sp-who{font-size:12.5px;color:var(--sub);margin-top:3px;}
+  .cal-alert-btn{margin-left:auto;padding:6px 12px;border-radius:999px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;}
+  .cal-alert-btn:hover{border-color:var(--orange);}
+  [data-theme="dark"] .sp-dday{background:rgba(251,191,36,.18);color:#fcd34d;}
+  [data-theme="dark"] .sp-card.d1 .sp-dday{background:rgba(251,113,133,.2);color:#fda4af;}
   .rt-popup-empty{font-size:14.5px;color:#15803d;font-weight:700;padding:14px 2px;}
   .modal-actions button{border:none;border-radius:999px;padding:9px 18px;font-size:14.5px;cursor:pointer;font-weight:700;}
   .btn-primary,.btn-ghost{border:none;border-radius:999px;padding:10px 18px;font-size:14.5px;cursor:pointer;font-weight:700;font-family:inherit;transition:transform .12s,opacity .12s;}
@@ -1632,6 +1648,7 @@ function syncCurrentUser(){
 
 function logout(){
   routinePopupShownFor = null;
+  schedPopupShownFor = null;
   resetMemoView();
   if(!confirm("로그아웃할까요?")) return;
   clearSession();
@@ -3107,21 +3124,14 @@ function absWho(a){
  * ============================================================ */
 const ABS_EMOJI = {
   inspect:  { e:"🔍", label:"점검" },
-  training: { e:"🎓", label:"교육" },
-  meeting:  { e:"🤝", label:"미팅·회의" },
-  seminar:  { e:"🎤", label:"세미나·워크숍" },
+  training: { e:"❤️", label:"교육" },
+  meeting:  { e:"👥", label:"미팅·회의" },
   leave:    { e:"🌴", label:"휴가" },
-  etc:      { e:"📌", label:"기타" }
+  etc:      { e:"🎸", label:"기타" }
 };
+// '기타' 유형은 전부 🎸 — 단, 메모에 미팅·회의가 들어 있으면 👥
 const ABS_EMOJI_WORDS = [
-  [/면접/, "👔"],
-  [/미팅|회의|간담회|협의|면담|모임|인수인계/, "🤝"],
-  [/세미나|워크숍|워크샵|설명회|학회|포럼|컨퍼런스/, "🎤"],
-  [/교육|강의|연수/, "🎓"],
-  [/점검|진단|순회|감사/, "🔍"],
-  [/견학|방문/, "🏢"],
-  [/테스트|시스템\s*시연/, "💻"],
-  [/출장/, "✈️"],
+  [/미팅|회의|간담회|협의|면담|모임|인수인계/, "👥"],
   [/반차|연차|휴가/, "🌴"]
 ];
 function absEmoji(a){
@@ -3198,6 +3208,7 @@ function redrawAbsenceViews(){
     renderAbsenceBanner();
     if(activeTab === "absence") renderContent();
   }catch(e){ /* 그리기 실패로 다른 일을 막지 않는다 */ }
+  try{ maybeShowSchedPopup(); }catch(e){}
 }
 
 function findEdu(id){
@@ -4225,7 +4236,7 @@ function renderAbsenceCalendar(){
     if(c.dateStr === todayS) classes.push("cal-today");
     return `<div class="${classes.join(" ")}" data-date="${c.dateStr}"><div class="cal-daynum">${c.day}</div><div class="cal-chips">${chips}</div></div>`;
   }).join("");
-  const legendKeys = ["inspect","training","meeting","seminar","leave","etc"];
+  const legendKeys = ["inspect","training","meeting","leave","etc"];
   const legend = `<div class="cal-legend">${legendKeys.map(k => `<span>${ABS_EMOJI[k].e} <b>${ABS_EMOJI[k].label}</b></span>`).join("")}<span class="cal-legend-hint">${currentUser ? (isAdmin ? '✋ 일정을 끌어서 날짜를 옮길 수 있습니다' : '✋ 내가 등록한 일정은 끌어서 날짜를 옮길 수 있습니다') : ''}</span></div>`;
 
   return `
@@ -4234,6 +4245,7 @@ function renderAbsenceCalendar(){
       <div class="cal-label">${monthLabel}</div>
       <button class="cal-nav" onclick="changeMonth(1)">›</button>
       <button class="cal-today-btn" onclick="goToday()">오늘</button>
+      ${currentUser ? `<button class="cal-alert-btn" onclick="openSchedPopupNow()" title="3일 뒤·1일 뒤 일정 알림을 다시 봅니다">🔔 일정 알림</button>` : ''}
     </div>
     ${legend}
     <div class="cal-grid">
@@ -5240,6 +5252,160 @@ function routinePopupAfterClick(){
   }, 0);
 }
 
+/* ============================================================
+ *  주요 일정 D-3 · D-1 알림 팝업
+ *  - 일정 시작일 3일 전 / 1일 전에, 그 일정의 대상자가 대시보드를 처음 열면 가운데 창으로 띄운다
+ *  - 대상자: 직접 등록 일정 = '이름' 칸 / 교육관리·안전보건 연동 일정 = 강사·점검자
+ *  - 휴가는 알림 대상에서 뺀다
+ *  - 하루 한 번(사용자별 기억). 관리자는 팀원 일정도 아래에 보기 전용으로 함께 본다
+ *  - 연동 일정은 늦게 도착하므로 도착할 때까지(최대 8초) 기다렸다가 판단한다
+ * ============================================================ */
+const SCHED_POPUP_KEY = "schedPopupSeen_v1";
+const SCHED_ALERT_DAYS = [3, 1];
+const SCHED_WAIT_MS = 8000;
+const schedPageStart = Date.now();
+let schedPopupShownFor = null;
+let schedPopupPending = false;
+let schedRetryTimer = null;
+
+function schedDaysUntil(dateStr){
+  const t = todayStr();
+  const a = new Date(t + "T12:00:00"), b = new Date(String(dateStr).slice(0, 10) + "T12:00:00");
+  return Math.round((b - a) / 86400000);
+}
+function schedTargets(a){
+  if(linkSrc(a)) return String(absWho(a) || "").split(/[,，/·\s]+/).map(x => x.trim()).filter(Boolean);
+  return absNameList(a);
+}
+function schedIsMine(a){
+  return !!currentUser && wkAbsFor(a, currentUser.name);
+}
+/** 오늘 기준 D-3·D-1 인 일정 (휴가 제외), 날짜순 */
+function schedUpcomingAlerts(){
+  const out = [];
+  allAbsences().forEach(a => {
+    if(!a || !a.start) return;
+    const t = LEGACY_TYPE_MAP[a.type] || a.type;
+    if(t === "leave") return;
+    const d = schedDaysUntil(a.start);
+    if(SCHED_ALERT_DAYS.indexOf(d) < 0) return;
+    out.push({ a, d });
+  });
+  return out.sort((x, y) => x.d - y.d || String(x.a.start).localeCompare(String(y.a.start)) || String(x.a.person).localeCompare(String(y.a.person)));
+}
+function mySchedAlerts(){ return currentUser ? schedUpcomingAlerts().filter(x => schedIsMine(x.a)) : []; }
+function teamSchedAlerts(){ return isAdmin ? schedUpcomingAlerts().filter(x => !schedIsMine(x.a)) : []; }
+
+function schedPopupSeenToday(){
+  if(!currentUser) return true;
+  try{ return JSON.parse(localStorage.getItem(SCHED_POPUP_KEY) || "{}")[currentUser.id] === todayStr(); }
+  catch(e){ return false; }
+}
+function markSchedPopupSeen(){
+  if(!currentUser) return;
+  try{
+    const seen = JSON.parse(localStorage.getItem(SCHED_POPUP_KEY) || "{}");
+    seen[currentUser.id] = todayStr();
+    localStorage.setItem(SCHED_POPUP_KEY, JSON.stringify(seen));
+  }catch(e){ /* 저장이 막혀도 팝업은 뜬다 */ }
+}
+/** 오늘·3일 뒤가 걸친 해의 연동 일정이 도착했는가 (실패해도 캐시에 빈 값이 들어가므로 '도착'으로 친다) */
+function schedLinkedReady(){
+  const ys = new Set([Number(todayStr().slice(0, 4)), new Date(Date.now() + 4 * 86400000).getFullYear()]);
+  for(const y of ys){ if(!eduCache.has(y) || !safeCache.has(y)) return false; }
+  return true;
+}
+
+function maybeShowSchedPopup(){
+  if(!dataLoaded || !currentUser) return;
+  if(schedPopupShownFor === currentUser.id) return;
+  if(schedPopupSeenToday()){ schedPopupShownFor = currentUser.id; return; }
+  if(!schedLinkedReady() && Date.now() - schedPageStart < SCHED_WAIT_MS){
+    clearTimeout(schedRetryTimer);
+    schedRetryTimer = setTimeout(maybeShowSchedPopup, 1000);
+    return;
+  }
+  const mine = mySchedAlerts(), team = teamSchedAlerts();
+  if(!mine.length && !team.length) return;      // 오늘 알릴 것 없음 — 나중에 연동 일정이 오면 다시 판단
+  if(document.getElementById("modalOverlay").classList.contains("open")){ schedPopupPending = true; return; }
+  schedPopupPending = false;
+  schedPopupShownFor = currentUser.id;
+  markSchedPopupSeen();
+  renderSchedPopup();
+}
+function openSchedPopupNow(){
+  if(!currentUser) return;
+  renderSchedPopup(true);
+}
+
+const SCHED_WD = ["일","월","화","수","목","금","토"];
+function schedWhen(a){
+  const f = s => { const d = new Date(s + "T12:00:00"); return `${d.getMonth() + 1}/${d.getDate()}(${SCHED_WD[d.getDay()]})`; };
+  return a.start === a.end || !a.end ? f(a.start) : `${f(a.start)} ~ ${f(a.end)}`;
+}
+function schedCard(x, showWho){
+  const a = x.a;
+  const type = TYPE_META[LEGACY_TYPE_MAP[a.type] || a.type] || TYPE_META.etc;
+  const src = linkSrc(a);
+  const who = schedTargets(a).join(", ");
+  return `
+    <div class="sp-card${x.d === 1 ? ' d1' : ''}">
+      <div class="sp-emo" aria-hidden="true">${absEmoji(a)}</div>
+      <div class="sp-main">
+        <div class="sp-head">
+          <span class="sp-dday">${x.d === 1 ? '내일 · D-1' : 'D-3'}</span>
+          <span class="sp-title">${escapeHtml(a.person)}</span>
+          <span class="type-badge ${type.cls}">${type.label}</span>
+          ${src ? `<span class="src-tag${src.tagCls}">${escapeHtml(src.tag)}</span>` : ''}
+          <span class="sp-when">${schedWhen(a)}</span>
+        </div>
+        ${a.memo ? `<div class="sp-memo">${escapeHtml(a.memo)}</div>` : ''}
+        ${showWho ? `<div class="sp-who">대상 ${escapeHtml(who || '미지정')}</div>` : ''}
+      </div>
+    </div>`;
+}
+function renderSchedPopup(manual){
+  const mine = mySchedAlerts(), team = teamSchedAlerts();
+  const d1 = mine.filter(x => x.d === 1).length, d3 = mine.filter(x => x.d === 3).length;
+  const nm = escapeHtml(currentUser ? currentUser.name : '');
+  const lead = mine.length
+    ? `<p class="rt-popup-lead"><b>${nm}</b>님 일정이 다가옵니다 —
+        ${d1 ? `내일 <b style="color:var(--red);">${d1}건</b>` : ''}${d1 && d3 ? ', ' : ''}${d3 ? `3일 뒤 <b style="color:var(--orange);">${d3}건</b>` : ''}</p>`
+    : (team.length ? `<p class="rt-popup-lead">3일 뒤·내일 있는 팀원 일정 <b style="color:var(--orange);">${team.length}건</b>이 있습니다.</p>` : '');
+  const mineHtml = mine.length
+    ? `<div class="rt-popup-list">${mine.map(x => schedCard(x, false)).join("")}</div>`
+    : `<div class="rt-popup-empty">${team.length ? '나에게 해당하는 3일 뒤·내일 일정은 없습니다.' : '3일 뒤·내일 예정된 내 일정이 없습니다.'}</div>`;
+  const teamHtml = team.length
+    ? `<div class="memo-divider" style="margin-top:14px;"><span>팀원 일정 ${team.length}건</span></div>
+       <div class="rt-popup-list">${team.map(x => schedCard(x, true)).join("")}</div>` : '';
+  const first = (mine[0] || team[0] || {}).a;
+  openModal(`
+    <h3>🔔 일정 알림</h3>
+    ${lead}
+    ${mineHtml}
+    ${teamHtml}
+    <p class="rt-popup-foot">${manual ? '지금은 [🔔 일정 알림]으로 연 창입니다.' : '이 창은 하루에 한 번만 뜹니다.'}
+      일정 시작일 3일 전과 1일 전에 알려드립니다(휴가 제외).</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal(); openAbsenceTabAt('${first ? escapeHtml(first.start) : ''}');">주요 일정 탭 열기</button>
+      <button class="btn-primary" onclick="closeModal()">확인</button>
+    </div>
+  `);
+}
+function openAbsenceTabAt(dateStr){
+  if(/^\d{4}-\d{2}-\d{2}$/.test(dateStr || "")){
+    calState.year = Number(dateStr.slice(0, 4));
+    calState.month = Number(dateStr.slice(5, 7)) - 1;
+  }
+  activeTab = "absence";
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === "absence"));
+  updateAdminUI();
+  ensureLinkedYears();
+  renderContent();
+  const el = document.getElementById("content");
+  if(el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 function renderContent(){
   const el = document.getElementById("content");
   if(activeTab === "all"){
@@ -5494,6 +5660,7 @@ function render(){
   renderMemoBanner();
   renderContent();
   updateAckTitle();
+  maybeShowSchedPopup();
   maybeShowRoutinePopup();
 }
 
@@ -5943,6 +6110,8 @@ function openModal(html, wide){
 }
 function closeModal(){
   document.getElementById("modalOverlay").classList.remove("open");
+  // 다른 창 때문에 미뤄둔 알림(일정 D-3·D-1 / 정기업무)이 있으면 이어서 띄운다
+  if(schedPopupPending) setTimeout(() => { maybeShowSchedPopup(); maybeShowRoutinePopup(); }, 250);
 }
 
 function openEditDue(id){
