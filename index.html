@@ -963,7 +963,7 @@
     /* 펼친 상태 */
     .table-scroll td[data-label="기타"]{grid-row:4;grid-column:1 / 4;}
     .table-scroll td[data-label="보고서"]{grid-row:5;grid-column:1 / 4;}
-    .table-scroll td[data-label="관리"]{grid-row:6;grid-column:1 / 4;}
+    .table-scroll td[data-label="관리"]{grid-row:5;grid-column:1 / 4;}
     .table-scroll tr.row-open td[data-label="기타"],
     .table-scroll tr.row-open td[data-label="보고서"]{
       display:flex;align-items:center;gap:10px;
@@ -1418,8 +1418,6 @@
     <div class="tab" data-tab="edu">교육</div>
     <div class="tab" data-tab="etc">기타</div>
     <div class="tab" data-tab="routine">정기업무</div>
-    <div class="tab" data-tab="absence">주요 일정</div>
-    <div class="tab" data-tab="report">주간업무보고</div>
   </div>
 
   <div id="content"></div>
@@ -2956,7 +2954,6 @@ function taskRow(t, opts){
 
   return `
     <tr class="${info.overdue && !completed ? 'row-overdue' : ''} ${completed ? 'row-completed' : ''}" onclick="toggleRowOpen(this, event)">
-      ${isAdmin ? `<td data-label="보고서"><input type="checkbox" title="주간업무보고에 포함" ${t.includeInReport !== false ? 'checked' : ''} onchange="toggleReportInclude('${t.id}')"></td>` : ''}
       <td data-label="업무 내용">${escapeHtml(t.title)}</td>
       <td data-label="담당자">${ownerLabel(t)}</td>
       <td data-label="마감일자">
@@ -2985,7 +2982,7 @@ function taskRow(t, opts){
 // 표 컬럼 폭을 팀별로 동일하게 고정한다 (팀마다 폭이 달라 보이던 문제 해결).
 function tableCols(admin){
   const act = admin ? '<col class="c-actions">' : (currentUser ? '<col class="c-actions-min">' : '');
-  return `<colgroup>${admin ? '<col class="c-report">' : ''}<col><col class="c-owner"><col class="c-due"><col class="c-dday"><col class="c-prog"><col class="c-status"><col class="c-memo">${act}</colgroup>`;
+  return `<colgroup><col><col class="c-owner"><col class="c-due"><col class="c-dday"><col class="c-prog"><col class="c-status"><col class="c-memo">${act}</colgroup>`;
 }
 
 // 모바일에서는 카드를 탭하면 기타/보고서/관리 영역이 펼쳐진다.
@@ -3027,7 +3024,7 @@ function teamTable(teamKey){
           ${tableCols(isAdmin)}
           <thead>
             <tr>
-              ${isAdmin ? '<th>보고서</th>' : ''}<th>업무 내용</th><th>담당자</th><th>마감일자</th><th>D-Day</th><th>진행율</th><th>상태</th><th>기타</th>${currentUser ? '<th>관리</th>' : ''}
+              <th>업무 내용</th><th>담당자</th><th>마감일자</th><th>D-Day</th><th>진행율</th><th>상태</th><th>기타</th>${currentUser ? '<th>관리</th>' : ''}
             </tr>
           </thead>
           <tbody>${activeRows}</tbody>
@@ -3040,7 +3037,7 @@ function teamTable(teamKey){
             ${tableCols(isAdmin)}
             <thead>
               <tr>
-                ${isAdmin ? '<th>보고서</th>' : ''}<th>업무 내용</th><th>담당자</th><th>마감일자</th><th>완료일</th><th>진행율</th><th>상태</th><th>기타</th>${currentUser ? '<th>관리</th>' : ''}
+                <th>업무 내용</th><th>담당자</th><th>마감일자</th><th>완료일</th><th>진행율</th><th>상태</th><th>기타</th>${currentUser ? '<th>관리</th>' : ''}
               </tr>
             </thead>
             <tbody>${completedRows}</tbody>
