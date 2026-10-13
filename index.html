@@ -836,7 +836,7 @@
   .cal-toast button{background:transparent;border:1px solid rgba(255,255,255,.5);color:#fff;border-radius:7px;padding:4px 10px;font-size:13px;cursor:pointer;white-space:nowrap;}
   .absence-chip .abs-emo{margin-left:2px;font-size:1.05em;line-height:1;}
   .emo-meet{color:#2563eb;width:1.25em;height:1.25em;vertical-align:-0.25em;display:inline-block;}
-  [data-theme="dark"] .emo-meet{color:#60a5fa;}
+  [data-theme="dark"] .emo-meet{color:#60a5fa;} .emo-book{color:#7c3aed;vertical-align:-0.16em;display:inline-block;} [data-theme="dark"] .emo-book{color:#a78bfa;}
 
   /* ---------- Responsive ---------- */
   /* 태블릿 폭에서는 입력 폼의 고정 컬럼 합계가 화면보다 넓어 가로 스크롤이 생겼다.
@@ -3523,9 +3523,9 @@ function absWho(a){
  * ============================================================ */
 // 미팅·회의 아이콘 — 👥 이모지는 윈도우에서 검정 실루엣이라 파란색 SVG 로 그린다
 const MEET_ICON = '<svg class="emo-meet" viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><circle cx="8.5" cy="7.5" r="3.6"/><path d="M1.5 20.2c0-4 3.1-7 7-7s7 3 7 7v.8h-14z"/><circle cx="16.6" cy="8.3" r="3" opacity=".8"/><path d="M16.4 13.6c3.5 0 6.1 2.6 6.1 6.1v1.3h-5.3v-.8c0-2.6-1-4.9-2.7-6.4.6-.1 1.2-.2 1.9-.2z" opacity=".8"/></svg>';
-const ABS_EMOJI = {
+const BOOK_ICON = '<svg class="emo-book" viewBox="0 0 24 24" width="1.15em" height="1.15em" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.3C9.6 4.7 6.4 4.3 2.4 4.8v14c4-.5 7.2-.1 9.6 1.5 2.4-1.6 5.6-2 9.6-1.5v-14c-4-.5-7.2-.1-9.6 1.5z" fill="currentColor" fill-opacity=".14" stroke-width="1.7"/><path d="M12 6.3v14" stroke-width="1.5"/><path d="M5 9c1.7-.1 3.3.2 4.6.8M5 12.2c1.7-.1 3.3.2 4.6.8M5 15.4c1.7-.1 3.3.2 4.6.8M14.4 9.8c1.3-.6 2.9-.9 4.6-.8M14.4 13c1.3-.6 2.9-.9 4.6-.8M14.4 16.2c1.3-.6 2.9-.9 4.6-.8" stroke-width="1.25"/></svg>'; const ABS_EMOJI = {
   inspect:  { e:"🔍", label:"점검" },
-  training: { e:"📖", label:"교육" },
+  training: { e:BOOK_ICON, label:"교육" },
   meeting:  { e:MEET_ICON, label:"미팅·회의" },
   leave:    { e:"🌴", label:"휴가" },
   etc:      { e:"🎸", label:"기타" }
