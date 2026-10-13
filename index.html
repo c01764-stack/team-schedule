@@ -419,6 +419,16 @@
   details.completed-details[open] > summary:before{content:'▾';}
   details.completed-details > summary:hover{color:var(--text);}
   details.completed-details .table-scroll{margin-top:8px;}
+  .done-months{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px;}
+  .done-months button{padding:5px 12px;border-radius:999px;border:1.5px solid var(--border);background:var(--card);color:var(--sub);
+    font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;}
+  .done-months button b{margin-left:3px;color:var(--text);font-weight:800;}
+  .done-months button:hover{border-color:var(--violet);color:var(--violet);}
+  .done-months button.on{background:var(--violet);border-color:var(--violet);color:#fff;}
+  .done-months button.on b{color:#fff;}
+  tr.month-row td{background:color-mix(in srgb, var(--violet) 7%, var(--card)) !important;padding:7px 14px !important;font-size:13.5px;font-weight:800;color:var(--text);border-bottom:1px solid var(--border);}
+  tr.month-row .mr-cnt{margin-left:8px;font-weight:700;color:var(--sub);font-size:12.5px;}
+  tr.month-row:hover td{background:color-mix(in srgb, var(--violet) 7%, var(--card)) !important;}
   details.memo-old{margin-top:12px;border-top:1px dashed var(--border);padding-top:4px;}
   details.memo-old .memo-list{margin-top:8px;}
 
@@ -919,6 +929,8 @@
       cursor:pointer;
     }
     .table-scroll tbody tr:last-child{margin-bottom:0;}
+    .table-scroll tbody tr.month-row{display:block;background:transparent;border:none;box-shadow:none;padding:10px 2px 2px;margin-bottom:6px;cursor:default;}
+    .table-scroll tbody tr.month-row td{background:transparent !important;padding:0 !important;border:none;font-size:14px;}
     .table-scroll tr.row-overdue{background:#fff5f6;border-color:#fecdd3;}
     .table-scroll tr.row-open{border-color:var(--violet);box-shadow:0 6px 18px rgba(139,92,246,.18);}
     .table-scroll td{display:block;padding:0;border:none;background:transparent !important;font-size:13px;text-align:left;white-space:nowrap;min-width:0;}
@@ -2994,6 +3006,32 @@ function toggleRowOpen(tr, ev){
   tr.classList.toggle('row-open');
 }
 
+/* ---- 완료된 업무 월별 보기 ---- */
+const doneMonthPick = {};      // 팀 -> 'all' | 'YYYY-MM' (화면 상태만, 저장 안 함)
+const doneOpen = new Set();    // 완료 목록을 펼쳐 둔 팀 — 다시 그려도 접히지 않게
+function doneMonthKey(t){
+  const d = new Date(t.completedAt || t.due);
+  return isNaN(d) ? "기타" : `${d.getFullYear()}-${pad2(d.getMonth() + 1)}`;
+}
+function doneMonthList(list){
+  const map = new Map();
+  list.forEach(t => { const k = doneMonthKey(t); if(!map.has(k)) map.set(k, []); map.get(k).push(t); });
+  return [...map.entries()].sort((a, b) => b[0].localeCompare(a[0])).map(([key, items]) => ({ key, items }));
+}
+function doneMonthLabel(key, full){
+  if(!/^\d{4}-\d{2}$/.test(key)) return "날짜 없음";
+  const y = Number(key.slice(0, 4)), m = Number(key.slice(5, 7));
+  return (full || y !== new Date().getFullYear()) ? `${y}년 ${m}월` : `${m}월`;
+}
+function setDoneMonth(team, key){
+  doneMonthPick[team] = key;
+  doneOpen.add(team);
+  renderContent();
+}
+function doneToggle(team, open){
+  if(open) doneOpen.add(team); else doneOpen.delete(team);
+}
+
 function teamTable(teamKey){
   const meta = TEAM_META[teamKey];
   const all = tasks.filter(t=>t.team===teamKey);
@@ -3002,15 +3040,26 @@ function teamTable(teamKey){
   const completed = all.filter(isTaskDone)
     .sort((a,b)=> new Date(b.completedAt || b.due) - new Date(a.completedAt || a.due));
 
-  const colCount = 7 + (isAdmin ? 1 : 0) + (currentUser ? 1 : 0);
+  const colCount = 7 + (currentUser ? 1 : 0);
 
   const activeRows = active.length
     ? active.map(t=>taskRow(t)).join("")
     : `<tr><td colspan="${colCount}" class="empty">등록된 업무가 없습니다.</td></tr>`;
 
+  // 완료된 업무 — 완료한 달별로 묶는다
+  const months = doneMonthList(completed);
+  let pick = doneMonthPick[teamKey] || "all";
+  if(pick !== "all" && !months.some(m => m.key === pick)) pick = "all";
+  const shown = pick === "all" ? months : months.filter(m => m.key === pick);
   const completedRows = completed.length
-    ? completed.map(t=>taskRow(t, {completed:true})).join("")
+    ? shown.map(m => `<tr class="month-row"><td colspan="${colCount}"><span class="mr-label">${doneMonthLabel(m.key, true)}</span><span class="mr-cnt">${m.items.length}건</span></td></tr>`
+        + m.items.map(t=>taskRow(t, {completed:true})).join("")).join("")
     : `<tr><td colspan="${colCount}" class="empty">완료된 업무가 없습니다.</td></tr>`;
+  const monthChips = months.length > 1
+    ? `<div class="done-months" role="tablist" aria-label="완료 월 선택">
+        <button type="button" class="${pick === 'all' ? 'on' : ''}" onclick="setDoneMonth('${teamKey}','all')">전체 <b>${completed.length}</b></button>
+        ${months.map(m => `<button type="button" class="${pick === m.key ? 'on' : ''}" onclick="setDoneMonth('${teamKey}','${m.key}')">${doneMonthLabel(m.key)} <b>${m.items.length}</b></button>`).join("")}
+      </div>` : '';
 
   return `
     <div class="team-section">
@@ -3030,8 +3079,9 @@ function teamTable(teamKey){
           <tbody>${activeRows}</tbody>
         </table>
       </div>
-      <details class="completed-details">
+      <details class="completed-details"${doneOpen.has(teamKey) ? ' open' : ''} ontoggle="doneToggle('${teamKey}', this.open)">
         <summary>완료된 업무 (${completed.length}건)</summary>
+        ${monthChips}
         <div class="table-scroll">
           <table>
             ${tableCols(isAdmin)}
