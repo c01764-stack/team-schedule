@@ -2039,18 +2039,6 @@
       "updatedByName": "천재우"
     },
     {
-      "id": "tnp7sda4g",
-      "team": "safety",
-      "person": "천재우",
-      "type": "inspect",
-      "start": "2026-10-19",
-      "end": "2026-10-19",
-      "memo": "skt정밀안전진단 리뷰/장안",
-      "updatedAt": "2026-10-13T06:50:24.428Z",
-      "updatedById": "c01764",
-      "updatedByName": "천재우"
-    },
-    {
       "id": "td61k32dt",
       "team": "safety",
       "person": "천재우",
@@ -7061,6 +7049,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 추가: 천재우"
+    },
+    {
+      "id": "l_tzlfek1d0mv6d4g73",
+      "at": "2026-10-13T07:31:42.207Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 삭제: 천재우"
     }
   ]
 }
