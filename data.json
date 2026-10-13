@@ -1594,7 +1594,15 @@
       "due": "2026-10-23",
       "progress": 0,
       "memo": "",
-      "notes": [],
+      "notes": [
+        {
+          "id": "ttc2urgs5",
+          "at": "2026-10-13T07:56:45.278Z",
+          "byUserId": "c01764",
+          "byName": "천재우",
+          "text": "10/13\n- 기 집행 내용 정리 및 쉴더스 보고\n- 잔여금액 집행 항목 검토 필요"
+        }
+      ],
       "dueHistory": [],
       "includeInReport": true,
       "createdAt": "2026-10-13T07:55:54.798Z",
@@ -7123,6 +7131,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 추가: SKT 안전관리비 집행 관련"
+    },
+    {
+      "id": "l_tiybd96rmmv6e0nze",
+      "at": "2026-10-13T07:56:45.290Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "기타 내용 추가: SKT 안전관리비 집행 관련 — \"10/13 - 기 집행 내용 정리 및 쉴더스 보고 - …\""
     }
   ]
 }
