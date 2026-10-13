@@ -836,7 +836,7 @@
   .cal-toast button{background:transparent;border:1px solid rgba(255,255,255,.5);color:#fff;border-radius:7px;padding:4px 10px;font-size:13px;cursor:pointer;white-space:nowrap;}
   .absence-chip .abs-emo{margin-left:2px;font-size:1.05em;line-height:1;}
   .emo-meet{color:#2563eb;width:1.25em;height:1.25em;vertical-align:-0.25em;display:inline-block;}
-  [data-theme="dark"] .emo-meet{color:#60a5fa;} .emo-book{color:#6d28d9;vertical-align:-0.16em;display:inline-block;} [data-theme="dark"] .emo-book{color:#a78bfa;}
+  [data-theme="dark"] .emo-meet{color:#60a5fa;} .emo-book{color:#6d28d9;vertical-align:-0.26em;display:inline-block;} [data-theme="dark"] .emo-book{color:#a78bfa;}
 
   /* ---------- Responsive ---------- */
   /* 태블릿 폭에서는 입력 폼의 고정 컬럼 합계가 화면보다 넓어 가로 스크롤이 생겼다.
@@ -3523,7 +3523,7 @@ function absWho(a){
  * ============================================================ */
 // 미팅·회의 아이콘 — 👥 이모지는 윈도우에서 검정 실루엣이라 파란색 SVG 로 그린다
 const MEET_ICON = '<svg class="emo-meet" viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><circle cx="8.5" cy="7.5" r="3.6"/><path d="M1.5 20.2c0-4 3.1-7 7-7s7 3 7 7v.8h-14z"/><circle cx="16.6" cy="8.3" r="3" opacity=".8"/><path d="M16.4 13.6c3.5 0 6.1 2.6 6.1 6.1v1.3h-5.3v-.8c0-2.6-1-4.9-2.7-6.4.6-.1 1.2-.2 1.9-.2z" opacity=".8"/></svg>';
-const BOOK_ICON = '<svg class="emo-book" viewBox="0 0 24 24" width="1.15em" height="1.15em" aria-hidden="true"><path d="M1.2 6.2v14.4c4.4-.6 8 0 10.8 1.6 2.8-1.6 6.4-2.2 10.8-1.6V6.2z" fill="currentColor"/><path d="M12 6C9.6 4.4 6.4 4 2.6 4.5v14.2c3.8-.5 7 0 9.4 1.5 2.4-1.5 5.6-2 9.4-1.5V4.5C17.6 4 14.4 4.4 12 6z" fill="#fff" stroke="currentColor" stroke-width="1.1"/><path d="M12 6v14" stroke="currentColor" stroke-width="1.1"/><path d="M4.8 8.4h4.8M4.8 11.4h4.8M4.8 14.4h4.8M14.4 8.4h4.8M14.4 11.4h4.8M14.4 14.4h4.8" stroke="currentColor" stroke-opacity=".55" stroke-width="1.2" stroke-linecap="round"/></svg>'; const ABS_EMOJI = {
+const BOOK_ICON = '<svg class="emo-book" viewBox="0 0 24 24" width="1.4em" height="1.4em" aria-hidden="true"><path d="M1.2 6.2v14.4c4.4-.6 8 0 10.8 1.6 2.8-1.6 6.4-2.2 10.8-1.6V6.2z" fill="currentColor"/><path d="M12 6C9.6 4.4 6.4 4 2.6 4.5v14.2c3.8-.5 7 0 9.4 1.5 2.4-1.5 5.6-2 9.4-1.5V4.5C17.6 4 14.4 4.4 12 6z" fill="#fff" stroke="currentColor" stroke-width="1.1"/><path d="M12 6v14" stroke="currentColor" stroke-width="1.1"/><path d="M4.8 8.4h4.8M4.8 11.4h4.8M4.8 14.4h4.8M14.4 8.4h4.8M14.4 11.4h4.8M14.4 14.4h4.8" stroke="currentColor" stroke-opacity=".55" stroke-width="1.2" stroke-linecap="round"/></svg>'; const ABS_EMOJI = {
   inspect:  { e:"🔍", label:"점검" },
   training: { e:BOOK_ICON, label:"교육" },
   meeting:  { e:MEET_ICON, label:"미팅·회의" },
