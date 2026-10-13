@@ -1582,6 +1582,32 @@
           "byName": "오혜지"
         }
       ]
+    },
+    {
+      "id": "tmy04dvlv",
+      "team": "safety",
+      "title": "SKT 안전관리비 집행 관련",
+      "owner": "천재우",
+      "ownerId": "c01764",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-10-23",
+      "progress": 0,
+      "memo": "",
+      "notes": [],
+      "dueHistory": [],
+      "includeInReport": true,
+      "createdAt": "2026-10-13T07:55:54.798Z",
+      "createdById": "c01764",
+      "createdByName": "천재우",
+      "progressHistory": [
+        {
+          "at": "2026-10-13T07:55:54.798Z",
+          "p": 0,
+          "byUserId": "c01764",
+          "byName": "천재우"
+        }
+      ]
     }
   ],
   "absences": [
@@ -7089,6 +7115,14 @@
       "name": "천재우",
       "type": "change",
       "message": "주요 전달사항 수정"
+    },
+    {
+      "id": "l_tgq1frbg6mv6dzl16",
+      "at": "2026-10-13T07:55:54.810Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: SKT 안전관리비 집행 관련"
     }
   ]
 }
