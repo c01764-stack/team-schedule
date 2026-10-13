@@ -7265,6 +7265,14 @@ updateInstallBtn();
 (function () {
   "use strict";
 
+  /* ══════════ 동물 잡기 이벤트 켜기/끄기 ══════════
+   * false = 이벤트 숨김(상단 스탬프 버튼·동물 출현·서버 호출 모두 멈춤)
+   * 다시 쓰려면 true 로만 바꾸면 된다. 아래 코드와 Supabase 서버는 그대로 둠.
+   */
+  var PUP_EVENT_ON = false;
+  if (!PUP_EVENT_ON) return;
+  /* ═══════════════════════════════════════════════ */
+
   /* ══════════ 여기 두 줄만 바꾸세요 ══════════ */
   var SUPABASE_URL = "https://fukgfyifwywqeyjlmhyi.supabase.co";
   var SUPABASE_KEY = "sb_publishable_K1Ulm-Au3rDELxHPMqRGnQ_qr5KkhHS";
