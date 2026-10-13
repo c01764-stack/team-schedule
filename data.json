@@ -2031,9 +2031,12 @@
       "team": "safety",
       "person": "천재우",
       "type": "inspect",
-      "start": "2026-10-19",
-      "end": "2026-10-19",
-      "memo": "skt정밀안전진단/분당"
+      "start": "2026-10-20",
+      "end": "2026-10-20",
+      "memo": "skt정밀안전진단/분당",
+      "updatedAt": "2026-10-13T06:50:29.020Z",
+      "updatedById": "c01764",
+      "updatedByName": "천재우"
     },
     {
       "id": "tnp7sda4g",
@@ -7015,6 +7018,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 이동: 천재우 2026-10-14 → 2026-10-19"
+    },
+    {
+      "id": "l_t51q3pz20mv6bnfvx",
+      "at": "2026-10-13T06:50:29.037Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 이동: 천재우 2026-10-19 → 2026-10-20"
     }
   ]
 }
