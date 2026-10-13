@@ -1622,6 +1622,32 @@
           "byName": "천재우"
         }
       ]
+    },
+    {
+      "id": "tz4zyzhcg",
+      "team": "edu",
+      "title": "경영 실적 자료 작성",
+      "owner": "오혜지",
+      "ownerId": "c05651",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-10-23",
+      "progress": 0,
+      "memo": "",
+      "notes": [],
+      "dueHistory": [],
+      "includeInReport": true,
+      "createdAt": "2026-10-13T07:58:25.485Z",
+      "createdById": "c01764",
+      "createdByName": "천재우",
+      "progressHistory": [
+        {
+          "at": "2026-10-13T07:58:25.485Z",
+          "p": 0,
+          "byUserId": "c01764",
+          "byName": "천재우"
+        }
+      ]
     }
   ],
   "absences": [
@@ -7153,6 +7179,14 @@
       "name": "천재우",
       "type": "change",
       "message": "진행율 수정: SKT 안전관리비 집행 관련 → 5%"
+    },
+    {
+      "id": "l_t6lrsu3twmv6e2taw",
+      "at": "2026-10-13T07:58:25.496Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: 경영 실적 자료 작성"
     }
   ]
 }
