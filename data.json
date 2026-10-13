@@ -7033,6 +7033,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tw5xpoh1lmv6d3gfn",
+      "at": "2026-10-13T07:30:55.859Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 수정: 천재우"
     }
   ]
 }
