@@ -1648,6 +1648,32 @@
           "byName": "천재우"
         }
       ]
+    },
+    {
+      "id": "tpf8r3uay",
+      "team": "etc",
+      "title": "SKT 워크숍 외부 강사 섭외",
+      "owner": "천재우",
+      "ownerId": "c01764",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-10-23",
+      "progress": 0,
+      "memo": "",
+      "notes": [],
+      "dueHistory": [],
+      "includeInReport": true,
+      "createdAt": "2026-10-13T07:59:40.966Z",
+      "createdById": "c01764",
+      "createdByName": "천재우",
+      "progressHistory": [
+        {
+          "at": "2026-10-13T07:59:40.966Z",
+          "p": 0,
+          "byUserId": "c01764",
+          "byName": "천재우"
+        }
+      ]
     }
   ],
   "absences": [
@@ -7187,6 +7213,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 추가: 경영 실적 자료 작성"
+    },
+    {
+      "id": "l_tlm99y0lbmv6e4fjl",
+      "at": "2026-10-13T07:59:40.977Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: SKT 워크숍 외부 강사 섭외"
     }
   ]
 }
