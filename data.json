@@ -2609,7 +2609,15 @@
       "updatedAt": "2026-10-06T13:13:57.206Z",
       "readAt": "2026-10-12T13:13:09.147Z",
       "doneAt": null,
-      "comments": []
+      "comments": [
+        {
+          "id": "c_ta861t27r",
+          "userId": "c01764",
+          "name": "천재우",
+          "text": "11월 일정 MJ확인 후 네이버 전달 필요(1주~2주 사이)",
+          "at": "2026-10-13T08:01:42.781Z"
+        }
+      ]
     },
     {
       "id": "m_tl2dx8sha",
@@ -7237,6 +7245,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 추가: SKT 워크숍 외부 강사 섭외"
+    },
+    {
+      "id": "l_tzb81kvvxmv6e71jg",
+      "at": "2026-10-13T08:01:42.796Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "전달사항 댓글: 천재우"
     }
   ]
 }
