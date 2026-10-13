@@ -90,6 +90,24 @@
   .setup-banner{background:linear-gradient(135deg,#fff3e0,#ffe4ec);border:2px solid #ffd39a;border-radius:0;padding:14px 16px;margin-bottom:22px;font-size:14.5px;color:#92400e;box-shadow:var(--shadow-soft);}
   .setup-banner button{margin-left:8px;background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;border:none;border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;font-weight:700;}
 
+  /* 상단 바로가기 — 스크롤해도 화면 위에 붙어 있다 */
+  .quick-nav{position:sticky;top:0;z-index:40;display:flex;gap:8px;margin:0 -6px 18px;padding:8px 6px;
+    background:color-mix(in srgb, var(--bg) 86%, transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    overflow-x:auto;scrollbar-width:none;}
+  .quick-nav::-webkit-scrollbar{display:none;}
+  .quick-nav button{flex:none;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;border:2px solid var(--border);
+    background:var(--card);color:var(--text);font-size:14.5px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;
+    box-shadow:0 3px 10px rgba(30,20,70,.08);transition:border-color .15s,color .15s,background .15s;}
+  .quick-nav button:hover{border-color:var(--violet);color:var(--violet);}
+  .quick-nav button.on{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent;}
+  [data-theme="dark"] .quick-nav button.on{background:linear-gradient(135deg,#0891b2,#7c3aed);}
+  #noticeBanner,#memoBanner,#weeklyBanner,#tabs{scroll-margin-top:72px;}
+  @media (max-width:640px){
+    /* 휴대폰: 다섯 개가 한 화면에 들어오게 아이콘 위·글자 아래 5칸 */
+    .quick-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:0 -4px 12px;padding:6px 4px;overflow:visible;}
+    .quick-nav button{flex-direction:column;justify-content:center;gap:2px;padding:6px 2px;border-radius:12px;font-size:11px;letter-spacing:-.3px;line-height:1.2;min-width:0;}
+    .quick-nav button span{display:block;max-width:100%;white-space:normal;word-break:keep-all;text-align:center;}
+  }
   .tabs{display:flex;gap:8px;margin-bottom:18px;border-bottom:none;flex-wrap:wrap;}
   .tab{padding:10px 20px;font-size:17px;cursor:pointer;color:var(--sub);border-bottom:none;border-radius:999px;background:#fff;border:2px solid var(--border);user-select:none;font-weight:600;transition:all .15s;box-shadow:0 4px 14px rgba(30,20,70,.1);}
   .tab:hover{border-color:var(--violet);color:var(--violet);}
@@ -1294,6 +1312,14 @@
       </div>
     </div>
   </header>
+
+  <nav class="quick-nav" id="quickNav" aria-label="바로가기">
+    <button type="button" data-go="notice">📢 <span>주요 전달사항</span></button>
+    <button type="button" data-go="memo">✉️ <span>개인 전달사항</span></button>
+    <button type="button" data-go="weekly">📊 <span>주간 업무현황</span></button>
+    <button type="button" data-go="tasks">📋 <span>주요 업무</span></button>
+    <button type="button" data-go="absence">📅 <span>주요 일정</span></button>
+  </nav>
 
   <div class="setup-banner" id="setupBanner" style="display:none;">
     지금은 <b>보기 전용</b>입니다. 확인 체크·댓글·업무 입력을 저장하려면 GitHub 토큰이 필요합니다.
@@ -6933,6 +6959,50 @@ document.getElementById("tabs").addEventListener("click", (e)=>{
   updateAdminUI();
   renderContent();
 });
+
+/* ============================================================
+ *  상단 바로가기 — 누르면 해당 영역으로 바로 이동
+ *  주요 업무 = [전체] 탭, 주요 일정 = [주요 일정] 탭(캘린더)
+ * ============================================================ */
+const QUICK_NAV_TARGET = { notice:"noticeBanner", memo:"memoBanner", weekly:"weeklyBanner", tasks:"tabs", absence:"tabs" };
+function selectTab(name){
+  if(activeTab === name) return;
+  activeTab = name;
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+  updateAdminUI();
+  if(name === "absence") ensureLinkedYears();
+  renderContent();
+}
+function quickGo(key){
+  if(key === "tasks") selectTab("all");
+  if(key === "absence") selectTab("absence");
+  const el = document.getElementById(QUICK_NAV_TARGET[key]);
+  if(!el) return;
+  quickNavLock = Date.now();
+  setQuickNavOn(key);
+  el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+let quickNavLock = 0;
+function setQuickNavOn(key){
+  document.querySelectorAll("#quickNav button").forEach(b => b.classList.toggle("on", b.dataset.go === key));
+}
+// 스크롤 위치에 따라 지금 보고 있는 영역의 버튼을 칠한다
+function syncQuickNav(){
+  if(Date.now() - quickNavLock < 900) return;   // 버튼으로 이동하는 동안은 건드리지 않는다
+  const line = 90;
+  const tabKey = activeTab === "absence" ? "absence" : "tasks";
+  let cur = null;
+  [["notice","noticeBanner"],["memo","memoBanner"],["weekly","weeklyBanner"],[tabKey,"tabs"]].forEach(([k, id]) => {
+    const el = document.getElementById(id);
+    if(el && el.offsetParent !== null && el.getBoundingClientRect().top <= line) cur = k;
+  });
+  setQuickNavOn(cur);
+}
+document.getElementById("quickNav").addEventListener("click", e => {
+  const b = e.target.closest("button[data-go]");
+  if(b) quickGo(b.dataset.go);
+});
+window.addEventListener("scroll", () => { requestAnimationFrame(syncQuickNav); }, { passive: true });
 
 syncCurrentUser();
 updateAdminUI();
