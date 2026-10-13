@@ -775,6 +775,22 @@
   .cal-chip-type{opacity:.75;margin-left:3px;font-weight:600;}
   .cal-chip-who{font-weight:600;opacity:.9;}
   .cal-chip-sep{margin:0 3px;opacity:.55;font-weight:600;}
+  /* 칩 = [글자(넘치면 …)] + [오른쪽 끝 이모지] — 이모지는 잘리지 않게 따로 둔다 */
+  .cal-chip{display:flex;align-items:center;gap:4px;}
+  .cal-chip-txt{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .cal-chip-emo{flex:0 0 auto;margin-left:auto;font-size:1.05em;line-height:1;font-weight:400;}
+  .cal-chip.can-drag{cursor:grab;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
+  .cal-chip.can-drag:hover{filter:brightness(.97);box-shadow:0 1px 4px rgba(0,0,0,.12);}
+  .cal-chip.cal-dragging{opacity:.35;}
+  .cal-cell.cal-drop{outline:2px dashed var(--violet);outline-offset:-2px;background:var(--edu-tint);}
+  .cal-ghost{position:fixed;z-index:3000;pointer-events:none;opacity:.95;transform:rotate(-2deg);box-shadow:0 8px 22px rgba(0,0,0,.25)!important;cursor:grabbing;max-width:260px;}
+  body.cal-drag-on, body.cal-drag-on *{cursor:grabbing!important;-webkit-user-select:none!important;user-select:none!important;}
+  .cal-legend{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:13px;color:var(--sub);margin:-4px 0 10px;}
+  .cal-legend b{font-weight:600;color:var(--text);}
+  .cal-legend .cal-legend-hint{margin-left:auto;}
+  .cal-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:3100;background:#1f2937;color:#fff;padding:10px 14px 10px 16px;border-radius:10px;font-size:14.5px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:calc(100vw - 32px);}
+  .cal-toast button{background:transparent;border:1px solid rgba(255,255,255,.5);color:#fff;border-radius:7px;padding:4px 10px;font-size:13px;cursor:pointer;white-space:nowrap;}
+  .absence-chip .abs-emo{margin-left:2px;font-size:1.05em;line-height:1;}
 
   /* ---------- Responsive ---------- */
   /* 태블릿 폭에서는 입력 폼의 고정 컬럼 합계가 화면보다 넓어 가로 스크롤이 생겼다.
@@ -941,6 +957,10 @@
     .cal-daynum{font-size:13px;}
     .cal-chip{font-size:11.5px;padding:2px 5px;border-radius:5px;font-weight:700;}
     .cal-chip-type{display:none;}
+    .cal-chip{gap:2px;}
+    .cal-chip-emo{font-size:11px;}
+    .cal-legend{font-size:12px;gap:4px 10px;}
+    .cal-legend .cal-legend-hint{margin-left:0;flex-basis:100%;}
 
     .modal-box{padding:16px;width:92vw;}
   }
@@ -3080,6 +3100,62 @@ function absWho(a){
   return "";
 }
 
+/* ============================================================
+ *  일정 이모지 — 칩 오른쪽 끝에 붙여 한눈에 구분
+ *  유형(점검·교육·미팅·휴가)이 정해져 있으면 유형대로,
+ *  '기타'는 메모 글자로 짐작한다 (기타의 대부분이 실제로는 미팅이라).
+ * ============================================================ */
+const ABS_EMOJI = {
+  inspect:  { e:"🔍", label:"점검" },
+  training: { e:"🎓", label:"교육" },
+  meeting:  { e:"🤝", label:"미팅·회의" },
+  seminar:  { e:"🎤", label:"세미나·워크숍" },
+  leave:    { e:"🌴", label:"휴가" },
+  etc:      { e:"📌", label:"기타" }
+};
+const ABS_EMOJI_WORDS = [
+  [/면접/, "👔"],
+  [/미팅|회의|간담회|협의|면담|모임|인수인계/, "🤝"],
+  [/세미나|워크숍|워크샵|설명회|학회|포럼|컨퍼런스/, "🎤"],
+  [/교육|강의|연수/, "🎓"],
+  [/점검|진단|순회|감사/, "🔍"],
+  [/견학|방문/, "🏢"],
+  [/테스트|시스템\s*시연/, "💻"],
+  [/출장/, "✈️"],
+  [/반차|연차|휴가/, "🌴"]
+];
+function absEmoji(a){
+  if(!a) return ABS_EMOJI.etc.e;
+  const t = LEGACY_TYPE_MAP[a.type] || a.type;
+  if(t === "leave")    return ABS_EMOJI.leave.e;
+  if(t === "inspect")  return ABS_EMOJI.inspect.e;
+  if(t === "training") return ABS_EMOJI.training.e;
+  if(t === "meeting")  return ABS_EMOJI.meeting.e;
+  const txt = String(a.memo || "");
+  for(const [re, e] of ABS_EMOJI_WORDS){ if(re.test(txt)) return e; }
+  return ABS_EMOJI.etc.e;
+}
+
+/* ============================================================
+ *  일정 수정 권한
+ *  - 관리자: 모든 일정
+ *  - 팀원: 본인이 등록한 일정만 (createdById)
+ *    작성자 기록이 없는 예전 일정은 '이름' 칸에 본인 이름이 있으면 본인 것으로 본다
+ *  - 교육관리·안전보건점검에서 가져온 일정은 여기서 바꿀 수 없다(원래 시스템에서 수정)
+ * ============================================================ */
+function isLinkedAbsence(a){
+  return !!(a && (linkSrc(a) || /^(EDU|SAFE):/.test(String(a.id))));
+}
+function absNameList(a){
+  return String((a && a.person) || "").split(/[,，/·\s]+/).map(x => x.trim()).filter(Boolean);
+}
+function canEditAbsence(a){
+  if(!a || !currentUser || isLinkedAbsence(a)) return false;
+  if(isAdmin) return true;
+  if(a.createdById) return a.createdById === currentUser.id;
+  return absNameList(a).includes(currentUser.name);
+}
+
 async function loadEduYear(year){
   if(eduLoading.has(year)) return;
   const hit = eduCache.get(year);
@@ -3283,7 +3359,7 @@ function renderAbsenceBanner(){
     const src = linkSrc(a);
     const srcTag = src ? ` <span class="src-tag${src.tagCls}">${src.tag}</span>` : '';
     const tipTxt = src ? src.tip : '클릭하면 세부 내용을 볼 수 있습니다';
-    return `<div class="absence-chip ${meta.cls}${src ? ' ' + src.cls : ''}" onclick="openAbsenceChip('${a.id}')" title="${tipTxt}"><span class="dot"></span>${escapeHtml(a.person)}${memoPart} <span class="type-badge ${type.cls}">${type.label}</span>${srcTag}</div>`;
+    return `<div class="absence-chip ${meta.cls}${src ? ' ' + src.cls : ''}" onclick="openAbsenceChip('${a.id}')" title="${tipTxt}"><span class="dot"></span>${escapeHtml(a.person)}${memoPart} <span class="type-badge ${type.cls}">${type.label}</span>${srcTag}<span class="abs-emo" aria-hidden="true">${absEmoji(a)}</span></div>`;
   }).join("");
   el.innerHTML = `<h3>주요 일정 (${dayList.length}명)</h3>${nav}<div class="absence-chips">${chips}</div>`;
   renderWeeklyBanner();
@@ -4140,14 +4216,17 @@ function renderAbsenceCalendar(){
       const src = linkSrc(a);
       const who = absWho(a);
       const whoPart = who ? `<span class="cal-chip-who"><span class="cal-chip-sep">·</span>${escapeHtml(who)}</span>` : '';
-      const tip = `${a.person} · ${meta.label} · ${type.label}${who ? ' · ' + who : ''}${a.memo ? ' · ' + a.memo : ''}${src ? ' (' + src.tag + ')' : ''}`;
-      return `<div class="cal-chip ${meta.cls}${src ? ' ' + src.cls : ''}" onclick="openAbsenceChip('${a.id}')" title="${escapeHtml(tip)}">${escapeHtml(a.person)}<span class="cal-chip-type">${type.label}</span>${whoPart}</div>`;
+      const drag = canEditAbsence(a);
+      const tip = `${a.person} · ${meta.label} · ${type.label}${who ? ' · ' + who : ''}${a.memo ? ' · ' + a.memo : ''}${src ? ' (' + src.tag + ')' : ''}${drag ? '\n끌어서 다른 날짜로 옮길 수 있습니다' : ''}`;
+      return `<div class="cal-chip ${meta.cls}${src ? ' ' + src.cls : ''}${drag ? ' can-drag' : ''}" data-abs-id="${escapeHtml(a.id)}" data-from="${c.dateStr}" onclick="openAbsenceChip('${a.id}')" title="${escapeHtml(tip)}"><span class="cal-chip-txt">${escapeHtml(a.person)}<span class="cal-chip-type">${type.label}</span>${whoPart}</span><span class="cal-chip-emo" aria-hidden="true">${absEmoji(a)}</span></div>`;
     }).join("");
     const classes = ["cal-cell"];
     if(!c.currentMonth) classes.push("cal-other-month");
     if(c.dateStr === todayS) classes.push("cal-today");
-    return `<div class="${classes.join(" ")}"><div class="cal-daynum">${c.day}</div><div class="cal-chips">${chips}</div></div>`;
+    return `<div class="${classes.join(" ")}" data-date="${c.dateStr}"><div class="cal-daynum">${c.day}</div><div class="cal-chips">${chips}</div></div>`;
   }).join("");
+  const legendKeys = ["inspect","training","meeting","seminar","leave","etc"];
+  const legend = `<div class="cal-legend">${legendKeys.map(k => `<span>${ABS_EMOJI[k].e} <b>${ABS_EMOJI[k].label}</b></span>`).join("")}<span class="cal-legend-hint">${currentUser ? (isAdmin ? '✋ 일정을 끌어서 날짜를 옮길 수 있습니다' : '✋ 내가 등록한 일정은 끌어서 날짜를 옮길 수 있습니다') : ''}</span></div>`;
 
   return `
     <div class="cal-header">
@@ -4156,6 +4235,7 @@ function renderAbsenceCalendar(){
       <button class="cal-nav" onclick="changeMonth(1)">›</button>
       <button class="cal-today-btn" onclick="goToday()">오늘</button>
     </div>
+    ${legend}
     <div class="cal-grid">
       ${weekHeader}
       ${dayCells}
@@ -5561,7 +5641,9 @@ function addAbsence(){
     alert("종료일은 시작일보다 빠를 수 없습니다.");
     return;
   }
-  const newAbsence = {id: cid(), team, person, type, start, end, memo};
+  const newAbsence = {id: cid(), team, person, type, start, end, memo,
+    createdAt: new Date().toISOString(),
+    createdById: currentUser ? currentUser.id : "", createdByName: currentUser ? currentUser.name : ""};
   absences.push(newAbsence);
   absenceDirty.set(newAbsence.id, newAbsence);
   document.getElementById("absPerson").value = "";
@@ -5575,6 +5657,7 @@ function addAbsence(){
 function openEditAbsence(id){
   const a = absences.find(x=>x.id===id);
   if(!a) return;
+  if(!canEditAbsence(a)){ openAbsenceView(a); return; }
   openModal(`
     <h3>일정 수정</h3>
     <div class="field">
@@ -5619,9 +5702,33 @@ function openEditAbsence(id){
   `);
 }
 
+/** 수정 권한이 없는 일정 — 보기 전용 */
+function openAbsenceView(a){
+  const meta = TEAM_META[a.team] || TEAM_META.etc;
+  const type = TYPE_META[a.type] || TYPE_META.etc;
+  const range = a.start === a.end ? a.start : `${a.start} ~ ${a.end}`;
+  const row = (k, v) => `<tr><td style="padding:7px 10px 7px 0;color:var(--sub);white-space:nowrap;vertical-align:top;">${k}</td><td style="padding:7px 0;">${v}</td></tr>`;
+  openModal(`
+    <h3>${absEmoji(a)} 일정 보기</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:14.5px;">
+      ${row("이름", escapeHtml(a.person))}
+      ${row("팀", meta.label)}
+      ${row("유형", type.label)}
+      ${row("날짜", range)}
+      ${a.memo ? row("메모", escapeHtml(a.memo)) : ''}
+      ${a.createdByName ? row("등록", escapeHtml(a.createdByName)) : ''}
+    </table>
+    <p style="font-size:13px;color:var(--sub);margin:12px 0 0;">본인이 등록한 일정만 수정·이동할 수 있습니다. 바꿔야 하면 등록한 사람이나 관리자에게 요청해주세요.</p>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="closeModal()">닫기</button>
+    </div>
+  `);
+}
+
 function saveAbsenceEdit(id){
   const a = absences.find(x=>x.id===id);
   if(!a) return;
+  if(!canEditAbsence(a)){ alert("본인이 등록한 일정만 수정할 수 있습니다."); return; }
   const start = document.getElementById("modalAbsStart").value;
   const end = document.getElementById("modalAbsEnd").value || start;
   const person = document.getElementById("modalAbsPerson").value.trim();
@@ -5646,6 +5753,8 @@ function saveAbsenceEdit(id){
 }
 
 function deleteAbsence(id){
+  const target = absences.find(a=>a.id===id);
+  if(target && !canEditAbsence(target)){ alert("본인이 등록한 일정만 삭제할 수 있습니다."); return; }
   if(!confirm("이 일정을 삭제할까요?")) return;
   const removed = absences.find(a=>a.id===id);
   absences = absences.filter(a=>a.id!==id);
@@ -5654,6 +5763,171 @@ function deleteAbsence(id){
   render();
   persist(`일정 삭제: ${removed ? removed.person : id}`);
 }
+
+/* ============================================================
+ *  주요 일정 캘린더 — 칩을 끌어서 날짜 옮기기
+ *  마우스: 누른 채 5px 이상 움직이면 끌기 시작
+ *  터치  : 0.4초 꾹 누르면 끌기 시작 (그냥 쓸면 화면 스크롤)
+ *  여러 날 일정은 기간을 유지한 채 통째로 옮긴다. 놓으면 바로 저장 + [되돌리기]
+ * ============================================================ */
+function absDayShift(ds, n){
+  const [y, m, d] = String(ds).split("-").map(Number);
+  return fmtLocalDate(new Date(y, m - 1, d + n));
+}
+function absDayDiff(a, b){
+  const p = s => { const [y, m, d] = String(s).split("-").map(Number); return Date.UTC(y, m - 1, d); };
+  return Math.round((p(b) - p(a)) / 86400000);
+}
+const calDrag = { st: null, suppressClickUntil: 0 };
+
+function calDragCleanup(){
+  const st = calDrag.st;
+  if(st){
+    clearTimeout(st.timer);
+    if(st.raf) cancelAnimationFrame(st.raf);
+    if(st.ghost) st.ghost.remove();
+    if(st.overCell) st.overCell.classList.remove("cal-drop");
+  }
+  document.querySelectorAll(".cal-chip.cal-dragging").forEach(el => el.classList.remove("cal-dragging"));
+  document.body.classList.remove("cal-drag-on");
+  calDrag.st = null;
+}
+function calDragStart(){
+  const st = calDrag.st;
+  if(!st || st.active) return;
+  st.active = true;
+  const r = st.chip.getBoundingClientRect();
+  st.offX = st.x - r.left; st.offY = st.y - r.top;
+  const g = st.chip.cloneNode(true);
+  g.classList.add("cal-ghost"); g.removeAttribute("onclick"); g.removeAttribute("title");
+  g.style.width = Math.max(r.width, 90) + "px";
+  document.body.appendChild(g);
+  st.ghost = g;
+  document.querySelectorAll(".cal-chip").forEach(el => { if(el.dataset.absId === st.id) el.classList.add("cal-dragging"); });
+  document.body.classList.add("cal-drag-on");
+  try{ const sel = window.getSelection(); if(sel) sel.removeAllRanges(); }catch(e){}
+  if(navigator.vibrate && st.type === "touch"){ try{ navigator.vibrate(15); }catch(e){} }
+  calDragMove(st.x, st.y);
+  st.raf = requestAnimationFrame(calDragAutoScroll);
+}
+// 화면 위·아래 끝으로 끌면 페이지를 천천히 스크롤해 준다 (캘린더가 화면보다 길 때)
+function calDragAutoScroll(){
+  const st = calDrag.st;
+  if(!st || !st.active){ return; }
+  const edge = 56, h = window.innerHeight;
+  let dy = 0;
+  if(st.y < edge) dy = -Math.ceil((edge - st.y) / 4);
+  else if(st.y > h - edge) dy = Math.ceil((st.y - (h - edge)) / 4);
+  if(dy){ window.scrollBy(0, dy); calDragMove(st.x, st.y); }
+  st.raf = requestAnimationFrame(calDragAutoScroll);
+}
+function calDragMove(x, y){
+  const st = calDrag.st;
+  if(!st || !st.ghost) return;
+  st.x = x; st.y = y;
+  st.ghost.style.left = (x - st.offX) + "px";
+  st.ghost.style.top  = (y - st.offY) + "px";
+  const hit = document.elementFromPoint(x, y);
+  const cell = hit ? hit.closest(".cal-grid .cal-cell[data-date]") : null;
+  if(cell !== st.overCell){
+    if(st.overCell) st.overCell.classList.remove("cal-drop");
+    if(cell) cell.classList.add("cal-drop");
+    st.overCell = cell;
+  }
+}
+function calDragDrop(){
+  const st = calDrag.st;
+  const cell = st && st.overCell;
+  const id = st && st.id, from = st && st.from;
+  calDrag.suppressClickUntil = Date.now() + 400;   // 놓을 때 생기는 click 으로 수정창이 뜨지 않게
+  calDragCleanup();
+  if(!cell) return;
+  const delta = absDayDiff(from, cell.dataset.date);
+  if(delta) moveAbsenceBy(id, delta);
+}
+
+function moveAbsenceBy(id, delta, isUndo){
+  const a = absences.find(x => x.id === id);
+  if(!a || !delta) return;
+  if(!canEditAbsence(a)){ alert("본인이 등록한 일정만 옮길 수 있습니다."); return; }
+  if(!ghConfig.token){ openSettings(); return; }
+  const before = a.start === a.end ? a.start : `${a.start}~${a.end}`;
+  a.start = absDayShift(a.start, delta);
+  a.end   = absDayShift(a.end || a.start, delta);
+  a.updatedAt = new Date().toISOString();
+  if(currentUser){ a.updatedById = currentUser.id; a.updatedByName = currentUser.name; }
+  const after = a.start === a.end ? a.start : `${a.start}~${a.end}`;
+  absenceDirty.set(a.id, a);
+  render();
+  persist(`일정 ${isUndo ? '이동 취소' : '이동'}: ${a.person} ${before} → ${after}`);
+  if(!isUndo) showCalToast(`${escapeHtml(a.person)} 일정을 ${Number(a.start.slice(5,7))}/${Number(a.start.slice(8,10))}${a.start !== a.end ? ' ~ ' + Number(a.end.slice(5,7)) + '/' + Number(a.end.slice(8,10)) : ''}로 옮겼습니다`, () => moveAbsenceBy(id, -delta, true));
+}
+
+function showCalToast(html, onUndo){
+  document.querySelectorAll(".cal-toast").forEach(el => el.remove());
+  const t = document.createElement("div");
+  t.className = "cal-toast"; t.setAttribute("role", "status");
+  t.innerHTML = `<span>${html}</span>${onUndo ? '<button type="button">되돌리기</button>' : ''}`;
+  document.body.appendChild(t);
+  const timer = setTimeout(() => t.remove(), 6000);
+  const b = t.querySelector("button");
+  if(b) b.onclick = () => { clearTimeout(timer); t.remove(); onUndo(); };
+}
+
+document.addEventListener("pointerdown", e => {
+  if(e.button > 0) return;
+  const chip = e.target.closest && e.target.closest(".cal-grid .cal-chip.can-drag");
+  if(!chip) return;
+  const a = absences.find(x => x.id === chip.dataset.absId);
+  if(!a || !canEditAbsence(a)) return;
+  calDragCleanup();
+  calDrag.st = { id: a.id, from: chip.dataset.from, chip, pid: e.pointerId, type: e.pointerType,
+                 x0: e.clientX, y0: e.clientY, x: e.clientX, y: e.clientY, active: false, timer: null };
+  if(e.pointerType === "touch"){
+    calDrag.st.timer = setTimeout(calDragStart, 400);
+  }
+});
+document.addEventListener("pointermove", e => {
+  const st = calDrag.st;
+  if(!st || e.pointerId !== st.pid) return;
+  if(!st.active){
+    const moved = Math.hypot(e.clientX - st.x0, e.clientY - st.y0);
+    if(st.type === "touch"){ if(moved > 10) calDragCleanup(); return; }   // 꾹 누르기 전에 움직이면 스크롤
+    st.x = e.clientX; st.y = e.clientY;
+    if(moved > 5) calDragStart();
+    return;
+  }
+  e.preventDefault();
+  calDragMove(e.clientX, e.clientY);
+});
+document.addEventListener("pointerup", e => {
+  const st = calDrag.st;
+  if(!st || e.pointerId !== st.pid) return;
+  if(st.active) calDragDrop(); else calDragCleanup();
+});
+document.addEventListener("pointercancel", e => {
+  const st = calDrag.st;
+  if(st && e.pointerId === st.pid) calDragCleanup();
+});
+// 터치로 끄는 동안에는 화면이 같이 스크롤되지 않게
+document.addEventListener("touchmove", e => {
+  if(calDrag.st && calDrag.st.active) e.preventDefault();
+}, { passive: false });
+document.addEventListener("selectstart", e => {
+  if(calDrag.st) e.preventDefault();   // 끄는 동안 글자가 파랗게 선택되지 않게
+});
+document.addEventListener("contextmenu", e => {
+  if(calDrag.st) e.preventDefault();
+});
+document.addEventListener("dragstart", e => {
+  if(e.target.closest && e.target.closest(".cal-chip.can-drag")) e.preventDefault();
+});
+document.addEventListener("click", e => {
+  if(Date.now() < calDrag.suppressClickUntil){ e.stopPropagation(); e.preventDefault(); }
+}, true);
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape" && calDrag.st && calDrag.st.active){ calDrag.suppressClickUntil = Date.now() + 400; calDragCleanup(); }
+});
 
 function formatDateTime(iso){
   const d = new Date(iso);
