@@ -7280,6 +7280,14 @@
       "name": "천재우",
       "type": "change",
       "message": "전달사항 확인: 천재우"
+    },
+    {
+      "id": "l_t7d419tvzmv78opnx",
+      "at": "2026-10-13T22:15:15.693Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
