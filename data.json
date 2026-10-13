@@ -7025,6 +7025,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 삭제: 천재우"
+    },
+    {
+      "id": "l_tfwhv2no8mv6c9w8y",
+      "at": "2026-10-13T07:07:56.674Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
