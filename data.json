@@ -1332,7 +1332,8 @@
           "byName": "천재우",
           "text": "10/14\n- 유튜브 w/s 참석 완료(강문선, 천재우)"
         }
-      ]
+      ],
+      "completedAt": "2026-10-14T11:11:28.190Z"
     },
     {
       "id": "tuta7vjpn",
@@ -7332,6 +7333,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_tt6ddzglymv80ex8t",
+      "at": "2026-10-14T11:11:28.205Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 완료 처리: SKT 안전보건실 온라인 W/S 일정"
     }
   ]
 }
