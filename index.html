@@ -877,6 +877,8 @@
 
     .absence-banner{padding:16px 13px;min-height:72px;margin-bottom:14px;gap:6px 10px;}
     .absence-banner h3{font-size:15.5px;}
+    /* 휴대폰: 일정 칩을 한 줄에 하나씩 같은 폭·같은 높이로(가장 긴 칩 기준) */
+    .absence-chips{display:grid;grid-template-columns:minmax(0,1fr);grid-auto-rows:1fr;gap:6px;}
     .absence-chip{font-size:12px;padding:5px 10px;}
     .notice-banner{padding:11px 13px;margin-bottom:14px;}
     .notice-banner h3{font-size:15.5px;}
