@@ -7324,6 +7324,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 수정: 천재우"
+    },
+    {
+      "id": "l_thl7fi7mamv7wx8b9",
+      "at": "2026-10-14T09:33:43.893Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
