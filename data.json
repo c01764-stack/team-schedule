@@ -7379,6 +7379,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 확인: 천재우"
+    },
+    {
+      "id": "l_t046e1310mv8rleii",
+      "at": "2026-10-14T23:52:20.154Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
