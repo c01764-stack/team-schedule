@@ -2710,7 +2710,7 @@
       "byName": "천재우",
       "createdAt": "2026-10-12T13:13:02.692Z",
       "updatedAt": "2026-10-12T22:09:26.183Z",
-      "readAt": null,
+      "readAt": "2026-10-14T11:12:55.003Z",
       "doneAt": null,
       "comments": []
     }
@@ -7371,6 +7371,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 완료 처리: FMS 보고서 작업"
+    },
+    {
+      "id": "l_t0kdcwbo8mv80gs89",
+      "at": "2026-10-14T11:12:55.017Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 확인: 천재우"
     }
   ]
 }
