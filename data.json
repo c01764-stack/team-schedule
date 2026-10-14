@@ -2186,7 +2186,7 @@
       "type": "etc",
       "start": "2026-10-21",
       "end": "2026-10-21",
-      "memo": "채용면접/14:00",
+      "memo": "채용면접/14:00, 15:00",
       "createdAt": "2026-10-13T07:31:16.100Z",
       "createdById": "c01764",
       "createdByName": "천재우"
@@ -7316,6 +7316,14 @@
       "name": "천재우",
       "type": "change",
       "message": "일정 삭제: 천재우"
+    },
+    {
+      "id": "l_tty1lxprcmv7nlpso",
+      "at": "2026-10-14T05:12:50.136Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "일정 수정: 천재우"
     }
   ]
 }
