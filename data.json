@@ -2763,6 +2763,19 @@
       "readAt": "2026-10-14T11:12:55.003Z",
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_t5qce8snk",
+      "toUserId": "c01764",
+      "toName": "천재우",
+      "text": "잡코리아 비즈머니 관련 확인",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-10-15T07:00:09.472Z",
+      "updatedAt": "2026-10-15T07:00:09.472Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -7517,6 +7530,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "진행율 수정: 하반기 CS교육 시행 → 50%"
+    },
+    {
+      "id": "l_tdz1g9kk4mv96vl3t",
+      "at": "2026-10-15T07:00:09.497Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 천재우"
     }
   ]
 }
