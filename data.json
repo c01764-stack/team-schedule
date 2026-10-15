@@ -1777,7 +1777,15 @@
       "due": "2026-10-30",
       "progress": 30,
       "memo": "",
-      "notes": [],
+      "notes": [
+        {
+          "id": "tc4itwvnu",
+          "at": "2026-10-15T09:44:35.610Z",
+          "byUserId": "c01764",
+          "byName": "천재우",
+          "text": "10/12\n- 성수 사업장 사용법 교육 등"
+        }
+      ],
       "dueHistory": [],
       "includeInReport": true,
       "createdAt": "2026-10-15T08:58:14.527Z",
@@ -7673,6 +7681,14 @@
       "name": "천재우",
       "type": "change",
       "message": "진행율 수정: SKT 사업장 출입 간소화 시범 운영 → 30%"
+    },
+    {
+      "id": "l_txhpzg7w6mv9cr1v5",
+      "at": "2026-10-15T09:44:35.633Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "기타 내용 추가: SKT 사업장 출입 간소화 시범 운영 — \"10/12 - 성수 사업장 사용법 교육 등\""
     }
   ]
 }
