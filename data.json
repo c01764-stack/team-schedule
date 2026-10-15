@@ -2819,6 +2819,19 @@
       "readAt": "2026-10-15T07:00:12.159Z",
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_tx45la4ri",
+      "toUserId": "c01764",
+      "toName": "천재우",
+      "text": "신규입사자 노트북/다이어리/사무용품 등 체크",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-10-15T09:43:28.319Z",
+      "updatedAt": "2026-10-15T09:43:28.319Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -7629,6 +7642,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 추가: SKT 사업장 출입 간소화 시범 운영"
+    },
+    {
+      "id": "l_t5qhqzzc2mv9cplxu",
+      "at": "2026-10-15T09:43:28.338Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 천재우"
     }
   ]
 }
