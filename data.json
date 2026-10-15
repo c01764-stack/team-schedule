@@ -7681,6 +7681,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 삭제: 쉴더스 안전관리시스템 개발 관련 업무"
+    },
+    {
+      "id": "l_tfg56q7dymv9fvsgy",
+      "at": "2026-10-15T11:12:15.586Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
