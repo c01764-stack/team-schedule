@@ -1020,7 +1020,7 @@
       "owner2": "",
       "owner2Id": "",
       "due": "2026-11-13",
-      "progress": 30,
+      "progress": 50,
       "memo": "",
       "dueHistory": [],
       "includeInReport": true,
@@ -1034,6 +1034,12 @@
         {
           "at": "2026-10-02T00:14:40.747Z",
           "p": 30,
+          "byUserId": "c05651",
+          "byName": "오혜지"
+        },
+        {
+          "at": "2026-10-15T05:58:35.333Z",
+          "p": 50,
           "byUserId": "c05651",
           "byName": "오혜지"
         }
@@ -7503,6 +7509,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "진행율 수정: 경영 실적 자료 작성 → 10%"
+    },
+    {
+      "id": "l_t0fcx0wstmv94oeot",
+      "at": "2026-10-15T05:58:35.357Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "진행율 수정: 하반기 CS교육 시행 → 50%"
     }
   ]
 }
