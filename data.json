@@ -1610,7 +1610,8 @@
           "byUserId": "c04897",
           "byName": "이재혁"
         }
-      ]
+      ],
+      "completedAt": "2026-10-15T09:43:40.862Z"
     },
     {
       "id": "tjh1enbvb",
@@ -7650,6 +7651,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 등록: 천재우"
+    },
+    {
+      "id": "l_tmlmxejz7mv9cpvma",
+      "at": "2026-10-15T09:43:40.882Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 완료 처리: 본사 게시판 이달의 활동 현행화"
     }
   ]
 }
