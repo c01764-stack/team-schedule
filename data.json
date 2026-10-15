@@ -7546,6 +7546,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 확인: 천재우"
+    },
+    {
+      "id": "l_tnch66nqemv98bqgg",
+      "at": "2026-10-15T07:40:42.544Z",
+      "userId": "c04897",
+      "name": "이재혁",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
