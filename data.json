@@ -1609,7 +1609,8 @@
           "byUserId": "c05651",
           "byName": "오혜지"
         }
-      ]
+      ],
+      "completedAt": "2026-10-15T01:19:58.882Z"
     },
     {
       "id": "tmy04dvlv",
@@ -7395,6 +7396,14 @@
       "name": "천재우",
       "type": "login",
       "message": "로그인"
+    },
+    {
+      "id": "l_t2un3e8fcmv8uq46v",
+      "at": "2026-10-15T01:19:58.903Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 완료 처리: 본사 게시판 이달의 활동 현행화"
     }
   ]
 }
