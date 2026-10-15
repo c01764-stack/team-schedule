@@ -1710,7 +1710,7 @@
       "owner2": "",
       "owner2Id": "",
       "due": "2026-10-23",
-      "progress": 0,
+      "progress": 10,
       "memo": "",
       "notes": [
         {
@@ -1732,6 +1732,12 @@
           "p": 0,
           "byUserId": "c01764",
           "byName": "천재우"
+        },
+        {
+          "at": "2026-10-15T05:58:17.423Z",
+          "p": 10,
+          "byUserId": "c05651",
+          "byName": "오혜지"
         }
       ]
     }
@@ -7475,6 +7481,14 @@
       "name": "천재우",
       "type": "change",
       "message": "업무 완료 처리: 법정교육 이수율 확인"
+    },
+    {
+      "id": "l_t9xjgheypmv94o0v7",
+      "at": "2026-10-15T05:58:17.443Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "진행율 수정: SKT 워크숍 외부 강사 섭외 → 10%"
     }
   ]
 }
