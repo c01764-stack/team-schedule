@@ -2773,7 +2773,7 @@
       "byName": "천재우",
       "createdAt": "2026-10-15T07:00:09.472Z",
       "updatedAt": "2026-10-15T07:00:09.472Z",
-      "readAt": null,
+      "readAt": "2026-10-15T07:00:12.159Z",
       "doneAt": null,
       "comments": []
     }
@@ -7538,6 +7538,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 등록: 천재우"
+    },
+    {
+      "id": "l_tcpljhfijmv96vn68",
+      "at": "2026-10-15T07:00:12.176Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 확인: 천재우"
     }
   ]
 }
