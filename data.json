@@ -2866,7 +2866,7 @@
       "createdAt": "2026-10-15T09:43:28.319Z",
       "updatedAt": "2026-10-15T09:43:28.319Z",
       "readAt": "2026-10-16T06:15:43.265Z",
-      "doneAt": null,
+      "doneAt": "2026-10-16T06:15:44.015Z",
       "comments": []
     }
   ],
@@ -2957,14 +2957,6 @@
     }
   ],
   "logs": [
-    {
-      "id": "l_tnkolw8d4mtqhaxnp",
-      "at": "2026-09-07T00:04:42.085Z",
-      "userId": "c05651",
-      "name": "오혜지",
-      "type": "change",
-      "message": "일정 추가: 오혜지"
-    },
     {
       "id": "l_tu6ed93yomtqhbw79",
       "at": "2026-09-07T00:05:26.853Z",
@@ -7756,6 +7748,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 확인: 천재우"
+    },
+    {
+      "id": "l_to78efbklmvakqb3b",
+      "at": "2026-10-16T06:15:44.039Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 완료: 천재우"
     }
   ]
 }
