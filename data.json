@@ -2865,7 +2865,7 @@
       "byName": "천재우",
       "createdAt": "2026-10-15T09:43:28.319Z",
       "updatedAt": "2026-10-15T09:43:28.319Z",
-      "readAt": null,
+      "readAt": "2026-10-16T06:15:43.265Z",
       "doneAt": null,
       "comments": []
     }
@@ -2957,14 +2957,6 @@
     }
   ],
   "logs": [
-    {
-      "id": "l_tktf2h6lzmtqhahvw",
-      "at": "2026-09-07T00:04:21.644Z",
-      "userId": "c05651",
-      "name": "오혜지",
-      "type": "change",
-      "message": "일정 추가: 주현수"
-    },
     {
       "id": "l_tnkolw8d4mtqhaxnp",
       "at": "2026-09-07T00:04:42.085Z",
@@ -7756,6 +7748,14 @@
       "name": "천재우",
       "type": "change",
       "message": "진행율 수정: 회사소개서 제작 → 35%"
+    },
+    {
+      "id": "l_t7cit0rmkmvakqaih",
+      "at": "2026-10-16T06:15:43.289Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 확인: 천재우"
     }
   ]
 }
