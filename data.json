@@ -1794,6 +1794,32 @@
           "byName": "천재우"
         }
       ]
+    },
+    {
+      "id": "ttwiknmit",
+      "team": "safety",
+      "title": "L7 호텔 제안서 작업",
+      "owner": "이재혁",
+      "ownerId": "c04897",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-10-19",
+      "progress": 0,
+      "memo": "",
+      "notes": [],
+      "dueHistory": [],
+      "includeInReport": true,
+      "createdAt": "2026-10-16T05:54:41.069Z",
+      "createdById": "c01764",
+      "createdByName": "천재우",
+      "progressHistory": [
+        {
+          "at": "2026-10-16T05:54:41.069Z",
+          "p": 0,
+          "byUserId": "c01764",
+          "byName": "천재우"
+        }
+      ]
     }
   ],
   "absences": [
@@ -2925,14 +2951,6 @@
     }
   ],
   "logs": [
-    {
-      "id": "l_tuacgfrnamtqh8ilg",
-      "at": "2026-09-07T00:02:49.252Z",
-      "userId": "c05651",
-      "name": "오혜지",
-      "type": "change",
-      "message": "일정 추가: 주현수"
-    },
     {
       "id": "l_t1pail10dmtqh9h7w",
       "at": "2026-09-07T00:03:34.124Z",
@@ -7724,6 +7742,14 @@
       "name": "천재우",
       "type": "change",
       "message": "진행율 수정: 4분기 안전보건소식지 → 90%"
+    },
+    {
+      "id": "l_tvl1lb9j2mvajz8lb",
+      "at": "2026-10-16T05:54:41.087Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "업무 추가: L7 호텔 제안서 작업"
     }
   ]
 }
