@@ -66,14 +66,17 @@
   .today-badge{background:var(--card);border:2px solid var(--edu);border-radius:999px;padding:8px 16px;font-size:14.5px;color:var(--text);font-weight:600;box-shadow:0 3px 10px rgba(139,92,246,.15);}
   .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
   .header-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
-  .header-actions{display:flex;align-items:center;gap:8px;}
+  /* 상단 도구 줄(동기화 상태+아이콘들)은 PC·휴대폰 모두 기본 접힘 — ⋯ 버튼을 누르면 펼친다 */
+  .header-actions{display:none;align-items:center;gap:8px;}
+  .header-actions.open{display:flex;}
   .sync-status{font-size:13px;color:var(--sub);white-space:nowrap;font-weight:600;}
   .sync-status.saving{color:var(--orange);}
   .sync-status.error{color:var(--red);}
   .icon-btn{background:var(--card);border:1px solid var(--border);border-radius:999px;width:34px;height:34px;cursor:pointer;font-size:16.5px;color:var(--violet);box-shadow:0 2px 6px rgba(99,102,241,.12);}
   .icon-btn:hover{background:var(--edu-tint);transform:translateY(-1px);}
-  /* 휴대폰 전용 "⋯" 버튼 — 상단 도구 줄(동기화 상태+아이콘 6개)을 접어두고 누르면 펼친다. PC 에선 숨김 */
-  .hdr-more{display:none;position:relative;font-size:20px;line-height:1;letter-spacing:1px;}
+  /* "⋯" 버튼 — 상단 도구 줄을 접어두고 누르면 펼친다(PC·휴대폰 공통) */
+  .hdr-more{display:inline-block;position:relative;font-size:20px;line-height:1;letter-spacing:1px;}
+  .hdr-more[aria-expanded="true"]{background:var(--edu-tint);}
   .hdr-more.sync-saving::after,.hdr-more.sync-error::after{content:"";position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:var(--orange);}
   .hdr-more.sync-error::after{background:var(--red);}
   /* 앱 설치 버튼 — 아이콘 버튼과 같은 줄에 두되 글자가 들어가므로 폭만 늘린다 */
@@ -823,7 +826,7 @@
   .cal-chip.from-edu{box-shadow:inset 0 0 0 1.5px #c4b5fd;}
   .cal-chip.from-safe{box-shadow:inset 0 0 0 1.5px #fdba74;}
   .cal-chip-type{opacity:.75;margin-left:3px;font-weight:600;}
-  .cal-chip-who{font-weight:500;opacity:.85;}
+  .cal-chip-who{font-weight:600;opacity:.9;}
   .cal-chip-sep{margin:0 3px;opacity:.55;font-weight:600;}
   /* 칩 = [글자(넘치면 …)] + [오른쪽 끝 이모지] — 이모지는 잘리지 않게 따로 둔다 */
   .cal-chip{display:flex;align-items:center;gap:4px;}
@@ -866,10 +869,8 @@
     .header-right{flex-direction:row;align-items:center;justify-content:space-between;
       flex-wrap:wrap;width:100%;gap:7px;}
     .header-meta{justify-content:flex-start;gap:6px;}
-    .hdr-more{display:inline-block;margin-left:auto;width:32px;height:32px;}
-    .hdr-more[aria-expanded="true"]{background:var(--edu-tint);}
-    .header-actions{display:none;flex:1 1 100%;gap:6px;justify-content:flex-end;padding-top:2px;}
-    .header-actions.open{display:flex;}
+    .hdr-more{margin-left:auto;width:32px;height:32px;}
+    .header-actions{flex:1 1 100%;gap:6px;justify-content:flex-end;padding-top:2px;}
     .sync-status{font-size:12px;margin-right:auto;}
     .today-badge{padding:5px 9px;font-size:12px;white-space:nowrap;}
     .icon-btn{width:30px;height:30px;font-size:14.5px;}
@@ -2936,7 +2937,7 @@ function setSyncStatus(state, message){
   if(more){ more.classList.toggle("sync-saving", state === "saving"); more.classList.toggle("sync-error", state === "error"); }
 }
 
-// 휴대폰(≤640px) 상단 도구 줄 접기/펼치기 — 상태는 저장하지 않는다(기본은 접힘)
+// 상단 도구 줄 접기/펼치기(PC·휴대폰 공통) — 상태는 저장하지 않는다(기본은 접힘)
 function toggleHdrActions(force){
   const row = document.getElementById("hdrActions"), btn = document.getElementById("hdrMoreBtn");
   if(!row || !btn) return;
@@ -3540,39 +3541,6 @@ function absWho(a){
   return "";
 }
 
-/**
- * 주요 일정 표시 형식을 하나로 맞춘다 — 이름(업무내용)
- *  - 직접 등록: 이름 칸(person) + 메모
- *  - 점검 연동: 점검자 + "사업장 점검"
- *  - 교육 연동: 강사 + "사업장 과정 · 시간"
- * 이름이 이미 앞에 나오므로 "점검자 X"·"강사 X" 같은 중복 글자는 넣지 않는다.
- * 연동 일정에 담당자가 없으면 사업장을 이름 자리에 둔다.
- */
-function absLabel(a){
-  if(!a) return { name:"", work:"" };
-  const who = absWho(a);
-  if(a.safe){
-    const site = String(a.safe.site || "").trim();
-    return who ? { name:who, work:[site, "점검"].filter(Boolean).join(" ") }
-               : { name:site || "점검", work:"점검" };
-  }
-  if(a.edu){
-    const e = a.edu;
-    const site = String(e.site || e.co || "").trim();
-    const time = (e.start && e.end) ? `${e.start}~${e.end}` : (e.start || "");
-    const course = String(e.title || e.course || "교육").trim();
-    const rest = [course, time].filter(Boolean).join(" · ");
-    return who ? { name:who, work:[site, rest].filter(Boolean).join(" ") }
-               : { name:site || "교육", work:rest };
-  }
-  const type = TYPE_META[a.type] || TYPE_META.etc;
-  return { name:String(a.person || "").trim(), work:String(a.memo || "").trim() || type.label };
-}
-function absLabelText(a){
-  const l = absLabel(a);
-  return l.work ? `${l.name}(${l.work})` : l.name;
-}
-
 /* ============================================================
  *  일정 이모지 — 칩 오른쪽 끝에 붙여 한눈에 구분
  *  유형(점검·교육·미팅·휴가)이 정해져 있으면 유형대로,
@@ -3824,12 +3792,11 @@ function renderAbsenceBanner(){
   const chips = dayList.map(a => {
     const meta = TEAM_META[a.team];
     const type = TYPE_META[a.type] || TYPE_META.etc;
-    const lbl = absLabel(a);
-    const memoPart = lbl.work ? `(${escapeHtml(lbl.work)})` : '';
+    const memoPart = a.memo ? ` (${escapeHtml(a.memo)})` : '';
     const src = linkSrc(a);
     const srcTag = src ? ` <span class="src-tag${src.tagCls}">${src.tag}</span>` : '';
     const tipTxt = src ? src.tip : '클릭하면 세부 내용을 볼 수 있습니다';
-    return `<div class="absence-chip ${meta.cls}${src ? ' ' + src.cls : ''}" onclick="openAbsenceChip('${a.id}')" title="${tipTxt}"><span class="dot"></span>${escapeHtml(lbl.name)}${memoPart} <span class="type-badge ${type.cls}">${type.label}</span>${srcTag}<span class="abs-emo" aria-hidden="true">${absEmoji(a)}</span></div>`;
+    return `<div class="absence-chip ${meta.cls}${src ? ' ' + src.cls : ''}" onclick="openAbsenceChip('${a.id}')" title="${tipTxt}"><span class="dot"></span>${escapeHtml(a.person)}${memoPart} <span class="type-badge ${type.cls}">${type.label}</span>${srcTag}<span class="abs-emo" aria-hidden="true">${absEmoji(a)}</span></div>`;
   }).join("");
   el.innerHTML = `<h3>주요 일정 (${dayList.length}명)</h3>${nav}<div class="absence-chips">${chips}</div>`;
   renderWeeklyBanner();
@@ -4685,11 +4652,10 @@ function renderAbsenceCalendar(){
       const type = TYPE_META[a.type] || TYPE_META.etc;
       const src = linkSrc(a);
       const who = absWho(a);
-      const lbl = absLabel(a);
-      const whoPart = lbl.work ? `<span class="cal-chip-who">(${escapeHtml(lbl.work)})</span>` : '';
+      const whoPart = who ? `<span class="cal-chip-who"><span class="cal-chip-sep">·</span>${escapeHtml(who)}</span>` : '';
       const drag = canEditAbsence(a);
-      const tip = `${absLabelText(a)} · ${meta.label} · ${type.label}${src ? ' (' + src.tag + ')' : ''}${drag ? '\n끌어서 다른 날짜로 옮길 수 있습니다' : ''}`;
-      return `<div class="cal-chip ${meta.cls}${src ? ' ' + src.cls : ''}${drag ? ' can-drag' : ''}" data-abs-id="${escapeHtml(a.id)}" data-from="${c.dateStr}" onclick="openAbsenceChip('${a.id}')" title="${escapeHtml(tip)}"><span class="cal-chip-txt">${escapeHtml(lbl.name)}${whoPart}</span><span class="cal-chip-emo" aria-hidden="true">${absEmoji(a)}</span></div>`;
+      const tip = `${a.person} · ${meta.label} · ${type.label}${who ? ' · ' + who : ''}${a.memo ? ' · ' + a.memo : ''}${src ? ' (' + src.tag + ')' : ''}${drag ? '\n끌어서 다른 날짜로 옮길 수 있습니다' : ''}`;
+      return `<div class="cal-chip ${meta.cls}${src ? ' ' + src.cls : ''}${drag ? ' can-drag' : ''}" data-abs-id="${escapeHtml(a.id)}" data-from="${c.dateStr}" onclick="openAbsenceChip('${a.id}')" title="${escapeHtml(tip)}"><span class="cal-chip-txt">${escapeHtml(a.person)}<span class="cal-chip-type">${type.label}</span>${whoPart}</span><span class="cal-chip-emo" aria-hidden="true">${absEmoji(a)}</span></div>`;
     }).join("");
     const classes = ["cal-cell"];
     if(!c.currentMonth) classes.push("cal-other-month");
