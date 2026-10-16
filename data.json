@@ -2897,14 +2897,6 @@
   ],
   "logs": [
     {
-      "id": "l_twx6mjafhmtqgsy9d",
-      "at": "2026-09-06T23:50:43.057Z",
-      "userId": "c01764",
-      "name": "천재우",
-      "type": "change",
-      "message": "일정 추가: 천재우"
-    },
-    {
       "id": "l_tpglpg31emtqgtaip",
       "at": "2026-09-06T23:50:58.945Z",
       "userId": "c01764",
@@ -7695,6 +7687,14 @@
       "name": "천재우",
       "type": "change",
       "message": "정기업무 완료: 주간업무일지 작성 보고 (2026-10-15)"
+    },
+    {
+      "id": "l_tfd13leu6mva7dte7",
+      "at": "2026-10-16T00:02:06.223Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "login",
+      "message": "로그인"
     }
   ]
 }
