@@ -2958,14 +2958,6 @@
   ],
   "logs": [
     {
-      "id": "l_tr7bxwzo2mtqhdh11",
-      "at": "2026-09-07T00:06:40.501Z",
-      "userId": "c05651",
-      "name": "오혜지",
-      "type": "change",
-      "message": "일정 추가: 오혜지"
-    },
-    {
       "id": "l_tco38tob9mtqhe13p",
       "at": "2026-09-07T00:07:06.517Z",
       "userId": "c05651",
@@ -7754,6 +7746,14 @@
       "at": "2026-10-18T23:44:12.905Z",
       "userId": "c04897",
       "name": "이재혁",
+      "type": "login",
+      "message": "로그인"
+    },
+    {
+      "id": "l_t89r5rj5kmvehaw5a",
+      "at": "2026-10-18T23:50:50.686Z",
+      "userId": "c05651",
+      "name": "오혜지",
       "type": "login",
       "message": "로그인"
     }
