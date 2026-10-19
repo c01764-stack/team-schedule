@@ -3010,6 +3010,19 @@
       "readAt": null,
       "doneAt": null,
       "comments": []
+    },
+    {
+      "id": "m_tmjbiem3f",
+      "toUserId": "c01764",
+      "toName": "천재우",
+      "text": "모니터링 점수 체크(박보원 팀장님)",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-10-19T08:46:42.304Z",
+      "updatedAt": "2026-10-19T08:46:42.304Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -3099,14 +3112,6 @@
     }
   ],
   "logs": [
-    {
-      "id": "l_ti2hbin1fmtqnzfdc",
-      "at": "2026-09-07T03:11:42.480Z",
-      "userId": "c01764",
-      "name": "천재우",
-      "type": "login",
-      "message": "로그인"
-    },
     {
       "id": "l_tntctjw4gmtqovdmf",
       "at": "2026-09-07T03:36:33.207Z",
@@ -7894,6 +7899,14 @@
     {
       "id": "l_t7fa8ypk3mvf09sgg",
       "at": "2026-10-19T08:41:51.952Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 천재우"
+    },
+    {
+      "id": "l_t00wg0rs1mvf0g0i4",
+      "at": "2026-10-19T08:46:42.316Z",
       "userId": "c01764",
       "name": "천재우",
       "type": "change",
