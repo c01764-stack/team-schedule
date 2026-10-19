@@ -2883,6 +2883,19 @@
       "readAt": "2026-10-16T06:15:43.265Z",
       "doneAt": "2026-10-16T06:15:44.015Z",
       "comments": []
+    },
+    {
+      "id": "m_ts8ik6pvh",
+      "toUserId": "c01764",
+      "toName": "천재우",
+      "text": "본부장님 카드 지출결의서 작성",
+      "byUserId": "c01764",
+      "byName": "천재우",
+      "createdAt": "2026-10-19T00:30:42.965Z",
+      "updatedAt": "2026-10-19T00:30:42.965Z",
+      "readAt": null,
+      "doneAt": null,
+      "comments": []
     }
   ],
   "routines": [
@@ -2972,14 +2985,6 @@
     }
   ],
   "logs": [
-    {
-      "id": "l_t1ya0s6vhmtqit00k",
-      "at": "2026-09-07T00:46:44.564Z",
-      "userId": "c01764",
-      "name": "천재우",
-      "type": "change",
-      "message": "개인 전달사항 등록: 박보검(테스트)"
-    },
     {
       "id": "l_tbmuxixacmtqit9fc",
       "at": "2026-09-07T00:46:56.760Z",
@@ -7771,6 +7776,14 @@
       "name": "천재우",
       "type": "change",
       "message": "개인 전달사항 완료: 천재우"
+    },
+    {
+      "id": "l_tefliwgmqmveiq61n",
+      "at": "2026-10-19T00:30:42.971Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 등록: 천재우"
     }
   ]
 }
