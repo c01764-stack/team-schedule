@@ -1811,7 +1811,7 @@
       "owner2": "",
       "owner2Id": "",
       "due": "2026-10-23",
-      "progress": 10,
+      "progress": 40,
       "memo": "",
       "notes": [
         {
@@ -1844,6 +1844,12 @@
         {
           "at": "2026-10-15T05:58:17.423Z",
           "p": 10,
+          "byUserId": "c05651",
+          "byName": "오혜지"
+        },
+        {
+          "at": "2026-10-19T08:59:01.737Z",
+          "p": 40,
           "byUserId": "c05651",
           "byName": "오혜지"
         }
@@ -3152,14 +3158,6 @@
     }
   ],
   "logs": [
-    {
-      "id": "l_ti899oudymtqshpnd",
-      "at": "2026-09-07T05:17:54.073Z",
-      "userId": "c01764",
-      "name": "천재우",
-      "type": "login",
-      "message": "로그인"
-    },
     {
       "id": "l_t1l4rgeg2mtqss3zq",
       "at": "2026-09-07T05:25:59.222Z",
@@ -7951,6 +7949,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "업무 추가: 휴넷 교육 운영"
+    },
+    {
+      "id": "l_ti0xi4z86mvf0vv1u",
+      "at": "2026-10-19T08:59:01.746Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "진행율 수정: SKT 워크숍 외부 강사 섭외 → 40%"
     }
   ]
 }
