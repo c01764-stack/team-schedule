@@ -175,6 +175,8 @@
 
   /* 다른 시스템 바로가기 카드 (계정 칩 왼쪽) */
   .sys-acct,.sys-links{display:flex;align-items:center;gap:6px;}
+  .ws-chip{font-size:13px;font-weight:700;color:var(--sub);padding:5px 10px;border:1.5px solid var(--border);border-radius:999px;background:var(--card);white-space:nowrap;}
+  .ws-chip select{font:inherit;font-weight:700;color:var(--text);background:transparent;border:0;outline:none;cursor:pointer;max-width:180px;}
   .sys-link{display:inline-flex;align-items:center;gap:7px;padding:4px 12px 4px 4px;border-radius:12px;
     background:var(--card);border:2px solid var(--sl-c);color:var(--text);font-size:13.5px;font-weight:700;
     text-decoration:none;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.07);transition:transform .12s,box-shadow .12s;}
@@ -1641,6 +1643,7 @@
         <div class="today-badge" id="todayBadge"></div>
         <div class="sys-acct">
           <div class="sys-links"><a class="sys-link sl-edu" href="https://chmsafety.github.io/chmedu/" title="교육관리 시스템(으)로 이동"><span class="sl-ic" aria-hidden="true">🎓</span><span class="sl-tx">교육관리</span></a><a class="sys-link sl-safe" href="https://chmsafety.github.io/safety-inspection/" title="안전보건 관리시스템(으)로 이동"><span class="sl-ic" aria-hidden="true">🦺</span><span class="sl-tx">안전관리</span></a></div>
+          <div class="ws-chip" id="wsChip" style="display:none;"></div>
           <div class="user-chip" id="userChip" style="display:none;"></div>
         </div>
         <button class="icon-btn hdr-more" id="hdrMoreBtn" onclick="toggleHdrActions()" aria-expanded="false" aria-controls="hdrActions" title="새로고침·계정·이력·로그아웃·디자인·설정">⋯</button>
@@ -1786,7 +1789,7 @@
 </div>
 
 <script>
-const TEAM_META = {
+let TEAM_META = {
   safety: {label:"안전", color:"var(--safety)", cls:"safety"},
   edu: {label:"교육", color:"var(--edu)", cls:"edu"},
   etc: {label:"기타", color:"var(--etc)", cls:"etc"}
@@ -1901,9 +1904,67 @@ let dataLoaded = false;
 let loadError = null;
 let autoRefreshTimer = null;
 let lastRemoteReadAt = 0;
-let sbMe = null;             // ts_load 가 돌려준 내 계정 {id, name, role, pwTemp}
+let sbMe = null;             // ts_load 가 돌려준 내 계정 {id, name, role, pwTemp, homeWs}
+// 팀 공간(workspace, 2026-10-20): 같은 화면·같은 서버를 여러 팀이 나눠 쓴다.
+//  - 팀원·팀장은 자기 팀 공간만 본다(서버가 강제). 총관리자(owner)는 공간을 골라 볼 수 있다.
+//  - 공간별 설정(settings): linkEdu·linkSafe(교육·안전 연동), logs(접속·작성 이력), teams(업무 분류)
+let wsInfo = null;           // {id, name, settings}
+let wsList = [];             // 총관리자에게만 전체 목록
+let isOwner = false;
+const WS_KEY = "tsWorkspace_v1";
+function requestedWs(){
+  try{
+    const q = new URLSearchParams(location.search).get("ws");
+    if(q) return q;
+    return localStorage.getItem(WS_KEY) || null;
+  }catch(e){ return null; }
+}
+function wsSetting(key, dflt){
+  const st = (wsInfo && wsInfo.settings) || {};
+  return Object.prototype.hasOwnProperty.call(st, key) ? st[key] : dflt;
+}
+function roleLabel(role){ return role === "owner" ? "총관리자" : (role === "leader" || role === "admin") ? "팀장" : "팀원"; }
+// 공간 전환(총관리자). 저장 안 된 변경이 있으면 묻고, 새로 불러오기 위해 페이지를 다시 연다.
+function switchWorkspace(id){
+  if(!id || (wsInfo && id === wsInfo.id)) return;
+  if(hasUnsavedChanges() && !confirm("아직 저장되지 않은 변경이 있습니다. 그래도 팀 공간을 바꿀까요?")){ updateAdminUI(); return; }
+  try{ localStorage.setItem(WS_KEY, id); }catch(e){}
+  const u = new URL(location.href); u.searchParams.set("ws", id); location.href = u.toString();
+}
+// 공간 설정을 화면에 적용: 업무 분류(TEAM_META)·탭·선택칸, 연동·이력 숨김
+function applyWorkspace(){
+  const teams = Array.isArray(wsSetting("teams", null)) && wsSetting("teams", null).length
+    ? wsSetting("teams", null) : [{key:"safety",label:"안전"},{key:"edu",label:"교육"},{key:"etc",label:"기타"}];
+  const cycle = ["safety","edu","etc"];
+  const meta = {};
+  teams.forEach((t, i) => { if(t && t.key) meta[t.key] = { label: String(t.label || t.key), color: `var(--${cycle[i % 3]})`, cls: cycle[i % 3] }; });
+  if(!meta.etc) meta.etc = { label: "기타", color: "var(--etc)", cls: "etc" };   // 옛 자료·기본값 대비
+  TEAM_META = meta;
+  const keys = Object.keys(meta);
+  const tabs = document.getElementById("tabs");
+  if(tabs){
+    tabs.innerHTML = `<div class="tab" data-tab="all">전체</div>` +
+      keys.map(k => `<div class="tab" data-tab="${escapeHtml(k)}">${escapeHtml(meta[k].label)}</div>`).join("") +
+      `<div class="tab" data-tab="routine">정기업무</div>`;
+    if(!["all","routine","absence","report"].includes(activeTab) && !meta[activeTab]) activeTab = "all";
+    tabs.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === activeTab));
+  }
+  ["inTeam","absTeam"].forEach(id => {
+    const sel = document.getElementById(id);
+    if(!sel) return;
+    sel.innerHTML = teamOptions(sel.value);
+    const wrap = sel.parentElement;
+    if(wrap){ wrap.style.display = keys.length <= 1 ? "none" : ""; const lb = wrap.querySelector("label"); if(lb) lb.textContent = "분류"; }
+  });
+  const links = document.querySelector(".sys-links");
+  if(links) links.style.display = (wsSetting("linkEdu", true) || wsSetting("linkSafe", true)) ? "" : "none";
+  updateAdminUI();
+}
+function teamOptions(selected){
+  return Object.keys(TEAM_META).map(k => `<option value="${escapeHtml(k)}" ${k === selected ? 'selected' : ''}>${escapeHtml(TEAM_META[k].label)}</option>`).join("");
+}
 
-// isAdmin 은 로그인한 계정의 역할(role === 'admin')로 결정된다.
+// isAdmin 은 로그인한 계정의 역할(owner·leader)로 결정된다. isOwner 는 총관리자만.
 let isAdmin = false;
 
 // 로그인했는가 = 저장할 수 있는가 (예전의 "토큰이 있는가" 자리)
@@ -2030,7 +2091,7 @@ async function sbAdmin(action, payload){
 // 세션이 끝났을 때(만료·다른 곳에서 비번 변경 등) 로그인 화면으로 돌려보낸다
 function handleAuthLost(){
   clearSession();
-  currentUser = null; isAdmin = false; sbMe = null;
+  currentUser = null; isAdmin = false; isOwner = false; sbMe = null;
   dataLoaded = false; loadError = null;
   render();
 }
@@ -2041,7 +2102,8 @@ function syncCurrentUser(){
   if(!sess){ currentUser = null; isAdmin = false; return; }
   if(!sbMe){ currentUser = null; isAdmin = false; return; }   // 아직 서버 데이터를 못 받은 단계
   currentUser = { id: sbMe.id, name: sbMe.name, role: sbMe.role };
-  isAdmin = sbMe.role === "admin";
+  isAdmin = ["owner","leader","admin"].includes(sbMe.role);
+  isOwner = sbMe.role === "owner";
 }
 
 function logout(){
@@ -2220,7 +2282,7 @@ function openMyAccount(){
   openModal(`
     <h3>내 계정</h3>
     <p class="auth-sub" style="margin:-6px 0 14px;">
-      ${escapeHtml(u.name)} · ${escapeHtml(u.id)} · ${u.role === 'admin' ? '관리자' : '팀원'}
+      ${escapeHtml(u.name)} · ${escapeHtml(u.id)} · ${roleLabel(u.role)}
     </p>
     ${temp ? `<div class="pw-warn">관리자가 정해준 초기 비밀번호를 쓰고 있습니다. 본인만 아는 비밀번호로 바꿔주세요.</div>` : ''}
     <div class="field">
@@ -2305,45 +2367,53 @@ async function changeMyPassword(){
 // 계정 생성·초기화·역할·삭제는 서버 함수(ts-admin)가 처리한다. 화면은 결과를 다시 읽어 보여준다.
 function openAccounts(){
   if(!isAdmin){ alert("관리자만 계정을 관리할 수 있습니다."); return; }
-  const rows = users.map(u => `
+  // 총관리자: 발급·역할·삭제·초기화 전부 / 팀장: 자기 팀 팀원 비밀번호 초기화만
+  const rows = users.map(u => {
+    const own = u.role === "owner";
+    const acts = [];
+    if(!own || isOwner) acts.push(`<button onclick="resetAccountPassword('${escapeHtml(u.id)}')">비번 초기화</button>`);
+    if(isOwner && !own){
+      acts.push(`<button onclick="toggleAccountRole('${escapeHtml(u.id)}')">${(u.role === 'leader' || u.role === 'admin') ? '팀원으로' : '팀장으로'}</button>`);
+      acts.push(`<button class="del" onclick="deleteAccount('${escapeHtml(u.id)}')">삭제</button>`);
+    }
+    return `
     <tr>
       <td><b>${escapeHtml(u.id)}</b></td>
       <td>${escapeHtml(u.name)}</td>
-      <td><span class="acct-role ${u.role === 'admin' ? 'admin' : 'member'}">${u.role === 'admin' ? '관리자' : '팀원'}</span>${u.pwTemp ? '<span class="acct-temp" title="초기 비밀번호를 아직 안 바꿨습니다">초기</span>' : ''}</td>
-      <td class="acct-actions">
-        <button onclick="resetAccountPassword('${escapeHtml(u.id)}')">비번 초기화</button>
-        <button onclick="toggleAccountRole('${escapeHtml(u.id)}')">${u.role === 'admin' ? '팀원으로' : '관리자로'}</button>
-        <button class="del" onclick="deleteAccount('${escapeHtml(u.id)}')">삭제</button>
-      </td>
-    </tr>
-  `).join("");
+      <td><span class="acct-role ${(u.role === 'member') ? 'member' : 'admin'}">${roleLabel(u.role)}</span>${u.pwTemp ? '<span class="acct-temp" title="초기 비밀번호를 아직 안 바꿨습니다">초기</span>' : ''}</td>
+      <td class="acct-actions">${acts.join("")}</td>
+    </tr>`;
+  }).join("");
 
-  openModal(`
-    <h3>팀원 계정 관리</h3>
-    <table class="acct-table">
-      <colgroup><col class="a-id"><col class="a-name"><col class="a-role"><col></colgroup>
-      <thead><tr><th>아이디</th><th>이름</th><th>역할</th><th></th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
+  const addForm = isOwner ? `
     <div class="acct-add">
-      <h4>계정 추가</h4>
+      <h4>계정 추가 <span style="font-weight:400;color:var(--sub);font-size:12.5px;">— ${escapeHtml(wsInfo ? wsInfo.name : '')} 공간에 추가됩니다</span></h4>
       <div class="acct-grid">
         <div><label>아이디(사번)</label><input type="text" id="newAcctId" placeholder="예: c01234"></div>
         <div><label>이름</label><input type="text" id="newAcctName" placeholder="예: 이재혁"></div>
-        <div><label>초기 비밀번호</label><input type="text" id="newAcctPw" placeholder="비우면 자동 생성"></div>
+        <div><label>초기 비밀번호</label><input type="text" id="newAcctPw" placeholder="비우면 자동 생성 (직접 정하면 영문+숫자 8자 이상, 11111111 같은 흔한 값 불가)"></div>
         <div><label>역할</label>
           <select id="newAcctRole" style="width:100%;padding:9px 10px;border:2px solid var(--border);border-radius:12px;font-size:14.5px;font-family:inherit;background:var(--card);color:var(--text);">
             <option value="member">팀원</option>
-            <option value="admin">관리자</option>
+            <option value="leader">팀장</option>
           </select>
         </div>
       </div>
       <p style="font-size:12px;color:var(--sub);margin:8px 0 0;">같은 사번으로 빌딩정보·허브 계정이 이미 있으면 그 계정을 그대로 쓰고(비밀번호 유지), 없으면 새로 만듭니다.</p>
       <p class="auth-error" id="acctError" style="margin-top:8px;"></p>
-    </div>
+    </div>` : `<p style="font-size:12.5px;color:var(--sub);margin:10px 0 0;">계정 발급·삭제는 총관리자만 할 수 있습니다. 팀원이 비밀번호를 잊으면 [비번 초기화]로 임시 비밀번호를 만들어 주세요.</p>`;
+
+  openModal(`
+    <h3>팀원 계정 관리${wsInfo ? ` <span style="font-size:13px;font-weight:600;color:var(--sub);">· ${escapeHtml(wsInfo.name)}</span>` : ''}</h3>
+    <table class="acct-table">
+      <colgroup><col class="a-id"><col class="a-name"><col class="a-role"><col></colgroup>
+      <thead><tr><th>아이디</th><th>이름</th><th>역할</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    ${addForm}
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeModal()">닫기</button>
-      <button class="btn-primary" id="acctAddBtn" onclick="addAccount()">계정 추가</button>
+      ${isOwner ? '<button class="btn-primary" id="acctAddBtn" onclick="addAccount()">계정 추가</button>' : ''}
     </div>
   `, true);
 }
@@ -2359,7 +2429,7 @@ async function reloadAccounts(){
 }
 
 async function addAccount(){
-  if(!isAdmin) return;
+  if(!isOwner) return;
   const btn = document.getElementById("acctAddBtn");
   const id = document.getElementById("newAcctId").value.trim().toLowerCase();
   const name = document.getElementById("newAcctName").value.trim();
@@ -2368,11 +2438,11 @@ async function addAccount(){
   if(!/^[a-z0-9][a-z0-9._-]{2,31}$/.test(id)){ setAcctError("아이디는 영문 소문자·숫자 3~32자로 입력해주세요."); return; }
   if(findUser(id)){ setAcctError("이미 있는 아이디입니다."); return; }
   if(!name){ setAcctError("이름을 입력해주세요."); return; }
-  if(pw && pw.length < 8){ setAcctError("초기 비밀번호는 8자 이상으로 정해주세요(비우면 자동 생성)."); return; }
+  if(pw && (pw.length < 8 || !/[A-Za-z]/.test(pw) || !/\d/.test(pw))){ setAcctError("초기 비밀번호는 영문과 숫자를 섞어 8자 이상으로 정해주세요. 비우면 자동으로 만들어 드립니다."); return; }
 
   btn.disabled = true; btn.textContent = "추가 중...";
   try{
-    const r = await sbAdmin("create", { login_id: id, name, role, password: pw || undefined });
+    const r = await sbAdmin("create", { login_id: id, name, role, password: pw || undefined, ws: wsInfo ? wsInfo.id : undefined });
     await reloadAccounts();
     openAccounts();
     if(r.existing){
@@ -2384,7 +2454,8 @@ async function addAccount(){
     persist("계정 추가: " + name, { noLog: true });
   }catch(e){
     btn.disabled = false; btn.textContent = "계정 추가";
-    setAcctError("추가 실패: " + (e.message || e));
+    const m = String(e.message || e);
+    setAcctError(/weak|easy to guess/i.test(m) ? "너무 흔한 비밀번호라 서버가 거부했습니다. 다른 비밀번호를 쓰거나 비워서 자동 생성하세요." : "추가 실패: " + m);
   }
 }
 
@@ -2392,7 +2463,7 @@ async function resetAccountPassword(id){
   if(!isAdmin) return;
   const u = findUser(id);
   if(!u) return;
-  const pw = prompt(`${u.name}(${u.id})의 새 비밀번호를 입력하세요. (8자 이상, 비우면 자동 생성)`);
+  const pw = prompt(`${u.name}(${u.id})의 새 비밀번호를 입력하세요. (8자 이상, 비우면 자동 생성)\n※ 빌딩정보·허브와 같은 계정이면 그쪽 비밀번호도 함께 바뀝니다.`);
   if(pw === null) return;
   if(pw && pw.length < 8){ alert("비밀번호는 8자 이상이어야 합니다."); return; }
   try{
@@ -2408,15 +2479,13 @@ async function resetAccountPassword(id){
 }
 
 async function toggleAccountRole(id){
-  if(!isAdmin) return;
+  if(!isOwner) return;
   const u = findUser(id);
   if(!u) return;
-  const next = u.role === "admin" ? "member" : "admin";
-  if(next === "member" && users.filter(x => x.role === "admin").length <= 1){
-    alert("관리자가 최소 한 명은 있어야 합니다.");
-    return;
-  }
-  if(!confirm(`${u.name}을(를) ${next === "admin" ? "관리자" : "팀원"}으로 바꿀까요?`)) return;
+  if(!isOwner){ alert("역할 변경은 총관리자만 할 수 있습니다."); return; }
+  if(u.role === "owner"){ alert("총관리자 계정의 역할은 바꿀 수 없습니다."); return; }
+  const next = (u.role === "leader" || u.role === "admin") ? "member" : "leader";
+  if(!confirm(`${u.name}을(를) ${next === "leader" ? "팀장" : "팀원"}으로 바꿀까요?`)) return;
   try{
     await sbAdmin("set_role", { login_id: u.id, role: next });
     await reloadAccounts();
@@ -2429,13 +2498,10 @@ async function toggleAccountRole(id){
 }
 
 async function deleteAccount(id){
-  if(!isAdmin) return;
+  if(!isOwner) return;
   const u = findUser(id);
   if(!u) return;
-  if(u.role === "admin" && users.filter(x => x.role === "admin").length <= 1){
-    alert("마지막 관리자 계정은 삭제할 수 없습니다.");
-    return;
-  }
+  if(u.role === "owner"){ alert("총관리자 계정은 여기서 삭제할 수 없습니다."); return; }
   const memoCount = memos.filter(m => m.toUserId === u.id).length;
   if(!confirm(
     `${u.name}(${u.id}) 계정을 삭제할까요?\n\n` +
@@ -2490,15 +2556,30 @@ function updateAdminUI(){
       chip.className = "user-chip" + (temp ? " pw-temp" : "");
       chip.title = temp ? "초기 비밀번호를 쓰고 있습니다 — 클릭해서 변경하세요" : "내 계정 / 비밀번호 변경";
       chip.onclick = openMyAccount;
-      chip.innerHTML = `${escapeHtml(currentUser.name)}<span class="role">${isAdmin ? '관리자' : '팀원'}</span>${temp ? '<span class="pw-dot" aria-label="초기 비밀번호 사용 중"></span>' : ''}`;
+      chip.innerHTML = `${escapeHtml(currentUser.name)}<span class="role">${roleLabel(currentUser.role)}</span>${temp ? '<span class="pw-dot" aria-label="초기 비밀번호 사용 중"></span>' : ''}`;
     } else {
       chip.style.display = "none";
+    }
+  }
+  // 팀 공간 칩: 이름 표시, 총관리자는 전환 메뉴
+  const wsc = document.getElementById("wsChip");
+  if(wsc){
+    if(currentUser && wsInfo){
+      wsc.style.display = "";
+      if(isOwner && wsList.length > 1){
+        wsc.innerHTML = `<select onchange="switchWorkspace(this.value)" title="팀 공간 전환">` +
+          wsList.map(w => `<option value="${escapeHtml(w.id)}" ${w.id === wsInfo.id ? 'selected' : ''}>${escapeHtml(w.name)}</option>`).join("") + `</select>`;
+      } else {
+        wsc.textContent = wsInfo.name;
+      }
+    } else {
+      wsc.style.display = "none";
     }
   }
   const acctBtn = document.getElementById("accountsBtn");
   if(acctBtn) acctBtn.style.display = isAdmin ? "" : "none";
   const logBtn = document.getElementById("logsBtn");
-  if(logBtn) logBtn.style.display = isAdmin ? "" : "none";
+  if(logBtn) logBtn.style.display = (isAdmin && wsSetting("logs", true)) ? "" : "none";
   const outBtn = document.getElementById("logoutBtn");
   if(outBtn) outBtn.style.display = currentUser ? "" : "none";
   syncForms();
@@ -2549,14 +2630,19 @@ window.addEventListener("resize", syncForms);
 async function fetchRemoteRaw(){
   let data;
   try{
-    data = await sbRpc("ts_load", {});
+    data = await sbRpc("ts_load", { p_ws: requestedWs() });
   }catch(err){
     if(err.auth){ handleAuthLost(); }
+    if(/없는 팀 공간/.test(String(err.message || ""))){ try{ localStorage.removeItem(WS_KEY); }catch(e){} history.replaceState(null, "", location.pathname); }
     throw err;
   }
   lastRemoteReadAt = Date.now();
   if(!data || typeof data !== "object") throw new Error("서버 응답 형식이 올바르지 않습니다.");
   sbMe = data.me || null;
+  wsInfo = data.ws || null;
+  wsList = Array.isArray(data.workspaces) ? data.workspaces : [];
+  if(wsInfo){ try{ localStorage.setItem(WS_KEY, wsInfo.id); }catch(e){} }
+  applyWorkspace();
   const freshTasks = Array.isArray(data.tasks) ? data.tasks : [];
   const freshAbsences = Array.isArray(data.absences) ? data.absences : [];
   const freshReports = Array.isArray(data.reports) ? data.reports : [];
@@ -2719,6 +2805,7 @@ function mergeLogs(freshLogs){
 // 이력 한 줄 남기기. 저장은 persist() 가 알아서 한다(별도 요청이 늘지 않는다).
 function addLog(type, message){
   if(!dataLoaded || !currentUser) return;
+  if(!wsSetting("logs", true)) return;   // 이 팀 공간은 이력을 남기지 않는다
   const entry = {
     id: "l_" + cid() + Date.now().toString(36),
     at: new Date().toISOString(),
@@ -2745,6 +2832,7 @@ function mergeByKey(freshArr, dirtyMap, keyFn){
 // 서버가 권한(관리자/담당자/본인)을 확인하므로, 화면에서 막은 것을 우회해도 서버가 거절한다.
 function buildSavePayload(){
   const p = {};
+  if(wsInfo) p.ws = wsInfo.id;
   const tasksArr = [];
   taskDirty.forEach((val, id) => { tasksArr.push(val === 'DELETE' ? { id, del: true } : { id, data: val }); });
   if(tasksArr.length) p.tasks = tasksArr;
@@ -3098,7 +3186,11 @@ function openSettings(){
     </div>
     <div class="field">
       <label>로그인</label>
-      <input type="text" value="${escapeHtml(currentUser ? (currentUser.name + ' · ' + currentUser.id + (isAdmin ? ' · 관리자' : ' · 팀원')) : '로그인 안 됨')}" readonly>
+      <input type="text" value="${escapeHtml(currentUser ? (currentUser.name + ' · ' + currentUser.id + ' · ' + roleLabel(currentUser.role)) : '로그인 안 됨')}" readonly>
+    </div>
+    <div class="field">
+      <label>팀 공간</label>
+      <input type="text" value="${escapeHtml(wsInfo ? (wsInfo.name + ' (' + wsInfo.id + ')') : '-')}" readonly>
     </div>
     <div class="field">
       <label>마지막 동기화</label>
@@ -3545,6 +3637,7 @@ function canEditAbsence(a){
 }
 
 async function loadEduYear(year){
+  if(!wsSetting("linkEdu", true)) return;
   if(eduLoading.has(year)) return;
   const hit = eduCache.get(year);
   if(hit && Date.now() - hit.at < EDU_TTL_MS) return;
@@ -3664,6 +3757,7 @@ function safeList(){
 }
 
 async function loadSafeYear(year){
+  if(!wsSetting("linkSafe", true)) return;
   if(safeLoading.has(year)) return;
   const hit = safeCache.get(year);
   if(hit && Date.now() - hit.at < SAFE_TTL_MS) return;
@@ -4632,7 +4726,7 @@ function buildWeeklyReportText(monday){
 
   let totalActive = 0, totalDone = 0, totalOverdue = 0, progressSum = 0, progressCount = 0;
 
-  ["safety","etc"].forEach(teamKey => {
+  Object.keys(TEAM_META).forEach(teamKey => {
     const meta = TEAM_META[teamKey];
     const teamTasks = tasks.filter(t => t.team === teamKey && t.includeInReport !== false);
     const overdue = teamTasks.filter(t => !isTaskDone(t) && t.progress < 100 && t.due < todayStr());
@@ -5298,9 +5392,7 @@ function openRoutineForm(r){
       <div class="field">
         <label>팀</label>
         <select id="rtTeam" style="${inp}">
-          <option value="safety" ${r ? sel('safety', r.team) : ''}>안전</option>
-          <option value="edu" ${r ? sel('edu', r.team) : ''}>교육</option>
-          <option value="etc" ${r ? sel('etc', r.team) : 'selected'}>기타</option>
+          ${teamOptions(r ? r.team : 'etc')}
         </select>
       </div>
       <div class="field">
@@ -5775,7 +5867,7 @@ function openAbsenceTabAt(dateStr){
 function renderContent(){
   const el = document.getElementById("content");
   if(activeTab === "all"){
-    el.innerHTML = teamTable("safety") + teamTable("edu") + teamTable("etc");
+    el.innerHTML = Object.keys(TEAM_META).map(teamTable).join("");
   } else if(activeTab === "routine"){
     el.innerHTML = renderRoutineTab();
   } else if(activeTab === "absence"){
@@ -6196,9 +6288,7 @@ function openEditAbsence(id){
     <div class="field">
       <label>팀</label>
       <select id="modalAbsTeam">
-        <option value="safety" ${a.team==='safety'?'selected':''}>안전</option>
-        <option value="edu" ${a.team==='edu'?'selected':''}>교육</option>
-        <option value="etc" ${a.team==='etc'?'selected':''}>기타</option>
+        ${teamOptions(a.team)}
       </select>
     </div>
     <div class="field">
