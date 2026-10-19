@@ -4,8 +4,8 @@
  *  1) 앱 껍데기(HTML·아이콘)를 캐시해서 두 번째부터 즉시 뜨게 하고, 잠깐 끊겨도 화면은 열리게 한다.
  *  2) 새 버전이 올라오면 페이지에 알려준다.
  *
- * 데이터(api.github.com)는 절대 캐시하지 않는다. 낡은 data.json 을 돌려주면
- * 앱이 옛 sha 로 저장을 시도해 충돌이 나기 때문이다.
+ * 데이터·로그인(supabase.co)은 절대 캐시하지 않는다. 낡은 데이터를 돌려주면 화면이 옛 내용 위에
+ * 저장을 시도하게 되기 때문이다. (예전 api.github.com 통과 규칙도 남겨둔다)
  * 교육관리·안전보건점검 시스템(script.google.com)도 마찬가지다. 가져온 일정은 늘 최신이어야
  * 등록·수정·삭제가 바로 따라오고, 매번 다른 주소로 부르기 때문에 캐시에 담아두면
  * 쓰지도 않을 응답만 쌓인다.
@@ -13,7 +13,7 @@
  * ※ 아이콘이나 index.html 을 바꿔 올릴 때는 아래 CACHE 이름의 날짜를 반드시 올릴 것.
  *    그래야 이미 설치한 기기가 새 파일을 받아간다.
  */
-const CACHE = 'workdiary-2026-10-16a';
+const CACHE = 'workdiary-2026-10-20a';
 
 const SHELL = [
   './',
@@ -58,6 +58,7 @@ self.addEventListener('fetch', (e) => {
 
   // 데이터·인증·교육관리 요청은 손대지 않는다 (항상 네트워크)
   if (url.hostname === 'api.github.com' || url.hostname === 'github.com') return;
+  if (url.hostname.endsWith('.supabase.co')) return;   // 데이터·로그인(Supabase)은 항상 네트워크
   if (url.hostname === 'script.google.com' || url.hostname === 'script.googleusercontent.com') return;
 
   // 페이지 이동: 네트워크 우선, 안 되면 캐시된 화면이라도 띄운다
