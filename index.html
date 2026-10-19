@@ -1733,7 +1733,8 @@
     </div>
     <div>
       <label>이름</label>
-      <input type="text" id="absPerson" placeholder="이름">
+      <select id="absPerson" onchange="syncPersonCustom('absPerson','absPersonCustom')"></select>
+      <input type="text" id="absPersonCustom" placeholder="이름 직접 입력" style="display:none;margin-top:6px;">
     </div>
     <div>
       <label>유형</label>
@@ -1961,6 +1962,43 @@ function applyWorkspace(){
   const links = document.querySelector(".sys-links");
   if(links) links.style.display = (wsSetting("linkEdu", true) || wsSetting("linkSafe", true)) ? "" : "none";
   updateAdminUI();
+}
+// 주요 일정 '이름' 칸: 팀원 명단에서 고르고, 명단에 없는 사람은 "직접 입력"
+function personOptions(selected){
+  const names = users.map(u => u.name).filter(Boolean);
+  const sel = String(selected || "").trim();
+  const custom = sel && !names.includes(sel);
+  return names.map(n => `<option value="${escapeHtml(n)}" ${n === sel ? 'selected' : ''}>${escapeHtml(n)}</option>`).join("") +
+    `<option value="__custom" ${custom ? 'selected' : ''}>직접 입력…</option>`;
+}
+function syncPersonCustom(selId, txtId){
+  const sel = document.getElementById(selId), txt = document.getElementById(txtId);
+  if(!sel || !txt) return;
+  const on = sel.value === "__custom";
+  txt.style.display = on ? "" : "none";
+  if(on) txt.focus();
+}
+function readPerson(selId, txtId){
+  const sel = document.getElementById(selId), txt = document.getElementById(txtId);
+  if(!sel) return "";
+  return (sel.value === "__custom" ? (txt ? txt.value : "") : sel.value).trim();
+}
+// 등록 폼의 이름 select 를 명단과 맞춘다(명단이 바뀌었을 때만 다시 그림, 고른 값은 유지)
+function syncAbsPersonSelect(){
+  const sel = document.getElementById("absPerson");
+  if(!sel) return;
+  const want = users.map(u => u.name).filter(Boolean).join("|");
+  if(sel.dataset.names === want) return;
+  sel.dataset.names = want;
+  const cur = readPerson("absPerson", "absPersonCustom") || (currentUser ? currentUser.name : "");
+  fillPersonSelect("absPerson", "absPersonCustom", cur);
+}
+function fillPersonSelect(selId, txtId, selected){
+  const sel = document.getElementById(selId), txt = document.getElementById(txtId);
+  if(!sel) return;
+  sel.innerHTML = personOptions(selected);
+  if(txt && sel.value === "__custom") txt.value = String(selected || "");
+  syncPersonCustom(selId, txtId);
 }
 function teamOptions(selected){
   return Object.keys(TEAM_META).map(k => `<option value="${escapeHtml(k)}" ${k === selected ? 'selected' : ''}>${escapeHtml(TEAM_META[k].label)}</option>`).join("");
@@ -2585,6 +2623,7 @@ function updateAdminUI(){
   const outBtn = document.getElementById("logoutBtn");
   if(outBtn) outBtn.style.display = currentUser ? "" : "none";
   syncForms();
+  syncAbsPersonSelect();
 }
 
 // 모바일에서는 입력 폼이 화면을 다 차지하지 않도록 버튼 뒤로 접어둔다.
@@ -6254,7 +6293,7 @@ function toggleReportInclude(id){
 function addAbsence(){
   if(!canWrite()){ needLogin(); return; }
   const team = document.getElementById("absTeam").value;
-  const person = document.getElementById("absPerson").value.trim();
+  const person = readPerson("absPerson", "absPersonCustom");
   const type = document.getElementById("absType").value;
   const start = document.getElementById("absStart").value;
   const end = document.getElementById("absEnd").value || start;
@@ -6273,7 +6312,8 @@ function addAbsence(){
     createdById: currentUser ? currentUser.id : "", createdByName: currentUser ? currentUser.name : ""};
   absences.push(newAbsence);
   absenceDirty.set(newAbsence.id, newAbsence);
-  document.getElementById("absPerson").value = "";
+  fillPersonSelect("absPerson", "absPersonCustom", currentUser ? currentUser.name : "");
+  const apc = document.getElementById("absPersonCustom"); if(apc) apc.value = "";
   document.getElementById("absStart").value = "";
   document.getElementById("absEnd").value = "";
   document.getElementById("absMemo").value = "";
@@ -6295,7 +6335,8 @@ function openEditAbsence(id){
     </div>
     <div class="field">
       <label>이름</label>
-      <input type="text" id="modalAbsPerson" value="${escapeHtml(a.person)}">
+      <select id="modalAbsPerson" onchange="syncPersonCustom('modalAbsPerson','modalAbsPersonCustom')">${personOptions(a.person)}</select>
+      <input type="text" id="modalAbsPersonCustom" value="${escapeHtml(a.person)}" placeholder="이름 직접 입력" style="display:${users.some(u => u.name === String(a.person || '').trim()) ? 'none' : ''};margin-top:6px;">
     </div>
     <div class="field">
       <label>유형</label>
@@ -6356,7 +6397,7 @@ function saveAbsenceEdit(id){
   if(!canEditAbsence(a)){ alert("본인이 등록한 일정만 수정할 수 있습니다."); return; }
   const start = document.getElementById("modalAbsStart").value;
   const end = document.getElementById("modalAbsEnd").value || start;
-  const person = document.getElementById("modalAbsPerson").value.trim();
+  const person = readPerson("modalAbsPerson", "modalAbsPersonCustom");
   if(!person || !start){
     alert("이름과 시작일을 입력해주세요.");
     return;
