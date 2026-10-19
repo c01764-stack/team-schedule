@@ -2860,7 +2860,7 @@
       "createdAt": "2026-10-15T07:00:09.472Z",
       "updatedAt": "2026-10-15T07:00:09.472Z",
       "readAt": "2026-10-15T07:00:12.159Z",
-      "doneAt": null,
+      "doneAt": "2026-10-19T00:30:12.013Z",
       "comments": [
         {
           "id": "c_tl47t3alg",
@@ -2972,14 +2972,6 @@
     }
   ],
   "logs": [
-    {
-      "id": "l_tvky4omcomtqispkv",
-      "at": "2026-09-07T00:46:31.039Z",
-      "userId": "c01764",
-      "name": "천재우",
-      "type": "login",
-      "message": "로그인"
-    },
     {
       "id": "l_t1ya0s6vhmtqit00k",
       "at": "2026-09-07T00:46:44.564Z",
@@ -7771,6 +7763,14 @@
       "name": "천재우",
       "type": "change",
       "message": "전달사항 댓글: 천재우"
+    },
+    {
+      "id": "l_t06kw6zk5mveipi5v",
+      "at": "2026-10-19T00:30:12.019Z",
+      "userId": "c01764",
+      "name": "천재우",
+      "type": "change",
+      "message": "개인 전달사항 완료: 천재우"
     }
   ]
 }
