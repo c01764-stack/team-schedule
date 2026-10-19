@@ -1940,6 +1940,40 @@
           "byName": "오혜지"
         }
       ]
+    },
+    {
+      "id": "tppnpuyvy",
+      "team": "edu",
+      "title": "휴넷 교육 운영",
+      "owner": "오혜지",
+      "ownerId": "c05651",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-10-31",
+      "progress": 50,
+      "memo": "",
+      "notes": [
+        {
+          "id": "ta0xmatko",
+          "at": "2026-10-19T08:58:48.825Z",
+          "byUserId": "c05651",
+          "byName": "오혜지",
+          "text": "10월 필수교육 이수율 / 11월 필수 및 추천교육 준비"
+        }
+      ],
+      "dueHistory": [],
+      "includeInReport": true,
+      "createdAt": "2026-10-19T08:58:48.825Z",
+      "createdById": "c05651",
+      "createdByName": "오혜지",
+      "progressHistory": [
+        {
+          "at": "2026-10-19T08:58:48.825Z",
+          "p": 50,
+          "byUserId": "c05651",
+          "byName": "오혜지"
+        }
+      ]
     }
   ],
   "absences": [
@@ -3118,14 +3152,6 @@
     }
   ],
   "logs": [
-    {
-      "id": "l_tgdf5vw9zmtqow4wb",
-      "at": "2026-09-07T03:37:08.555Z",
-      "userId": "c00000",
-      "name": "박보검(테스트)",
-      "type": "login",
-      "message": "로그인"
-    },
     {
       "id": "l_ti899oudymtqshpnd",
       "at": "2026-09-07T05:17:54.073Z",
@@ -7917,6 +7943,14 @@
       "name": "천재우",
       "type": "change",
       "message": "진행율 수정: 회사소개서 제작 → 40%"
+    },
+    {
+      "id": "l_tklec4ye0mvf0vl34",
+      "at": "2026-10-19T08:58:48.832Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "업무 추가: 휴넷 교육 운영"
     }
   ]
 }
