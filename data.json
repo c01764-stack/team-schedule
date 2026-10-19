@@ -1908,6 +1908,32 @@
           "byName": "천재우"
         }
       ]
+    },
+    {
+      "id": "thaa6sqpo",
+      "team": "edu",
+      "title": "법정의무교육",
+      "owner": "오혜지",
+      "ownerId": "c05651",
+      "owner2": "",
+      "owner2Id": "",
+      "due": "2026-10-19",
+      "progress": 90,
+      "memo": "",
+      "notes": [],
+      "dueHistory": [],
+      "includeInReport": true,
+      "createdAt": "2026-10-19T08:39:03.283Z",
+      "createdById": "c05651",
+      "createdByName": "오혜지",
+      "progressHistory": [
+        {
+          "at": "2026-10-19T08:39:03.283Z",
+          "p": 90,
+          "byUserId": "c05651",
+          "byName": "오혜지"
+        }
+      ]
     }
   ],
   "absences": [
@@ -3060,14 +3086,6 @@
     }
   ],
   "logs": [
-    {
-      "id": "l_twaheixvkmtqldrcx",
-      "at": "2026-09-07T01:58:52.353Z",
-      "userId": "c05651",
-      "name": "오혜지",
-      "type": "change",
-      "message": "일정 수정: 오혜지"
-    },
     {
       "id": "l_tcweamx8wmtqmfgvs",
       "at": "2026-09-07T02:28:11.704Z",
@@ -7859,6 +7877,14 @@
       "name": "천재우",
       "type": "change",
       "message": "기타 내용 추가: SKT 워크숍 외부 강사 섭외 — \"10/19 - 능률협회, 강사야 리스트 확인 - 리스트…\""
+    },
+    {
+      "id": "l_t8hwei60ymvf066bt",
+      "at": "2026-10-19T08:39:03.305Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "업무 추가: 법정의무교육"
     }
   ]
 }
