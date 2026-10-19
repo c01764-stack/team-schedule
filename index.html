@@ -1653,7 +1653,7 @@
         <button class="icon-btn" id="logoutBtn" onclick="logout()" title="로그아웃">⏻</button>
         <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" title="디자인 전환">✨</button>
         <button class="icon-btn install-btn" id="installBtn" onclick="installApp()" title="이 대시보드를 앱처럼 홈 화면에 설치" style="display:none;">앱 설치</button>
-        <button class="icon-btn" onclick="openSettings()" title="GitHub 동기화 설정">⚙</button>
+        <button class="icon-btn" onclick="openSettings()" title="연결 정보">⚙</button>
       </div>
     </div>
   </header>
@@ -1667,8 +1667,8 @@
   </nav>
 
   <div class="setup-banner" id="setupBanner" style="display:none;">
-    지금은 <b>보기 전용</b>입니다. 확인 체크·댓글·업무 입력을 저장하려면 GitHub 토큰이 필요합니다.
-    <button onclick="openSettings()">토큰 입력하기</button>
+    로그인하면 확인 체크·댓글·업무 입력을 저장할 수 있습니다.
+    <button onclick="renderAuthGate()">로그인</button>
   </div>
 
   <div class="absence-banner" id="absenceBanner"></div>
@@ -1786,7 +1786,6 @@
 </div>
 
 <script>
-const GH_CONFIG_KEY = "ghSyncConfig_v1";
 const TEAM_META = {
   safety: {label:"안전", color:"var(--safety)", cls:"safety"},
   edu: {label:"교육", color:"var(--edu)", cls:"edu"},
@@ -1880,91 +1879,47 @@ function goCurrentWeek(){
   weekState.monday = mondayOf(new Date());
   renderContent();
 }
-// 이 대시보드가 바라보는 저장소는 하나로 고정돼 있다. 그래서 저장소 정보는
-// 코드에 내장해두고, 처음 들어오는 사람도 아무 설정 없이 바로 로그인 화면을 본다.
-// (public 저장소라 읽기는 토큰이 필요 없다. 토큰은 "저장"할 때만 쓴다.)
-const DEFAULT_GH = { owner: "c01764-stack", repo: "team-schedule", path: "data.json", branch: "main", token: "" };
+// ============================================================
+//  저장소: Supabase (2026-10-19 전환)
+//  ------------------------------------------------------------
+//  예전에는 GitHub 저장소의 data.json 한 파일을 통째로 읽고 썼다.
+//  이제는 Supabase(빌딩정보와 같은 프로젝트, ts_ 테이블)에 저장한다.
+//   - 읽기: RPC ts_load()  → 예전 data.json 과 같은 모양 {tasks, absences, ...}
+//   - 쓰기: RPC ts_save(p) → 화면이 추적한 변경(dirty)만 종류별로 보내고,
+//           권한(관리자/담당자/본인)은 서버가 확인한다. 화면의 제한은 안내일 뿐이다.
+//   - 로그인: Supabase Auth (사번@bldg.local + 비밀번호). 빌딩정보·허브와 같은 계정 체계.
+//  GitHub 토큰은 더 이상 쓰지 않는다. 저장소에 data.json 도 없다.
+// ============================================================
+const SB_URL = "https://dbymktwxokbvfshlztrg.supabase.co";
+const SB_KEY = "sb_publishable_RHDgmlGV-m946etnPHfXaw_vy2u8uCp";
+const SB_DOMAIN = "bldg.local";
+const SB_ADMIN_FN = SB_URL + "/functions/v1/ts-admin";
 
-let ghConfig = null;
-try{ ghConfig = JSON.parse(localStorage.getItem(GH_CONFIG_KEY) || "null"); }catch(e){ ghConfig = null; }
-// 저장된 설정이 없으면 기본 저장소로 시작한다(토큰 없이 읽기 전용).
-// 예전에 저장해둔 설정이 있으면 그대로 쓰되, 빠진 항목만 기본값으로 채운다.
-ghConfig = Object.assign({}, DEFAULT_GH, ghConfig || {});
-if(!ghConfig.owner) ghConfig.owner = DEFAULT_GH.owner;
-if(!ghConfig.repo)  ghConfig.repo  = DEFAULT_GH.repo;
-if(!ghConfig.path)  ghConfig.path  = DEFAULT_GH.path;
-if(!ghConfig.branch) ghConfig.branch = DEFAULT_GH.branch;
-let fileSha = null;
 let isSaving = false;
-// 원격 데이터를 "한 번이라도 제대로 읽었는가". 읽지 못한 상태에서는
-// 계정 생성 화면을 띄우지도, 저장하지도 않는다. 읽기에 실패한 것을
-// "데이터가 없다"로 착각해서 기존 파일을 덮어쓰는 사고를 막기 위한 안전장치다.
+// 서버 데이터를 "한 번이라도 제대로 읽었는가". 읽지 못한 상태에서는 저장하지 않는다.
 let dataLoaded = false;
 let loadError = null;
 let autoRefreshTimer = null;
-// 마지막으로 원격 데이터를 읽은 시각. 토큰 없이(익명으로) 읽을 때는 GitHub 가
-// 시간당 60회로 제한하므로, 자동 새로고침 간격을 늘리는 데 쓴다.
 let lastRemoteReadAt = 0;
+let sbMe = null;             // ts_load 가 돌려준 내 계정 {id, name, role, pwTemp}
 
-// isAdmin 은 이제 로그인한 계정의 역할(role === 'admin')로 결정된다.
-// 예전의 하드코딩 비밀번호 방식은 제거됐다.
+// isAdmin 은 로그인한 계정의 역할(role === 'admin')로 결정된다.
 let isAdmin = false;
 
-// ============================================================
-//  계정 / 로그인
-//  ------------------------------------------------------------
-//  ※ 이 앱에는 서버가 없다. 로그인은 data.json 안의 계정 목록과
-//    브라우저에서 대조하는 "신원 구분용" 장치이지, 외부인 차단
-//    수단이 아니다. data.json 자체는 저장소가 public 인 이상
-//    URL 을 아는 사람이면 누구나 내려받을 수 있다.
-//    비밀번호는 평문이 아니라 PBKDF2-SHA256(15만회) 해시로만
-//    저장하지만, 다른 서비스와 같은 비밀번호는 쓰지 말 것.
-// ============================================================
-const AUTH_KEY = "authSession_v1";
-const PBKDF2_ITER = 150000;
-const LEGACY_ADMIN_KEY = "isAdminUnlocked_v1"; // 예전 잠금 흔적 정리용
+// 로그인했는가 = 저장할 수 있는가 (예전의 "토큰이 있는가" 자리)
+function canWrite(){ return !!currentUser; }
+function needLogin(){ alert("로그인이 필요합니다."); renderAuthGate(); }
 
-let users = [];          // [{id, name, role, salt, hash, iter, createdAt, pwTemp}]
+// ============================================================
+//  계정 / 로그인 (Supabase Auth)
+// ============================================================
+const AUTH_KEY = "tsAuthSession_v2";
+const LEGACY_AUTH_KEYS = ["authSession_v1", "ghSyncConfig_v1"];   // 예전 판 흔적 정리용
+const LEGACY_ADMIN_KEY = "isAdminUnlocked_v1";
+
+let users = [];          // [{id, name, role, pwTemp, createdAt}]  (서버 ts_members, 비밀번호 정보 없음)
 let currentUser = null;  // {id, name, role}
-// 계정 목록 전체가 아니라 "내가 바꾼 계정"만 추적한다. 두 사람이 동시에
-// 비밀번호를 바꿔도 서로의 변경이 사라지지 않게 하기 위해서다.
-let userDirty = new Map(); // userId -> 계정객체 | 'DELETE'
-
-function bytesToHex(bytes){
-  return Array.from(bytes).map(b => b.toString(16).padStart(2,"0")).join("");
-}
-function hexToBytes(hex){
-  const out = new Uint8Array(hex.length / 2);
-  for(let i = 0; i < out.length; i++) out[i] = parseInt(hex.substr(i*2, 2), 16);
-  return out;
-}
-function randomSaltHex(){
-  return bytesToHex(crypto.getRandomValues(new Uint8Array(16)));
-}
-
-// 브라우저 내장 PBKDF2 (네이티브라 15만회도 순식간에 끝난다)
-async function derivePasswordHash(password, saltHex, iter){
-  const key = await crypto.subtle.importKey(
-    "raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]
-  );
-  const bits = await crypto.subtle.deriveBits(
-    { name:"PBKDF2", salt: hexToBytes(saltHex), iterations: iter, hash:"SHA-256" },
-    key, 256
-  );
-  return bytesToHex(new Uint8Array(bits));
-}
-
-async function makeCredential(password){
-  const salt = randomSaltHex();
-  const hash = await derivePasswordHash(password, salt, PBKDF2_ITER);
-  return { salt, hash, iter: PBKDF2_ITER };
-}
-
-async function verifyPassword(user, password){
-  if(!user || !user.salt || !user.hash) return false;
-  const hash = await derivePasswordHash(password, user.salt, user.iter || PBKDF2_ITER);
-  return hash === user.hash;
-}
+let userDirty = new Map(); // 호환용(이제 계정 변경은 서버 함수가 바로 처리한다)
 
 function findUser(id){
   const key = String(id || "").trim().toLowerCase();
@@ -1973,46 +1928,120 @@ function findUser(id){
 
 // 로그인은 24시간 유지된다. 로그인한 시각(at)을 함께 저장해두고,
 // 하루가 지난 세션은 읽는 순간 만료 처리해서 다시 로그인 화면을 띄운다.
-// (하루 안에는 새로고침·탭 닫았다 다시 열기·브라우저 재시작 모두 그대로 유지)
-// 예전 판에는 만료가 아예 없어서 "한 번 로그인하면 영원히 통과"였다.
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
 
 function loadSession(){
   try{
     const raw = JSON.parse(localStorage.getItem(AUTH_KEY) || "null");
-    if(!raw || !raw.userId) return null;
+    if(!raw || !raw.userId || !raw.access_token || !raw.refresh_token) return null;
     const at = Date.parse(raw.at || "");
-    // at 이 없거나(예전 판 세션) 하루가 지났으면 만료다.
     if(!at || Date.now() - at >= SESSION_TTL_MS){ clearSession(); return null; }
     return raw;
   }catch(e){ return null; }
 }
-function saveSession(user){
-  try{
-    localStorage.setItem(AUTH_KEY, JSON.stringify({
-      userId: user.id, name: user.name, role: user.role, at: new Date().toISOString()
-    }));
-  }catch(e){ /* 시크릿 모드 등에서 막히면 이번 탭에서만 유지되지 않을 뿐이다 */ }
+function saveSession(sess){
+  try{ localStorage.setItem(AUTH_KEY, JSON.stringify(sess)); }
+  catch(e){ /* 시크릿 모드 등에서 막히면 이번 탭에서만 유지되지 않을 뿐이다 */ }
 }
 function clearSession(){
   try{ localStorage.removeItem(AUTH_KEY); }catch(e){}
-  try{ sessionStorage.removeItem(AUTH_KEY); }catch(e){}   // 이전 판 흔적 정리
+  try{ LEGACY_AUTH_KEYS.forEach(k => localStorage.removeItem(k)); sessionStorage.removeItem("authSession_v1"); }catch(e){}
 }
 
-// 저장된 세션의 계정이 아직 살아있는지 확인하고 currentUser 를 맞춘다.
-// (관리자가 계정을 지웠거나 역할을 바꿨으면 여기서 반영된다)
+// Supabase Auth 호출(세션 없이)
+async function sbAuthFetch(path, body, token){
+  const res = await fetch(SB_URL + "/auth/v1" + path, {
+    method: body ? "POST" : "GET",
+    headers: { "apikey": SB_KEY, "Content-Type": "application/json", ...(token ? { "Authorization": "Bearer " + token } : {}) },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  let json = null;
+  try{ json = await res.json(); }catch(e){}
+  if(!res.ok){
+    const msg = (json && (json.msg || json.error_description || json.message || json.error)) || ("HTTP " + res.status);
+    const err = new Error(msg); err.status = res.status; throw err;
+  }
+  return json;
+}
+// 사번·비밀번호로 토큰을 받는다. 세션은 건드리지 않는다(비밀번호 확인용으로도 쓴다).
+async function sbPasswordGrant(id, pw){
+  return sbAuthFetch("/token?grant_type=password", { email: String(id).trim().toLowerCase() + "@" + SB_DOMAIN, password: pw });
+}
+// 만료가 가까우면 refresh_token 으로 갱신한다. 갱신에 실패하면(만료·회수) 세션을 지운다.
+let sbRefreshing = null;
+async function sbAccessToken(){
+  const sess = loadSession();
+  if(!sess) return null;
+  if(sess.expires_at && sess.expires_at * 1000 - Date.now() > 60000) return sess.access_token;
+  if(!sbRefreshing){
+    sbRefreshing = (async () => {
+      try{
+        const tok = await sbAuthFetch("/token?grant_type=refresh_token", { refresh_token: sess.refresh_token });
+        const next = Object.assign({}, sess, { access_token: tok.access_token, refresh_token: tok.refresh_token, expires_at: tok.expires_at });
+        saveSession(next);
+        return next.access_token;
+      }catch(e){
+        if(e.status === 400 || e.status === 401 || e.status === 403){ clearSession(); return null; }
+        return sess.access_token;   // 네트워크 문제면 일단 지금 토큰으로 시도한다
+      }finally{ sbRefreshing = null; }
+    })();
+  }
+  return sbRefreshing;
+}
+// 로그인한 사람으로 RPC 호출. 401 이면 세션이 끝난 것 → 로그인 화면으로.
+async function sbRpc(fn, args){
+  const token = await sbAccessToken();
+  if(!token){ const err = new Error("로그인이 필요합니다."); err.auth = true; throw err; }
+  const res = await fetch(SB_URL + "/rest/v1/rpc/" + fn, {
+    method: "POST", cache: "no-store",
+    headers: { "apikey": SB_KEY, "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+    body: JSON.stringify(args || {})
+  });
+  if(res.status === 204) return null;
+  let json = null;
+  try{ json = await res.json(); }catch(e){}
+  if(!res.ok){
+    const msg = (json && (json.message || json.hint || json.error)) || ("HTTP " + res.status);
+    const err = new Error(msg); err.status = res.status;
+    if(res.status === 401) err.auth = true;
+    // 42501 = 서버가 권한 없음으로 거절한 것. 재시도해도 소용없다.
+    if(json && json.code === "42501") err.forbidden = true;
+    if(res.status === 429 || res.status >= 500) err.transient = true;
+    throw err;
+  }
+  return json;
+}
+// 계정 관리 서버 함수(관리자 전용)
+async function sbAdmin(action, payload){
+  const token = await sbAccessToken();
+  if(!token){ const err = new Error("로그인이 필요합니다."); err.auth = true; throw err; }
+  const res = await fetch(SB_ADMIN_FN, {
+    method: "POST",
+    headers: { "apikey": SB_KEY, "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+    body: JSON.stringify(Object.assign({ action }, payload || {}))
+  });
+  let json = null;
+  try{ json = await res.json(); }catch(e){}
+  if(!res.ok || !json || json.error){
+    throw new Error((json && json.error) || ("HTTP " + res.status));
+  }
+  return json;
+}
+// 세션이 끝났을 때(만료·다른 곳에서 비번 변경 등) 로그인 화면으로 돌려보낸다
+function handleAuthLost(){
+  clearSession();
+  currentUser = null; isAdmin = false; sbMe = null;
+  dataLoaded = false; loadError = null;
+  render();
+}
+
+// 저장된 세션과 서버가 알려준 내 계정(sbMe)으로 currentUser 를 맞춘다.
 function syncCurrentUser(){
   const sess = loadSession();
   if(!sess){ currentUser = null; isAdmin = false; return; }
-  if(!users.length){
-    // 아직 원격 데이터를 못 받아온 단계다. 여기서 세션을 지워버리면
-    // 새로고침할 때마다 다시 로그인해야 하므로, 계정 목록이 올 때까지 기다린다.
-    currentUser = null; isAdmin = false; return;
-  }
-  const u = findUser(sess.userId);
-  if(!u){ currentUser = null; isAdmin = false; clearSession(); return; }
-  currentUser = { id: u.id, name: u.name, role: u.role };
-  isAdmin = u.role === "admin";
+  if(!sbMe){ currentUser = null; isAdmin = false; return; }   // 아직 서버 데이터를 못 받은 단계
+  currentUser = { id: sbMe.id, name: sbMe.name, role: sbMe.role };
+  isAdmin = sbMe.role === "admin";
 }
 
 function logout(){
@@ -2020,22 +2049,25 @@ function logout(){
   schedPopupShownFor = null;
   resetMemoView();
   if(!confirm("로그아웃할까요?")) return;
+  const sess = loadSession();
+  if(sess){ sbAuthFetch("/logout", {}, sess.access_token).catch(()=>{}); }
   clearSession();
   currentUser = null;
   isAdmin = false;
+  sbMe = null;
+  dataLoaded = false;
+  if(autoRefreshTimer){ clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
   render();
 }
 
 // ---------- 로그인 게이트 화면 ----------
-// 'nosetup'  : GitHub 동기화 설정 전
-// 'nousers'  : 계정이 하나도 없음 -> 최초 관리자 계정 생성
-// 'login'    : 로그인 필요
-// 'ok'       : 통과
+// 'login'     : 세션 없음 → 로그인 필요
+// 'loading'   : 세션은 있고 서버 데이터를 불러오는 중
+// 'loaderror' : 불러오기 실패
+// 'ok'        : 통과
 function authState(){
-  if(!ghConfig) return "nosetup";
-  // 아직 한 번도 못 읽었다 — 불러오는 중인지, 실패한 것인지 구분한다.
+  if(!loadSession()) return "login";
   if(!dataLoaded) return loadError ? "loaderror" : "loading";
-  if(!users.length) return "nousers";
   if(!currentUser) return "login";
   return "ok";
 }
@@ -2063,15 +2095,6 @@ function renderAuthGate(){
     return false;
   }
 
-  if(state === "nosetup"){
-    box.innerHTML = `
-      <h2>업무관리 대시보드</h2>
-      <p class="auth-sub">먼저 GitHub 동기화 설정이 필요합니다. 저장소 정보와 토큰을 입력하면 팀 데이터를 불러옵니다.</p>
-      <button class="btn-primary" onclick="openSettings()">동기화 설정하기</button>
-    `;
-    return false;
-  }
-
   if(state === "loaderror"){
     // 앱으로 설치해두면 오프라인에서도 화면은 뜬다. 그때는 원인을 분명히 알려준다.
     if(!navigator.onLine){
@@ -2079,7 +2102,7 @@ function renderAuthGate(){
         <h2>오프라인입니다</h2>
         <p class="auth-sub">
           인터넷에 연결되면 자동으로 최신 내용을 불러옵니다.<br>
-          <b>기존 데이터는 저장소에 그대로 있습니다.</b>
+          <b>기존 데이터는 서버에 그대로 있습니다.</b>
         </p>
         <button class="btn-primary" onclick="loadInitial()">다시 시도</button>
       `;
@@ -2089,55 +2112,16 @@ function renderAuthGate(){
     box.innerHTML = `
       <h2>데이터를 불러오지 못했습니다</h2>
       <p class="auth-sub">
-        저장소의 데이터 파일을 읽지 못했습니다. 잠시 후 다시 시도해주세요.<br>
-        <b>기존 데이터는 저장소에 그대로 있습니다.</b> 이 화면에서는 아무것도 저장되지 않으니 안심하셔도 됩니다.
+        서버에서 데이터를 읽지 못했습니다. 잠시 후 다시 시도해주세요.<br>
+        <b>기존 데이터는 서버에 그대로 있습니다.</b> 이 화면에서는 아무것도 저장되지 않으니 안심하셔도 됩니다.
       </p>
       ${loadError ? `<div class="pw-warn">${escapeHtml(String(loadError))}</div>` : ''}
       <button class="btn-primary" onclick="loadInitial()">다시 불러오기</button>
       <div class="auth-foot">
-        인터넷 연결이나 토큰이 문제일 수 있습니다.
-        <button onclick="openSettings()">동기화 설정 열기</button>
+        인터넷 연결 문제이거나, 로그인이 만료됐을 수 있습니다.
+        <button onclick="handleAuthLost()">다시 로그인</button>
       </div>
     `;
-    return false;
-  }
-
-  if(state === "nousers"){
-    if(!ghConfig.token){
-      box.innerHTML = `
-        <h2>계정 만들기</h2>
-        <p class="auth-sub">아직 등록된 계정이 없습니다. 첫 관리자 계정을 만들려면 쓰기 권한이 있는 GitHub 토큰이 필요합니다.</p>
-        <button class="btn-primary" onclick="openSettings()">설정에서 토큰 입력하기</button>
-      `;
-      return false;
-    }
-    box.innerHTML = `
-      <h2>첫 관리자 계정 만들기</h2>
-      <p class="auth-sub">이 계정으로 업무·일정 등록과 팀원 계정 관리를 하게 됩니다. 만든 뒤에 팀원 계정을 추가할 수 있습니다.</p>
-      <div class="field">
-        <label>아이디</label>
-        <input type="text" id="setupId" placeholder="영문/숫자 (예: cjw)" autocomplete="username">
-      </div>
-      <div class="field">
-        <label>이름</label>
-        <input type="text" id="setupName" placeholder="화면에 표시될 이름 (예: 천재우)">
-      </div>
-      <div class="field">
-        <label>비밀번호</label>
-        <input type="password" id="setupPw" placeholder="8자 이상" autocomplete="new-password">
-      </div>
-      <div class="field">
-        <label>비밀번호 확인</label>
-        <input type="password" id="setupPw2" autocomplete="new-password">
-      </div>
-      <p class="auth-error" id="authError"></p>
-      <button class="btn-primary" id="setupBtn" onclick="createFirstAdmin()">관리자 계정 만들기</button>
-      <div class="auth-foot">
-        이 로그인은 <b>누가 쓰는지 구분하기 위한 것</b>입니다. 저장소가 public 이면 데이터 파일 자체는
-        주소를 아는 사람이 내려받을 수 있으니, 다른 곳에서 쓰는 비밀번호는 사용하지 마세요.
-      </div>
-    `;
-    setTimeout(()=>{ const el=document.getElementById("setupId"); if(el) el.focus(); }, 50);
     return false;
   }
 
@@ -2145,9 +2129,9 @@ function renderAuthGate(){
   const lastId = localStorage.getItem("lastLoginId") || "";
   box.innerHTML = `
     <h2>업무관리 대시보드</h2>
-    <p class="auth-sub">아이디와 비밀번호를 입력해주세요.</p>
+    <p class="auth-sub">사번과 비밀번호를 입력해주세요.</p>
     <div class="field">
-      <label>아이디</label>
+      <label>아이디(사번)</label>
       <input type="text" id="loginId" value="${escapeHtml(lastId)}" autocomplete="username">
     </div>
     <div class="field">
@@ -2158,8 +2142,8 @@ function renderAuthGate(){
     <button class="btn-primary" id="loginBtn" onclick="doLogin()">로그인</button>
     <div class="auth-foot">
       한 번 로그인하면 24시간 동안 유지되고, 그 뒤에는 다시 로그인해야 합니다.<br>
-      비밀번호를 잊으셨다면 관리자에게 초기화를 요청하세요.
-      <button onclick="openSettings()">동기화 설정</button>
+      비밀번호를 잊으셨다면 관리자에게 초기화를 요청하세요.<br>
+      빌딩정보·통합정보 허브와 같은 사번·비밀번호를 씁니다.
     </div>
   `;
   const idEl = document.getElementById("loginId");
@@ -2179,71 +2163,50 @@ async function doLogin(){
   const id = document.getElementById("loginId").value.trim();
   const pw = document.getElementById("loginPw").value;
   if(!id || !pw){ setAuthError("아이디와 비밀번호를 모두 입력해주세요."); return; }
-  const user = findUser(id);
   btn.disabled = true; btn.textContent = "확인 중...";
   setAuthError("");
-  let ok = false;
-  try{ ok = user ? await verifyPassword(user, pw) : false; }
-  catch(e){ setAuthError("이 브라우저에서는 로그인 처리를 할 수 없습니다: " + (e.message || e)); }
-  btn.disabled = false; btn.textContent = "로그인";
-  if(!ok){
-    setAuthError("아이디 또는 비밀번호가 올바르지 않습니다.");
+  let tok = null;
+  try{
+    tok = await sbPasswordGrant(id, pw);
+  }catch(e){
+    btn.disabled = false; btn.textContent = "로그인";
+    if(e.status === 400 || e.status === 401 || e.status === 403){
+      setAuthError("아이디 또는 비밀번호가 올바르지 않습니다.");
+    }else if(e.name === "TypeError"){
+      setAuthError("서버에 연결할 수 없습니다. 인터넷 연결을 확인해주세요.");
+    }else{
+      setAuthError("로그인에 실패했습니다: " + (e.message || e));
+    }
     const pwEl = document.getElementById("loginPw");
     if(pwEl){ pwEl.value = ""; pwEl.focus(); }
     return;
   }
-  localStorage.setItem("lastLoginId", user.id);
+  const loginId = id.toLowerCase();
+  saveSession({ userId: loginId, access_token: tok.access_token, refresh_token: tok.refresh_token,
+                expires_at: tok.expires_at, at: new Date().toISOString() });
+  localStorage.setItem("lastLoginId", loginId);
   localStorage.removeItem(LEGACY_ADMIN_KEY);
-  saveSession(user);
   // 사람이 바뀌면 개인 전달사항 접기·보기 범위를 새로 판단해야 한다
   resetMemoView();
-  syncCurrentUser();
-  render();
-  // 접속 기록. 토큰이 없으면 저장할 수 없으니 조용히 넘어간다.
-  if(ghConfig && ghConfig.token && dataLoaded){
-    addLog("login", "로그인");
-    persist("접속 기록: " + user.name, { noLog: true });
+  await loadInitial();
+  if(!dataLoaded){
+    // 토큰은 받았지만 데이터를 못 읽었다(팀원 명단에 없거나 네트워크). 화면이 원인을 보여준다.
+    return;
   }
-}
-
-async function createFirstAdmin(){
-  const btn = document.getElementById("setupBtn");
-  const id = document.getElementById("setupId").value.trim();
-  const name = document.getElementById("setupName").value.trim();
-  const pw = document.getElementById("setupPw").value;
-  const pw2 = document.getElementById("setupPw2").value;
-  if(!/^[A-Za-z0-9_.-]{3,20}$/.test(id)){ setAuthError("아이디는 영문·숫자 3~20자로 입력해주세요."); return; }
-  if(!name){ setAuthError("이름을 입력해주세요."); return; }
-  if(pw.length < 8){ setAuthError("비밀번호는 8자 이상으로 정해주세요."); return; }
-  if(pw !== pw2){ setAuthError("비밀번호 확인이 일치하지 않습니다."); return; }
-
-  btn.disabled = true; btn.textContent = "만드는 중...";
-  setAuthError("");
-  try{
-    const cred = await makeCredential(pw);
-    const admin = { id, name, role:"admin", ...cred, createdAt: new Date().toISOString(), pwTemp: false };
-    users = [admin];
-    userDirty.set(admin.id, admin);
-    localStorage.setItem("lastLoginId", id);
-    localStorage.removeItem(LEGACY_ADMIN_KEY);
-    saveSession({ id, name, role:"admin" });
-    syncCurrentUser();
-    const ok = await persist("관리자 계정 생성: " + name, { immediate: true });
-    if(!ok){
-      btn.disabled = false; btn.textContent = "관리자 계정 만들기";
-      setAuthError("계정을 저장하지 못했습니다. 잠시 후 [관리자 계정 만들기]를 다시 눌러주세요.");
-      return;
-    }
+  if(!currentUser){
+    clearSession();
+    loadError = null;
     render();
-  }catch(e){
-    btn.disabled = false; btn.textContent = "관리자 계정 만들기";
-    setAuthError("계정 생성에 실패했습니다: " + (e.message || e));
+    setAuthError("이 계정은 업무관리 대시보드 팀원으로 등록되어 있지 않습니다. 관리자에게 등록을 요청하세요.");
+    return;
   }
+  sbRpc("ts_touch_login", {}).catch(()=>{});
+  addLog("login", "로그인");
+  persist("접속 기록: " + currentUser.name, { noLog: true });
 }
 
 // ---------- 내 계정 (본인 비밀번호 변경) ----------
-// 관리자가 만들어준 초기 비밀번호를 쓰는 동안은 pwTemp 가 true 고,
-// 본인이 한 번 바꾸면 false 가 된다.
+// 관리자가 만들어준 초기 비밀번호를 쓰는 동안은 pwTemp 가 true 고, 본인이 한 번 바꾸면 false 가 된다.
 function usingTempPassword(){
   if(!currentUser) return false;
   const u = findUser(currentUser.id);
@@ -2252,8 +2215,7 @@ function usingTempPassword(){
 
 function openMyAccount(){
   if(!currentUser) return;
-  const u = findUser(currentUser.id);
-  if(!u) return;
+  const u = findUser(currentUser.id) || currentUser;
   const temp = !!u.pwTemp;
   openModal(`
     <h3>내 계정</h3>
@@ -2274,6 +2236,7 @@ function openMyAccount(){
       <input type="password" id="pwNew2" autocomplete="new-password">
     </div>
     <p class="auth-error" id="pwError"></p>
+    <p style="font-size:12px;color:var(--sub);margin:0;">이 비밀번호는 빌딩정보·통합정보 허브 등 같은 사번으로 쓰는 다른 시스템에도 함께 적용됩니다.</p>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeModal()">닫기</button>
       <button class="btn-primary" id="pwSaveBtn" onclick="changeMyPassword()">비밀번호 변경</button>
@@ -2286,8 +2249,6 @@ function openMyAccount(){
 
 async function changeMyPassword(){
   if(!currentUser) return;
-  const u = findUser(currentUser.id);
-  if(!u) return;
   const btn = document.getElementById("pwSaveBtn");
   const err = document.getElementById("pwError");
   const setErr = m => { if(err) err.textContent = m || ""; };
@@ -2300,31 +2261,37 @@ async function changeMyPassword(){
   if(nw.length < 8){ setErr("새 비밀번호는 8자 이상으로 정해주세요."); return; }
   if(nw !== nw2){ setErr("새 비밀번호 확인이 일치하지 않습니다."); return; }
   if(nw === cur){ setErr("지금 쓰는 비밀번호와 다르게 정해주세요."); return; }
-  if(!ghConfig || !ghConfig.token){
-    setErr("읽기 전용 모드에서는 비밀번호를 바꿀 수 없습니다. 설정(⚙)에서 토큰을 입력해주세요.");
-    return;
-  }
 
   btn.disabled = true; btn.textContent = "확인 중...";
   setErr("");
   try{
-    const ok = await verifyPassword(u, cur);
-    if(!ok){
+    // 현재 비밀번호 확인(세션은 그대로 둔다)
+    try{ await sbPasswordGrant(currentUser.id, cur); }
+    catch(e){
       btn.disabled = false; btn.textContent = "비밀번호 변경";
       setErr("현재 비밀번호가 올바르지 않습니다.");
       document.getElementById("pwCur").value = "";
       document.getElementById("pwCur").focus();
       return;
     }
-    const cred = await makeCredential(nw);
-    Object.assign(u, cred, { pwTemp: false, pwChangedAt: new Date().toISOString() });
-    userDirty.set(u.id, u);
-    const saved = await persist("비밀번호 변경: " + u.name, { immediate: true });
-    if(!saved){
-      btn.disabled = false; btn.textContent = "비밀번호 변경";
-      setErr("아직 저장되지 않았습니다. 화면 아래 [다시 시도]를 눌러주세요.");
-      return;
+    const token = await sbAccessToken();
+    if(!token) throw new Error("로그인이 만료되었습니다. 다시 로그인해주세요.");
+    const res = await fetch(SB_URL + "/auth/v1/user", {
+      method: "PUT",
+      headers: { "apikey": SB_KEY, "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+      body: JSON.stringify({ password: nw })
+    });
+    if(!res.ok){
+      let msg = "HTTP " + res.status;
+      try{ const j = await res.json(); msg = j.msg || j.message || j.error_description || msg; }catch(e){}
+      throw new Error(msg);
     }
+    await sbRpc("ts_pw_changed", {}).catch(()=>{});
+    const u = findUser(currentUser.id);
+    if(u){ u.pwTemp = false; u.pwChangedAt = new Date().toISOString(); }
+    if(sbMe) sbMe.pwTemp = false;
+    addLog("change", "비밀번호 변경");
+    persist("비밀번호 변경: " + currentUser.name, { noLog: true });
     closeModal();
     render();
     alert("비밀번호를 변경했습니다.");
@@ -2335,6 +2302,7 @@ async function changeMyPassword(){
 }
 
 // ---------- 팀원 계정 관리 (관리자 전용) ----------
+// 계정 생성·초기화·역할·삭제는 서버 함수(ts-admin)가 처리한다. 화면은 결과를 다시 읽어 보여준다.
 function openAccounts(){
   if(!isAdmin){ alert("관리자만 계정을 관리할 수 있습니다."); return; }
   const rows = users.map(u => `
@@ -2360,9 +2328,9 @@ function openAccounts(){
     <div class="acct-add">
       <h4>계정 추가</h4>
       <div class="acct-grid">
-        <div><label>아이디</label><input type="text" id="newAcctId" placeholder="영문/숫자"></div>
+        <div><label>아이디(사번)</label><input type="text" id="newAcctId" placeholder="예: c01234"></div>
         <div><label>이름</label><input type="text" id="newAcctName" placeholder="예: 이재혁"></div>
-        <div><label>초기 비밀번호</label><input type="text" id="newAcctPw" placeholder="8자 이상"></div>
+        <div><label>초기 비밀번호</label><input type="text" id="newAcctPw" placeholder="비우면 자동 생성"></div>
         <div><label>역할</label>
           <select id="newAcctRole" style="width:100%;padding:9px 10px;border:2px solid var(--border);border-radius:12px;font-size:14.5px;font-family:inherit;background:var(--card);color:var(--text);">
             <option value="member">팀원</option>
@@ -2370,6 +2338,7 @@ function openAccounts(){
           </select>
         </div>
       </div>
+      <p style="font-size:12px;color:var(--sub);margin:8px 0 0;">같은 사번으로 빌딩정보·허브 계정이 이미 있으면 그 계정을 그대로 쓰고(비밀번호 유지), 없으면 새로 만듭니다.</p>
       <p class="auth-error" id="acctError" style="margin-top:8px;"></p>
     </div>
     <div class="modal-actions">
@@ -2384,31 +2353,35 @@ function setAcctError(msg){
   if(el) el.textContent = msg || "";
 }
 
+// 계정 변경 뒤 서버 명단을 다시 읽는다(저장 안 된 내 변경은 그대로 유지)
+async function reloadAccounts(){
+  try{ await refreshFromRemote(); }catch(e){}
+}
+
 async function addAccount(){
   if(!isAdmin) return;
   const btn = document.getElementById("acctAddBtn");
-  const id = document.getElementById("newAcctId").value.trim();
+  const id = document.getElementById("newAcctId").value.trim().toLowerCase();
   const name = document.getElementById("newAcctName").value.trim();
   const pw = document.getElementById("newAcctPw").value;
   const role = document.getElementById("newAcctRole").value;
-  if(!/^[A-Za-z0-9_.-]{3,20}$/.test(id)){ setAcctError("아이디는 영문·숫자 3~20자로 입력해주세요."); return; }
+  if(!/^[a-z0-9][a-z0-9._-]{2,31}$/.test(id)){ setAcctError("아이디는 영문 소문자·숫자 3~32자로 입력해주세요."); return; }
   if(findUser(id)){ setAcctError("이미 있는 아이디입니다."); return; }
   if(!name){ setAcctError("이름을 입력해주세요."); return; }
-  if(pw.length < 8){ setAcctError("초기 비밀번호는 8자 이상으로 정해주세요."); return; }
+  if(pw && pw.length < 8){ setAcctError("초기 비밀번호는 8자 이상으로 정해주세요(비우면 자동 생성)."); return; }
 
   btn.disabled = true; btn.textContent = "추가 중...";
   try{
-    const cred = await makeCredential(pw);
-    const acct = { id, name, role, ...cred, createdAt: new Date().toISOString(), pwTemp: true };
-    users.push(acct);
-    userDirty.set(acct.id, acct);
-    const ok = await persist("계정 추가: " + name, { immediate: true });
+    const r = await sbAdmin("create", { login_id: id, name, role, password: pw || undefined });
+    await reloadAccounts();
     openAccounts();
-    if(ok){
-      alert(`${name}(${id}) 계정을 만들었습니다.\n초기 비밀번호를 본인에게 전달해주세요: ${pw}`);
+    if(r.existing){
+      alert(`${name}(${id}) 계정을 팀원으로 등록했습니다.\n이미 쓰던 계정(빌딩정보/허브)이라 비밀번호는 그대로입니다.`);
     }else{
-      alert(`${name}(${id}) 계정을 아직 저장하지 못했습니다.\n화면 아래 [다시 시도]를 눌러 저장한 뒤에 비밀번호를 전달해주세요.`);
+      alert(`${name}(${id}) 계정을 만들었습니다.\n초기 비밀번호를 본인에게 전달해주세요: ${r.password}`);
     }
+    addLog("change", "계정 추가: " + name);
+    persist("계정 추가: " + name, { noLog: true });
   }catch(e){
     btn.disabled = false; btn.textContent = "계정 추가";
     setAcctError("추가 실패: " + (e.message || e));
@@ -2419,17 +2392,19 @@ async function resetAccountPassword(id){
   if(!isAdmin) return;
   const u = findUser(id);
   if(!u) return;
-  const pw = prompt(`${u.name}(${u.id})의 새 비밀번호를 입력하세요. (8자 이상)`);
+  const pw = prompt(`${u.name}(${u.id})의 새 비밀번호를 입력하세요. (8자 이상, 비우면 자동 생성)`);
   if(pw === null) return;
-  if(pw.length < 8){ alert("비밀번호는 8자 이상이어야 합니다."); return; }
-  const cred = await makeCredential(pw);
-  Object.assign(u, cred, { pwTemp: true });
-  userDirty.set(u.id, u);
-  const ok = await persist("비밀번호 초기화: " + u.name, { immediate: true });
-  openAccounts();
-  alert(ok
-    ? `${u.name}의 비밀번호를 변경했습니다.\n본인에게 전달해주세요: ${pw}`
-    : `${u.name}의 새 비밀번호를 아직 저장하지 못했습니다.\n화면 아래 [다시 시도]를 눌러 저장한 뒤에 전달해주세요.`);
+  if(pw && pw.length < 8){ alert("비밀번호는 8자 이상이어야 합니다."); return; }
+  try{
+    const r = await sbAdmin("reset_password", { login_id: u.id, password: pw || undefined });
+    await reloadAccounts();
+    openAccounts();
+    alert(`${u.name}의 비밀번호를 변경했습니다.\n본인에게 전달해주세요: ${r.password}`);
+    addLog("change", "비밀번호 초기화: " + u.name);
+    persist("비밀번호 초기화: " + u.name, { noLog: true });
+  }catch(e){
+    alert("비밀번호 초기화에 실패했습니다: " + (e.message || e));
+  }
 }
 
 async function toggleAccountRole(id){
@@ -2442,11 +2417,15 @@ async function toggleAccountRole(id){
     return;
   }
   if(!confirm(`${u.name}을(를) ${next === "admin" ? "관리자" : "팀원"}으로 바꿀까요?`)) return;
-  u.role = next;
-  userDirty.set(u.id, u);
-  syncCurrentUser();
-  await persist("역할 변경: " + u.name, { immediate: true });
-  openAccounts();
+  try{
+    await sbAdmin("set_role", { login_id: u.id, role: next });
+    await reloadAccounts();
+    openAccounts();
+    addLog("change", "역할 변경: " + u.name);
+    persist("역할 변경: " + u.name, { noLog: true });
+  }catch(e){
+    alert("역할 변경에 실패했습니다: " + (e.message || e));
+  }
 }
 
 async function deleteAccount(id){
@@ -2463,16 +2442,17 @@ async function deleteAccount(id){
     `· 주요 전달사항 확인 기록에서 빠집니다.` +
     (memoCount ? `\n· ${u.name} 앞으로 온 개인 전달사항 ${memoCount}건은 남아있지만, 더 이상 확인 체크를 할 수 없습니다. 필요 없으면 직접 삭제해주세요.` : '')
   )) return;
-  users = users.filter(x => x.id !== u.id);
-  if(notice && Array.isArray(notice.reads)){
-    notice.reads = notice.reads.filter(r => r.userId !== u.id);
-    noticeTextDirty = true;
-  }
-  userDirty.set(u.id, 'DELETE');
   const wasMe = currentUser && currentUser.id === u.id;
-  await persist("계정 삭제: " + u.name, { immediate: true });
-  if(wasMe){ clearSession(); syncCurrentUser(); render(); return; }
-  openAccounts();
+  try{
+    await sbAdmin("delete", { login_id: u.id });
+    addLog("change", "계정 삭제: " + u.name);
+    await persist("계정 삭제: " + u.name, { immediate: true, noLog: true });
+    if(wasMe){ handleAuthLost(); return; }
+    await reloadAccounts();
+    openAccounts();
+  }catch(e){
+    alert("계정 삭제에 실패했습니다: " + (e.message || e));
+  }
 }
 
 // 디자인 전환 (2026-10-13 개편): 기본은 B 아날로그(paper), 버튼을 누르면 A 정돈형(clean)과 오간다.
@@ -2565,45 +2545,18 @@ function toggleAddForm(formId){
 
 window.addEventListener("resize", syncForms);
 
-function ghUrl(){
-  const pathParts = ghConfig.path.split('/').filter(Boolean).map(encodeURIComponent).join('/');
-  return `https://api.github.com/repos/${encodeURIComponent(ghConfig.owner)}/${encodeURIComponent(ghConfig.repo)}/contents/${pathParts}`;
-}
-
+// 서버에서 전체를 읽어 예전 data.json 과 같은 모양으로 돌려준다
 async function fetchRemoteRaw(){
-  // 브라우저/중간 캐시가 예전 응답을 돌려주면 낡은 sha 로 저장을 시도하게 되고,
-  // 그러면 재시도를 아무리 해도 계속 충돌한다. 그래서 캐시를 우회한다.
-  //
-  // 주의: 여기에 Cache-Control / Pragma 같은 요청 헤더를 넣으면 안 된다.
-  // GitHub API 가 CORS 로 허용하는 요청 헤더 목록에 그 둘이 없어서, 넣는 순간
-  // 사전 요청(preflight)이 거부되고 모든 읽기가 실패한다.
-  // 캐시 우회는 URL 뒤의 타임스탬프와 fetch 의 cache 옵션만으로 충분하다.
-  const headers = { "Accept": "application/vnd.github+json" };
-  if(ghConfig.token) headers["Authorization"] = `Bearer ${ghConfig.token}`;
-  const url = `${ghUrl()}?ref=${encodeURIComponent(ghConfig.branch || 'main')}&_=${Date.now()}`;
-  const res = await fetch(url, { headers, cache: "no-store" });
-  if(res.status === 404){
-    return { tasks: [], absences: [], reports: [], notice: normalizeNotice(null), users: [], memos: [], routines: [], logs: [], sha: null, isNew: true };
-  }
-  if(res.status === 401 || res.status === 403){
-    // 토큰 없이 읽을 때는 시간당 횟수 제한(60회)에 걸릴 수 있다. 원인을 구분해서 알려준다.
-    const remaining = res.headers.get("X-RateLimit-Remaining");
-    if(!ghConfig.token && remaining === "0"){
-      throw new Error("GitHub 조회 횟수 제한에 걸렸습니다. 잠시 후 다시 시도하거나, 설정(⚙)에서 토큰을 넣으면 제한이 크게 늘어납니다.");
-    }
-    throw new Error("토큰이 유효하지 않거나 권한이 없습니다. 설정을 확인해주세요.");
-  }
-  lastRemoteReadAt = Date.now();
-  if(!res.ok){
-    throw new Error(`불러오기 실패 (HTTP ${res.status})`);
-  }
-  const json = await res.json();
   let data;
   try{
-    data = JSON.parse(b64ToUtf8(json.content.replace(/\n/g, '')));
-  }catch(e){
-    throw new Error("데이터 파일 형식이 올바르지 않습니다.");
+    data = await sbRpc("ts_load", {});
+  }catch(err){
+    if(err.auth){ handleAuthLost(); }
+    throw err;
   }
+  lastRemoteReadAt = Date.now();
+  if(!data || typeof data !== "object") throw new Error("서버 응답 형식이 올바르지 않습니다.");
+  sbMe = data.me || null;
   const freshTasks = Array.isArray(data.tasks) ? data.tasks : [];
   const freshAbsences = Array.isArray(data.absences) ? data.absences : [];
   const freshReports = Array.isArray(data.reports) ? data.reports : [];
@@ -2616,10 +2569,10 @@ async function fetchRemoteRaw(){
   freshAbsences.forEach(a => { if(!TYPE_META[a.type]) a.type = LEGACY_TYPE_MAP[a.type] || "etc"; });
   return { tasks: freshTasks, absences: freshAbsences, reports: freshReports,
            notice: freshNotice, users: freshUsers, memos: freshMemos, routines: freshRoutines,
-           logs: freshLogs, sha: json.sha, isNew: false };
+           logs: freshLogs, isNew: false };
 }
 
-// 최초 로드/설정 변경 때만 쓰는 "전체 교체". 저장 안 된 로컬 변경이 있으면 사라지므로
+// 최초 로드 때만 쓰는 "전체 교체". 저장 안 된 로컬 변경이 있으면 사라지므로
 // 새로고침 경로에서는 절대 쓰지 말 것 (그쪽은 refreshFromRemote 를 쓴다).
 async function loadRemoteData(){
   const fresh = await fetchRemoteRaw();
@@ -2633,7 +2586,6 @@ async function loadRemoteData(){
   memos = fresh.memos;
   routines = fresh.routines || [];
   logs = fresh.logs || [];
-  fileSha = fresh.sha;
   taskDirty.clear();
   taskNoteDirty.clear();
   absenceDirty.clear();
@@ -2645,7 +2597,7 @@ async function loadRemoteData(){
   myReadDirty = null;
   userDirty.clear();
   syncCurrentUser();
-  return { isNew: fresh.isNew };
+  return { isNew: false };
 }
 
 // freshArr(원격 최신 목록)을 기준으로, 이번 세션에서 아직 저장되지 못한 로컬 변경(dirtyMap)만
@@ -2789,40 +2741,67 @@ function mergeByKey(freshArr, dirtyMap, keyFn){
   return Array.from(map.values());
 }
 
+// 화면이 추적한 변경(dirty)을 종류별로 모아 서버 ts_save 에 한 번에 보낸다.
+// 서버가 권한(관리자/담당자/본인)을 확인하므로, 화면에서 막은 것을 우회해도 서버가 거절한다.
+function buildSavePayload(){
+  const p = {};
+  const tasksArr = [];
+  taskDirty.forEach((val, id) => { tasksArr.push(val === 'DELETE' ? { id, del: true } : { id, data: val }); });
+  if(tasksArr.length) p.tasks = tasksArr;
+  const notesArr = [];
+  taskNoteDirty.forEach(ch => { notesArr.push(ch.del ? { taskId: ch.taskId, noteId: ch.noteId, del: true } : { taskId: ch.taskId, note: ch.note }); });
+  if(notesArr.length) p.taskNotes = notesArr;
+  const absArr = [];
+  absenceDirty.forEach((val, id) => {
+    if(/^(EDU|SAFE):/.test(String(id))) return;   // 연동 일정은 저장 대상이 아니다
+    absArr.push(val === 'DELETE' ? { id, del: true } : { id, data: val });
+  });
+  if(absArr.length) p.absences = absArr;
+  const repArr = [];
+  reportDirty.forEach((val, weekStart) => { repArr.push({ weekStart, data: val }); });
+  if(repArr.length) p.reports = repArr;
+  if(noticeTextDirty) p.notice = { text: notice.text, updatedAt: notice.updatedAt, noticeId: notice.noticeId, reads: notice.reads || [] };
+  if(myReadDirty) p.myRead = myReadDirty;
+  const memoArr = [];
+  memoDirty.forEach((val, id) => { memoArr.push(val === 'DELETE' ? { id, del: true } : { id, data: val }); });
+  if(memoArr.length) p.memos = memoArr;
+  const cmtArr = [];
+  memoCommentDirty.forEach(({ memoId, comment }) => { cmtArr.push({ memoId, comment }); });
+  if(cmtArr.length) p.memoComments = cmtArr;
+  if(memoCommentDeleted.size) p.memoCommentDeleted = Array.from(memoCommentDeleted);
+  const readArr = [];
+  memoReadDirty.forEach((at, id) => { readArr.push({ id, at }); });
+  if(readArr.length) p.memoRead = readArr;
+  const doneArr = [];
+  memoDoneDirty.forEach((at, id) => { doneArr.push({ id, at }); });
+  if(doneArr.length) p.memoDone = doneArr;
+  const rArr = [];
+  routineDirty.forEach((val, id) => { rArr.push(val === 'DELETE' ? { id, del: true } : { id, data: val }); });
+  if(rArr.length) p.routines = rArr;
+  const rdArr = [];
+  routineDoneDirty.forEach((rec, key) => {
+    const i = key.indexOf('|');
+    rdArr.push({ id: key.slice(0, i), date: key.slice(i + 1), rec: rec === null ? null : rec });
+  });
+  if(rdArr.length) p.routineDone = rdArr;
+  if(logDirty.length) p.logs = logDirty.map(l => ({ id: l.id, at: l.at, type: l.type, message: l.message }));
+  return p;
+}
+
 // 편집이 일어날 때마다 1 씩 올라간다. 저장 요청을 만든 시점 이후에 새 편집이
 // 들어왔다면, 저장이 성공해도 그 편집은 아직 반영된 게 아니므로 dirty 를 지우면 안 된다.
 let changeSeq = 0;
 
 async function saveRemoteData(message){
   const seqAtSend = changeSeq;
-  const body = {
-    message: message || "업데이트",
-    content: utf8ToB64(JSON.stringify({ tasks, absences, reports, notice, users, memos, routines, logs }, null, 2)),
-    branch: ghConfig.branch || "main"
-  };
-  if(fileSha) body.sha = fileSha;
-  const res = await fetch(ghUrl(), {
-    method: "PUT",
-    headers: {
-      "Authorization": `Bearer ${ghConfig.token}`,
-      "Accept": "application/vnd.github+json",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body)
-  });
-  if(!res.ok){
-    let msg = `저장 실패 (HTTP ${res.status})`;
-    try{ const errJson = await res.json(); if(errJson.message) msg = errJson.message; }catch(e){}
-    const err = new Error(msg);
-    err.status = res.status;
-    // 409/422 = 그 사이 누가 먼저 저장함(sha 불일치). 최신본을 받아 병합 후 다시 시도하면 된다.
-    if(res.status === 409 || res.status === 422) err.conflict = true;
-    // 429(요청 과다) / 5xx(깃허브 일시 장애)도 잠깐 기다렸다 다시 하면 대개 성공한다.
-    else if(res.status === 429 || res.status >= 500) err.transient = true;
+  const payload = buildSavePayload();
+  if(!Object.keys(payload).length){ pendingMessages = []; return true; }
+  try{
+    await sbRpc("ts_save", { p: payload });
+  }catch(err){
+    if(err.auth){ handleAuthLost(); }
     throw err;
   }
-  const json = await res.json();
-  fileSha = json.content.sha;
 
   if(changeSeq === seqAtSend){
     // 보내는 사이에 새 편집이 없었다 -> 전부 반영 완료
@@ -2844,8 +2823,10 @@ async function saveRemoteData(message){
 }
 
 // 재시도해서 해결될 수 있는 오류인가? (네트워크 끊김은 fetch 가 TypeError 를 던진다)
+// 서버가 권한 없음(42501)으로 거절한 것과 로그인 만료는 재시도해도 소용없다.
 function isRetryableSaveError(err){
   if(!err) return false;
+  if(err.forbidden || err.auth) return false;
   if(err.conflict || err.transient) return true;
   if(err.name === "TypeError") return true;
   return false;
@@ -2887,7 +2868,6 @@ async function refreshFromRemote(){
   logs     = mergeLogs(fresh.logs);
   users    = mergeByKey(fresh.users,    userDirty,    u => u.id);
   syncCurrentUser();
-  fileSha = fresh.sha;
   safeRender();
   return fresh;
 }
@@ -2905,6 +2885,15 @@ async function attemptSaveWithRetry(){
       return await saveRemoteData(currentCommitMessage());
     }catch(err){
       lastErr = err;
+      if(err && err.forbidden){
+        // 서버가 권한 없음으로 거절했다. 화면에 남은 그 변경은 되돌리고(서버 기준으로 다시 읽기) 이유를 알려준다.
+        taskDirty.clear(); taskNoteDirty.clear(); absenceDirty.clear(); reportDirty.clear();
+        clearMemoDirty(); clearRoutineDirty(); logDirty = []; noticeTextDirty = false; myReadDirty = null; userDirty.clear();
+        pendingMessages = [];
+        try{ await loadRemoteData(); }catch(e){}
+        alert("저장이 거절되었습니다: " + (err.message || err) + "\n화면을 서버 내용으로 되돌렸습니다.");
+        return true;
+      }
       if(!isRetryableSaveError(err)) throw err;
       const backoff = Math.min(3000, 250 * Math.pow(2, i)) * (0.6 + Math.random() * 0.8);
       await wait(backoff);
@@ -2974,20 +2963,18 @@ function currentCommitMessage(){
 
 function persist(message, opts){
   opts = opts || {};
-  if(!ghConfig) return Promise.resolve();
   if(!dataLoaded){
-    // 원격 파일을 읽지 못한 상태에서 저장하면 기존 내용을 통째로 날릴 수 있다.
+    // 서버 데이터를 읽지 못한 상태에서 저장하면 기존 내용을 통째로 날릴 수 있다.
     alert("아직 서버에서 데이터를 불러오지 못했습니다. 연결이 복구된 뒤에 다시 시도해주세요.\n(기존 데이터를 덮어쓰지 않도록 저장을 막았습니다)");
     return Promise.resolve(false);
   }
-  if(!ghConfig.token){
-    alert("읽기 전용 모드입니다. 이 기기에서는 저장할 수 없습니다. 편집하려면 설정(⚙)에서 토큰을 입력해주세요.");
-    return refreshFromRemote().catch(()=>{});
+  if(!currentUser){
+    alert("로그인이 필요합니다. 로그인한 뒤에 다시 시도해주세요.");
+    return Promise.resolve(false);
   }
   changeSeq++;
   if(message) pendingMessages.push(message);
   // 관리자가 나중에 볼 수 있도록, 저장되는 변경마다 한 줄씩 이력을 남긴다.
-  // (이력은 같은 data.json 에 함께 저장되므로 요청이 늘지 않는다)
   if(message && !opts.noLog) addLog("change", message);
   if(opts.immediate){
     if(saveTimer){ clearTimeout(saveTimer); saveTimer = null; }
@@ -3093,68 +3080,40 @@ window.addEventListener("beforeunload", (e) => {
 
 function updateSetupBanner(){
   const banner = document.getElementById("setupBanner");
-  if(!banner) return;
-  // 저장소 정보는 코드에 내장돼 있으므로, 이제 안내가 필요한 건 "토큰이 없는 상태"뿐이다.
-  banner.style.display = (ghConfig && ghConfig.token) ? "none" : "block";
+  if(banner) banner.style.display = "none";   // GitHub 토큰 안내는 더 이상 쓰지 않는다
 }
 
+// ⚙ 연결 정보 — 저장소가 Supabase 로 바뀌어 설정할 것이 없다. 상태만 보여준다.
 function openSettings(){
+  const sess = loadSession();
   openModal(`
-    <h3>GitHub 동기화 설정</h3>
-    <p style="font-size:13px;color:var(--sub);margin:-6px 0 14px;">저장소 정보는 이미 입력돼 있습니다. <b>아래 토큰만 넣으면</b> 확인 체크·업무 입력이 저장됩니다. 토큰이 없으면 보기만 가능합니다.</p>
+    <h3>연결 정보</h3>
+    <p style="font-size:13px;color:var(--sub);margin:-6px 0 14px;">
+      이 대시보드의 데이터는 <b>Supabase 서버</b>에 저장됩니다. 로그인한 팀원만 읽고 쓸 수 있고,
+      업무·일정·전달사항의 수정 권한은 서버가 확인합니다. 따로 설정할 것은 없습니다.
+    </p>
     <div class="field">
-      <label>Personal Access Token</label>
-      <input type="password" id="cfgToken" value="${escapeHtml(ghConfig?.token || '')}" placeholder="ghp_... 또는 github_pat_...">
-      <p style="font-size:12px;color:var(--sub);margin:4px 0 0;">비워두면 보기 전용입니다 (조회만 가능, 확인 체크·추가·수정 불가).</p>
+      <label>서버</label>
+      <input type="text" value="${escapeHtml(SB_URL.replace('https://',''))}" readonly>
     </div>
-    <details style="margin-top:4px;">
-      <summary style="cursor:pointer;font-size:13px;color:var(--sub);font-weight:700;">저장소 정보 (평소에는 건드릴 필요 없습니다)</summary>
-      <div style="margin-top:10px;">
-        <div class="field">
-          <label>GitHub 사용자명 / 조직</label>
-          <input type="text" id="cfgOwner" value="${escapeHtml(ghConfig?.owner || '')}" placeholder="예: myaccount">
-        </div>
-        <div class="field">
-          <label>저장소 이름</label>
-          <input type="text" id="cfgRepo" value="${escapeHtml(ghConfig?.repo || '')}" placeholder="예: team-schedule">
-        </div>
-        <div class="field">
-          <label>데이터 파일 경로</label>
-          <input type="text" id="cfgPath" value="${escapeHtml(ghConfig?.path || 'data.json')}">
-        </div>
-        <div class="field">
-          <label>브랜치</label>
-          <input type="text" id="cfgBranch" value="${escapeHtml(ghConfig?.branch || 'main')}">
-        </div>
-      </div>
-    </details>
+    <div class="field">
+      <label>로그인</label>
+      <input type="text" value="${escapeHtml(currentUser ? (currentUser.name + ' · ' + currentUser.id + (isAdmin ? ' · 관리자' : ' · 팀원')) : '로그인 안 됨')}" readonly>
+    </div>
+    <div class="field">
+      <label>마지막 동기화</label>
+      <input type="text" value="${escapeHtml(lastRemoteReadAt ? new Date(lastRemoteReadAt).toLocaleString('ko-KR') : '-')}" readonly>
+    </div>
+    <p style="font-size:12px;color:var(--sub);margin:4px 0 0;">로그인은 ${sess ? '유지 중(24시간)' : '필요'}. 비밀번호는 오른쪽 위 이름 칩에서 바꿀 수 있습니다.</p>
     <div class="modal-actions">
-      <button class="btn-ghost" onclick="closeModal()">취소</button>
-      <button class="btn-primary" onclick="saveSettings()">저장하고 불러오기</button>
+      <button class="btn-ghost" onclick="closeModal()">닫기</button>
+      <button class="btn-primary" onclick="closeModal(); manualRefresh();">지금 새로고침</button>
     </div>
   `);
 }
 
-function saveSettings(){
-  const owner = document.getElementById("cfgOwner").value.trim();
-  const repo = document.getElementById("cfgRepo").value.trim();
-  const path = document.getElementById("cfgPath").value.trim() || "data.json";
-  const branch = document.getElementById("cfgBranch").value.trim() || "main";
-  const token = document.getElementById("cfgToken").value.trim();
-  if(!owner || !repo){
-    alert("사용자명과 저장소는 필수입니다.");
-    return;
-  }
-  if(!token && !confirm("토큰 없이 저장하면 보기 전용으로 동작합니다. 확인 체크·댓글·업무 추가/수정이 불가능합니다. 계속할까요?")) return;
-  ghConfig = { owner, repo, path, branch, token };
-  localStorage.setItem(GH_CONFIG_KEY, JSON.stringify(ghConfig));
-  closeModal();
-  updateSetupBanner();
-  loadInitial();
-}
-
 async function loadInitial(){
-  if(!ghConfig){
+  if(!loadSession()){
     updateSetupBanner();
     render();
     return;
@@ -3163,11 +3122,8 @@ async function loadInitial(){
   renderAuthGate();
   setSyncStatus("loading", "불러오는 중...");
   try{
-    const result = await loadRemoteData();
-    if(result.isNew && ghConfig.token && users.length){
-      await saveRemoteData("초기 데이터 파일 생성");
-    }
-    setSyncStatus("idle", (ghConfig.token ? "동기화됨" : "읽기 전용") + " · " + nowTimeLabel());
+    await loadRemoteData();
+    setSyncStatus("idle", "동기화됨 · " + nowTimeLabel());
   }catch(err){
     // 못 읽었으면 "데이터가 없다"가 아니라 "연결이 안 된다"로 다룬다.
     loadError = err && (err.message || String(err));
@@ -3178,10 +3134,8 @@ async function loadInitial(){
 }
 
 async function manualRefresh(){
-  // 새로고침(읽기)은 토큰이 없어도 된다.
   if(saveInFlight) return;
   // 저장 못 한 변경이 남아 있으면, 새로고침이 아니라 저장을 다시 시도하는 게 맞다.
-  // (예전에는 여기서 새로고침을 해버려서 입력이 사라졌다)
   if(saveFailed || hasUnsavedChanges()){
     retrySaveNow();
     return;
@@ -3198,17 +3152,15 @@ async function manualRefresh(){
 function startAutoRefresh(){
   if(autoRefreshTimer) clearInterval(autoRefreshTimer);
   autoRefreshTimer = setInterval(async () => {
-    if(!ghConfig) return;
+    if(!loadSession()) return;
     if(saveInFlight || saveTimer) return;                 // 저장 중이거나 저장 대기 중
     if(hasUnsavedChanges()) return;                       // 아직 못 보낸 내 변경이 있으면 건드리지 않는다
     if(document.hidden) return;                           // 다른 탭을 보고 있으면 쉰다
     if(document.getElementById("modalOverlay").classList.contains("open")) return;
     if(isEditingField()) return;                          // 뭔가 입력 중
-    // 토큰이 없으면 익명 조회라 시간당 60회 제한이 있다. 3분에 한 번만 읽는다.
-    if(!ghConfig.token && Date.now() - lastRemoteReadAt < 180000) return;
     try{
       await refreshFromRemote();
-      setSyncStatus("idle", (ghConfig.token ? "동기화됨" : "읽기 전용") + " · " + nowTimeLabel());
+      setSyncStatus("idle", "동기화됨 · " + nowTimeLabel());
     }catch(e){ /* 백그라운드 폴링은 조용히 실패 */ }
   }, 30000);
 }
@@ -3817,7 +3769,7 @@ function renderNoticeReads(){
   const readIds = new Set(reads.map(r => r.userId));
   const unread = users.filter(u => !readIds.has(u.id));
   const mine = myRead();
-  const readOnly = !ghConfig || !ghConfig.token;
+  const readOnly = !canWrite();
 
   const btn = readOnly
     ? `<button class="read-btn" disabled title="읽기 전용 모드에서는 확인 체크를 저장할 수 없습니다">확인 체크 불가</button>`
@@ -3840,7 +3792,7 @@ function renderNoticeReads(){
       ${btn}
       <span class="read-count">확인 ${reads.length}/${total}명</span>
       <div class="read-chips">${chips}${unreadChips}</div>
-      ${readOnly ? '<span class="read-note">이 기기는 읽기 전용 모드입니다. 설정(⚙)에서 토큰을 넣으면 확인 체크를 할 수 있습니다.</span>' : ''}
+      ${readOnly ? '<span class="read-note">로그인하면 확인 체크를 할 수 있습니다.</span>' : ''}
     </div>
   `;
 }
@@ -4032,7 +3984,7 @@ function memoCard(m){
   const isTarget = currentUser && m.toUserId === currentUser.id;
   // 수정·삭제는 작성자 본인만 (관리자라도 남이 쓴 건은 손대지 않는다)
   const canManage = memoIsMine(m);
-  const readOnly = !ghConfig || !ghConfig.token;
+  const readOnly = !canWrite();
   // 두 단계로 진행된다. 1단계 확인(readAt) → 2단계 완료(doneAt).
   const read = !!m.readAt;
   const done = !!m.doneAt;
@@ -4453,10 +4405,7 @@ function toggleMemoRead(id){
   const m = memos.find(x => x.id === id);
   if(!m || !currentUser) return;
   if(m.toUserId !== currentUser.id){ alert("받는 사람 본인만 확인 체크를 할 수 있습니다."); return; }
-  if(!ghConfig || !ghConfig.token){
-    alert("읽기 전용 모드에서는 확인 체크를 저장할 수 없습니다. 설정(⚙)에서 토큰을 입력해주세요.");
-    return;
-  }
+  if(!canWrite()){ needLogin(); return; }
   const next = m.readAt ? null : new Date().toISOString();
   // 확인을 취소하면 그 위에 쌓인 완료도 같이 풀어야 앞뒤가 맞는다
   if(!next && m.doneAt){
@@ -4477,10 +4426,7 @@ function toggleMemoDone(id){
   const m = memos.find(x => x.id === id);
   if(!m || !currentUser) return;
   if(m.toUserId !== currentUser.id){ alert("받는 사람 본인만 완료 체크를 할 수 있습니다."); return; }
-  if(!ghConfig || !ghConfig.token){
-    alert("읽기 전용 모드에서는 완료 체크를 저장할 수 없습니다. 설정(⚙)에서 토큰을 입력해주세요.");
-    return;
-  }
+  if(!canWrite()){ needLogin(); return; }
   if(!m.readAt){ alert("먼저 [확인했습니다]를 눌러주세요."); return; }
   const next = m.doneAt ? null : new Date().toISOString();
   m.doneAt = next;
@@ -4493,10 +4439,7 @@ function toggleMemoDone(id){
 function addMemoComment(id){
   const m = memos.find(x => x.id === id);
   if(!m || !currentUser) return;
-  if(!ghConfig || !ghConfig.token){
-    alert("읽기 전용 모드에서는 댓글을 저장할 수 없습니다. 설정(⚙)에서 토큰을 입력해주세요.");
-    return;
-  }
+  if(!canWrite()){ needLogin(); return; }
   const el = document.getElementById("memoDraft_" + id);
   const text = (el ? el.value : (memoDrafts[id] || "")).trim();
   if(!text) return;
@@ -4528,10 +4471,7 @@ function deleteMemoComment(memoId, commentId){
 
 function toggleNoticeRead(){
   if(!currentUser) return;
-  if(!ghConfig || !ghConfig.token){
-    alert("읽기 전용 모드에서는 확인 체크를 저장할 수 없습니다. 설정(⚙)에서 토큰을 입력해주세요.");
-    return;
-  }
+  if(!canWrite()){ needLogin(); return; }
   const mine = myRead();
   const reads = noticeReads().filter(r => r.userId !== currentUser.id);
   if(!mine){
@@ -5200,7 +5140,7 @@ function routineStepButtons(r, dateStr){
 function routineAlertCard(a){
   const r = a.routine;
   const isMine = currentUser && r.ownerId === currentUser.id;
-  const readOnly = !ghConfig || !ghConfig.token;
+  const readOnly = !canWrite();
   // 내 담당인데 이미 날짜가 됐거나 지났으면 = 지금 해야 할 일. 카드를 맥박 강조한다.
   const needsAck = isMine && (a.kind === "late" || a.kind === "due");
   const badge = needsAck ? `<span class="ack-badge">${a.kind === "late" ? "지연" : "오늘 마감"}</span>` : "";
@@ -5236,7 +5176,7 @@ function openRoutineTab(){
 function routineListCard(r){
   const t = todayStr();
   const isMine = currentUser && r.ownerId === currentUser.id;
-  const readOnly = !ghConfig || !ghConfig.token;
+  const readOnly = !canWrite();
   const next = routineNextDate(r, t);
   const alerts = routineAlerts(r, t);
   // 알림 구간에 없는 건은 다음 차례까지 며칠 남았는지만 조용히 보여준다
@@ -5427,7 +5367,7 @@ function syncRoutineFields(freq){
 
 function saveRoutine(id){
   if(!isAdmin){ alert("관리자만 등록·수정할 수 있습니다."); return; }
-  if(!ghConfig.token){ openSettings(); return; }
+  if(!canWrite()){ needLogin(); return; }
   const title = document.getElementById("rtTitle").value.trim();
   if(!title){ alert("업무 내용을 입력해주세요."); return; }
   const ownerId = document.getElementById("rtOwner").value;
@@ -5507,7 +5447,7 @@ function routineCheckGuard(id, dateStr){
     alert("담당자 본인만 확인·완료 체크를 할 수 있습니다.");
     return null;
   }
-  if(!ghConfig.token){ openSettings(); return null; }
+  if(!canWrite()){ needLogin(); return null; }
   return r;
 }
 
@@ -5673,8 +5613,8 @@ function renderRoutinePopup(manual){
 function routinePopupAfterClick(){
   setTimeout(() => {
     if(!document.getElementById("modalOverlay").classList.contains("open")) return;
-    // 토큰이 없어 설정 창이 대신 열린 경우에는 그 창을 덮어쓰지 않는다
-    if(ghConfig && ghConfig.token) renderRoutinePopup();
+    // 로그인 안내가 대신 뜬 경우에는 그 창을 덮어쓰지 않는다
+    if(canWrite()) renderRoutinePopup();
   }, 0);
 }
 
@@ -6109,7 +6049,7 @@ function updateAckTitle(){
 function addTask(){
   // 업무 추가는 로그인한 팀원 누구나 (수정·삭제·완료 처리는 관리자만)
   if(!currentUser){ alert("로그인 후 업무를 추가할 수 있습니다."); return; }
-  if(!ghConfig.token){ openSettings(); return; }
+  if(!canWrite()){ needLogin(); return; }
   const team = document.getElementById("inTeam").value;
   const title = document.getElementById("inTitle").value.trim();
   const o1 = findUser(document.getElementById("inOwner").value);
@@ -6152,7 +6092,7 @@ function editProgress(id){
     alert("담당자(정·부) 또는 관리자만 진행율을 수정할 수 있습니다.");
     return;
   }
-  if(!ghConfig.token){ openSettings(); return; }
+  if(!canWrite()){ needLogin(); return; }
   const val = prompt(`새 진행율을 입력하세요 (${isAdmin ? '0' : t.progress}-100):`, t.progress);
   if(val === null) return;
   const num = Math.max(0, Math.min(100, Number(val)));
@@ -6218,7 +6158,7 @@ function toggleReportInclude(id){
 }
 
 function addAbsence(){
-  if(!ghConfig.token){ openSettings(); return; }
+  if(!canWrite()){ needLogin(); return; }
   const team = document.getElementById("absTeam").value;
   const person = document.getElementById("absPerson").value.trim();
   const type = document.getElementById("absType").value;
@@ -6443,7 +6383,7 @@ function moveAbsenceBy(id, delta, isUndo){
   const a = absences.find(x => x.id === id);
   if(!a || !delta) return;
   if(!canEditAbsence(a)){ alert("본인이 등록한 일정만 옮길 수 있습니다."); return; }
-  if(!ghConfig.token){ openSettings(); return; }
+  if(!canWrite()){ needLogin(); return; }
   const before = a.start === a.end ? a.start : `${a.start}~${a.end}`;
   a.start = absDayShift(a.start, delta);
   a.end   = absDayShift(a.end || a.start, delta);
@@ -6813,7 +6753,7 @@ function addTaskNote(id){
   const t = tasks.find(x=>x.id===id);
   if(!t) return;
   if(!canAddTaskNote(t)){ alert("관리자 또는 이 업무의 담당자(정·부)만 기록을 남길 수 있습니다."); return; }
-  if(!ghConfig.token){ openSettings(); return; }
+  if(!canWrite()){ needLogin(); return; }
   const ta = document.getElementById("tnNew");
   const text = ta ? ta.value.trim() : "";
   if(!text){ alert("내용을 입력해주세요."); if(ta) ta.focus(); return; }
