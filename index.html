@@ -1923,6 +1923,8 @@ function wsSetting(key, dflt){
   const st = (wsInfo && wsInfo.settings) || {};
   return Object.prototype.hasOwnProperty.call(st, key) ? st[key] : dflt;
 }
+// 이력 열람: 공간의 logs 가 켜져 있고, logsOwnerOnly 면 총관리자만
+function canSeeLogs(){ return isAdmin && wsSetting("logs", true) && (isOwner || !wsSetting("logsOwnerOnly", false)); }
 function roleLabel(role){ return role === "owner" ? "총관리자" : (role === "leader" || role === "admin") ? "팀장" : "팀원"; }
 // 공간 전환(총관리자). 저장 안 된 변경이 있으면 묻고, 새로 불러오기 위해 페이지를 다시 연다.
 function switchWorkspace(id){
@@ -2579,7 +2581,7 @@ function updateAdminUI(){
   const acctBtn = document.getElementById("accountsBtn");
   if(acctBtn) acctBtn.style.display = isAdmin ? "" : "none";
   const logBtn = document.getElementById("logsBtn");
-  if(logBtn) logBtn.style.display = (isAdmin && wsSetting("logs", true)) ? "" : "none";
+  if(logBtn) logBtn.style.display = canSeeLogs() ? "" : "none";
   const outBtn = document.getElementById("logoutBtn");
   if(outBtn) outBtn.style.display = currentUser ? "" : "none";
   syncForms();
@@ -6686,7 +6688,7 @@ function saveTaskOwner(id){
 // ── 접속·작성 이력 (관리자 전용) ───────────────────────────
 let logFilter = "all";
 function openLogs(){
-  if(!isAdmin){ alert("관리자만 볼 수 있습니다."); return; }
+  if(!canSeeLogs()){ alert(wsSetting("logsOwnerOnly", false) ? "총관리자만 볼 수 있습니다." : "관리자만 볼 수 있습니다."); return; }
   logFilter = "all";
   renderLogs();
 }
