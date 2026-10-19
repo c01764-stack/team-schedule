@@ -1771,7 +1771,7 @@
       "owner2": "",
       "owner2Id": "",
       "due": "2026-10-23",
-      "progress": 10,
+      "progress": 50,
       "memo": "",
       "notes": [
         {
@@ -1797,6 +1797,12 @@
         {
           "at": "2026-10-15T05:58:27.373Z",
           "p": 10,
+          "byUserId": "c05651",
+          "byName": "오혜지"
+        },
+        {
+          "at": "2026-10-19T08:59:07.348Z",
+          "p": 50,
           "byUserId": "c05651",
           "byName": "오혜지"
         }
@@ -3158,14 +3164,6 @@
     }
   ],
   "logs": [
-    {
-      "id": "l_t1l4rgeg2mtqss3zq",
-      "at": "2026-09-07T05:25:59.222Z",
-      "userId": "c01764",
-      "name": "천재우",
-      "type": "change",
-      "message": "일정 추가: 천재우"
-    },
     {
       "id": "l_tyzyt7u9dmtqt1zxm",
       "at": "2026-09-07T05:33:40.522Z",
@@ -7957,6 +7955,14 @@
       "name": "오혜지",
       "type": "change",
       "message": "진행율 수정: SKT 워크숍 외부 강사 섭외 → 40%"
+    },
+    {
+      "id": "l_tuf5jfbd1mvf0vzdt",
+      "at": "2026-10-19T08:59:07.361Z",
+      "userId": "c05651",
+      "name": "오혜지",
+      "type": "change",
+      "message": "진행율 수정: 경영 실적 자료 작성 → 50%"
     }
   ]
 }
