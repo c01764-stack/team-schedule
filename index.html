@@ -665,6 +665,13 @@
   .memo-divider{display:flex;align-items:center;gap:10px;margin:4px 0 0;}
   .memo-divider::before,.memo-divider::after{content:"";flex:1;height:1px;background:var(--border);}
   .memo-divider span{font-size:12px;font-weight:800;color:var(--sub);white-space:nowrap;}
+  /* 완료 묶음 접기 — 구분선 자체가 제목 줄(클릭하면 펼침). 기본은 접힘 */
+  details.memo-done-fold{margin:0;}
+  details.memo-done-fold > summary{list-style:none;cursor:pointer;user-select:none;padding:4px 0;}
+  details.memo-done-fold > summary::-webkit-details-marker{display:none;}
+  details.memo-done-fold > summary span i{font-style:normal;font-weight:700;color:var(--violet);margin-left:4px;}
+  details.memo-done-fold > summary:hover span{color:var(--text);}
+  .memo-done-body{display:flex;flex-direction:column;margin-top:6px;}
   .memo-list{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
   /* 5건을 넘어가면 목록 자체를 고정 높이로 두고 그 안에서만 스크롤한다.
      (접힌 줄 5개 높이 + 다음 줄이 살짝 보이게 = 스크롤이 있다는 신호) */
@@ -4085,6 +4092,27 @@ function toggleMemoCard(id){
   memoFoldOverride.set(id, !memoIsOpen(m));
   renderMemoBanner();
 }
+
+// ---------- 완료 무리 접기 ----------
+// 완료된 건은 더 손댈 일이 없으므로 "완료 N건" 제목 줄만 남기고 기본으로 접어둔다.
+// 제목 줄을 누르면 펼쳐지고, 펼친 상태는 화면을 다시 그려도 유지된다(저장은 안 함).
+// 키: [나에게] 목록은 'mine', 사람별 칸은 그 사람의 id.
+let memoDoneOpen = new Set();
+function memoDoneToggle(key, open){
+  // 그려질 때 open 속성 때문에 toggle 이 한 번 더 올 수 있다 → 상태가 실제로 바뀐 때만 처리
+  if(open === memoDoneOpen.has(key)) return;
+  if(open) memoDoneOpen.add(key); else memoDoneOpen.delete(key);
+  // 펼치면 고정 높이(스크롤) 판단이 달라지므로 목록을 다시 그린다.
+  if(key === 'mine') renderMemoBanner();
+}
+function memoDoneFoldHtml(key, list, gap){
+  if(!list.length) return '';
+  const open = memoDoneOpen.has(key);
+  return `<details class="memo-done-fold"${open ? ' open' : ''} ontoggle="memoDoneToggle('${key}', this.open)">
+    <summary class="memo-divider${gap < 10 ? ' small' : ''}"><span>완료 ${list.length}건 <i>${open ? '▾ 접기' : '▸ 펼치기'}</i></span></summary>
+    <div class="memo-done-body" style="gap:${gap}px">${list.map(memoCard).join("")}</div>
+  </details>`;
+}
 function memoMineCount(){
   return currentUser ? memos.filter(m => m.toUserId === currentUser.id).length : 0;
 }
@@ -4111,6 +4139,7 @@ function setMemoScope(v){
 // 로그인한 사람이 바뀌면 접기 상태와 보기 범위를 다시 판단해야 한다.
 function resetMemoView(){
   memoFoldOverride = new Map();
+  memoDoneOpen = new Set();
   memoScope = null;
   memoBoardPick = null;
 }
@@ -4280,9 +4309,10 @@ function renderMemoBannerInner(){
 
   const groups = [
     { list: unread,     label: null },
-    { list: doing,      label: `확인함 · 완료 대기 ${doing.length}건` },
-    { list: recentDone, label: `완료 ${recentDone.length}건` }
+    { list: doing,      label: `확인함 · 완료 대기 ${doing.length}건` }
   ].filter(g => g.list.length);
+  // 완료 무리는 기본으로 접어두고 제목 줄을 누르면 펼친다(memoDoneFold).
+  const doneFold = memoDoneFoldHtml('mine', recentDone, 10);
 
   // "나에게 N건" 은 내가 아직 끝내지 않은 것(미확인 + 완료 대기)을 센다.
   // 카운트는 보기 범위와 무관하게 항상 전체 기준으로 보여준다.
@@ -4309,16 +4339,17 @@ function renderMemoBannerInner(){
                         : '등록된 개인 전달사항이 없습니다.')
     : '최근 전달사항이 없습니다. 아래 "지난 전달사항"에 기록이 남아 있습니다.';
 
-  const listCount = unread.length + doing.length + recentDone.length;
+  // 고정 높이(스크롤) 판단은 실제로 펼쳐져 보이는 건수로 한다.
+  const listCount = unread.length + doing.length + (memoDoneOpen.has('mine') ? recentDone.length : 0);
 
-  const listHtml = groups.length === 0
+  const listHtml = (groups.length === 0 && !recentDone.length)
     ? `<div class="absence-empty">${emptyMsg}</div>`
     : groups.map((g, gi) => {
         // 무리가 바뀌는 자리에만 한 줄짜리 구분선을 넣는다.
         const divider = (gi > 0 && g.label)
           ? `<div class="memo-divider"><span>${g.label}</span></div>` : '';
         return divider + g.list.map(memoCard).join("");
-      }).join("");
+      }).join("") + doneFold;
 
   const oldHtml = oldDone.length
     ? `<details class="completed-details memo-old">
@@ -4417,9 +4448,7 @@ function memoBoardHtml(){
     const body = c.list.length
       ? unread.map(memoCard).join("")
         + doing.map(memoCard).join("")
-        + (done.length
-            ? `<div class="memo-divider small"><span>완료 ${done.length}건</span></div>` + done.map(memoCard).join("")
-            : '')
+        + memoDoneFoldHtml(c.id, done, 7)
       : `<div class="memo-col-empty">전달사항이 없습니다.</div>`;
 
     return `
@@ -4567,6 +4596,8 @@ function toggleMemoDone(id){
   m.doneAt = next;
   memoDoneDirty.set(id, next);
   memoFoldOverride.set(id, true);
+  // 방금 완료한 카드가 접힌 "완료" 묶음 속으로 사라지지 않게 그 묶음을 펼쳐둔다
+  if(next){ memoDoneOpen.add('mine'); memoDoneOpen.add(currentUser.id); }
   render();
   persist(next ? `개인 전달사항 완료: ${currentUser.name}` : `개인 전달사항 완료 취소: ${currentUser.name}`);
 }
