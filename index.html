@@ -4094,20 +4094,30 @@ function toggleMemoCard(id){
 }
 
 // ---------- 완료 무리 접기 ----------
-// 완료된 건은 더 손댈 일이 없으므로 "완료 N건" 제목 줄만 남기고 기본으로 접어둔다.
-// 제목 줄을 누르면 펼쳐지고, 펼친 상태는 화면을 다시 그려도 유지된다(저장은 안 함).
+// "완료 N건" 제목 줄을 누르면 접고 펼친다. 기본값은 화면 폭에 따라 다르다 —
+// 휴대폰·태블릿(≤980px, 사람별 칸이 칩으로 바뀌는 기준과 같음)은 접힘, 노트북·PC 는 펼침.
+// 사용자가 직접 누른 것만 memoDoneOverride 에 남겨 기본값보다 우선한다(저장은 안 함).
 // 키: [나에게] 목록은 'mine', 사람별 칸은 그 사람의 id.
-let memoDoneOpen = new Set();
+const memoNarrowMq = window.matchMedia ? window.matchMedia('(max-width: 980px)') : null;
+function memoDoneDefaultOpen(){ return !(memoNarrowMq && memoNarrowMq.matches); }
+let memoDoneOverride = new Map();   // key -> true(펼침) | false(접힘)
+function memoDoneIsOpen(key){
+  return memoDoneOverride.has(key) ? memoDoneOverride.get(key) : memoDoneDefaultOpen();
+}
 function memoDoneToggle(key, open){
   // 그려질 때 open 속성 때문에 toggle 이 한 번 더 올 수 있다 → 상태가 실제로 바뀐 때만 처리
-  if(open === memoDoneOpen.has(key)) return;
-  if(open) memoDoneOpen.add(key); else memoDoneOpen.delete(key);
+  if(open === memoDoneIsOpen(key)) return;
+  memoDoneOverride.set(key, !!open);
   // 펼치면 고정 높이(스크롤) 판단이 달라지므로 목록을 다시 그린다.
   if(key === 'mine') renderMemoBanner();
 }
+// 창 폭이 기준을 넘나들면(창 크기 조절·회전) 기본값이 바뀌므로 다시 그린다.
+if(memoNarrowMq && memoNarrowMq.addEventListener){
+  memoNarrowMq.addEventListener('change', () => { if(typeof renderMemoBanner === 'function' && dataLoaded) renderMemoBanner(); });
+}
 function memoDoneFoldHtml(key, list, gap){
   if(!list.length) return '';
-  const open = memoDoneOpen.has(key);
+  const open = memoDoneIsOpen(key);
   return `<details class="memo-done-fold"${open ? ' open' : ''} ontoggle="memoDoneToggle('${key}', this.open)">
     <summary class="memo-divider${gap < 10 ? ' small' : ''}"><span>완료 ${list.length}건 <i>${open ? '▾ 접기' : '▸ 펼치기'}</i></span></summary>
     <div class="memo-done-body" style="gap:${gap}px">${list.map(memoCard).join("")}</div>
@@ -4139,7 +4149,7 @@ function setMemoScope(v){
 // 로그인한 사람이 바뀌면 접기 상태와 보기 범위를 다시 판단해야 한다.
 function resetMemoView(){
   memoFoldOverride = new Map();
-  memoDoneOpen = new Set();
+  memoDoneOverride = new Map();
   memoScope = null;
   memoBoardPick = null;
 }
@@ -4340,7 +4350,7 @@ function renderMemoBannerInner(){
     : '최근 전달사항이 없습니다. 아래 "지난 전달사항"에 기록이 남아 있습니다.';
 
   // 고정 높이(스크롤) 판단은 실제로 펼쳐져 보이는 건수로 한다.
-  const listCount = unread.length + doing.length + (memoDoneOpen.has('mine') ? recentDone.length : 0);
+  const listCount = unread.length + doing.length + (memoDoneIsOpen('mine') ? recentDone.length : 0);
 
   const listHtml = (groups.length === 0 && !recentDone.length)
     ? `<div class="absence-empty">${emptyMsg}</div>`
@@ -4597,7 +4607,7 @@ function toggleMemoDone(id){
   memoDoneDirty.set(id, next);
   memoFoldOverride.set(id, true);
   // 방금 완료한 카드가 접힌 "완료" 묶음 속으로 사라지지 않게 그 묶음을 펼쳐둔다
-  if(next){ memoDoneOpen.add('mine'); memoDoneOpen.add(currentUser.id); }
+  if(next){ memoDoneOverride.set('mine', true); memoDoneOverride.set(currentUser.id, true); }
   render();
   persist(next ? `개인 전달사항 완료: ${currentUser.name}` : `개인 전달사항 완료 취소: ${currentUser.name}`);
 }
