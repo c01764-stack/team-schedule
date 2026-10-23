@@ -169,6 +169,9 @@
   .auth-box input:focus{outline:none;border-color:var(--violet);}
   .auth-box .btn-primary{width:100%;padding:13px 0;margin-top:6px;font-size:15.5px;}
   .auth-error{font-size:14px;color:var(--red);font-weight:700;margin:10px 0 0;min-height:17px;}
+  .auto-login-opt{display:flex;align-items:flex-start;gap:8px;margin:2px 0 4px;font-size:14.5px;font-weight:600;color:var(--text);cursor:pointer;user-select:none;}
+  .auto-login-opt input{width:17px;height:17px;margin-top:2px;flex:0 0 auto;accent-color:var(--violet);}
+  .auto-login-opt small{display:block;font-weight:400;font-size:12.5px;color:var(--sub);margin-top:1px;}
   .auth-foot{margin-top:18px;padding-top:14px;border-top:1px solid var(--border);font-size:12.5px;color:var(--sub);line-height:1.6;}
   .auth-foot button{background:none;border:none;color:var(--violet);font-weight:700;cursor:pointer;font-size:12.5px;font-family:inherit;padding:0;text-decoration:underline;}
 
@@ -473,6 +476,7 @@
   .memo-view{white-space:pre-wrap;word-break:break-word;font-size:15.5px;line-height:1.6;color:var(--text);background:#f7f7fb;border-radius:0;padding:14px 16px;max-height:50vh;overflow-y:auto;}
 
   .due-cell{display:flex;align-items:center;gap:6px;}
+  .no-due{color:var(--sub);font-size:13px;}
   .hist-link{font-size:13px;color:#6d28d9;cursor:pointer;border:none;background:var(--edu-tint);padding:3px 10px;border-radius:999px;white-space:nowrap;font-weight:700;}
   .hist-link:hover{background:#e4d8fd;}
   .hist-link.empty-hist{color:var(--sub);background:#f0f0f5;}
@@ -610,6 +614,11 @@
   .memo-sum-text{flex:1 1 auto;min-width:0;font-size:14.5px;color:var(--text);
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .memo-card.collapsed.is-done .memo-sum-text{color:var(--sub);}
+  .memo-lock{flex:0 0 auto;display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:800;color:#b45309;background:#fef3c7;border:1px solid #fcd34d;border-radius:999px;padding:1px 7px;white-space:nowrap;line-height:1.5;}
+  [data-theme="dark"] .memo-lock{color:#fcd34d;background:rgba(252,211,77,.12);border-color:rgba(252,211,77,.35);}
+  .memo-secret-opt{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border:2px solid var(--border);border-radius:12px;cursor:pointer;font-size:14.5px;}
+  .memo-secret-opt input{margin-top:3px;width:16px;height:16px;flex:0 0 auto;}
+  .memo-secret-opt small{display:block;color:var(--sub);font-size:12.5px;margin-top:2px;}
   .memo-sum-cmt{flex:0 0 auto;font-size:12px;font-weight:700;color:var(--sub);white-space:nowrap;}
   .memo-sum-date{flex:0 0 auto;font-size:12px;font-weight:700;color:var(--sub);white-space:nowrap;}
   /* ---------- 사람별 칸(보드) ---------- */
@@ -1775,8 +1784,8 @@
       <select id="inOwner2"></select>
     </div>
     <div>
-      <label>마감일자</label>
-      <input type="date" id="inDue">
+      <label>마감일자 <span style="font-weight:400;color:var(--sub);">(선택)</span></label>
+      <input type="date" id="inDue" title="비워 두면 '마감 없음'으로 등록됩니다">
     </div>
     <div>
       <label>진행율 (%)</label>
@@ -2100,13 +2109,19 @@ function findUser(id){
 // 로그인은 24시간 유지된다. 로그인한 시각(at)을 함께 저장해두고,
 // 하루가 지난 세션은 읽는 순간 만료 처리해서 다시 로그인 화면을 띄운다.
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
+// 자동 로그인을 켜면 30일 동안 유지된다. 쓸 때마다(토큰 갱신 때) 기한이 다시 30일로 늘어난다.
+// 비밀번호는 어디에도 저장하지 않는다 — Supabase 가 준 갱신 토큰(refresh_token)으로만 이어 간다.
+const SESSION_TTL_REMEMBER_MS = 30 * 24 * 60 * 60 * 1000;
+const AUTO_LOGIN_KEY = "tsAutoLogin_v1";
+function autoLoginPref(){ try{ return localStorage.getItem(AUTO_LOGIN_KEY) === "1"; }catch(e){ return false; } }
 
 function loadSession(){
   try{
     const raw = JSON.parse(localStorage.getItem(AUTH_KEY) || "null");
     if(!raw || !raw.userId || !raw.access_token || !raw.refresh_token) return null;
     const at = Date.parse(raw.at || "");
-    if(!at || Date.now() - at >= SESSION_TTL_MS){ clearSession(); return null; }
+    const ttl = raw.remember ? SESSION_TTL_REMEMBER_MS : SESSION_TTL_MS;
+    if(!at || Date.now() - at >= ttl){ clearSession(); return null; }
     return raw;
   }catch(e){ return null; }
 }
@@ -2149,6 +2164,7 @@ async function sbAccessToken(){
       try{
         const tok = await sbAuthFetch("/token?grant_type=refresh_token", { refresh_token: sess.refresh_token });
         const next = Object.assign({}, sess, { access_token: tok.access_token, refresh_token: tok.refresh_token, expires_at: tok.expires_at });
+        if(sess.remember) next.at = new Date().toISOString();   // 자동 로그인: 쓰는 동안은 기한이 계속 늘어난다
         saveSession(next);
         return next.access_token;
       }catch(e){
@@ -2310,10 +2326,14 @@ function renderAuthGate(){
       <label>비밀번호</label>
       <input type="password" id="loginPw" autocomplete="current-password">
     </div>
+    <label class="auto-login-opt">
+      <input type="checkbox" id="loginRemember" ${autoLoginPref() ? 'checked' : ''}>
+      <span>자동 로그인 <small>이 기기에서 30일 동안 로그인 유지 · 공용 PC에서는 끄세요</small></span>
+    </label>
     <p class="auth-error" id="authError"></p>
     <button class="btn-primary" id="loginBtn" onclick="doLogin()">로그인</button>
     <div class="auth-foot">
-      한 번 로그인하면 24시간 동안 유지되고, 그 뒤에는 다시 로그인해야 합니다.<br>
+      자동 로그인을 끄면 24시간 동안 유지되고, 그 뒤에는 다시 로그인해야 합니다.<br>
       비밀번호를 잊으셨다면 관리자에게 초기화를 요청하세요.<br>
       빌딩정보·통합정보 허브와 같은 사번·비밀번호를 씁니다.
     </div>
@@ -2354,8 +2374,10 @@ async function doLogin(){
     return;
   }
   const loginId = id.toLowerCase();
+  const remember = !!(document.getElementById("loginRemember") || {}).checked;
+  try{ localStorage.setItem(AUTO_LOGIN_KEY, remember ? "1" : "0"); }catch(e){}
   saveSession({ userId: loginId, access_token: tok.access_token, refresh_token: tok.refresh_token,
-                expires_at: tok.expires_at, at: new Date().toISOString() });
+                expires_at: tok.expires_at, at: new Date().toISOString(), remember });
   localStorage.setItem("lastLoginId", loginId);
   localStorage.removeItem(LEGACY_ADMIN_KEY);
   // 사람이 바뀌면 개인 전달사항 접기·보기 범위를 새로 판단해야 한다
@@ -2822,6 +2844,7 @@ function normalizeMemo(m){
     updatedAt: m.updatedAt || null,
     readAt: m.readAt || null,   // 1단계 — 전달사항을 읽었다
     doneAt: m.doneAt || null,   // 2단계 — 지시 내용을 처리했다
+    secret: !!m.secret,         // 비밀 — 받는 사람·작성자·총관리자만 (서버가 나머지에게는 아예 내려주지 않는다)
     comments: Array.isArray(m.comments) ? m.comments.slice() : []
   };
 }
@@ -3308,7 +3331,7 @@ function openSettings(){
       <label>마지막 동기화</label>
       <input type="text" value="${escapeHtml(lastRemoteReadAt ? new Date(lastRemoteReadAt).toLocaleString('ko-KR') : '-')}" readonly>
     </div>
-    <p style="font-size:12px;color:var(--sub);margin:4px 0 0;">로그인은 ${sess ? '유지 중(24시간)' : '필요'}. 비밀번호는 오른쪽 위 이름 칩에서 바꿀 수 있습니다.</p>
+    <p style="font-size:12px;color:var(--sub);margin:4px 0 0;">로그인은 ${sess ? (sess.remember ? '자동 로그인 유지 중(30일)' : '유지 중(24시간)') : '필요'}. 비밀번호는 오른쪽 위 이름 칩에서 바꿀 수 있습니다.</p>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeModal()">닫기</button>
       <button class="btn-primary" onclick="closeModal(); manualRefresh();">지금 새로고침</button>
@@ -3403,14 +3426,16 @@ function ownerLabel(t){
 
 function dueInfo(due, progress, done){
   const today = new Date(todayStr());
-  const dueDate = new Date(due);
-  const diffDays = Math.round((dueDate - today) / 86400000);
+  const hasDue = /^\d{4}-\d{2}-\d{2}$/.test(due || "");   // 마감일 없이 등록한 업무도 있다
+  const diffDays = hasDue ? Math.round((new Date(due) - today) / 86400000) : null;
   let status, badgeClass, ddayClass, ddayText;
   if(done){
     status = "완료"; badgeClass = "done"; ddayClass = "ok"; ddayText = "완료";
   } else if(progress >= 100){
     // 담당자는 다 했다고 했고, 관리자의 완료 처리만 남은 상태
     status = "완료 대기"; badgeClass = "pending"; ddayClass = "ok"; ddayText = "승인 대기";
+  } else if(!hasDue){
+    status = "진행중"; badgeClass = "ongoing"; ddayClass = "ok"; ddayText = "-";
   } else if(diffDays < 0){
     status = "지연"; badgeClass = "overdue"; ddayClass = "late"; ddayText = "D+" + Math.abs(diffDays);
   } else {
@@ -3418,7 +3443,7 @@ function dueInfo(due, progress, done){
     ddayText = diffDays === 0 ? "D-day" : "D-" + diffDays;
     ddayClass = diffDays <= 3 ? "warn" : "ok";
   }
-  return {status, badgeClass, ddayClass, ddayText, overdue: diffDays < 0 && !done && progress < 100};
+  return {status, badgeClass, ddayClass, ddayText, overdue: hasDue && diffDays < 0 && !done && progress < 100};
 }
 
 function barColor(progress, overdue){
@@ -3477,7 +3502,7 @@ function taskRow(t, opts){
       <td data-label="담당자">${ownerLabel(t)}</td>
       <td data-label="마감일자">
         <div class="due-cell">
-          <span>${t.due}</span>
+          <span>${t.due ? t.due : '<span class="no-due">마감 없음</span>'}</span>
           <span class="hist-link ${t.dueHistory && t.dueHistory.length ? '' : 'empty-hist'}" onclick="openHistory('${t.id}')">이력${t.dueHistory && t.dueHistory.length ? ' ' + t.dueHistory.length : ''}</span>
         </div>
       </td>
@@ -3543,7 +3568,9 @@ function teamTable(teamKey){
   const meta = TEAM_META[teamKey];
   const all = tasks.filter(t=>t.team===teamKey);
   // 완료 여부는 관리자의 완료 처리(completedAt)로 가른다. 100%여도 처리 전이면 진행 목록에 남는다.
-  const active = all.filter(t => !isTaskDone(t)).sort((a,b)=> new Date(a.due) - new Date(b.due));
+  // 마감일 없는 업무는 마감 있는 업무 뒤로 (등록순)
+  const dueKey = t => t.due ? new Date(t.due).getTime() : Infinity;
+  const active = all.filter(t => !isTaskDone(t)).sort((a,b)=> (dueKey(a) - dueKey(b)) || 0);
   const completed = all.filter(isTaskDone)
     .sort((a,b)=> new Date(b.completedAt || b.due) - new Date(a.completedAt || a.due));
 
@@ -4280,6 +4307,7 @@ function memoCard(m){
 
   const cls = `${isTarget ? 'to-me' : ''} ${done ? 'is-done' : ''} ${read && !done ? 'is-doing' : ''} ${needsAck ? 'needs-ack' : ''}`;
   const cmtCount = (m.comments || []).length;
+  const lockTag = m.secret ? `<span class="memo-lock" title="비밀 전달사항 — 받는 사람·보낸 사람·총관리자만 볼 수 있습니다">🔒 비밀</span>` : '';
   const dateShort = m.createdAt ? formatDateTime(m.createdAt).slice(5,10) : '';
 
   // ---------- 접힌 모습: 한 줄 요약 ----------
@@ -4292,6 +4320,7 @@ function memoCard(m){
         <div class="memo-sum" onclick="toggleMemoCard('${m.id}')" title="클릭하면 펼쳐집니다">
           <span class="memo-dot ${dot}"></span>
           <span class="memo-sum-to">→ ${escapeHtml(m.toName)}</span>
+          ${lockTag}
           <span class="memo-sum-text">${oneLine}</span>
           ${needsAck ? `<span class="ack-badge">확인 필요</span>` : ''}
           ${cmtCount ? `<span class="memo-sum-cmt">💬 ${cmtCount}</span>` : ''}
@@ -4307,6 +4336,7 @@ function memoCard(m){
     <div class="memo-card ${cls}">
       <div class="memo-card-head" onclick="if(!event.target.closest('button, input, a')) toggleMemoCard('${m.id}')" title="클릭하면 접힙니다">
         <span class="memo-to">→ ${escapeHtml(m.toName)}${findUser(m.toUserId) ? '' : ' <span class="memo-gone">(삭제된 계정)</span>'}</span>
+        ${lockTag}
         ${status}
         <span class="memo-by">${escapeHtml(m.byName)} · ${m.createdAt ? formatDateTime(m.createdAt).slice(5) : ''}${m.updatedAt && m.updatedAt !== m.createdAt ? ' (수정됨)' : ''}</span>
         ${manageBtns}
@@ -4577,7 +4607,13 @@ function openMemoNoteForm(m){
       <label>내용</label>
       <textarea id="memoNoteText" rows="5" maxlength="1000" placeholder="이 팀원에게만 전달할 내용을 입력하세요">${m ? escapeHtml(m.text) : ''}</textarea>
     </div>
-    <p class="report-hint" style="margin:0;">팀 전체가 볼 수 있습니다. 확인 체크는 받는 사람만, 댓글은 누구나 달 수 있습니다.</p>
+    <div class="field">
+      <label class="memo-secret-opt">
+        <input type="checkbox" id="memoSecret" ${m && m.secret ? 'checked' : ''} onchange="memoSecretHint()">
+        <span>🔒 비밀로 보내기<small>받는 사람과 보낸 사람(나)${isOwner ? '' : ', 총관리자'}만 볼 수 있습니다. 다른 팀원에게는 목록에도 나타나지 않습니다.</small></span>
+      </label>
+    </div>
+    <p class="report-hint" id="memoScopeHint" style="margin:0;">${m && m.secret ? '받는 사람·보낸 사람·총관리자만 볼 수 있습니다. 확인 체크는 받는 사람만, 댓글은 이 세 사람만 달 수 있습니다.' : '팀 전체가 볼 수 있습니다. 확인 체크는 받는 사람만, 댓글은 누구나 달 수 있습니다.'}</p>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeModal()">취소</button>
       <button class="btn-primary" onclick="saveMemoNote(${m ? `'${m.id}'` : 'null'})">${m ? '수정' : '등록'}</button>
@@ -4586,12 +4622,21 @@ function openMemoNoteForm(m){
   setTimeout(()=>{ const t=document.getElementById("memoNoteText"); if(t) t.focus(); }, 50);
 }
 
+function memoSecretHint(){
+  const on = !!(document.getElementById("memoSecret") || {}).checked;
+  const h = document.getElementById("memoScopeHint");
+  if(h) h.textContent = on
+    ? '받는 사람·보낸 사람·총관리자만 볼 수 있습니다. 확인 체크는 받는 사람만, 댓글은 이 세 사람만 달 수 있습니다.'
+    : '팀 전체가 볼 수 있습니다. 확인 체크는 받는 사람만, 댓글은 누구나 달 수 있습니다.';
+}
+
 function saveMemoNote(id){
   const toId = document.getElementById("memoTo").value;
   const text = document.getElementById("memoNoteText").value.trim();
   if(!text){ alert("내용을 입력해주세요."); return; }
   const target = findUser(toId);
   if(!target){ alert("받는 사람을 선택해주세요."); return; }
+  const secret = !!(document.getElementById("memoSecret") || {}).checked;
   const now = new Date().toISOString();
 
   if(id){
@@ -4602,6 +4647,7 @@ function saveMemoNote(id){
     m.toUserId = target.id;
     m.toName = target.name;
     m.text = text;
+    m.secret = secret;
     m.updatedAt = now;
     // 받는 사람이 바뀌면 앞사람의 확인·완료 기록은 무효다
     if(targetChanged){ m.readAt = null; m.doneAt = null; }
@@ -4615,7 +4661,7 @@ function saveMemoNote(id){
   const memo = {
     id: "m_" + cid(),
     toUserId: target.id, toName: target.name,
-    text,
+    text, secret,
     byUserId: currentUser ? currentUser.id : "", byName: currentUser ? currentUser.name : "",
     createdAt: now, updatedAt: now, readAt: null, doneAt: null, comments: []
   };
@@ -4875,7 +4921,7 @@ function buildWeeklyReportText(monday){
   Object.keys(TEAM_META).filter(k => !isProjectsTab(k)).forEach(teamKey => {
     const meta = TEAM_META[teamKey];
     const teamTasks = tasks.filter(t => t.team === teamKey && t.includeInReport !== false);
-    const overdue = teamTasks.filter(t => !isTaskDone(t) && t.progress < 100 && t.due < todayStr());
+    const overdue = teamTasks.filter(t => !isTaskDone(t) && t.progress < 100 && t.due && t.due < todayStr());
 
     // 대시보드와 같은 기준 — 완료 처리된 건은 평균에서 뺀다
     teamTasks.forEach(t => { if(!isTaskDone(t)){ progressSum += Number(t.progress); progressCount++; } });
@@ -6739,8 +6785,8 @@ function addTask(){
   const progress = Math.max(0, Math.min(100, Number(document.getElementById("inProgress").value) || 0));
   const memo = document.getElementById("inMemo").value.trim();
 
-  if(!title || !due){
-    alert("업무 내용과 마감일자를 입력해주세요.");
+  if(!title){
+    alert("업무 내용을 입력해주세요.");
     return;
   }
   if(!o1){ alert("담당자(정)를 선택해주세요."); return; }
@@ -7168,11 +7214,11 @@ function openEditDue(id){
     <h3>마감일자 수정</h3>
     <div class="field">
       <label>현재 마감일</label>
-      <input type="text" value="${t.due}" disabled>
+      <input type="text" value="${t.due || '마감 없음'}" disabled>
     </div>
     <div class="field">
-      <label>새 마감일</label>
-      <input type="date" id="modalNewDue" value="${t.due}">
+      <label>새 마감일 <span style="font-weight:400;color:var(--sub);">(비우면 '마감 없음')</span></label>
+      <input type="date" id="modalNewDue" value="${t.due || ''}">
     </div>
     <div class="field">
       <label>변경 사유 (선택)</label>
@@ -7191,12 +7237,8 @@ function saveDueEdit(id){
   if(!t) return;
   const newDue = document.getElementById("modalNewDue").value;
   const reason = document.getElementById("modalReason").value.trim();
-  if(!newDue){
-    alert("새 마감일을 입력해주세요.");
-    return;
-  }
   let changed = false;
-  if(newDue !== t.due){
+  if(newDue !== (t.due || "")){
     if(!Array.isArray(t.dueHistory)) t.dueHistory = [];
     t.dueHistory.push({
       from: t.due,
@@ -7949,7 +7991,7 @@ function openHistory(id){
     ? history.map(h => `
         <tr>
           <td>${formatDateTime(h.changedAt)}</td>
-          <td><span class="hist-old">${h.from}</span><span class="hist-arrow">→</span><span class="hist-new">${h.to}</span></td>
+          <td><span class="hist-old">${h.from || '없음'}</span><span class="hist-arrow">→</span><span class="hist-new">${h.to || '없음'}</span></td>
           <td>${escapeHtml(h.reason || '-')}</td>
         </tr>
       `).join("")
