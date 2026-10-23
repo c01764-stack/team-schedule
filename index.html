@@ -108,7 +108,7 @@
   .quick-nav button:hover{border-color:var(--violet);color:var(--violet);}
   .quick-nav button.on{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent;}
   [data-theme="dark"] .quick-nav button.on{background:linear-gradient(135deg,#0891b2,#7c3aed);}
-  #noticeBanner,#memoBanner,#weeklyBanner,#tabs{scroll-margin-top:72px;}
+  #noticeBanner,#memoBanner,#weeklyBanner,#tabs,#taskAddForm,#absenceAddForm,#taskFormToggle,#absenceFormToggle{scroll-margin-top:72px;}
   @media (max-width:640px){
     /* 휴대폰: 다섯 개가 한 화면에 들어오게 아이콘 위·글자 아래 5칸 */
     .quick-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:0 -4px 12px;padding:6px 4px;overflow:visible;}
@@ -8040,7 +8040,11 @@ function selectTab(name){
 function quickGo(key){
   if(key === "tasks") selectTab("all");
   if(key === "absence") selectTab("absence");
-  const el = document.getElementById(QUICK_NAV_TARGET[key]);
+  // 주요 업무·주요 일정은 탭 줄 바로 위에 등록 칸이 있다 — 탭 줄로 가면 등록 칸이 화면 위로 가려지므로
+  // 등록 칸(좁은 화면이면 "+ 추가" 버튼)이 보이면 그쪽으로 이동한다
+  const FORM_FIRST = { tasks:["taskFormToggle","taskAddForm"], absence:["absenceFormToggle","absenceAddForm"] };
+  let el = (FORM_FIRST[key] || []).map(id => document.getElementById(id))
+            .find(x => x && x.offsetParent !== null) || document.getElementById(QUICK_NAV_TARGET[key]);
   if(!el) return;
   quickNavLock = Date.now();
   setQuickNavOn(key);
@@ -8056,7 +8060,9 @@ function syncQuickNav(){
   const line = 90;
   const tabKey = activeTab === "absence" ? "absence" : "tasks";
   let cur = null;
-  [["notice","noticeBanner"],["memo","memoBanner"],["weekly","weeklyBanner"],[tabKey,"tabs"]].forEach(([k, id]) => {
+  const formId = activeTab === "absence" ? ["absenceFormToggle","absenceAddForm"] : ["taskFormToggle","taskAddForm"];
+  const formEl = formId.map(id => document.getElementById(id)).find(x => x && x.offsetParent !== null);
+  [["notice","noticeBanner"],["memo","memoBanner"],["weekly","weeklyBanner"],[tabKey, formEl ? formEl.id : "tabs"]].forEach(([k, id]) => {
     const el = document.getElementById(id);
     if(el && el.offsetParent !== null && el.getBoundingClientRect().top <= line) cur = k;
   });
