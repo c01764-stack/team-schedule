@@ -1259,6 +1259,9 @@
     color:var(--sub);cursor:pointer;font-family:inherit;}
   .wk-pick.on{background:var(--blue);border-color:var(--blue);color:#fff;}
   .wk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin-top:12px;}
+  /* 4명이면 넓은 화면은 한 줄 4칸, 노트북 폭은 2칸×2줄(3+1 로 한 명만 떨어지지 않게) */
+  .wk-grid[data-n="4"]{grid-template-columns:repeat(4,minmax(0,1fr));}
+  @media (max-width:1399px){ .wk-grid[data-n="4"]{grid-template-columns:repeat(2,minmax(0,1fr));} }
   .wk-card{background:var(--card);border:1px solid var(--border);border-top:3px solid var(--wk-c,var(--blue));border-radius:0;
     display:flex;flex-direction:column;min-width:0;}
   .wk-card.quiet{opacity:.72;}
@@ -1316,7 +1319,7 @@
     .wk-head h3{font-size:15.5px;}
     .wk-nav{margin-left:0;width:100%;justify-content:space-between;}
     .wk-range{min-width:0;flex:1;}
-    .wk-grid{grid-template-columns:minmax(0,1fr);}
+    .wk-grid,.wk-grid[data-n="4"]{grid-template-columns:minmax(0,1fr);}
     .wk-body{max-height:none;}
     .wk-tt{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
     .wk-tr{align-items:flex-start;}
@@ -4522,11 +4525,22 @@ function renderMemoBannerInner(){
 // 지난 기록은 칸을 내려서 본다(그래서 보드에서는 "지난 전달사항" 접기를 쓰지 않는다).
 const MEMO_BOARD_IDS = ["c01764", "c04897", "c05474", "c05651"];   // 천재우(맨 앞) · 이재혁 · 주현수 · 오혜지 순서
 let memoBoardPick = null;   // 좁은 화면에서 고른 사람 (칸 대신 칩으로 전환)
+// 개인 전달사항 칸·주간 업무현황 카드에 늘 보일 사람 순서.
+// 공간 설정 boardOrder(사번 목록)가 있으면 그대로, 안전관리/교육팀은 위 고정 순서,
+// 그 밖의 공간은 팀장 먼저 + 나머지 명단 순서(테스트 계정 제외)
+function boardIds(){
+  const o = wsSetting("boardOrder", null);
+  if(Array.isArray(o) && o.length) return o;
+  if(!wsInfo || wsInfo.id === "safety") return MEMO_BOARD_IDS;
+  const isLead = u => u.role === "leader" || u.role === "admin";
+  const list = users.filter(u => !/테스트/.test(u.name || ""));
+  return list.filter(isLead).concat(list.filter(u => !isLead(u))).map(u => u.id);
+}
 
 function memoBoardColumns(){
   const cols = [];
   const used = new Set();
-  MEMO_BOARD_IDS.forEach(id => {
+  boardIds().forEach(id => {
     const u = findUser(id);
     if(!u) return;                       // 계정이 없어졌으면 그 칸은 만들지 않는다
     used.add(id);
@@ -6638,7 +6652,7 @@ function wkTaskWeek(t, s, e){
 /** 카드를 그릴 사람들 — 전달사항 칸 순서 그대로, 그 밖의 계정은 그 주 기록이 있을 때만 */
 function wkPeople(s, e){
   const out = [];
-  MEMO_BOARD_IDS.forEach(id => { const u = findUser(id); if(u) out.push(u); });
+  boardIds().forEach(id => { const u = findUser(id); if(u) out.push(u); });
   users.forEach(u => {
     if(out.indexOf(u) >= 0 || /테스트/.test(u.name || "")) return;
     const hasTask = tasks.some(t => wkTaskRole(t, u) && wkTaskWeek(t, s, e).changed);
@@ -6677,10 +6691,10 @@ function renderWeeklyBanner(){
     `<button class="wk-pick${wkWho === u.id ? " on" : ""}" onclick="setWeeklyWho('${u.id}')">${escapeHtml(u.name)}</button>`).join("")}</div>`;
 
   const weekAbs = allAbsences().filter(a => a.start <= e && a.end >= s).sort((a, b) => a.start < b.start ? -1 : a.start > b.start ? 1 : 0);
-  const cards = people.map((u, idx) => ({ u, idx })).filter(x => wkWho === "all" || wkWho === x.u.id)
-    .map(({ u, idx }) => wkCard(u, WK_COLORS[idx % WK_COLORS.length], s, e, weekAbs)).join("");
+  const shown = people.map((u, idx) => ({ u, idx })).filter(x => wkWho === "all" || wkWho === x.u.id);
+  const cards = shown.map(({ u, idx }) => wkCard(u, WK_COLORS[idx % WK_COLORS.length], s, e, weekAbs)).join("");
 
-  el.innerHTML = head + picks + `<div class="wk-grid">${cards || '<div class="wk-empty">표시할 사람이 없습니다.</div>'}</div>`;
+  el.innerHTML = head + picks + `<div class="wk-grid" data-n="${shown.length}">${cards || '<div class="wk-empty">표시할 사람이 없습니다.</div>'}</div>`;
 }
 
 function wkCard(u, color, s, e, weekAbs){
