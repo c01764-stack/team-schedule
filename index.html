@@ -1814,7 +1814,7 @@
     </div>
     <div>
       <label>이름</label>
-      <select id="absPerson" onchange="syncPersonCustom('absPerson','absPersonCustom')"></select>
+      <select id="absPerson" onchange="this.dataset.auto='0'; syncPersonCustom('absPerson','absPersonCustom')"></select>
       <input type="text" id="absPersonCustom" placeholder="이름 직접 입력" style="display:none;margin-top:6px;">
     </div>
     <div>
@@ -2093,8 +2093,18 @@ function syncAbsPersonSelect(){
   const want = users.map(u => u.name).filter(Boolean).join("|");
   if(sel.dataset.names === want) return;
   sel.dataset.names = want;
-  const cur = readPerson("absPerson", "absPersonCustom") || (currentUser ? currentUser.name : "");
+  // 사람이 직접 고른 적이 없으면(자동으로 채운 값) 명단이 바뀔 때 기본값을 다시 정한다
+  const cur = sel.dataset.auto === "0" ? (readPerson("absPerson", "absPersonCustom") || defaultAbsPerson()) : defaultAbsPerson();
   fillPersonSelect("absPerson", "absPersonCustom", cur);
+}
+// 등록 폼 이름 기본값: 내가 명단에 있으면 나, 없으면(다른 팀 공간을 보는 총관리자) 그 팀 팀장, 그다음 명단 첫 사람
+function defaultAbsPerson(){
+  const me = currentUser ? String(currentUser.name || "").trim() : "";
+  if(me && users.some(u => u.name === me)) return me;
+  const lead = users.find(u => u.role === "leader" || u.role === "admin");
+  if(lead && lead.name) return lead.name;
+  const first = users.find(u => u.name);
+  return first ? first.name : me;
 }
 function fillPersonSelect(selId, txtId, selected){
   const sel = document.getElementById(selId), txt = document.getElementById(txtId);
@@ -6935,7 +6945,8 @@ function addAbsence(){
     createdById: currentUser ? currentUser.id : "", createdByName: currentUser ? currentUser.name : ""};
   absences.push(newAbsence);
   absenceDirty.set(newAbsence.id, newAbsence);
-  fillPersonSelect("absPerson", "absPersonCustom", currentUser ? currentUser.name : "");
+  fillPersonSelect("absPerson", "absPersonCustom", defaultAbsPerson());
+  { const ap = document.getElementById("absPerson"); if(ap) ap.dataset.auto = "1"; }
   const apc = document.getElementById("absPersonCustom"); if(apc) apc.value = "";
   document.getElementById("absStart").value = "";
   document.getElementById("absEnd").value = "";
