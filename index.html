@@ -796,6 +796,7 @@
   .absence-status.done{background:#f1f5f9;color:var(--sub);}
 
   .add-form.absence-form{grid-template-columns:100px 130px 90px 140px 140px 1fr 110px;}
+  @media (min-width: 901px){ .add-form.absence-form.no-team{grid-template-columns:130px 110px 150px 150px 1fr 110px;} }
 
   .report-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
   .report-header .cal-label{font-size:16.5px;font-weight:800;min-width:200px;text-align:center;color:#6d28d9;}
@@ -1309,6 +1310,7 @@
   .wk-foot{border-top:1px solid var(--border);padding:7px 14px;font-size:12.5px;color:var(--sub);font-weight:600;}
   .wk-foot b{color:#b45309;}
   .type-badge.meeting{background:#e0f2fe;color:#0369a1;}
+  .type-badge.duty{background:#ffedd5;color:#c2410c;}
   @media (max-width:640px){
     .wk-banner{padding:11px 13px;margin-bottom:14px;}
     .wk-head h3{font-size:15.5px;}
@@ -1327,6 +1329,7 @@
   [data-theme="dark"] .wk-task:hover,[data-theme="dark"] .wk-ev:hover{background:rgba(96,165,250,.10);}
   [data-theme="dark"] .wk-foot b{color:#fcd34d;}
   [data-theme="dark"] .type-badge.meeting{background:rgba(56,189,248,.16);color:#7dd3fc;}
+  [data-theme="dark"] .type-badge.duty{background:rgba(251,146,60,.16);color:#fdba74;}
   /* ===================== 디자인 3번: 정돈형(클린) =====================
      색을 한 가지 강조색(먹청)으로 줄이고, 그라데이션·큰 그림자·색 테두리를 걷어내
      "어디가 제목이고 어디가 내용인지"가 먼저 보이게 한다. 영역 구분은 왼쪽 색 띠 하나로만. */
@@ -1877,9 +1880,24 @@ const TYPE_META = {
   inspect: {label:"점검", cls:"inspect"},
   training: {label:"교육", cls:"training"},
   meeting: {label:"미팅", cls:"meeting"},
+  duty: {label:"근무지원", cls:"duty"},
   leave: {label:"휴가", cls:"leave"},
   etc: {label:"기타", cls:"etc"}
 };
+// 팀 공간마다 주요 일정 유형 목록을 따로 둘 수 있다(settings.absTypes). 없으면 기본 5종
+const ABS_TYPES_DEFAULT = ["inspect","training","meeting","leave","etc"];
+function absTypeKeys(){
+  const v = (typeof wsSetting === "function") ? wsSetting("absTypes", null) : null;
+  const keys = Array.isArray(v) ? v.filter(k => TYPE_META[k]) : [];
+  return keys.length ? keys : ABS_TYPES_DEFAULT;
+}
+function absTypeOptions(selected){
+  const keys = absTypeKeys().slice();
+  if(selected && TYPE_META[selected] && !keys.includes(selected)) keys.push(selected);   // 예전 자료의 유형은 그대로 보이게
+  return keys.map(k => `<option value="${k}" ${k === selected ? 'selected' : ''}>${TYPE_META[k].label}</option>`).join("");
+}
+// settings.absTeam === false 인 공간은 주요 일정에 분류(팀)를 쓰지 않는다 — 저장할 때는 'etc'
+function absUseTeam(){ return wsSetting("absTeam", true) !== false; }
 // 이전 유형(외근/출장) 데이터를 새 유형으로 안전하게 이전하기 위한 매핑
 const LEGACY_TYPE_MAP = { outside:"etc", trip:"etc" };
 
@@ -2035,8 +2053,15 @@ function applyWorkspace(){
     if(!sel) return;
     sel.innerHTML = teamOptions(sel.value);
     const wrap = sel.parentElement;
-    if(wrap){ wrap.style.display = keys.length <= 1 ? "none" : ""; const lb = wrap.querySelector("label"); if(lb) lb.textContent = "분류"; }
+    if(wrap){ wrap.style.display = (keys.length <= 1 || (id === "absTeam" && !absUseTeam())) ? "none" : ""; const lb = wrap.querySelector("label"); if(lb) lb.textContent = "분류"; }
   });
+  const absForm = document.getElementById("absenceAddForm");
+  if(absForm) absForm.classList.toggle("no-team", !absUseTeam() || keys.length <= 1);
+  const absTypeSel = document.getElementById("absType");
+  if(absTypeSel){
+    const curType = absTypeKeys().includes(absTypeSel.value) ? absTypeSel.value : absTypeKeys()[0];
+    absTypeSel.innerHTML = absTypeOptions(curType);
+  }
   const links = document.querySelector(".sys-links");
   if(links) links.style.display = (wsSetting("linkEdu", true) || wsSetting("linkSafe", true)) ? "" : "none";
   updateAdminUI();
@@ -3731,10 +3756,12 @@ function absWho(a){
  * ============================================================ */
 // 미팅·회의 아이콘 — 👥 이모지는 윈도우에서 검정 실루엣이라 파란색 SVG 로 그린다
 const MEET_ICON = '<svg class="emo-meet" viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><circle cx="8.5" cy="7.5" r="3.6"/><path d="M1.5 20.2c0-4 3.1-7 7-7s7 3 7 7v.8h-14z"/><circle cx="16.6" cy="8.3" r="3" opacity=".8"/><path d="M16.4 13.6c3.5 0 6.1 2.6 6.1 6.1v1.3h-5.3v-.8c0-2.6-1-4.9-2.7-6.4.6-.1 1.2-.2 1.9-.2z" opacity=".8"/></svg>';
+const DUTY_ICON = '<svg class="emo-duty" viewBox="0 0 24 24" width="1.4em" height="1.4em" style="vertical-align:-0.26em;display:inline-block" aria-hidden="true"><path d="M4 13a8 8 0 0 1 16 0z" fill="#f59e0b" stroke="#b45309" stroke-width="1.1" stroke-linejoin="round"/><path d="M10.6 5.2h2.8v4h-2.8z" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><rect x="2.4" y="12.6" width="19.2" height="2.6" rx="1.3" fill="#d97706" stroke="#92400e" stroke-width="1"/><path d="M7.4 15.4c.6 3.3 2.4 5 4.6 5s4-1.7 4.6-5" fill="#fde7c8" stroke="#a16207" stroke-width="1"/></svg>';
 const LEAVE_ICON = '<svg class="emo-leave" viewBox="2.2 2 20 20" width="1.55em" height="1.55em" style="vertical-align:-0.34em;display:inline-block" aria-hidden="true"><path d="M3 21l4.6-12.6 8 8z" fill="#8b5cf6" stroke="#5b21b6" stroke-width="1" stroke-linejoin="round"/><path d="M5.2 15l3.6 3.6M6.6 11.2l6.2 6.2" stroke="#fde047" stroke-width="1.3"/><g stroke-linecap="round" stroke-width="1.6" fill="none"><path d="M13.5 6.5c.6-1.6 0-3 .8-4" stroke="#ef4444"/><path d="M17.5 10.5c1.6-.6 3 0 4-.8" stroke="#0ea5e9"/><path d="M16 4.5l1.6-1.6" stroke="#22c55e"/></g><circle cx="19.5" cy="5.5" r="1.2" fill="#f59e0b"/><circle cx="11" cy="3.5" r=".9" fill="#ec4899"/><circle cx="20.6" cy="14" r=".9" fill="#22c55e"/><rect x="17.6" y="7.4" width="1.8" height="1.8" rx=".3" transform="rotate(30 18.5 8.3)" fill="#ec4899"/></svg>'; const ETC_ICON = '<svg class="emo-etc" viewBox="2.5 2.5 19 19" width="1.4em" height="1.4em" style="vertical-align:-0.26em;display:inline-block" aria-hidden="true"><g transform="rotate(40 12 12)"><rect x="11" y="1.2" width="2" height="11" rx=".6" fill="#78350f"/><path d="M10.2.6h3.6l-.4 2.6h-2.8z" fill="#1f2937"/><path d="M9 10.5c-.8-.8-2.2-.4-2.2 1 0 1.2 1.2 1.6 1.2 2.6 0 1-1.6 1.6-1.6 3.8 0 2.7 2.4 4.3 5.6 4.3s5.4-1.6 5.4-4.3c0-2.2-1.6-2.8-1.6-3.8 0-1 1.4-1.6 1.4-3 0-1.6-1.6-1.8-2.4-.6L13.6 12h-2.8z" fill="#dc2626" stroke="#7f1d1d" stroke-width=".8"/><path d="M9.6 14.6c1.5 1 3.3 1 4.8 0v4.6H9.6z" fill="#f8fafc"/><rect x="10.3" y="15.4" width="3.4" height=".9" fill="#1f2937"/><rect x="10.3" y="17.5" width="3.4" height=".9" fill="#1f2937"/></g></svg>'; const INSPECT_ICON = '<svg class="emo-insp" viewBox="0 0 24 24" width="1.4em" height="1.4em" style="vertical-align:-0.26em;display:inline-block" aria-hidden="true"><path d="M15 15l5.6 5.6" stroke="#92400e" stroke-width="3.6" stroke-linecap="round"/><path d="M14.3 14.3l1.6 1.6" stroke="#6b7280" stroke-width="3.2" stroke-linecap="round"/><circle cx="9.8" cy="9.8" r="6.4" fill="#bfdbfe" fill-opacity=".75" stroke="#6b7280" stroke-width="2"/><path d="M6.6 8.4a3.8 3.8 0 0 1 3-2.6" stroke="#fff" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg>'; const BOOK_ICON = '<svg class="emo-book" viewBox="0 0 24 24" width="1.4em" height="1.4em" aria-hidden="true"><path d="M1.2 6.2v14.4c4.4-.6 8 0 10.8 1.6 2.8-1.6 6.4-2.2 10.8-1.6V6.2z" fill="currentColor"/><path d="M12 6C9.6 4.4 6.4 4 2.6 4.5v14.2c3.8-.5 7 0 9.4 1.5 2.4-1.5 5.6-2 9.4-1.5V4.5C17.6 4 14.4 4.4 12 6z" fill="#fff" stroke="currentColor" stroke-width="1.1"/><path d="M12 6v14" stroke="currentColor" stroke-width="1.1"/><path d="M4.8 8.4h4.8M4.8 11.4h4.8M4.8 14.4h4.8M14.4 8.4h4.8M14.4 11.4h4.8M14.4 14.4h4.8" stroke="currentColor" stroke-opacity=".55" stroke-width="1.2" stroke-linecap="round"/></svg>'; const ABS_EMOJI = {
   inspect:  { e:INSPECT_ICON, label:"점검" },
   training: { e:BOOK_ICON, label:"교육" },
   meeting:  { e:MEET_ICON, label:"미팅·회의" },
+  duty:     { e:DUTY_ICON, label:"근무지원" },
   leave:    { e:LEAVE_ICON, label:"휴가" },
   etc:      { e:ETC_ICON, label:"기타" }
 };
@@ -3750,6 +3777,7 @@ function absEmoji(a){
   if(t === "inspect")  return ABS_EMOJI.inspect.e;
   if(t === "training") return ABS_EMOJI.training.e;
   if(t === "meeting")  return ABS_EMOJI.meeting.e;
+  if(t === "duty")     return ABS_EMOJI.duty.e;
   const txt = String(a.memo || "");
   for(const [re, e] of ABS_EMOJI_WORDS){ if(re.test(txt)) return e; }
   return ABS_EMOJI.etc.e;
@@ -3975,7 +4003,7 @@ function renderAbsenceBanner(){
     return;
   }
   const chips = dayList.map(a => {
-    const meta = TEAM_META[a.team];
+    const meta = TEAM_META[a.team] || TEAM_META.etc;
     const type = TYPE_META[a.type] || TYPE_META.etc;
     const memoPart = a.memo ? ` (${escapeHtml(a.memo)})` : '';
     const src = linkSrc(a);
@@ -4874,13 +4902,13 @@ function renderAbsenceCalendar(){
   const dayCells = cells.map(c => {
     const dayAbsences = allAbsences().filter(a => a.start <= c.dateStr && c.dateStr <= a.end);
     const chips = dayAbsences.map(a => {
-      const meta = TEAM_META[a.team];
+      const meta = TEAM_META[a.team] || TEAM_META.etc;
       const type = TYPE_META[a.type] || TYPE_META.etc;
       const src = linkSrc(a);
       const who = absWho(a);
       const whoPart = who ? `<span class="cal-chip-who"><span class="cal-chip-sep">·</span>${escapeHtml(who)}</span>` : '';
       const drag = canEditAbsence(a);
-      const tip = `${a.person} · ${meta.label} · ${type.label}${who ? ' · ' + who : ''}${a.memo ? ' · ' + a.memo : ''}${src ? ' (' + src.tag + ')' : ''}${drag ? '\n끌어서 다른 날짜로 옮길 수 있습니다' : ''}`;
+      const tip = `${a.person}${absUseTeam() ? ' · ' + meta.label : ''} · ${type.label}${who ? ' · ' + who : ''}${a.memo ? ' · ' + a.memo : ''}${src ? ' (' + src.tag + ')' : ''}${drag ? '\n끌어서 다른 날짜로 옮길 수 있습니다' : ''}`;
       return `<div class="cal-chip ${meta.cls}${src ? ' ' + src.cls : ''}${drag ? ' can-drag' : ''}" data-abs-id="${escapeHtml(a.id)}" data-from="${c.dateStr}" onclick="openAbsenceChip('${a.id}')" title="${escapeHtml(tip)}"><span class="cal-chip-txt">${escapeHtml(a.person)}<span class="cal-chip-type">${type.label}</span>${whoPart}</span><span class="cal-chip-emo" aria-hidden="true">${absEmoji(a)}</span></div>`;
     }).join("");
     const classes = ["cal-cell"];
@@ -4888,7 +4916,7 @@ function renderAbsenceCalendar(){
     if(c.dateStr === todayS) classes.push("cal-today");
     return `<div class="${classes.join(" ")}" data-date="${c.dateStr}"><div class="cal-daynum">${c.day}</div><div class="cal-chips">${chips}</div></div>`;
   }).join("");
-  const legendKeys = ["inspect","training","meeting","leave","etc"];
+  const legendKeys = absTypeKeys().filter(k => ABS_EMOJI[k]);
   const legend = `<div class="cal-legend">${legendKeys.map(k => `<span>${ABS_EMOJI[k].e} <b>${ABS_EMOJI[k].label}</b></span>`).join("")}<span class="cal-legend-hint">${currentUser ? (isAdmin ? '✋ 일정을 끌어서 날짜를 옮길 수 있습니다' : '✋ 내가 등록한 일정은 끌어서 날짜를 옮길 수 있습니다') : ''}</span></div>`;
 
   return `
@@ -4948,10 +4976,10 @@ function buildWeeklyReportText(monday){
   const nextEndStr = fmtLocalDate(nextFriday);
 
   const formatAbsenceLine = a => {
-    const meta = TEAM_META[a.team];
+    const meta = TEAM_META[a.team] || TEAM_META.etc;
     const type = TYPE_META[a.type] || TYPE_META.etc;
     const dateRange = a.start === a.end ? a.start : `${a.start}~${a.end}`;
-    return `- ${a.person} (${meta.label}) - ${type.label} - ${dateRange}${a.memo ? ' - ' + a.memo : ''}`;
+    return `- ${a.person}${absUseTeam() ? ' (' + meta.label + ')' : ''} - ${type.label} - ${dateRange}${a.memo ? ' - ' + a.memo : ''}`;
   };
 
   lines.push(`■ 주요 일정 (외근/점검/교육/휴가 등)`);
@@ -6655,13 +6683,13 @@ function wkCard(u, color, s, e, weekAbs){
 
   const mine = weekAbs.filter(a => wkAbsFor(a, u.name));
   const by = k => mine.filter(a => a.type === k);
-  const meet = by("meeting"), tr = by("training"), ins = by("inspect"), etc = by("etc"), lv = by("leave");
+  const meet = by("meeting"), tr = by("training"), ins = by("inspect"), etc = by("etc"), lv = by("leave"), duty = by("duty");
 
   const nDone = changed.filter(x => x.w.doneInWk).length;
   const nUp = changed.filter(x => !x.w.doneInWk && x.w.from !== null && x.w.to > x.w.from).length;
   const nDown = changed.filter(x => x.w.from !== null && x.w.to < x.w.from).length;
   const nNew = changed.filter(x => x.w.created && !x.w.doneInWk).length;
-  const total = changed.length + meet.length + tr.length + ins.length + etc.length;
+  const total = changed.length + meet.length + tr.length + ins.length + duty.length + etc.length;
 
   const sum = total ? [
     nDone ? `<span class="up">완료 ${nDone}</span>` : "",
@@ -6731,8 +6759,9 @@ function wkCard(u, color, s, e, weekAbs){
       ${sec("미팅", "var(--wk-meet)", meet)}
       ${sec("교육", "var(--wk-tr)", tr)}
       ${sec("점검", "var(--wk-ins)", ins)}
+      ${sec("근무지원", "var(--wk-ins)", duty)}
       ${sec("기타 일정", "var(--wk-etc)", etc)}
-      ${(meet.length + tr.length + ins.length + etc.length) ? "" : '<div class="wk-sec"><div class="wk-empty">미팅 · 교육 · 점검 기록 없음</div></div>'}
+      ${(meet.length + tr.length + ins.length + duty.length + etc.length) ? "" : '<div class="wk-sec"><div class="wk-empty">미팅 · 교육 · 점검 기록 없음</div></div>'}
     </div>
     ${lv.length ? `<div class="wk-foot"><b>휴가</b> ${lv.map(a => a.start === a.end ? wkMD(a.start) : `${wkMD(a.start)}~${wkMD(a.end)}`).join(", ")}</div>` : ""}
   </div>`;
@@ -6886,7 +6915,7 @@ function toggleReportInclude(id){
 
 function addAbsence(){
   if(!canWrite()){ needLogin(); return; }
-  const team = document.getElementById("absTeam").value;
+  const team = absUseTeam() ? document.getElementById("absTeam").value : "etc";
   const person = readPerson("absPerson", "absPersonCustom");
   const type = document.getElementById("absType").value;
   const start = document.getElementById("absStart").value;
@@ -6921,12 +6950,12 @@ function openEditAbsence(id){
   if(!canEditAbsence(a)){ openAbsenceView(a); return; }
   openModal(`
     <h3>일정 수정</h3>
-    <div class="field">
+    ${absUseTeam() ? `<div class="field">
       <label>팀</label>
       <select id="modalAbsTeam">
         ${teamOptions(a.team)}
       </select>
-    </div>
+    </div>` : ''}
     <div class="field">
       <label>이름</label>
       <select id="modalAbsPerson" onchange="syncPersonCustom('modalAbsPerson','modalAbsPersonCustom')">${personOptions(a.person)}</select>
@@ -6934,13 +6963,7 @@ function openEditAbsence(id){
     </div>
     <div class="field">
       <label>유형</label>
-      <select id="modalAbsType">
-        <option value="inspect" ${a.type==='inspect'?'selected':''}>점검</option>
-        <option value="training" ${a.type==='training'?'selected':''}>교육</option>
-        <option value="meeting" ${a.type==='meeting'?'selected':''}>미팅</option>
-        <option value="leave" ${a.type==='leave'?'selected':''}>휴가</option>
-        <option value="etc" ${a.type==='etc'?'selected':''}>기타</option>
-      </select>
+      <select id="modalAbsType">${absTypeOptions(a.type)}</select>
     </div>
     <div class="field">
       <label>시작일</label>
@@ -6972,7 +6995,7 @@ function openAbsenceView(a){
     <h3>${absEmoji(a)} 일정 보기</h3>
     <table style="width:100%;border-collapse:collapse;font-size:14.5px;">
       ${row("이름", escapeHtml(a.person))}
-      ${row("팀", meta.label)}
+      ${absUseTeam() ? row("팀", meta.label) : ''}
       ${row("유형", type.label)}
       ${row("날짜", range)}
       ${a.memo ? row("메모", escapeHtml(a.memo)) : ''}
@@ -7000,7 +7023,8 @@ function saveAbsenceEdit(id){
     alert("종료일은 시작일보다 빠를 수 없습니다.");
     return;
   }
-  a.team = document.getElementById("modalAbsTeam").value;
+  const teamSel = document.getElementById("modalAbsTeam");
+  if(teamSel) a.team = teamSel.value;
   a.person = person;
   a.type = document.getElementById("modalAbsType").value;
   a.start = start;
