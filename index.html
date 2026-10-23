@@ -1634,6 +1634,68 @@
     [data-theme="paper"] .tab{border-bottom:1.5px solid var(--border);border-radius:6px;margin-bottom:0;}
     [data-theme="paper"] .tab.active{padding-bottom:10px;box-shadow:inset 0 -3px 0 var(--ink);}
   }
+  /* ── 프로젝트업무 탭 (2026-10-23) ──
+     분류(teams) 중 kind:"projects" 인 탭은 업무 목록 대신 프로젝트 보드를 그린다.
+     프로젝트 = 제목·기간·담당 + 단계(세부 일정) + 파일(Supabase Storage) + 올리기/내려받기 이력 */
+  .pj-sec{margin-bottom:22px;}
+  .pj-sec h3{margin:0 0 10px;font-size:16.5px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .pj-sec h3 .sub{font-size:13px;color:var(--sub);font-weight:600;}
+  .pj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+  .pj-card{background:var(--card);border:1px solid var(--border);padding:14px 16px;cursor:pointer;box-shadow:var(--shadow-soft);transition:box-shadow .15s,transform .12s;display:flex;flex-direction:column;gap:7px;}
+  .pj-card:hover{box-shadow:var(--shadow-card);transform:translateY(-1px);}
+  .pj-card.is-done{background:#fbfbfe;opacity:.85;}
+  .pj-card .pj-title{font-size:15.5px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .pj-card .pj-meta{font-size:12.5px;color:var(--sub);font-weight:600;display:flex;flex-wrap:wrap;gap:4px 12px;}
+  .pj-bar{height:8px;background:#eeedf8;border-radius:999px;overflow:hidden;}
+  .pj-bar i{display:block;height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:999px;}
+  .pj-bar i.ok{background:var(--green);}
+  .pj-prog{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--sub);font-weight:700;}
+  .pj-prog .pj-bar{flex:1;}
+  .pj-next{font-size:12.5px;color:var(--text);font-weight:600;}
+  .pj-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px;}
+  .pj-chips button{padding:5px 12px;border-radius:999px;border:1.5px solid var(--border);background:var(--card);color:var(--sub);font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .pj-chips button.on{background:var(--violet);border-color:var(--violet);color:#fff;}
+  .pj-empty{font-size:14.5px;color:var(--sub);padding:14px 2px;}
+  /* 상세 */
+  .pj-detail{background:var(--card);border:1px solid var(--border);padding:16px 18px;box-shadow:var(--shadow-soft);margin-bottom:14px;}
+  .pj-head{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;}
+  .pj-head h2{margin:0;font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .pj-head .pj-manage{margin-left:auto;display:flex;gap:5px;flex-wrap:wrap;}
+  .pj-manage button,.pj-tbl button.mini{border:1.5px solid var(--border);background:transparent;border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--violet);font-weight:700;font-family:inherit;white-space:nowrap;}
+  .pj-manage button.del,.pj-tbl button.mini.del{color:var(--red);}
+  .pj-desc{margin:8px 0 0;font-size:14px;color:var(--text);white-space:pre-wrap;line-height:1.55;}
+  .pj-info{margin-top:8px;font-size:13px;color:var(--sub);font-weight:600;display:flex;flex-wrap:wrap;gap:4px 14px;}
+  .pj-back{border:none;background:transparent;color:var(--violet);font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;padding:4px 0;}
+  .pj-sub{margin-top:14px;}
+  .pj-sub h4{margin:0 0 8px;font-size:15px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .pj-sub h4 .sub{font-size:12.5px;color:var(--sub);font-weight:600;}
+  .pj-sub h4 .routine-add-btn{padding:5px 12px;font-size:12.5px;}
+  .pj-tbl{width:100%;border-collapse:collapse;font-size:13.5px;}
+  .pj-tbl th{text-align:left;font-size:12px;color:var(--sub);font-weight:800;padding:6px 8px;border-bottom:2px solid var(--border);white-space:nowrap;}
+  .pj-tbl td{padding:7px 8px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  .pj-tbl tr.st-done td{color:var(--sub);}
+  .pj-tbl tr.st-done td.t{text-decoration:line-through;}
+  .pj-tbl td.t{font-weight:700;color:var(--text);}
+  .pj-tbl td.act{white-space:nowrap;text-align:right;}
+  .pj-tbl select.st{padding:4px 8px;border:1.5px solid var(--border);border-radius:999px;font-size:12.5px;font-family:inherit;font-weight:700;background:var(--card);color:var(--text);}
+  .pj-tbl select.st.todo{color:var(--sub);} .pj-tbl select.st.doing{color:#1d4ed8;border-color:#93c5fd;background:#eff6ff;} .pj-tbl select.st.done{color:#15803d;border-color:#86efac;background:#f0fdf4;}
+  .pj-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .pj-scroll .pj-tbl{min-width:520px;}
+  .pj-file-name{font-weight:700;color:var(--text);word-break:break-all;}
+  .pj-file-name small{display:block;font-size:11.5px;color:var(--sub);font-weight:600;}
+  .pj-drop{margin-top:8px;border:2px dashed var(--border);padding:10px 12px;font-size:13px;color:var(--sub);font-weight:600;text-align:center;cursor:pointer;}
+  .pj-drop.over{border-color:var(--violet);color:var(--violet);background:#f5f3ff;}
+  .pj-drop.busy{opacity:.6;pointer-events:none;}
+  .pj-log{font-size:12.5px;color:var(--sub);font-weight:600;line-height:1.7;max-height:220px;overflow:auto;padding:2px 0;}
+  .pj-log b{color:var(--text);}
+  .pj-log .a-upload{color:#1d4ed8;} .pj-log .a-download{color:#15803d;} .pj-log .a-delete{color:var(--red);} .pj-log .a-create{color:#6d28d9;}
+  .pj-dday{font-size:11.5px;font-weight:800;border-radius:999px;padding:2px 8px;white-space:nowrap;}
+  .pj-dday.late{background:#ffe4e6;color:#be123c;} .pj-dday.soon{background:#fef3c7;color:#b45309;} .pj-dday.ok{background:#f1f5f9;color:var(--sub);}
+  @media (max-width:640px){
+    .pj-grid{grid-template-columns:1fr;}
+    .pj-detail{padding:13px 12px;}
+    .pj-head h2{font-size:18px;}
+  }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Nanum+Pen+Script&display=swap">
@@ -1947,7 +2009,7 @@ function applyWorkspace(){
     ? wsSetting("teams", null) : [{key:"safety",label:"안전"},{key:"edu",label:"교육"},{key:"etc",label:"기타"}];
   const cycle = ["safety","edu","etc"];
   const meta = {};
-  teams.forEach((t, i) => { if(t && t.key) meta[t.key] = { label: String(t.label || t.key), color: `var(--${cycle[i % 3]})`, cls: cycle[i % 3] }; });
+  teams.forEach((t, i) => { if(t && t.key) meta[t.key] = { label: String(t.label || t.key), color: `var(--${cycle[i % 3]})`, cls: cycle[i % 3], kind: t.kind === "projects" ? "projects" : "tasks" }; });
   if(!meta.etc) meta.etc = { label: "기타", color: "var(--etc)", cls: "etc" };   // 옛 자료·기본값 대비
   TEAM_META = meta;
   const keys = Object.keys(meta);
@@ -2008,7 +2070,8 @@ function fillPersonSelect(selId, txtId, selected){
   syncPersonCustom(selId, txtId);
 }
 function teamOptions(selected){
-  return Object.keys(TEAM_META).map(k => `<option value="${escapeHtml(k)}" ${k === selected ? 'selected' : ''}>${escapeHtml(TEAM_META[k].label)}</option>`).join("");
+  // 프로젝트업무 분류(kind:projects)에는 일반 업무를 넣지 않는다
+  return Object.keys(TEAM_META).filter(k => TEAM_META[k].kind !== "projects").map(k => `<option value="${escapeHtml(k)}" ${k === selected ? 'selected' : ''}>${escapeHtml(TEAM_META[k].label)}</option>`).join("");
 }
 
 // isAdmin 은 로그인한 계정의 역할(owner·leader)로 결정된다. isOwner 는 총관리자만.
@@ -2660,7 +2723,7 @@ function applyFormState(formId, toggleId, active, label){
 
 function syncForms(){
   applyFormState("taskAddForm", "taskFormToggle",
-    !!currentUser && activeTab !== "absence" && activeTab !== "report" && activeTab !== "routine", "+ 업무 추가");
+    !!currentUser && activeTab !== "absence" && activeTab !== "report" && activeTab !== "routine" && !isProjectsTab(activeTab), "+ 업무 추가");
   applyFormState("absenceAddForm", "absenceFormToggle",
     activeTab === "absence", "+ 일정 추가");
 }
@@ -3005,6 +3068,7 @@ async function refreshFromRemote(){
   users    = mergeByKey(fresh.users,    userDirty,    u => u.id);
   syncCurrentUser();
   safeRender();
+  if(isProjectsTab(activeTab) && !pjUploading) loadProjects();
   return fresh;
 }
 
@@ -4808,7 +4872,7 @@ function buildWeeklyReportText(monday){
 
   let totalActive = 0, totalDone = 0, totalOverdue = 0, progressSum = 0, progressCount = 0;
 
-  Object.keys(TEAM_META).forEach(teamKey => {
+  Object.keys(TEAM_META).filter(k => !isProjectsTab(k)).forEach(teamKey => {
     const meta = TEAM_META[teamKey];
     const teamTasks = tasks.filter(t => t.team === teamKey && t.includeInReport !== false);
     const overdue = teamTasks.filter(t => !isTaskDone(t) && t.progress < 100 && t.due < todayStr());
@@ -5946,10 +6010,453 @@ function openAbsenceTabAt(dateStr){
   if(el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+// ============================================================
+//  프로젝트업무 (2026-10-23)
+//  분류(teams) 중 kind:"projects" 인 탭은 업무 표 대신 프로젝트 보드를 그린다.
+//   - 프로젝트: ts_projects(data = {title, desc, ownerId, ownerName, start, end, status, steps[]})
+//   - 세부 일정(단계): steps[{id, title, start, end, personId, personName, status todo|doing|done, memo}]
+//   - 파일: Supabase Storage 'ts-project-files' (<ws>/<프로젝트id>/<파일id>.<확장자>), 표 ts_project_files
+//   - 이력: ts_project_logs (create / upload / download / delete) — 같은 공간 팀원 모두 볼 수 있다
+//  권한(서버가 확인): 추가·수정·단계·파일 올리기·내려받기 = 팀원 누구나,
+//                   프로젝트 삭제 = 팀장·총관리자, 파일 삭제 = 올린 본인·팀장·총관리자
+// ============================================================
+const PJ_BUCKET = "ts-project-files";
+const PJ_MAX_BYTES = 50 * 1024 * 1024;
+const PJ_STEP_STATUS = { todo: "대기", doing: "진행", done: "완료" };
+let projects = [], projectFiles = [], projectLogs = [];
+let projectsLoaded = false, projectsLoading = false, projectsError = null;
+let projectOpen = null;          // 상세를 보고 있는 프로젝트 id
+let projectFilter = "active";    // active | done | all
+let pjUploading = false;
+let pjMyUid = null;             // 내 auth 계정 id (올린 본인 판단용)
+
+function isProjectsTab(key){ return !!(TEAM_META[key] && TEAM_META[key].kind === "projects"); }
+function projectsTabKey(){ return Object.keys(TEAM_META).find(isProjectsTab) || null; }
+function findProject(id){ return projects.find(p => p.id === id) || null; }
+function pjFilesOf(id){ return projectFiles.filter(f => f.projectId === id); }
+function pjSteps(p){ return Array.isArray(p && p.steps) ? p.steps : []; }
+function pjProgress(p){
+  const s = pjSteps(p);
+  if(!s.length) return p.status === "done" ? 100 : 0;
+  return Math.round(s.filter(x => x.status === "done").length * 100 / s.length);
+}
+function pjCanDelete(){ return isAdmin; }
+function pjCanDeleteFile(f){ return isAdmin || !!(currentUser && f.byUserId && pjMyUid && String(f.byUserId) === String(pjMyUid)); }
+function fmtBytes(n){
+  n = Number(n) || 0;
+  if(n < 1024) return n + " B";
+  if(n < 1024 * 1024) return (n / 1024).toFixed(0) + " KB";
+  return (n / 1024 / 1024).toFixed(n < 10 * 1024 * 1024 ? 1 : 0) + " MB";
+}
+function pjDday(end, status){
+  if(!end || status === "done") return "";
+  const d = daysBetween(todayStr(), end);
+  if(d < 0) return `<span class="pj-dday late">D+${-d}</span>`;
+  if(d === 0) return `<span class="pj-dday soon">D-Day</span>`;
+  if(d <= 3) return `<span class="pj-dday soon">D-${d}</span>`;
+  return `<span class="pj-dday ok">D-${d}</span>`;
+}
+function pjPeriod(s, e){ return (s || e) ? `${s || '?'} ~ ${e || '?'}` : "기간 미정"; }
+
+// ---------- 서버 ----------
+async function loadProjects(force){
+  if(!currentUser || !wsInfo) return;
+  if(projectsLoading) return;
+  projectsLoading = true;
+  try{
+    const r = await sbRpc("ts_projects_load", { p_ws: wsInfo.id });
+    projects = Array.isArray(r && r.projects) ? r.projects : [];
+    projectFiles = Array.isArray(r && r.files) ? r.files : [];
+    projectLogs = Array.isArray(r && r.logs) ? r.logs : [];
+    pjMyUid = (r && r.uid) || null;
+    projectsLoaded = true; projectsError = null;
+  }catch(err){
+    projectsError = err && (err.message || String(err));
+    if(err && err.auth){ handleAuthLost(); return; }
+  }finally{ projectsLoading = false; }
+  if(isProjectsTab(activeTab)) renderContent();
+}
+async function pjCall(fn, args, okMsg){
+  try{
+    const r = await sbRpc(fn, args);
+    await loadProjects(true);
+    return r;
+  }catch(err){
+    if(err && err.auth){ handleAuthLost(); return null; }
+    alert((err && err.message) || "처리하지 못했습니다.");
+    await loadProjects(true);
+    return null;
+  }
+}
+async function sbStorage(method, path, opts){
+  const token = await sbAccessToken();
+  if(!token){ const err = new Error("로그인이 필요합니다."); err.auth = true; throw err; }
+  opts = opts || {};
+  const headers = Object.assign({ "apikey": SB_KEY, "Authorization": "Bearer " + token }, opts.headers || {});
+  const res = await fetch(SB_URL + "/storage/v1/" + path, { method, headers, body: opts.body });
+  let json = null;
+  try{ json = await res.json(); }catch(e){}
+  if(!res.ok){
+    const msg = (json && (json.message || json.error)) || ("HTTP " + res.status);
+    const err = new Error(msg); err.status = res.status;
+    if(res.status === 401) err.auth = true;
+    throw err;
+  }
+  return json;
+}
+
+// ---------- 화면: 목록 ----------
+function renderProjectTab(){
+  const key = activeTab;
+  const meta = TEAM_META[key] || { label: "프로젝트업무" };
+  if(!projectsLoaded && !projectsError){
+    if(!projectsLoading) loadProjects();
+    return `<div class="pj-sec"><h3>${escapeHtml(meta.label)}</h3><div class="pj-empty">불러오는 중...</div></div>`;
+  }
+  if(projectsError && !projectsLoaded){
+    return `<div class="pj-sec"><h3>${escapeHtml(meta.label)}</h3><div class="pj-empty">불러오지 못했습니다: ${escapeHtml(projectsError)} <button class="routine-add-btn ghost" onclick="loadProjects(true)">다시 시도</button></div></div>`;
+  }
+  if(projectOpen){
+    const p = findProject(projectOpen);
+    if(p) return renderProjectDetail(p);
+    projectOpen = null;
+  }
+  const active = projects.filter(p => p.status !== "done");
+  const done = projects.filter(p => p.status === "done");
+  const list = projectFilter === "active" ? active : projectFilter === "done" ? done : projects;
+  const addBtn = currentUser ? `<button class="routine-add-btn" onclick="openProjectForm(null)">+ 프로젝트 추가</button>` : "";
+  const chips = `<div class="pj-chips">
+      <button class="${projectFilter === 'active' ? 'on' : ''}" onclick="setProjectFilter('active')">진행 중 <b>${active.length}</b></button>
+      <button class="${projectFilter === 'done' ? 'on' : ''}" onclick="setProjectFilter('done')">완료 <b>${done.length}</b></button>
+      <button class="${projectFilter === 'all' ? 'on' : ''}" onclick="setProjectFilter('all')">전체 <b>${projects.length}</b></button>
+    </div>`;
+  const cards = list.length
+    ? `<div class="pj-grid">${list.map(projectCard).join("")}</div>`
+    : `<div class="pj-empty">${projects.length ? '해당하는 프로젝트가 없습니다.' : '등록된 프로젝트가 없습니다. 위 버튼으로 추가하세요.'}</div>`;
+  return `<div class="pj-sec">
+      <h3>${escapeHtml(meta.label)} <span class="sub">${active.length}건 진행 중</span> ${addBtn}</h3>
+      ${chips}
+      ${cards}
+    </div>`;
+}
+function setProjectFilter(v){ projectFilter = v; renderContent(); }
+function projectCard(p){
+  const steps = pjSteps(p);
+  const prog = pjProgress(p);
+  const files = pjFilesOf(p.id);
+  const next = steps.filter(s => s.status !== "done").sort((a, b) => String(a.end || a.start || "9999").localeCompare(String(b.end || b.start || "9999")))[0];
+  const doneCnt = steps.filter(s => s.status === "done").length;
+  return `<div class="pj-card ${p.status === 'done' ? 'is-done' : ''}" onclick="openProject('${escapeHtml(p.id)}')">
+      <div class="pj-title">${escapeHtml(p.title)} ${p.status === 'done' ? '<span class="rt-chip done">완료</span>' : pjDday(p.end, p.status)}</div>
+      <div class="pj-meta"><span>📅 ${escapeHtml(pjPeriod(p.start, p.end))}</span><span>👤 ${escapeHtml(p.ownerName || '미지정')}</span><span>📎 ${files.length}</span></div>
+      <div class="pj-prog"><div class="pj-bar"><i class="${prog === 100 ? 'ok' : ''}" style="width:${prog}%"></i></div><span>${prog}% (${doneCnt}/${steps.length})</span></div>
+      ${next ? `<div class="pj-next">다음: ${escapeHtml(next.title)}${next.end ? ` · ~${escapeHtml(next.end)}` : ''}${next.personName ? ` · ${escapeHtml(next.personName)}` : ''}</div>` : ''}
+    </div>`;
+}
+function openProject(id){ projectOpen = id; renderContent(); window.scrollTo({ top: document.getElementById("content").offsetTop - 70, behavior: "smooth" }); }
+function closeProject(){ projectOpen = null; renderContent(); }
+
+// ---------- 화면: 상세 ----------
+function renderProjectDetail(p){
+  const steps = pjSteps(p).slice().sort((a, b) => String(a.start || a.end || "9999").localeCompare(String(b.start || b.end || "9999")) || String(a.title).localeCompare(String(b.title)));
+  const files = pjFilesOf(p.id);
+  const logs = projectLogs.filter(l => l.projectId === p.id);
+  const prog = pjProgress(p);
+  const can = !!currentUser;
+  const manage = can ? `<span class="pj-manage">
+      <button onclick="openProjectForm('${escapeHtml(p.id)}')">수정</button>
+      <button onclick="toggleProjectDone('${escapeHtml(p.id)}')">${p.status === 'done' ? '다시 진행' : '프로젝트 완료'}</button>
+      ${pjCanDelete() ? `<button class="del" onclick="deleteProject('${escapeHtml(p.id)}')">삭제</button>` : ''}
+    </span>` : "";
+  const stepRows = steps.length ? steps.map(s => stepRow(p, s)).join("")
+    : `<tr><td colspan="6" class="pj-empty">등록된 단계가 없습니다.${can ? ' "단계 추가"로 세부 일정을 넣으세요.' : ''}</td></tr>`;
+  const fileRows = files.length ? files.map(f => fileRow(f)).join("")
+    : `<tr><td colspan="4" class="pj-empty">올린 파일이 없습니다.</td></tr>`;
+  const logHtml = logs.length ? logs.slice(0, 200).map(l => {
+      const act = { create: "생성", upload: "올림", download: "내려받음", delete: "삭제", view: "열람" }[l.action] || l.action;
+      return `<div>${escapeHtml(formatDateTime(l.at))} · <b>${escapeHtml(l.name || '')}</b> <span class="a-${escapeHtml(l.action)}">${act}</span>${l.detail ? ' · ' + escapeHtml(l.detail) : ''}</div>`;
+    }).join("") : `<div>기록 없음</div>`;
+  return `<div class="pj-sec">
+      <button class="pj-back" onclick="closeProject()">← 프로젝트 목록</button>
+      <div class="pj-detail">
+        <div class="pj-head">
+          <h2>${escapeHtml(p.title)} ${p.status === 'done' ? '<span class="rt-chip done">완료</span>' : pjDday(p.end, p.status)}</h2>
+          ${manage}
+        </div>
+        ${p.desc ? `<p class="pj-desc">${escapeHtml(p.desc)}</p>` : ''}
+        <div class="pj-info"><span>📅 ${escapeHtml(pjPeriod(p.start, p.end))}</span><span>👤 담당 ${escapeHtml(p.ownerName || '미지정')}</span>${p.createdByName ? `<span>등록 ${escapeHtml(p.createdByName)} ${p.createdAt ? escapeHtml(formatDateTime(p.createdAt)) : ''}</span>` : ''}</div>
+        <div class="pj-prog" style="margin-top:10px;"><div class="pj-bar"><i class="${prog === 100 ? 'ok' : ''}" style="width:${prog}%"></i></div><span>${prog}%</span></div>
+
+        <div class="pj-sub">
+          <h4>세부 일정 <span class="sub">${steps.filter(s => s.status === 'done').length}/${steps.length} 완료</span>
+            ${can ? `<button class="routine-add-btn" onclick="openStepForm('${escapeHtml(p.id)}', null)">+ 단계 추가</button>` : ''}</h4>
+          <div class="pj-scroll"><table class="pj-tbl">
+            <thead><tr><th>단계</th><th>시작</th><th>종료</th><th>담당</th><th>상태</th><th></th></tr></thead>
+            <tbody>${stepRows}</tbody>
+          </table></div>
+        </div>
+
+        <div class="pj-sub">
+          <h4>파일 <span class="sub">${files.length}개</span>
+            ${can ? `<button class="routine-add-btn" onclick="document.getElementById('pjFileInput').click()">+ 파일 올리기</button>
+            <input type="file" id="pjFileInput" multiple style="display:none;" onchange="uploadProjectFiles('${escapeHtml(p.id)}', this.files)">` : ''}</h4>
+          <div class="pj-scroll"><table class="pj-tbl">
+            <thead><tr><th>파일</th><th>올린 사람</th><th>올린 때</th><th></th></tr></thead>
+            <tbody>${fileRows}</tbody>
+          </table></div>
+          ${can ? `<div class="pj-drop ${pjUploading ? 'busy' : ''}" id="pjDrop"
+              ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')"
+              ondrop="event.preventDefault();this.classList.remove('over');uploadProjectFiles('${escapeHtml(p.id)}', event.dataTransfer.files)"
+              onclick="document.getElementById('pjFileInput').click()">${pjUploading ? '올리는 중...' : '여기에 파일을 끌어다 놓거나 클릭해서 올리기 (파일당 50MB까지)'}</div>` : ''}
+        </div>
+
+        <div class="pj-sub">
+          <details>
+            <summary style="cursor:pointer;font-weight:800;font-size:14px;">이력 (올리기·내려받기·삭제) ${logs.length}건</summary>
+            <div class="pj-log" style="margin-top:6px;">${logHtml}</div>
+          </details>
+        </div>
+      </div>
+    </div>`;
+}
+function stepRow(p, s){
+  const can = !!currentUser;
+  const st = PJ_STEP_STATUS[s.status] ? s.status : "todo";
+  const sel = can
+    ? `<select class="st ${st}" onchange="setStepStatus('${escapeHtml(p.id)}','${escapeHtml(s.id)}',this.value)">${Object.keys(PJ_STEP_STATUS).map(k => `<option value="${k}" ${k === st ? 'selected' : ''}>${PJ_STEP_STATUS[k]}</option>`).join("")}</select>`
+    : `<span class="rt-chip ${st === 'done' ? 'done' : st === 'doing' ? 'doing' : 'off'}">${PJ_STEP_STATUS[st]}</span>`;
+  return `<tr class="st-${st}">
+      <td class="t">${escapeHtml(s.title)}${s.memo ? `<div style="font-size:12px;color:var(--sub);font-weight:600;white-space:pre-wrap;">${escapeHtml(s.memo)}</div>` : ''}</td>
+      <td>${escapeHtml(s.start || '-')}</td>
+      <td>${escapeHtml(s.end || '-')} ${pjDday(s.end, st)}</td>
+      <td>${escapeHtml(s.personName || '-')}</td>
+      <td>${sel}</td>
+      <td class="act">${can ? `<button class="mini" onclick="openStepForm('${escapeHtml(p.id)}','${escapeHtml(s.id)}')">수정</button> <button class="mini del" onclick="deleteStep('${escapeHtml(p.id)}','${escapeHtml(s.id)}')">삭제</button>` : ''}</td>
+    </tr>`;
+}
+function fileRow(f){
+  return `<tr>
+      <td><span class="pj-file-name">${escapeHtml(f.name)}<small>${fmtBytes(f.size)}</small></span></td>
+      <td>${escapeHtml(f.byName || '')}</td>
+      <td>${escapeHtml(formatDateTime(f.at))}</td>
+      <td class="act">${currentUser ? `<button class="mini" onclick="downloadProjectFile('${escapeHtml(f.id)}')">내려받기</button>` : ''} ${pjCanDeleteFile(f) ? `<button class="mini del" onclick="deleteProjectFile('${escapeHtml(f.id)}')">삭제</button>` : ''}</td>
+    </tr>`;
+}
+
+// ---------- 프로젝트 등록 / 수정 ----------
+function pjPersonSelectHtml(id, selectedId, selectedName){
+  const inp = "width:100%;padding:9px 10px;border:2px solid var(--border);border-radius:12px;font-size:14.5px;font-family:inherit;background:var(--card);color:var(--text);";
+  const opts = users.map(u => `<option value="${escapeHtml(u.id)}" ${u.id === selectedId || (!selectedId && selectedName && u.name === selectedName) ? 'selected' : ''}>${escapeHtml(u.name)}</option>`).join("");
+  return `<select id="${id}" style="${inp}"><option value="">미지정</option>${opts}</select>`;
+}
+function pjReadPerson(id){
+  const sel = document.getElementById(id);
+  if(!sel || !sel.value) return { personId: "", personName: "" };
+  const u = findUser(sel.value);
+  return { personId: sel.value, personName: u ? u.name : "" };
+}
+function openProjectForm(id){
+  if(!currentUser){ needLogin(); return; }
+  const p = id ? findProject(id) : null;
+  const inp = "width:100%;padding:9px 10px;border:2px solid var(--border);border-radius:12px;font-size:14.5px;font-family:inherit;background:var(--card);color:var(--text);";
+  openModal(`
+    <h3>${p ? '프로젝트 수정' : '프로젝트 추가'}</h3>
+    <div class="field"><label>프로젝트 이름</label>
+      <input type="text" id="pjTitle" maxlength="120" style="${inp}" placeholder="예: 2027 전력설비 교체" value="${p ? escapeHtml(p.title) : ''}"></div>
+    <div class="acct-grid">
+      <div class="field"><label>시작일</label><input type="date" id="pjStart" style="${inp}" value="${p ? escapeHtml(p.start || '') : ''}"></div>
+      <div class="field"><label>종료 예정일</label><input type="date" id="pjEnd" style="${inp}" value="${p ? escapeHtml(p.end || '') : ''}"></div>
+      <div class="field full"><label>담당</label>${pjPersonSelectHtml('pjOwner', p ? p.ownerId : (currentUser ? currentUser.id : ''), p ? p.ownerName : '')}</div>
+    </div>
+    <div class="field"><label>설명 (선택)</label>
+      <textarea id="pjDesc" rows="3" maxlength="1000" placeholder="목적·범위·참고 사항">${p ? escapeHtml(p.desc || '') : ''}</textarea></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-primary" onclick="saveProjectForm(${p ? `'${escapeHtml(p.id)}'` : 'null'})">${p ? '수정' : '등록'}</button>
+    </div>`, true);
+  setTimeout(() => { const t = document.getElementById("pjTitle"); if(t) t.focus(); }, 50);
+}
+async function saveProjectForm(id){
+  const title = (document.getElementById("pjTitle").value || "").trim();
+  if(!title){ alert("프로젝트 이름을 입력하세요."); return; }
+  const start = document.getElementById("pjStart").value || "";
+  const end = document.getElementById("pjEnd").value || "";
+  if(start && end && end < start){ alert("종료일이 시작일보다 앞섭니다."); return; }
+  const who = pjReadPerson("pjOwner");
+  const prev = id ? findProject(id) : null;
+  const data = Object.assign({}, prev || {}, {
+    title, start, end, desc: (document.getElementById("pjDesc").value || "").trim(),
+    ownerId: who.personId, ownerName: who.personName,
+    status: prev ? (prev.status || "active") : "active",
+    steps: pjSteps(prev)
+  });
+  closeModal();
+  const r = await pjCall("ts_project_save", { p: Object.assign({}, data, { id: id || "", ws: wsInfo.id }) });
+  if(r && r.id && !id){ projectOpen = r.id; renderContent(); }
+}
+async function saveProjectData(p){
+  return pjCall("ts_project_save", { p: Object.assign({}, p, { ws: wsInfo.id }) });
+}
+async function toggleProjectDone(id){
+  const p = findProject(id); if(!p) return;
+  const toDone = p.status !== "done";
+  if(toDone && pjSteps(p).some(s => s.status !== "done") && !confirm("아직 끝나지 않은 단계가 있습니다. 그래도 프로젝트를 완료 처리할까요?")) return;
+  await saveProjectData(Object.assign({}, p, { status: toDone ? "done" : "active", doneAt: toDone ? new Date().toISOString() : null }));
+}
+async function deleteProject(id){
+  const p = findProject(id); if(!p) return;
+  if(!pjCanDelete()){ alert("프로젝트 삭제는 팀장·총관리자만 할 수 있습니다."); return; }
+  const files = pjFilesOf(id);
+  if(!confirm(`"${p.title}" 프로젝트를 삭제할까요?${files.length ? `\n올린 파일 ${files.length}개도 함께 지워집니다.` : ''}\n되돌릴 수 없습니다.`)) return;
+  try{
+    if(files.length){
+      await sbStorage("DELETE", "object/" + PJ_BUCKET, { headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prefixes: files.map(f => f.path) }) });
+    }
+  }catch(err){
+    if(err && err.auth){ handleAuthLost(); return; }
+    if(!confirm("저장소의 파일을 지우지 못했습니다(" + (err.message || err) + "). 프로젝트만 삭제할까요?")) return;
+  }
+  projectOpen = null;
+  await pjCall("ts_project_delete", { p_id: id });
+}
+
+// ---------- 단계(세부 일정) ----------
+function openStepForm(pid, sid){
+  if(!currentUser){ needLogin(); return; }
+  const p = findProject(pid); if(!p) return;
+  const s = sid ? pjSteps(p).find(x => x.id === sid) : null;
+  const inp = "width:100%;padding:9px 10px;border:2px solid var(--border);border-radius:12px;font-size:14.5px;font-family:inherit;background:var(--card);color:var(--text);";
+  const st = s ? (PJ_STEP_STATUS[s.status] ? s.status : "todo") : "todo";
+  openModal(`
+    <h3>${s ? '단계 수정' : '단계 추가'} <span style="font-size:13px;color:var(--sub);font-weight:600;">— ${escapeHtml(p.title)}</span></h3>
+    <div class="field"><label>단계 이름</label>
+      <input type="text" id="stTitle" maxlength="120" style="${inp}" placeholder="예: 현장 실측" value="${s ? escapeHtml(s.title) : ''}"></div>
+    <div class="acct-grid">
+      <div class="field"><label>시작일</label><input type="date" id="stStart" style="${inp}" value="${s ? escapeHtml(s.start || '') : ''}"></div>
+      <div class="field"><label>종료일</label><input type="date" id="stEnd" style="${inp}" value="${s ? escapeHtml(s.end || '') : ''}"></div>
+      <div class="field"><label>담당</label>${pjPersonSelectHtml('stPerson', s ? s.personId : '', s ? s.personName : '')}</div>
+      <div class="field"><label>상태</label>
+        <select id="stStatus" style="${inp}">${Object.keys(PJ_STEP_STATUS).map(k => `<option value="${k}" ${k === st ? 'selected' : ''}>${PJ_STEP_STATUS[k]}</option>`).join("")}</select></div>
+    </div>
+    <div class="field"><label>메모 (선택)</label>
+      <textarea id="stMemo" rows="2" maxlength="500">${s ? escapeHtml(s.memo || '') : ''}</textarea></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-primary" onclick="saveStepForm('${escapeHtml(pid)}', ${s ? `'${escapeHtml(s.id)}'` : 'null'})">${s ? '수정' : '추가'}</button>
+    </div>`, true);
+  setTimeout(() => { const t = document.getElementById("stTitle"); if(t) t.focus(); }, 50);
+}
+async function saveStepForm(pid, sid){
+  const p = findProject(pid); if(!p) return;
+  const title = (document.getElementById("stTitle").value || "").trim();
+  if(!title){ alert("단계 이름을 입력하세요."); return; }
+  const start = document.getElementById("stStart").value || "";
+  const end = document.getElementById("stEnd").value || "";
+  if(start && end && end < start){ alert("종료일이 시작일보다 앞섭니다."); return; }
+  const who = pjReadPerson("stPerson");
+  const status = document.getElementById("stStatus").value || "todo";
+  const memo = (document.getElementById("stMemo").value || "").trim();
+  const steps = pjSteps(p).slice();
+  const idx = sid ? steps.findIndex(x => x.id === sid) : -1;
+  const rec = Object.assign({}, idx >= 0 ? steps[idx] : { id: "s" + cid().slice(1) + Date.now().toString(36), createdAt: new Date().toISOString() },
+    { title, start, end, personId: who.personId, personName: who.personName, status, memo, updatedAt: new Date().toISOString() });
+  if(status === "done" && !(idx >= 0 && steps[idx].status === "done")) rec.doneAt = new Date().toISOString();
+  if(status !== "done") rec.doneAt = null;
+  if(idx >= 0) steps[idx] = rec; else steps.push(rec);
+  closeModal();
+  await saveProjectData(Object.assign({}, p, { steps }));
+}
+async function setStepStatus(pid, sid, status){
+  const p = findProject(pid); if(!p) return;
+  const steps = pjSteps(p).map(s => s.id === sid
+    ? Object.assign({}, s, { status, updatedAt: new Date().toISOString(), doneAt: status === "done" ? (s.doneAt || new Date().toISOString()) : null })
+    : s);
+  await saveProjectData(Object.assign({}, p, { steps }));
+}
+async function deleteStep(pid, sid){
+  const p = findProject(pid); if(!p) return;
+  const s = pjSteps(p).find(x => x.id === sid); if(!s) return;
+  if(!confirm(`"${s.title}" 단계를 삭제할까요?`)) return;
+  await saveProjectData(Object.assign({}, p, { steps: pjSteps(p).filter(x => x.id !== sid) }));
+}
+
+// ---------- 파일 ----------
+function pjSafeExt(name){
+  const m = /\.([A-Za-z0-9]{1,8})$/.exec(String(name || ""));
+  return m ? m[1].toLowerCase() : "bin";
+}
+async function uploadProjectFiles(pid, fileList){
+  if(!currentUser){ needLogin(); return; }
+  const p = findProject(pid); if(!p) return;
+  const files = Array.from(fileList || []);
+  if(!files.length) return;
+  const tooBig = files.filter(f => f.size > PJ_MAX_BYTES);
+  if(tooBig.length){ alert("50MB를 넘는 파일은 올릴 수 없습니다:\n" + tooBig.map(f => f.name).join("\n")); }
+  const ok = files.filter(f => f.size <= PJ_MAX_BYTES);
+  if(!ok.length) return;
+  pjUploading = true; renderContent();
+  const failed = [];
+  for(const f of ok){
+    const fid = "f" + cid().slice(1) + Date.now().toString(36);
+    const path = `${wsInfo.id}/${pid}/${fid}.${pjSafeExt(f.name)}`;
+    try{
+      await sbStorage("POST", "object/" + PJ_BUCKET + "/" + path, {
+        headers: { "Content-Type": f.type || "application/octet-stream", "x-upsert": "false" }, body: f });
+      await sbRpc("ts_project_file_add", { p: { id: fid, projectId: pid, name: f.name, path, size: f.size, mime: f.type || "" } });
+    }catch(err){
+      if(err && err.auth){ pjUploading = false; handleAuthLost(); return; }
+      failed.push(f.name + " (" + (err.message || err) + ")");
+    }
+  }
+  pjUploading = false;
+  await loadProjects(true);
+  renderContent();
+  if(failed.length) alert("올리지 못한 파일:\n" + failed.join("\n"));
+}
+async function downloadProjectFile(fid){
+  if(!currentUser){ needLogin(); return; }
+  const f = projectFiles.find(x => x.id === fid); if(!f) return;
+  // 서명 URL 로 바로 여는 대신 로그인 토큰으로 받아서(blob) 저장한다 — 실패해도 화면이 다른 곳으로 넘어가지 않고,
+  // 원래 파일 이름 그대로 내려받힌다.
+  try{
+    const token = await sbAccessToken();
+    if(!token){ needLogin(); return; }
+    const res = await fetch(SB_URL + "/storage/v1/object/authenticated/" + PJ_BUCKET + "/" + f.path, {
+      headers: { "apikey": SB_KEY, "Authorization": "Bearer " + token } });
+    if(!res.ok){
+      let msg = "HTTP " + res.status;
+      try{ const j = await res.json(); msg = j.message || j.error || msg; }catch(e){}
+      if(res.status === 401){ handleAuthLost(); return; }
+      throw new Error(msg);
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = f.name; a.rel = "noopener";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    sbRpc("ts_project_file_log", { p_file_id: fid, p_action: "download" }).then(() => loadProjects(true)).catch(() => {});
+  }catch(err){
+    if(err && err.auth){ handleAuthLost(); return; }
+    alert("내려받지 못했습니다: " + (err.message || err));
+  }
+}
+async function deleteProjectFile(fid){
+  const f = projectFiles.find(x => x.id === fid); if(!f) return;
+  if(!confirm(`"${f.name}" 파일을 삭제할까요? 되돌릴 수 없습니다.`)) return;
+  const r = await pjCall("ts_project_file_delete", { p_file_id: fid });
+  if(!r || !r.ok) return;
+  try{
+    await sbStorage("DELETE", "object/" + PJ_BUCKET, { headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prefixes: [r.path || f.path] }) });
+  }catch(err){ /* 표에서는 이미 빠졌다. 저장소 쪽 찌꺼기는 관리자가 정리 */ }
+}
+
 function renderContent(){
   const el = document.getElementById("content");
   if(activeTab === "all"){
-    el.innerHTML = Object.keys(TEAM_META).map(teamTable).join("");
+    el.innerHTML = Object.keys(TEAM_META).filter(k => !isProjectsTab(k)).map(teamTable).join("");
+  } else if(isProjectsTab(activeTab)){
+    el.innerHTML = renderProjectTab();
   } else if(activeTab === "routine"){
     el.innerHTML = renderRoutineTab();
   } else if(activeTab === "absence"){
@@ -7485,6 +7992,7 @@ function selectTab(name){
   document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === name));
   updateAdminUI();
   if(name === "absence") ensureLinkedYears();
+  if(isProjectsTab(name)) loadProjects();   // 탭을 열 때마다 서버에서 새로 읽는다
   renderContent();
 }
 function quickGo(key){
